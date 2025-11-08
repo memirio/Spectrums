@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Site {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  url         String
+  imageUrl    String?
+  author      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Many-to-many relationship with tags
+  tags        SiteTag[]
+  images      Image[]
+  
+  @@map("sites")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  
+  // Many-to-many relationship with sites
+  sites     SiteTag[]
+  // Aliases for fuzzy matching
+  aliases   TagAlias[]
+  
+  @@map("tags")
+}
+
+model TagAlias {
+  id        String   @id @default(cuid())
+  alias     String   @unique
+  tagId     String
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@map("tag_aliases")
+}
+model SiteTag {
+  id     String @id @default(cuid())
+  siteId String
+  tagId  String
+  
+  site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([siteId, tagId])
+  @@map("site_tags")
+}
+
+// -----------------------------
+// Automatic tagging extensions
+// -----------------------------
+
+// NOTE: Keeping the existing Image model if defined elsewhere.
+// If no Image model exists yet, this minimal definition ensures
+// relations compile; you can extend it later without breaking references.
+model Image {
+  id        String   @id @default(cuid())
+  siteId    String
+  url       String
+  width     Int?
+  height    Int?
+  bytes     Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  // Relations for tagging system
+  embedding  ImageEmbedding?
+  tags       ImageTag[]
+
+  @@unique([siteId, url], name: "siteId_url")
+  @@map("images")
+}
+
+model ImageEmbedding {
+  id         String   @id @default(cuid())
+  imageId    String   @unique
+  model      String
+  vector     Json     // store as normalized float array
+  contentHash String? @unique // SHA-256 of canonical PNG (nullable for migration)
+  createdAt  DateTime @default(now())
+  image      Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@index([contentHash])
+  @@map("image_embeddings")
+}
+
+model Concept {
+  id        String   @id
+  label     String
+  locale    String?  @default("en")
+  synonyms  Json     // stored as array in JSON
+  related   Json     // stored as array in JSON
+  weight    Float?   @default(1.0)
+  embedding Json
+
+  // Backref
+  images    ImageTag[]
+}
+
+model ImageTag {
+  imageId   String
+  conceptId String
+  score     Float
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  concept   Concept  @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+
+  @@id([imageId, conceptId])
+  @@map("image_tags")
+}

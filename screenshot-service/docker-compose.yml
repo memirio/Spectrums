@@ -1,0 +1,72 @@
+services:
+  api:
+    build: .
+    command: npm run dev
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - STORAGE_BUCKET=screenshots
+      - STORAGE_REGION=us-east-1
+      - STORAGE_ENDPOINT=http://minio:9000
+      - AWS_ACCESS_KEY_ID=minio
+      - AWS_SECRET_ACCESS_KEY=minio123
+      - CDN_BASE_URL=http://localhost:9000/screenshots
+      - CACHE_TTL_HOURS=24
+      - LOG_LEVEL=info
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - ./src:/app/src
+
+  worker:
+    build: .
+    command: npm run worker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - STORAGE_BUCKET=screenshots
+      - STORAGE_REGION=us-east-1
+      - STORAGE_ENDPOINT=http://minio:9000
+      - AWS_ACCESS_KEY_ID=minio
+      - AWS_SECRET_ACCESS_KEY=minio123
+      - CDN_BASE_URL=http://localhost:9000/screenshots
+      - CACHE_TTL_HOURS=24
+      - LOG_LEVEL=info
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - ./src:/app/src
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minio123
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data:
+  minio-data:
+
