@@ -426,7 +426,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
   // Use Gemini to generate concepts directly from the image (truly generative, no similarity matching)
   console.log(`[tagImage] Generating abstract concepts from image using Gemini...`);
   
-  let generatedConcepts: Record<string, string | string[]>;
+  let generatedConcepts: Record<string, Array<{ concept: string; opposites: string[] }>>;
   try {
     generatedConcepts = await generateAbstractConceptsFromImage(imageBuffer, 'image/png');
   } catch (error: any) {
@@ -451,7 +451,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     return { core, synonyms };
   }
   
-  // Process each category - can have one or multiple concepts
+  // Process each category - concepts now include opposites from the initial call
   for (const [categoryId, conceptData] of Object.entries(generatedConcepts)) {
     const category = CATEGORIES[categoryId as keyof typeof CATEGORIES];
     if (!category) {
@@ -459,17 +459,17 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       continue;
     }
     
-    // Handle both single concept (string) and multiple concepts (array)
-    const conceptLabels = Array.isArray(conceptData) ? conceptData : [conceptData];
+    // New format: conceptData is always an array of {concept, opposites} objects
+    const conceptsWithOpposites: Array<{ concept: string; opposites: string[] }> = conceptData;
     
     // Ensure at least 1 concept per category
-    if (conceptLabels.length === 0) {
+    if (conceptsWithOpposites.length === 0) {
       console.warn(`[tagImage] No concepts generated for category: ${categoryId}`);
       continue;
     }
     
     // Process each concept in this category
-    for (const generatedLabel of conceptLabels) {
+    for (const { concept: generatedLabel, opposites: generatedOpposites } of conceptsWithOpposites) {
       if (!generatedLabel || typeof generatedLabel !== 'string') {
         continue;
       }
@@ -531,16 +531,33 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       const validSynonyms = synonyms.filter(syn => !isExactDuplicate(syn, syn.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
       const validRelated = allRelated.filter(rel => !isExactDuplicate(rel, rel.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
       
-      // Generate opposites using Gemini
-      console.log(`[tagImage] Generating opposites for concept: "${conceptLabel}" (category: ${category.label})`);
-      const { generateOppositesForConcept } = await import('@/lib/gemini');
-      let opposites: string[] = [];
-      try {
-        opposites = await generateOppositesForConcept(conceptLabel, category.label);
-        console.log(`[tagImage] Generated ${opposites.length} opposites for "${conceptLabel}": ${opposites.join(', ')}`);
-      } catch (error: any) {
-        console.warn(`[tagImage] Failed to generate opposites for "${conceptLabel}": ${error.message}`);
-        // Continue without opposites - don't fail the whole process
+      // Use opposites from the initial Gemini call (already generated, no extra API call needed!)
+      // Only use opposites if this concept is actually new (not a duplicate)
+      let opposites: string[] = generatedOpposites || [];
+      
+      if (opposites.length > 0) {
+        console.log(`[tagImage] Using ${opposites.length} opposites from initial call for "${conceptLabel}": ${opposites.join(', ')}`);
+      } else {
+        // Fallback: if no opposites in response, generate them separately
+        // This should be rare now, but we ensure every concept gets opposites
+        console.warn(`[tagImage] ⚠️  No opposites in initial response for "${conceptLabel}", generating separately...`);
+        const { generateOppositesForConcept } = await import('@/lib/gemini');
+        try {
+          opposites = await generateOppositesForConcept(conceptLabel, category.label);
+          if (opposites.length > 0) {
+            console.log(`[tagImage] ✅ Generated ${opposites.length} opposites for "${conceptLabel}": ${opposites.join(', ')}`);
+          } else {
+            console.warn(`[tagImage] ⚠️  Still no opposites generated for "${conceptLabel}" after fallback call`);
+          }
+        } catch (error: any) {
+          // If we hit quota limits, skip opposites generation (non-fatal)
+          if (error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('503')) {
+            console.warn(`[tagImage] ⚠️  Skipping opposites for "${conceptLabel}" due to API quota/rate limit`);
+          } else {
+            console.warn(`[tagImage] ⚠️  Failed to generate opposites for "${conceptLabel}": ${error.message}`);
+          }
+          // Continue without opposites - don't fail the whole process
+        }
       }
       
       newConcepts.push({

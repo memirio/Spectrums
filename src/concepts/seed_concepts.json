@@ -477,6 +477,21 @@
     "category": "Aesthetic / Formal"
   },
   {
+    "id": "classicism",
+    "label": "Classicism",
+    "synonyms": [
+      "classicism"
+    ],
+    "related": [],
+    "opposites": [
+      "Modernism",
+      "Avant-garde",
+      "Experimentation",
+      "Nihilism"
+    ],
+    "category": "Aesthetic / Formal"
+  },
+  {
     "id": "cleanliness",
     "label": "Cleanliness",
     "synonyms": [
@@ -2453,7 +2468,8 @@
       "musiced",
       "musicing",
       "musicical",
-      "Entertainment"
+      "Entertainment",
+      "Audio"
     ],
     "related": [
       "expressive",
@@ -3200,7 +3216,8 @@
       "spaciousing",
       "spaciousic",
       "Open",
-      "Expansive"
+      "Expansive",
+      "Spaciousness"
     ],
     "related": [
       "minimalistic",
@@ -5413,7 +5430,8 @@
       "pasteled",
       "pasteling",
       "pastelical",
-      "Pale"
+      "Pale",
+      "Delicate"
     ],
     "related": [
       "calm",
@@ -6390,7 +6408,8 @@
       "aqueousing",
       "aqueousness",
       "aqueousic",
-      "aqueousical"
+      "aqueousical",
+      "Subaqueous"
     ],
     "related": [
       "action",
@@ -6680,7 +6699,8 @@
       "brutalists",
       "brutalisted",
       "brutalisting",
-      "Concrete"
+      "Concrete",
+      "Neo-Brutalism"
     ],
     "related": [
       "geometric",
@@ -6887,6 +6907,21 @@
     "category": "Design Style"
   },
   {
+    "id": "commercial",
+    "label": "Commercial",
+    "synonyms": [
+      "commercial"
+    ],
+    "related": [],
+    "opposites": [
+      "Artistic",
+      "Personal",
+      "Amateur",
+      "Experimental"
+    ],
+    "category": "Design Style"
+  },
+  {
     "id": "computational",
     "label": "Computational",
     "synonyms": [
@@ -7078,6 +7113,21 @@
       "comic",
       "computational",
       "conceptual"
+    ],
+    "category": "Design Style"
+  },
+  {
+    "id": "deconstructivism",
+    "label": "Deconstructivism",
+    "synonyms": [
+      "deconstructivism"
+    ],
+    "related": [],
+    "opposites": [
+      "Structuralism",
+      "Minimalism",
+      "Harmony",
+      "Order"
     ],
     "category": "Design Style"
   },
@@ -7801,6 +7851,21 @@
     "category": "Design Style"
   },
   {
+    "id": "hybrid",
+    "label": "Hybrid",
+    "synonyms": [
+      "hybrid"
+    ],
+    "related": [],
+    "opposites": [
+      "pure",
+      "singular",
+      "monolithic",
+      "homogeneous"
+    ],
+    "category": "Design Style"
+  },
+  {
     "id": "hyperreal",
     "label": "Hyperreal",
     "synonyms": [
@@ -8048,6 +8113,21 @@
       "chunky",
       "comic",
       "computational"
+    ],
+    "category": "Design Style"
+  },
+  {
+    "id": "miniature",
+    "label": "Miniature",
+    "synonyms": [
+      "miniature"
+    ],
+    "related": [],
+    "opposites": [
+      "Grandiose",
+      "Massive",
+      "Monumental",
+      "Full-scale"
     ],
     "category": "Design Style"
   },
@@ -8908,6 +8988,51 @@
     "category": "Design Style"
   },
   {
+    "id": "techno-futurism",
+    "label": "Techno-futurism",
+    "synonyms": [
+      "techno-futurism"
+    ],
+    "related": [],
+    "opposites": [
+      "Retro",
+      "Steampunk",
+      "ArtNouveau",
+      "Gothic"
+    ],
+    "category": "Design Style"
+  },
+  {
+    "id": "technographic",
+    "label": "Technographic",
+    "synonyms": [
+      "technographic"
+    ],
+    "related": [],
+    "opposites": [
+      "Organic",
+      "Hand-drawn",
+      "Analog",
+      "Artisanal"
+    ],
+    "category": "Design Style"
+  },
+  {
+    "id": "techwear",
+    "label": "Techwear",
+    "synonyms": [
+      "techwear"
+    ],
+    "related": [],
+    "opposites": [
+      "Heritage",
+      "Traditional",
+      "Rustic",
+      "Basic"
+    ],
+    "category": "Design Style"
+  },
+  {
     "id": "traditional",
     "label": "Traditional",
     "synonyms": [
@@ -8996,7 +9121,8 @@
       "raytraced",
       "depth-cue",
       "shaded",
-      "Volumetric"
+      "Volumetric",
+      "Polygonal"
     ],
     "related": [
       "lighting",
@@ -9082,6 +9208,24 @@
       "art",
       "artistic",
       "blank"
+    ],
+    "category": "Design Technique"
+  },
+  {
+    "id": "annotation",
+    "label": "Annotation",
+    "synonyms": [
+      "annotation"
+    ],
+    "related": [
+      "3D Rendering",
+      "Vector Graphics"
+    ],
+    "opposites": [
+      "Implicit",
+      "Abstract",
+      "Unlabeled",
+      "Undocumented"
     ],
     "category": "Design Technique"
   },
@@ -9256,6 +9400,24 @@
       "blank",
       "compositing",
       "curation"
+    ],
+    "category": "Design Technique"
+  },
+  {
+    "id": "bokeh",
+    "label": "Bokeh",
+    "synonyms": [
+      "bokeh"
+    ],
+    "related": [
+      "3D Rendering",
+      "Vector Graphics"
+    ],
+    "opposites": [
+      "Sharp",
+      "Focused",
+      "Crisp",
+      "Detailed"
     ],
     "category": "Design Technique"
   },
@@ -10177,6 +10339,24 @@
     "category": "Design Technique"
   },
   {
+    "id": "macro",
+    "label": "Macro",
+    "synonyms": [
+      "macro"
+    ],
+    "related": [
+      "3D Rendering",
+      "Vector Graphics"
+    ],
+    "opposites": [
+      "Panoramic",
+      "Distant",
+      "Wide",
+      "Abstract"
+    ],
+    "category": "Design Technique"
+  },
+  {
     "id": "magnify",
     "label": "Magnify",
     "synonyms": [
@@ -10601,7 +10781,8 @@
       "renderic",
       "renderical",
       "renders",
-      "rendered"
+      "rendered",
+      "Rendered"
     ],
     "related": [
       "Vector Graphics",
@@ -11759,7 +11940,8 @@
       "calmed",
       "calming",
       "calmical",
-      "Tranquil"
+      "Tranquil",
+      "Calmness"
     ],
     "related": [
       "muted",
@@ -12442,6 +12624,22 @@
     "category": "Feeling / Emotion"
   },
   {
+    "id": "dignity",
+    "label": "Dignity",
+    "synonyms": [
+      "Dignitic",
+      "Dignitical",
+      "dignity"
+    ],
+    "related": [],
+    "opposites": [
+      "Informality",
+      "Crude",
+      "Vulgarity"
+    ],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "direct",
     "label": "Direct",
     "synonyms": [
@@ -12885,6 +13083,21 @@
     "category": "Feeling / Emotion"
   },
   {
+    "id": "exuberance",
+    "label": "Exuberance",
+    "synonyms": [
+      "exuberance"
+    ],
+    "related": [],
+    "opposites": [
+      "Restraint",
+      "Calmness",
+      "Subtlety",
+      "Melancholy"
+    ],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "familiarity",
     "label": "Familiarity",
     "synonyms": [
@@ -13282,6 +13495,23 @@
       "aspire",
       "cheer",
       "clarity"
+    ],
+    "category": "Feeling / Emotion"
+  },
+  {
+    "id": "intimacy",
+    "label": "Intimacy",
+    "synonyms": [
+      "Intimacic",
+      "Intimacical",
+      "intimacy"
+    ],
+    "related": [],
+    "opposites": [
+      "Distance",
+      "Detachment",
+      "Impersonality",
+      "Grandeur"
     ],
     "category": "Feeling / Emotion"
   },
@@ -14269,6 +14499,21 @@
     "category": "Feeling / Emotion"
   },
   {
+    "id": "resilient",
+    "label": "Resilient",
+    "synonyms": [
+      "resilient"
+    ],
+    "related": [],
+    "opposites": [
+      "Fragile",
+      "Weak",
+      "Vulnerable",
+      "Yielding"
+    ],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "retro",
     "label": "Retro",
     "synonyms": [
@@ -14341,6 +14586,21 @@
       "aspire",
       "cheer",
       "clarity"
+    ],
+    "category": "Feeling / Emotion"
+  },
+  {
+    "id": "robust",
+    "label": "Robust",
+    "synonyms": [
+      "robust"
+    ],
+    "related": [],
+    "opposites": [
+      "Delicate",
+      "Weak",
+      "Flimsy",
+      "Brittle"
     ],
     "category": "Feeling / Emotion"
   },
@@ -15204,6 +15464,21 @@
       "arch",
       "architecture",
       "array"
+    ],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "aerodynamic",
+    "label": "Aerodynamic",
+    "synonyms": [
+      "aerodynamic"
+    ],
+    "related": [],
+    "opposites": [
+      "clunky",
+      "boxy",
+      "cumbersome",
+      "inefficient"
     ],
     "category": "Form & Structure"
   },
@@ -16225,7 +16500,8 @@
       "curveic",
       "curveical",
       "curveed",
-      "curveing"
+      "curveing",
+      "RV"
     ],
     "related": [
       "accordion",
@@ -16515,6 +16791,20 @@
     "category": "Form & Structure"
   },
   {
+    "id": "enclosed",
+    "label": "Enclosed",
+    "synonyms": [
+      "enclosed"
+    ],
+    "related": [],
+    "opposites": [
+      "Open",
+      "Borderless",
+      "Expansive"
+    ],
+    "category": "Form & Structure"
+  },
+  {
     "id": "enclosure",
     "label": "Enclosure",
     "synonyms": [
@@ -16609,6 +16899,38 @@
       "block",
       "boundless",
       "canvas"
+    ],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "figurative",
+    "label": "Figurative",
+    "synonyms": [
+      "figurative"
+    ],
+    "related": [],
+    "opposites": [
+      "Abstract",
+      "Geometric",
+      "Non-objective",
+      "Formless"
+    ],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "flexibility",
+    "label": "Flexibility",
+    "synonyms": [
+      "Flexibilitic",
+      "Flexibilitical",
+      "flexibility"
+    ],
+    "related": [],
+    "opposites": [
+      "Rigidity",
+      "Stiffness",
+      "Inflexibility",
+      "Immobility"
     ],
     "category": "Form & Structure"
   },
@@ -16847,6 +17169,21 @@
     "category": "Form & Structure"
   },
   {
+    "id": "freeform",
+    "label": "Freeform",
+    "synonyms": [
+      "freeform"
+    ],
+    "related": [],
+    "opposites": [
+      "Structured",
+      "Grid",
+      "Formal",
+      "Confined"
+    ],
+    "category": "Form & Structure"
+  },
+  {
     "id": "geometric",
     "label": "Geometric",
     "synonyms": [
@@ -16998,6 +17335,21 @@
     "category": "Form & Structure"
   },
   {
+    "id": "hollow",
+    "label": "Hollow",
+    "synonyms": [
+      "hollow"
+    ],
+    "related": [],
+    "opposites": [
+      "Solid",
+      "Filled",
+      "Opaque",
+      "Dense"
+    ],
+    "category": "Form & Structure"
+  },
+  {
     "id": "imposing",
     "label": "Imposing",
     "synonyms": [
@@ -17036,6 +17388,36 @@
       "imposition"
     ],
     "related": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "integrated",
+    "label": "Integrated",
+    "synonyms": [
+      "integrated"
+    ],
+    "related": [],
+    "opposites": [
+      "Modular",
+      "Fragmented",
+      "Disjointed",
+      "Separate"
+    ],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "interference",
+    "label": "Interference",
+    "synonyms": [
+      "interference"
+    ],
+    "related": [],
+    "opposites": [
+      "Clarity",
+      "Openness",
+      "Unobstructed",
+      "Direct"
+    ],
     "category": "Form & Structure"
   },
   {
@@ -17276,6 +17658,21 @@
       "array",
       "assembly",
       "axial"
+    ],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "loop",
+    "label": "Loop",
+    "synonyms": [
+      "loop"
+    ],
+    "related": [],
+    "opposites": [
+      "Linear",
+      "Finite",
+      "Static",
+      "Broken"
     ],
     "category": "Form & Structure"
   },
@@ -18901,6 +19298,23 @@
     "category": "Form & Structure"
   },
   {
+    "id": "wavy",
+    "label": "Wavy",
+    "synonyms": [
+      "Wavic",
+      "Wavical",
+      "wavy"
+    ],
+    "related": [],
+    "opposites": [
+      "Straight",
+      "Angular",
+      "Rigid",
+      "Linear"
+    ],
+    "category": "Form & Structure"
+  },
+  {
     "id": "advertising",
     "label": "Advertising",
     "synonyms": [
@@ -18910,6 +19324,40 @@
       "E-commerce"
     ],
     "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "aesthetics",
+    "label": "Aesthetics",
+    "synonyms": [
+      "aesthetics"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Functionality",
+      "Utility",
+      "Practicality",
+      "Gritty"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "analytics",
+    "label": "Analytics",
+    "synonyms": [
+      "analytics"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Intuition",
+      "Guesswork",
+      "Qualitative",
+      "Subjectivity"
+    ],
     "category": "Industry"
   },
   {
@@ -18957,6 +19405,23 @@
     "category": "Industry"
   },
   {
+    "id": "behavioral",
+    "label": "Behavioral",
+    "synonyms": [
+      "behavioral"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Hardware",
+      "Mechanical",
+      "Physical",
+      "Tangible"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "beverage",
     "label": "Beverage",
     "synonyms": [
@@ -18986,6 +19451,57 @@
     "category": "Industry"
   },
   {
+    "id": "boutique",
+    "label": "Boutique",
+    "synonyms": [
+      "boutique"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Mass-market",
+      "Generic",
+      "Wholesale",
+      "Industrial"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "catering",
+    "label": "Catering",
+    "synonyms": [
+      "catering"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Retail",
+      "Restaurant",
+      "DIY",
+      "Manufacturing"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "childcare",
+    "label": "Childcare",
+    "synonyms": [
+      "childcare"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Adult-services",
+      "Corporate",
+      "Elderly-care",
+      "Academic"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "climate",
     "label": "Climate",
     "synonyms": [
@@ -18995,6 +19511,23 @@
       "E-commerce"
     ],
     "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "conservation",
+    "label": "Conservation",
+    "synonyms": [
+      "conservation"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Consumption",
+      "Resource-extraction",
+      "Development",
+      "Neglect"
+    ],
     "category": "Industry"
   },
   {
@@ -19120,6 +19653,40 @@
     "category": "Industry"
   },
   {
+    "id": "edutainment",
+    "label": "Edutainment",
+    "synonyms": [
+      "edutainment"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Pure Entertainment",
+      "Academic",
+      "Abstract",
+      "Professional"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "engineering",
+    "label": "Engineering",
+    "synonyms": [
+      "engineering"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Arts",
+      "Humanities",
+      "Services",
+      "Abstract"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "eyewear",
     "label": "Eyewear",
     "synonyms": [
@@ -19197,6 +19764,44 @@
     "category": "Industry"
   },
   {
+    "id": "healthy",
+    "label": "Healthy",
+    "synonyms": [
+      "Healthic",
+      "Healthical",
+      "healthy"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Processed",
+      "Indulgent",
+      "Unhealthy",
+      "Fast-food"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "horology",
+    "label": "Horology",
+    "synonyms": [
+      "Horologic",
+      "Horological",
+      "horology"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Digital",
+      "Casual",
+      "Informal",
+      "Ephemera"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "hotels",
     "label": "Hotels",
     "synonyms": [
@@ -19226,6 +19831,42 @@
     "category": "Industry"
   },
   {
+    "id": "interior",
+    "label": "Interior",
+    "synonyms": [
+      "interior"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Exterior",
+      "Landscape",
+      "Urban"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "jewelry",
+    "label": "Jewelry",
+    "synonyms": [
+      "Jewelric",
+      "Jewelrical",
+      "jewelry"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Apparel",
+      "Tools",
+      "Utilitarian",
+      "Electronics",
+      "Homeware"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "logistics",
     "label": "Logistics",
     "synonyms": [
@@ -19239,6 +19880,40 @@
       "chaos",
       "isolation",
       "waste"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "manufacturing",
+    "label": "Manufacturing",
+    "synonyms": [
+      "manufacturing"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Service",
+      "Retail",
+      "Agriculture",
+      "Craft"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "marine",
+    "label": "Marine",
+    "synonyms": [
+      "marine"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Land-based",
+      "Aerospace",
+      "Urban",
+      "Terrestrial"
     ],
     "category": "Industry"
   },
@@ -19271,6 +19946,23 @@
     "category": "Industry"
   },
   {
+    "id": "merchandise",
+    "label": "Merchandise",
+    "synonyms": [
+      "merchandise"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Services",
+      "Essentials",
+      "Experiences",
+      "Intellectual Property"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "metaverse",
     "label": "Metaverse",
     "synonyms": [
@@ -19284,6 +19976,124 @@
       "Onsite",
       "Analog",
       "Material"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "mobile",
+    "label": "Mobile",
+    "synonyms": [
+      "mobile"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Desktop",
+      "Print",
+      "Physical",
+      "Static"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "motorsport",
+    "label": "Motorsport",
+    "synonyms": [
+      "motorsport"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Manual-labor",
+      "Pedestrian",
+      "Static",
+      "Slow-paced"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "murals",
+    "label": "Murals",
+    "synonyms": [
+      "murals"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Fine Art",
+      "Sculpture",
+      "Digital Art",
+      "Small-scale Art"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "museum",
+    "label": "Museum",
+    "synonyms": [
+      "museum"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Retail",
+      "Contemporary",
+      "Ephemeral"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "non-profit",
+    "label": "Non-profit",
+    "synonyms": [
+      "non-profit"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Commercial",
+      "Corporate",
+      "For-profit",
+      "Greed"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "orthodontics",
+    "label": "Orthodontics",
+    "synonyms": [
+      "orthodontics"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Podiatry",
+      "Ophthalmology",
+      "Dermatology",
+      "Cardiology"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "payments",
+    "label": "Payments",
+    "synonyms": [
+      "payments"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Barter",
+      "Donation",
+      "Free",
+      "Non-monetary"
     ],
     "category": "Industry"
   },
@@ -19359,6 +20169,23 @@
       "Industrial",
       "Office",
       "Logistics"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "robotics",
+    "label": "Robotics",
+    "synonyms": [
+      "robotics"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Manual",
+      "Human",
+      "Craft",
+      "Biological"
     ],
     "category": "Industry"
   },
@@ -19446,6 +20273,23 @@
       "Disposable",
       "Coarse",
       "Commodity"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "wearables",
+    "label": "Wearables",
+    "synonyms": [
+      "wearables"
+    ],
+    "related": [
+      "E-commerce"
+    ],
+    "opposites": [
+      "Stationary",
+      "Immobile",
+      "Desktop",
+      "Installed"
     ],
     "category": "Industry"
   },
@@ -19762,6 +20606,20 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "artifact",
+    "label": "Artifact",
+    "synonyms": [
+      "artifact"
+    ],
+    "related": [],
+    "opposites": [
+      "Organic",
+      "Modern",
+      "Synthetic"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "assemblage",
     "label": "Assemblage",
     "synonyms": [
@@ -20006,6 +20864,21 @@
       "bio"
     ],
     "related": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "biomorphic",
+    "label": "Biomorphic",
+    "synonyms": [
+      "biomorphic"
+    ],
+    "related": [],
+    "opposites": [
+      "Geometric",
+      "Synthetic",
+      "Mechanical",
+      "Artificial"
+    ],
     "category": "Natural / Metaphysical Concepts"
   },
   {
@@ -20855,6 +21728,21 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "earthiness",
+    "label": "Earthiness",
+    "synonyms": [
+      "earthiness"
+    ],
+    "related": [],
+    "opposites": [
+      "Artificiality",
+      "Synthetic",
+      "Otherworldly",
+      "Alien"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "echo",
     "label": "Echo",
     "synonyms": [
@@ -21104,6 +21992,21 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "envelopment",
+    "label": "Envelopment",
+    "synonyms": [
+      "envelopment"
+    ],
+    "related": [],
+    "opposites": [
+      "Exposure",
+      "Openness",
+      "Release",
+      "Disclosure"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "environment",
     "label": "Environment",
     "synonyms": [
@@ -21113,7 +22016,8 @@
       "environmentical",
       "environments",
       "environmented",
-      "environmenting"
+      "environmenting",
+      "Environmental"
     ],
     "related": [
       "absorption",
@@ -21871,6 +22775,22 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "glimpse",
+    "label": "Glimpse",
+    "synonyms": [
+      "glimpse"
+    ],
+    "related": [],
+    "opposites": [
+      "Panorama",
+      "Wholeness",
+      "Obscurity",
+      "Concealment",
+      "Completeness"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "globe",
     "label": "Globe",
     "synonyms": [
@@ -22233,6 +23153,21 @@
       "aura",
       "aurora",
       "being"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "interference",
+    "label": "Interference",
+    "synonyms": [
+      "interference"
+    ],
+    "related": [],
+    "opposites": [
+      "Clarity",
+      "Flow",
+      "Unimpeded",
+      "Directness"
     ],
     "category": "Natural / Metaphysical Concepts"
   },
@@ -22606,6 +23541,21 @@
       "bloom",
       "bond",
       "burst"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "microcosm",
+    "label": "Microcosm",
+    "synonyms": [
+      "microcosm"
+    ],
+    "related": [],
+    "opposites": [
+      "Macrocosm",
+      "Vastness",
+      "Infinity",
+      "Grandeur"
     ],
     "category": "Natural / Metaphysical Concepts"
   },
@@ -23457,6 +24407,24 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "reflectivity",
+    "label": "Reflectivity",
+    "synonyms": [
+      "Reflectivitic",
+      "Reflectivitical",
+      "reflectivity"
+    ],
+    "related": [],
+    "opposites": [
+      "Absorption",
+      "Dullness",
+      "Opacity",
+      "Matte",
+      "Darkness"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "refraction",
     "label": "Refraction",
     "synonyms": [
@@ -23697,6 +24665,22 @@
       "drifting",
       "detached",
       "ephemeral"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "roots",
+    "label": "Roots",
+    "synonyms": [
+      "roots"
+    ],
+    "related": [],
+    "opposites": [
+      "Dispersal",
+      "Future",
+      "Detachment",
+      "Abstract",
+      "Novelty"
     ],
     "category": "Natural / Metaphysical Concepts"
   },
@@ -25601,6 +26585,23 @@
     "category": "Philosophical / Existential Concepts"
   },
   {
+    "id": "ascendancy",
+    "label": "Ascendancy",
+    "synonyms": [
+      "Ascendancic",
+      "Ascendancical",
+      "ascendancy"
+    ],
+    "related": [],
+    "opposites": [
+      "Decline",
+      "Submersion",
+      "Fall",
+      "Grounded"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "ascension",
     "label": "Ascension",
     "synonyms": [
@@ -26455,6 +27456,21 @@
     "category": "Philosophical / Existential Concepts"
   },
   {
+    "id": "contradiction",
+    "label": "Contradiction",
+    "synonyms": [
+      "contradiction"
+    ],
+    "related": [],
+    "opposites": [
+      "Harmony",
+      "Concord",
+      "Agreement",
+      "Unity"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "convergence",
     "label": "Convergence",
     "synonyms": [
@@ -26551,6 +27567,20 @@
       "beginning",
       "belonging",
       "catalog"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "customization",
+    "label": "Customization",
+    "synonyms": [
+      "customization"
+    ],
+    "related": [],
+    "opposites": [
+      "Standardization",
+      "Uniformity",
+      "Generic"
     ],
     "category": "Philosophical / Existential Concepts"
   },
@@ -27272,7 +28302,8 @@
       "fluxical",
       "fluxs",
       "fluxed",
-      "fluxing"
+      "fluxing",
+      "UX"
     ],
     "related": [
       "absurdity",
@@ -28042,6 +29073,21 @@
     "category": "Philosophical / Existential Concepts"
   },
   {
+    "id": "interpretation",
+    "label": "Interpretation",
+    "synonyms": [
+      "interpretation"
+    ],
+    "related": [],
+    "opposites": [
+      "Fact",
+      "Dogma",
+      "Literalism",
+      "Ambiguity"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "intertwined",
     "label": "Intertwined",
     "synonyms": [
@@ -28255,6 +29301,21 @@
       "beginning",
       "belonging",
       "catalog"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "limitation",
+    "label": "Limitation",
+    "synonyms": [
+      "limitation"
+    ],
+    "related": [],
+    "opposites": [
+      "Freedom",
+      "Boundlessness",
+      "Expansion",
+      "Opportunity"
     ],
     "category": "Philosophical / Existential Concepts"
   },
@@ -28657,6 +29718,23 @@
       "beginning",
       "belonging",
       "catalog"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "obscurity",
+    "label": "Obscurity",
+    "synonyms": [
+      "Obscuritic",
+      "Obscuritical",
+      "obscurity"
+    ],
+    "related": [],
+    "opposites": [
+      "Clarity",
+      "Revelation",
+      "Transparency",
+      "Visibility"
     ],
     "category": "Philosophical / Existential Concepts"
   },
@@ -30162,6 +31240,21 @@
     "category": "Philosophical / Existential Concepts"
   },
   {
+    "id": "uniqueness",
+    "label": "Uniqueness",
+    "synonyms": [
+      "uniqueness"
+    ],
+    "related": [],
+    "opposites": [
+      "Conformity",
+      "Homogeneity",
+      "Standard",
+      "Generic"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "unseen",
     "label": "Unseen",
     "synonyms": [
@@ -30190,6 +31283,21 @@
       "beginning",
       "belonging",
       "catalog"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "unveiling",
+    "label": "Unveiling",
+    "synonyms": [
+      "unveiling"
+    ],
+    "related": [],
+    "opposites": [
+      "Concealment",
+      "Obscurity",
+      "Masking",
+      "Secrecy"
     ],
     "category": "Philosophical / Existential Concepts"
   },
@@ -30334,6 +31442,21 @@
       "beginning",
       "belonging",
       "catalog"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "well-being",
+    "label": "Well-being",
+    "synonyms": [
+      "well-being"
+    ],
+    "related": [],
+    "opposites": [
+      "Distress",
+      "Illness",
+      "Hardship",
+      "Suffering"
     ],
     "category": "Philosophical / Existential Concepts"
   },
@@ -31258,6 +32381,21 @@
     "category": "Social / Cultural Concepts"
   },
   {
+    "id": "casual",
+    "label": "Casual",
+    "synonyms": [
+      "casual"
+    ],
+    "related": [],
+    "opposites": [
+      "Formal",
+      "Stiff",
+      "Official",
+      "Ceremonial"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "celebrity",
     "label": "Celebrity",
     "synonyms": [
@@ -31729,6 +32867,21 @@
     "category": "Social / Cultural Concepts"
   },
   {
+    "id": "conservation",
+    "label": "Conservation",
+    "synonyms": [
+      "conservation"
+    ],
+    "related": [],
+    "opposites": [
+      "destruction",
+      "exploitation",
+      "waste",
+      "neglect"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "consumerism",
     "label": "Consumerism",
     "synonyms": [
@@ -31757,6 +32910,21 @@
       "attention",
       "authenticity",
       "authoritative"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "consumption",
+    "label": "Consumption",
+    "synonyms": [
+      "consumption"
+    ],
+    "related": [],
+    "opposites": [
+      "Production",
+      "Creation",
+      "Frugality",
+      "Abstinence"
     ],
     "category": "Social / Cultural Concepts"
   },
@@ -31814,7 +32982,8 @@
       "corporated",
       "corporater",
       "corporates",
-      "Business"
+      "Business",
+      "Formal"
     ],
     "related": [
       "serif",
@@ -34878,7 +36047,8 @@
       "saasing",
       "saasic",
       "saasical",
-      "Platform"
+      "Platform",
+      "Software"
     ],
     "related": [
       "modern",
@@ -34897,6 +36067,20 @@
       "agency",
       "algorithm",
       "ambition"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "scholarship",
+    "label": "Scholarship",
+    "synonyms": [
+      "scholarship"
+    ],
+    "related": [],
+    "opposites": [
+      "Ignorance",
+      "Popularity",
+      "Superficiality"
     ],
     "category": "Social / Cultural Concepts"
   },
@@ -35551,6 +36735,21 @@
     "category": "Social / Cultural Concepts"
   },
   {
+    "id": "user-centric",
+    "label": "User-Centric",
+    "synonyms": [
+      "user-centric"
+    ],
+    "related": [],
+    "opposites": [
+      "System-centric",
+      "Product-centric",
+      "Developer-centric",
+      "Impersonal"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "utility",
     "label": "Utility",
     "synonyms": [
@@ -35747,7 +36946,8 @@
       "youthical",
       "youths",
       "youthed",
-      "youthing"
+      "youthing",
+      "Youthful"
     ],
     "related": [
       "access",
@@ -35766,6 +36966,21 @@
       "attention",
       "authorship",
       "automation"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "youthfulness",
+    "label": "Youthfulness",
+    "synonyms": [
+      "youthfulness"
+    ],
+    "related": [],
+    "opposites": [
+      "Maturity",
+      "Antiquity",
+      "Formality",
+      "Seriousness"
     ],
     "category": "Social / Cultural Concepts"
   },
@@ -35927,6 +37142,21 @@
       "diffused",
       "digital",
       "distorted"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
+    "id": "brushstroke",
+    "label": "Brushstroke",
+    "synonyms": [
+      "brushstroke"
+    ],
+    "related": [],
+    "opposites": [
+      "Smooth",
+      "Digital",
+      "Photographic",
+      "Sharp"
     ],
     "category": "Texture & Materiality"
   },
@@ -36143,7 +37373,8 @@
       "crispical",
       "crisps",
       "crisped",
-      "crisping"
+      "crisping",
+      "Crispness"
     ],
     "related": [
       "acoustic",
@@ -37150,6 +38381,21 @@
     "category": "Texture & Materiality"
   },
   {
+    "id": "intangible",
+    "label": "Intangible",
+    "synonyms": [
+      "intangible"
+    ],
+    "related": [],
+    "opposites": [
+      "Tangible",
+      "Concrete",
+      "Physical",
+      "Solid"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "layered",
     "label": "Layered",
     "synonyms": [
@@ -37863,6 +39109,21 @@
     "category": "Texture & Materiality"
   },
   {
+    "id": "porous",
+    "label": "Porous",
+    "synonyms": [
+      "porous"
+    ],
+    "related": [],
+    "opposites": [
+      "Solid",
+      "Opaque",
+      "Impermeable",
+      "Dense"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "powder",
     "label": "Powder",
     "synonyms": [
@@ -37996,6 +39257,21 @@
     "category": "Texture & Materiality"
   },
   {
+    "id": "roughness",
+    "label": "Roughness",
+    "synonyms": [
+      "roughness"
+    ],
+    "related": [],
+    "opposites": [
+      "Smoothness",
+      "Polished",
+      "Slick",
+      "Fine"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "rugged",
     "label": "Rugged",
     "synonyms": [
@@ -38088,7 +39364,8 @@
       "sharpical",
       "sharps",
       "sharped",
-      "sharping"
+      "sharping",
+      "Sharpness"
     ],
     "related": [
       "acoustic",
@@ -38780,12 +40057,28 @@
     "category": "Texture & Materiality"
   },
   {
+    "id": "viscous",
+    "label": "Viscous",
+    "synonyms": [
+      "viscous"
+    ],
+    "related": [],
+    "opposites": [
+      "Dry",
+      "Solid",
+      "Gaseous",
+      "Crisp"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "weighty",
     "label": "Weighty",
     "synonyms": [
       "Weightic",
       "Weightical",
-      "weighty"
+      "weighty",
+      "Weight"
     ],
     "related": [],
     "opposites": [
@@ -38793,6 +40086,21 @@
       "Airy",
       "Delicate",
       "Sheer"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
+    "id": "wire",
+    "label": "Wire",
+    "synonyms": [
+      "wire"
+    ],
+    "related": [],
+    "opposites": [
+      "Fabric",
+      "Smooth",
+      "Solid",
+      "Wood"
     ],
     "category": "Texture & Materiality"
   },
@@ -39742,6 +41050,36 @@
     "category": "Vibe / Mood"
   },
   {
+    "id": "empathetic",
+    "label": "Empathetic",
+    "synonyms": [
+      "empathetic"
+    ],
+    "related": [],
+    "opposites": [
+      "Apathetic",
+      "Indifferent",
+      "Cold",
+      "Detached"
+    ],
+    "category": "Vibe / Mood"
+  },
+  {
+    "id": "empowering",
+    "label": "Empowering",
+    "synonyms": [
+      "empowering"
+    ],
+    "related": [],
+    "opposites": [
+      "Submissive",
+      "Oppressive",
+      "Restricting",
+      "Powerless"
+    ],
+    "category": "Vibe / Mood"
+  },
+  {
     "id": "enchanted",
     "label": "Enchanted",
     "synonyms": [
@@ -40192,7 +41530,8 @@
       "Sci-fi",
       "Sci-Fi",
       "Advanced",
-      "Holographic"
+      "Holographic",
+      "High-tech"
     ],
     "related": [
       "gradient",
