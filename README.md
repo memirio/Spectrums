@@ -152,8 +152,8 @@ The production pipeline automatically processes new sites when added via the API
 
 8. **Gemini Concept Generation**
    - Analyzes image using Google Gemini 1.5 Flash vision model
-   - Generates new abstract concepts (at least 1 per category from 11 categories):
-     - Feeling/Emotion, Vibe/Mood, Philosophical/Existential, Aesthetic/Formal, Natural/Metaphysical, Social/Cultural, Design Style, Color & Tone, Texture & Materiality, Form & Structure, Design Technique
+   - Generates new abstract concepts (at least 1 per category from 12 categories):
+     - Feeling/Emotion, Vibe/Mood, Philosophical/Existential, Aesthetic/Formal, Natural/Metaphysical, Social/Cultural, Design Style, Color & Tone, Texture & Materiality, Form & Structure, Design Technique, Industry
    - Creates new concepts in `seed_concepts.json` and database
    - Merges duplicates (exact matches) and synonyms (fuzzy matches) into existing concepts
 

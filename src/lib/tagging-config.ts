@@ -9,16 +9,15 @@ export const TAG_CONFIG = {
   MAX_K: 700,
   
   // Minimum cosine similarity score to create an ImageTag (absolute floor)
-  // Increased from 0.12 to 0.15 for more selective, pragmatic tagging
-  // With 183 concepts above 0.12, we were forcing 20 tags per image
-  // With 0.15, we get ~12-15 relevant tags per image (more pragmatic)
-  MIN_SCORE: 0.15,
+  // Set to 0.18 for more selective tagging - no concept-specific thresholds
+  MIN_SCORE: 0.18,
   
   // Relative threshold: minimum percentage drop allowed between consecutive tags
-  // Stops tagging when score drops by more than this percentage (e.g., 0.10 = 10%)
+  // Reduced from 0.10 (10%) to 0.30 (30%) to be less aggressive
+  // Only stops tagging when score drops by more than 30% (much more lenient)
   // Prevents including weak tags just to fill up to MAX_K
   // Uses percentage instead of absolute gap to account for varying score ranges
-  MIN_SCORE_DROP_PCT: 0.10, // 10% drop indicates significantly less relevant
+  MIN_SCORE_DROP_PCT: 0.30, // 30% drop indicates significantly less relevant (reduced from 10%)
   
   // Fallback: if no concepts pass MIN_SCORE, keep this many anyway
   FALLBACK_K: 6,

@@ -271,18 +271,32 @@ export async function GET(request: NextRequest) {
               const tagScore = DIRECT_MULTIPLIER * directComponent
               score = tagScore + baseScore * ZERO_WITH_DIRECT
               
-              // Handle opposite tags - if we have direct matches, they take precedence
+              // Handle opposite tags - always apply penalty, strength based on opposite score and distance to direct
               if (oppositeTags.length > 0) {
-                // Direct matches exist - slight reduction if opposites are very strong
                 const maxOppositeScore = Math.max(...oppositeTags.map(t => t.score))
                 const maxDirectScore = Math.max(...directMatches.map(t => t.score))
-                if (maxOppositeScore > maxDirectScore * 1.3) {
-                  // Opposite is significantly stronger than direct - slight reduction
-                  const reductionFactor = Math.min(0.2, (maxOppositeScore - maxDirectScore) / maxOppositeScore)
-                  const directComponentReduced = directSum * (1.0 - reductionFactor)
-                  const tagScoreReduced = DIRECT_MULTIPLIER * directComponentReduced
-                  score = tagScoreReduced + baseScore * ZERO_WITH_DIRECT
-                }
+                
+                // Calculate penalty strength:
+                // 1. Base penalty: proportional to opposite tag strength (normalize 0.15-0.30 range to 0-1)
+                const oppositeStrength = Math.max(0, Math.min(1, (maxOppositeScore - 0.15) / (0.30 - 0.15)))
+                
+                // 2. Distance factor: smaller distance = larger penalty
+                // Distance = |directScore - oppositeScore|
+                const distance = Math.abs(maxDirectScore - maxOppositeScore)
+                // Normalize distance (0.0-0.15 range maps to 1.0-0.3 penalty multiplier)
+                // Closer tags (small distance) get higher penalty multiplier
+                const distanceFactor = 1.0 - (Math.min(distance, 0.15) / 0.15) * 0.7 // 1.0 to 0.3 range
+                
+                // 3. Surpass bonus: if opposite > direct, add extra penalty
+                const surpassBonus = maxOppositeScore > maxDirectScore ? 0.05 : 0
+                
+                // 4. Calculate penalty percentage (0-15% max to ensure direct tags still rank above non-direct)
+                // Further reduced from 30% to 15% for subtle penalties
+                const penaltyPercent = Math.min(0.15, (oppositeStrength * 0.08 + distanceFactor * 0.05 + surpassBonus * 0.02))
+                
+                // Apply penalty to the tag component (not base score)
+                const tagScorePenalized = tagScore * (1.0 - penaltyPercent)
+                score = tagScorePenalized + baseScore * ZERO_WITH_DIRECT
               }
             } else {
               // hasMatchingTag is true but no directMatches - this shouldn't happen
@@ -292,14 +306,18 @@ export async function GET(request: NextRequest) {
               
               // Handle opposite tags - no direct matches but has opposites
               if (oppositeTags.length > 0) {
-                // No direct matches but has opposites - reduce score further
                 const maxOppositeScore = Math.max(...oppositeTags.map(t => t.score))
                 const maxSupportingScore = relatedMatches.reduce((m, t) => Math.max(m, t.score), 0)
-                if (maxOppositeScore > maxSupportingScore * 1.2) {
-                  // Opposite is significantly stronger - apply penalty
-                  const penaltyPercent = (maxOppositeScore - maxSupportingScore) / maxOppositeScore * 0.50
-                  score *= (1.0 - penaltyPercent)
-                }
+                
+                // Calculate penalty based on opposite strength and distance to supporting score
+                const oppositeStrength = Math.max(0, Math.min(1, (maxOppositeScore - 0.15) / (0.30 - 0.15)))
+                const distance = Math.abs(maxSupportingScore - maxOppositeScore)
+                const distanceFactor = 1.0 - (Math.min(distance, 0.15) / 0.15) * 0.7
+                const surpassBonus = maxOppositeScore > maxSupportingScore ? 0.05 : 0
+                
+                // Higher penalty when no direct matches (reduced from 50% to 30% max)
+                const penaltyPercent = Math.min(0.30, (oppositeStrength * 0.15 + distanceFactor * 0.10 + surpassBonus * 0.05))
+                score *= (1.0 - penaltyPercent)
               }
             }
           } 
@@ -326,10 +344,14 @@ export async function GET(request: NextRequest) {
             const relatedMax = relatedMatches.reduce((m, t) => Math.max(m, t.score), 0)
             
             if (oppositeTags.length > 0) {
-              // Heavy penalty for opposite tags - rank very low
+              // Heavy penalty for opposite tags when no direct matches - rank very low
               const maxOppositeScore = Math.max(...oppositeTags.map(t => t.score))
-              const oppositeStrength = Math.min(1.0, (maxOppositeScore - 0.12) / (0.35 - 0.12))
-              const penaltyPercent = 0.90 + (oppositeStrength * 0.05) // 90-95% reduction
+              
+              // Calculate penalty based on opposite strength
+              const oppositeStrength = Math.max(0, Math.min(1, (maxOppositeScore - 0.15) / (0.30 - 0.15)))
+              
+              // When no direct matches, apply penalty (reduced from 60-75% to 40-55% reduction)
+              const penaltyPercent = 0.40 + (oppositeStrength * 0.15) // 40-55% reduction
               score = baseScore * (1.0 - penaltyPercent) * ZERO_NO_DIRECT
             } else if (relatedMax >= RELATED_MIN) {
               // Only related tags (no direct) - heavily reduce related to ensure direct always wins
@@ -401,8 +423,8 @@ export async function GET(request: NextRequest) {
           } as any)
         }
       }
-      // Sort by: 1) has all matches, 2) number of direct hits (desc), 3) base cosine similarity (desc), 4) score (desc), 5) NO opposite tags
-      // When direct hits are equal, prioritize base cosine similarity (how well the image matches the query)
+      // Sort by: 1) has all matches, 2) number of direct hits (desc), 3) final score (desc), 4) base cosine similarity (desc), 5) NO opposite tags
+      // When direct hits are equal, prioritize final score (which includes tag boost) over base similarity
       ranked.sort((a: any, b: any) => {
         // First: full matches rank above partial matches
         if (a.hasAllMatches && !b.hasAllMatches) return -1
@@ -413,17 +435,18 @@ export async function GET(request: NextRequest) {
           return b.directHitsCount - a.directHitsCount
         }
         
-        // Third: When direct hits are equal, sort by base cosine similarity (primary ranking)
-        // This ensures images with higher base similarity rank higher among direct hits
+        // Third: When direct hits are equal, sort by final score (primary ranking)
+        // Final score includes the 10x tag boost, which is what we want to rank by
+        if (Math.abs(a.score - b.score) > 0.01) {
+          return b.score - a.score
+        }
+        
+        // Fourth: base cosine similarity (tiebreaker if final scores are very close)
+        // Only used when final scores are within 0.01 of each other
         if (a.directHitsCount === b.directHitsCount) {
           if (Math.abs(a.baseScore - b.baseScore) > 0.0001) {
             return b.baseScore - a.baseScore
           }
-        }
-        
-        // Fourth: final score (higher is better) - only used as tiebreaker if baseScore is equal
-        if (Math.abs(a.score - b.score) > 0.01) {
-          return b.score - a.score
         }
         
         // Fifth: images WITHOUT opposite tags rank above those WITH opposite tags (minor tiebreaker)

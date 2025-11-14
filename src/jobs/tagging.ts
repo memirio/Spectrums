@@ -218,7 +218,7 @@ export async function tagImage(imageId: string): Promise<string[]> {
 
 /**
  * Create new abstract concepts from a single image using Gemini vision API
- * Creates at least one new concept per category from the 11 categories
+ * Creates at least one new concept per category from the 12 categories
  * This is truly generative - creates new concepts without looking at existing examples
  * 
  * This function ONLY generates concepts - it does NOT apply tags to the image
@@ -232,7 +232,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
   const CATEGORIES = {
     'feeling-emotion': {
       label: 'Feeling / Emotion',
-      examples: ['Joy', 'Peace', 'Melancholy', 'Anxiety', 'Hope', 'Serenity', 'Anger', 'Awe', 'Nostalgia', 'Isolation', 'Wonder', 'Calm'],
+      examples: ['Joy', 'Peace', 'Melancholy', 'Anxiety', 'Hope', 'Serenity', 'Anger', 'Awe', 'Nostalgia', 'Isolation', 'Wonder', 'Calm', 'Tension', 'Relaxation', 'Warmth', 'Cold', 'Pressure', 'Lightness', 'Heaviness', 'Comfort', 'Discomfort', 'Energy', 'Fatigue', 'Vitality', 'Stillness', 'Movement', 'Openness', 'Confinement'],
     },
     'vibe-mood': {
       label: 'Vibe / Mood',
@@ -256,7 +256,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     },
     'design-style': {
       label: 'Design Style',
-      examples: ['Minimalism', 'Bauhaus', 'Brutalism', 'Surrealism', 'Postmodernism', 'Futurism', 'Organic', 'Art Deco', 'Maximalism', 'Retro-Futurism'],
+      examples: ['Minimalism', 'Bauhaus', 'Brutalism', 'Surrealism', 'Postmodernism', 'Futurism', 'Organic', 'Art Deco', 'Maximalism', 'Retro-Futurism', 'Skeuomorphic', 'Glassmorphism', 'Neumorphism', 'Cyberpunk', 'Scandinavian', 'Bohemian', 'Gothic', 'Rustic', 'Industrial', 'Vintage', 'Y2K', 'Dark Academia', 'Light Academia', 'Cottagecore', 'Traditional', 'New', 'Old', 'Friendly', 'Gritty', 'Serene', 'Ethereal', 'Dreamlike', 'Futuristic', 'Minimal', 'Cinematic', 'Intimate', 'Chaotic', 'Ethereal', 'Industrial', 'Playful', 'Somber', 'Mysterious', 'Urban'],
     },
     'color-tone': {
       label: 'Color & Tone',
@@ -273,6 +273,10 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     'design-technique': {
       label: 'Design Technique',
       examples: ['Photography', 'Collage', '3D Rendering', 'Illustration', 'Vector Graphics', 'Generative Art', 'Painting', 'AI Synthesis', 'Glitch Art', 'Mixed Media', 'Typography', 'Motion Design'],
+    },
+    'industry': {
+      label: 'Industry',
+      examples: ['Technology', 'Finance', 'Healthcare', 'Education', 'E-commerce', 'Fashion', 'Food', 'Travel', 'Real Estate', 'Automotive', 'Entertainment', 'Sports', 'Non-profit', 'Government', 'Manufacturing', 'Energy', 'Media', 'Consulting', 'Legal', 'Hospitality', 'Banking', 'SaaS', 'Telemedicine', 'Fintech', 'EdTech', 'Retail', 'Luxury', 'Restaurant', 'Hospitality', 'PropTech', 'Mobility', 'Gaming', 'Fitness', 'Charity', 'Public Sector', 'Industrial', 'Renewable', 'Publishing', 'Advisory', 'Law', 'Hotels'],
     }
   };
   
@@ -316,7 +320,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     }
   } catch (e) {
     // If seed file not found, can't add new concepts
-    return;
+    return [];
   }
   
   // Helper function to check for exact matches only
@@ -527,11 +531,24 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       const validSynonyms = synonyms.filter(syn => !isExactDuplicate(syn, syn.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
       const validRelated = allRelated.filter(rel => !isExactDuplicate(rel, rel.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
       
+      // Generate opposites using Gemini
+      console.log(`[tagImage] Generating opposites for concept: "${conceptLabel}" (category: ${category.label})`);
+      const { generateOppositesForConcept } = await import('@/lib/gemini');
+      let opposites: string[] = [];
+      try {
+        opposites = await generateOppositesForConcept(conceptLabel, category.label);
+        console.log(`[tagImage] Generated ${opposites.length} opposites for "${conceptLabel}": ${opposites.join(', ')}`);
+      } catch (error: any) {
+        console.warn(`[tagImage] Failed to generate opposites for "${conceptLabel}": ${error.message}`);
+        // Continue without opposites - don't fail the whole process
+      }
+      
       newConcepts.push({
         id: conceptId,
         label: conceptLabel,
         synonyms: validSynonyms,
         related: validRelated,
+        opposites: opposites || [], // Add opposites to concept (ensure it's always an array)
         category: category.label
       });
       
@@ -539,7 +556,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     }
   }
   
-  console.log(`[tagImage] Creating ${newConcepts.length} new concepts from image (target: at least 11, one per category)`);
+  console.log(`[tagImage] Creating ${newConcepts.length} new concepts from image (target: at least 12, one per category)`);
   
   // Add new concepts to seed file
   if (newConcepts.length > 0) {
@@ -572,6 +589,21 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       const avg = meanVec(vecs);
       const emb = l2norm(avg);
       
+      // Convert opposite labels to concept IDs for database storage
+      // We'll use the same conversion logic that updateConceptOpposites uses
+      const oppositeIds: string[] = [];
+      if (newConcept.opposites && newConcept.opposites.length > 0) {
+        // For now, use normalized IDs - updateConceptOpposites will do proper lookup later
+        // and update both the file and database
+        for (const oppLabel of newConcept.opposites) {
+          // Convert label to concept ID format (normalized)
+          const oppId = oppLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          if (oppId !== newConcept.id && oppId.length > 0) {
+            oppositeIds.push(oppId);
+          }
+        }
+      }
+      
       await prisma.concept.upsert({
         where: { id: newConcept.id },
         update: {
@@ -579,6 +611,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
           locale: 'en',
           synonyms: newConcept.synonyms,
           related: newConcept.related,
+          opposites: oppositeIds.length > 0 ? oppositeIds : undefined,
           weight: 1.0,
           embedding: emb,
         },
@@ -588,10 +621,22 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
           locale: 'en',
           synonyms: newConcept.synonyms,
           related: newConcept.related,
+          opposites: oppositeIds.length > 0 ? oppositeIds : undefined,
           weight: 1.0,
           embedding: emb,
         }
       });
+      
+      // Update concept-opposites.ts with Gemini-generated opposites
+      if (newConcept.opposites && newConcept.opposites.length > 0) {
+        try {
+          const { updateConceptOpposites } = await import('@/lib/update-concept-opposites');
+          await updateConceptOpposites(newConcept.id, newConcept.opposites);
+        } catch (error: any) {
+          console.warn(`[tagImage] Failed to update concept-opposites.ts for "${newConcept.label}": ${error.message}`);
+          // Continue - don't fail the whole process
+        }
+      }
       
       console.log(`[tagImage] Created new concept: ${newConcept.label} (${newConcept.category})`);
     }

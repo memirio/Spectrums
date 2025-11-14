@@ -105,6 +105,7 @@ model Concept {
   locale    String?  @default("en")
   synonyms  Json     // stored as array in JSON
   related   Json     // stored as array in JSON
+  opposites Json?    // stored as array in JSON (opposite/excluding concept IDs)
   weight    Float?   @default(1.0)
   embedding Json
 

@@ -9,7 +9,7 @@ import 'dotenv/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-// Conservative opposite pairs - direct opposites only
+// Comprehensive opposite pairs - direct opposites only
 // These are term-level opposites (labels + synonyms), not just concept IDs
 const OPPOSITE_PAIRS: Array<[string, string]> = [
   // Dimensional
@@ -19,6 +19,9 @@ const OPPOSITE_PAIRS: Array<[string, string]> = [
   ['2d', '3d'],
   ['three-dimensional', '2d'],
   ['flat-design', '3d'],
+  ['volumetric', 'flat'],
+  ['depth', 'flat'],
+  ['dimensional', 'flat'],
   
   // Color/Tone
   ['colorful', 'colorless'],
@@ -32,10 +35,18 @@ const OPPOSITE_PAIRS: Array<[string, string]> = [
   ['low-saturation', 'high-saturation'],
   ['warm', 'cool'],
   ['cool', 'warm'],
+  ['neon', 'muted'],
+  ['pastel', 'vibrant'],
+  ['monochrome', 'colorful'],
+  ['duotone', 'colorful'],
+  ['gradient', 'solid'],
+  ['solid', 'gradient'],
   
   // Style/Aesthetic
   ['minimalistic', 'maximalist'],
   ['maximalist', 'minimalistic'],
+  ['minimal', 'maximal'],
+  ['maximal', 'minimal'],
   ['modern', 'retro'],
   ['retro', 'modern'],
   ['futuristic', 'retro'],
@@ -47,6 +58,23 @@ const OPPOSITE_PAIRS: Array<[string, string]> = [
   ['organic', 'geometric'],
   ['illustration-led', 'photography-led'],
   ['photography-led', 'illustration-led'],
+  ['skeuomorphic', 'flat'],
+  ['flat', 'skeuomorphic'],
+  ['brutalist', 'elegant'],
+  ['elegant', 'brutalist'],
+  ['corporate', 'artistic'],
+  ['artistic', 'corporate'],
+  ['professional', 'playful'],
+  ['playful', 'professional'],
+  ['luxurious', 'minimal'],
+  ['premium', 'minimal'],
+  ['gritty', 'polished'],
+  ['polished', 'gritty'],
+  ['cinematic', 'static'],
+  ['surreal', 'realistic'],
+  ['realistic', 'surreal'],
+  ['experimental', 'conventional'],
+  ['conventional', 'experimental'],
   
   // Mood/Personality
   ['playful', 'strict'],
@@ -74,12 +102,30 @@ const OPPOSITE_PAIRS: Array<[string, string]> = [
   ['serene', 'energetic'],
   ['gentle', 'powerful'],
   ['powerful', 'gentle'],
+  ['peaceful', 'chaotic'],
+  ['chaotic', 'peaceful'],
+  ['melancholy', 'joyful'],
+  ['joyful', 'melancholy'],
+  ['somber', 'cheerful'],
+  ['cheerful', 'somber'],
   
   // Layout
   ['spacious', 'dense'],
   ['dense', 'spacious'],
   ['centered', 'asymmetrical'],
   ['asymmetrical', 'centered'],
+  ['grid-based', 'organic'],
+  ['organic', 'grid-based'],
+  ['modular', 'fluid'],
+  ['fluid', 'modular'],
+  ['full-bleed', 'contained'],
+  ['contained', 'full-bleed'],
+  ['split-screen', 'unified'],
+  ['unified', 'split-screen'],
+  ['card-based', 'seamless'],
+  ['seamless', 'card-based'],
+  ['masonry', 'grid'],
+  ['grid', 'masonry'],
   
   // Typography
   ['serif', 'sans-serif'],
@@ -88,14 +134,98 @@ const OPPOSITE_PAIRS: Array<[string, string]> = [
   ['condensed', 'large-type'],
   ['display', 'body-text'],
   ['body-text', 'display'],
+  ['typographic', 'image-led'],
+  ['image-led', 'typographic'],
+  ['editorial-type', 'display-type'],
+  ['display-type', 'editorial-type'],
+  ['geometric-type', 'handwritten'],
+  ['handwritten', 'geometric-type'],
+  ['variable-font', 'static'],
+  ['static', 'variable-font'],
   
-  // Interaction
+  // Interaction/Motion
   ['static', 'animated'],
   ['animated', 'static'],
   ['static', 'dynamic'],
   ['dynamic', 'static'],
   ['responsive', 'fixed-width'],
   ['fixed-width', 'responsive'],
+  ['interactive', 'passive'],
+  ['passive', 'interactive'],
+  ['motion-heavy', 'static'],
+  ['parallax', 'static'],
+  ['scroll-driven', 'static'],
+  ['micro-interactions', 'static'],
+  ['immersive', 'superficial'],
+  ['superficial', 'immersive'],
+  
+  // Texture/Materiality
+  ['matte', 'glossy'],
+  ['glossy', 'matte'],
+  ['grainy', 'smooth'],
+  ['smooth', 'grainy'],
+  ['layered', 'flat'],
+  ['flat', 'layered'],
+  ['soft', 'hard'],
+  ['hard', 'soft'],
+  ['transparent', 'opaque'],
+  ['opaque', 'transparent'],
+  ['metallic', 'organic'],
+  ['organic', 'metallic'],
+  ['synthetic', 'natural'],
+  ['natural', 'synthetic'],
+  ['fibrous', 'smooth'],
+  ['fluid', 'rigid'],
+  ['rigid', 'fluid'],
+  
+  // Form/Structure
+  ['grid', 'organic'],
+  ['organic', 'grid'],
+  ['modularity', 'flow'],
+  ['flow', 'modularity'],
+  ['hierarchy', 'flat'],
+  ['flat', 'hierarchy'],
+  ['fragmentation', 'unity'],
+  ['unity', 'fragmentation'],
+  ['repetition', 'unique'],
+  ['unique', 'repetition'],
+  ['balance', 'asymmetry'],
+  ['asymmetry', 'balance'],
+  ['symmetry', 'asymmetry'],
+  ['rhythm', 'static'],
+  ['static', 'rhythm'],
+  
+  // Design Technique
+  ['photography', 'illustration'],
+  ['illustration', 'photography'],
+  ['3d-rendering', 'flat-design'],
+  ['flat-design', '3d-rendering'],
+  ['vector', 'raster'],
+  ['raster', 'vector'],
+  ['generative-art', 'hand-drawn'],
+  ['hand-drawn', 'generative-art'],
+  ['collage', 'photography'],
+  ['photography', 'collage'],
+  ['glitch-art', 'clean'],
+  ['clean', 'glitch-art'],
+  ['mixed-media', 'single-medium'],
+  ['single-medium', 'mixed-media'],
+  ['ai-synthesis', 'handmade'],
+  ['handmade', 'ai-synthesis'],
+  
+  // Content/Context
+  ['corporate', 'personal'],
+  ['personal', 'corporate'],
+  ['ecommerce', 'portfolio'],
+  ['portfolio', 'ecommerce'],
+  ['agency', 'in-house'],
+  ['in-house', 'agency'],
+  ['saas', 'content'],
+  ['content', 'saas'],
+  ['landing-page', 'documentation'],
+  ['documentation', 'landing-page'],
+  ['editorial', 'commercial'],
+  ['commercial', 'editorial'],
 ];
 
 async function main() {

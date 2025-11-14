@@ -20,8 +20,8 @@ function cosineSimilarity(a: number[], b: number[]): number {
 const CATEGORIES = {
   'feeling-emotion': {
     label: 'Feeling / Emotion',
-    examples: ['Joy', 'Peace', 'Melancholy', 'Anxiety', 'Hope', 'Serenity', 'Anger', 'Awe', 'Nostalgia', 'Isolation', 'Wonder', 'Calm'],
-    description: 'The emotional or psychological state evoked in the viewer'
+    examples: ['Joy', 'Peace', 'Melancholy', 'Anxiety', 'Hope', 'Serenity', 'Anger', 'Awe', 'Nostalgia', 'Isolation', 'Wonder', 'Calm', 'Tension', 'Relaxation', 'Warmth', 'Cold', 'Pressure', 'Lightness', 'Heaviness', 'Comfort', 'Discomfort', 'Energy', 'Fatigue', 'Vitality', 'Stillness', 'Movement', 'Openness', 'Confinement'],
+    description: 'The emotional and physical feelings evoked in the viewer (both emotional states and physical sensations)'
   },
   'vibe-mood': {
     label: 'Vibe / Mood',
@@ -72,6 +72,11 @@ const CATEGORIES = {
     label: 'Design Technique',
     examples: ['Photography', 'Collage', '3D Rendering', 'Illustration', 'Vector Graphics', 'Generative Art', 'Painting', 'AI Synthesis', 'Glitch Art', 'Mixed Media', 'Typography', 'Motion Design'],
     description: 'The methods, tools, and processes used to create the image'
+  },
+  'industry': {
+    label: 'Industry',
+    examples: ['Technology', 'Finance', 'Healthcare', 'Education', 'E-commerce', 'Fashion', 'Food', 'Travel', 'Real Estate', 'Automotive', 'Entertainment', 'Sports', 'Non-profit', 'Government', 'Manufacturing', 'Energy', 'Media', 'Consulting', 'Legal', 'Hospitality', 'Banking', 'SaaS', 'Telemedicine', 'Fintech', 'EdTech', 'Retail', 'Luxury', 'Restaurant', 'Hospitality', 'PropTech', 'Mobility', 'Gaming', 'Fitness', 'Charity', 'Public Sector', 'Industrial', 'Renewable', 'Publishing', 'Advisory', 'Law', 'Hotels'],
+    description: 'The industry or business sector the design represents or targets (both overall industry and specific sector)'
   }
 }
 
@@ -85,7 +90,7 @@ type ConceptSeed = {
 
 /**
  * Generate abstract concepts from images
- * Analyzes all images and creates concepts based on the 11 categories
+ * Analyzes all images and creates concepts based on the 12 categories
  */
 export async function generateAbstractConceptsFromImages() {
   console.log('🔍 Starting abstract concept generation from images...')
