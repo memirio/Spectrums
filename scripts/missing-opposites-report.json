@@ -1,0 +1,3116 @@
+[
+  {
+    "label": "esoteric",
+    "conceptIds": [
+      "accessible"
+    ]
+  },
+  {
+    "label": "unattainable",
+    "conceptIds": [
+      "accessible"
+    ]
+  },
+  {
+    "label": "arcane",
+    "conceptIds": [
+      "accessible"
+    ]
+  },
+  {
+    "label": "industrial-aesthetics",
+    "conceptIds": [
+      "art"
+    ]
+  },
+  {
+    "label": "equilibrium-aesthetics",
+    "conceptIds": [
+      "asymmetry"
+    ]
+  },
+  {
+    "label": "unanchored",
+    "conceptIds": [
+      "based"
+    ]
+  },
+  {
+    "label": "exposed",
+    "conceptIds": [
+      "caps"
+    ]
+  },
+  {
+    "label": "unveiled",
+    "conceptIds": [
+      "caps"
+    ]
+  },
+  {
+    "label": "exposed-hair",
+    "conceptIds": [
+      "caps"
+    ]
+  },
+  {
+    "label": "fluid-styles",
+    "conceptIds": [
+      "caps"
+    ]
+  },
+  {
+    "label": "single-path",
+    "conceptIds": [
+      "carousel"
+    ]
+  },
+  {
+    "label": "periphery",
+    "conceptIds": [
+      "centrality"
+    ]
+  },
+  {
+    "label": "uniform-brightness",
+    "conceptIds": [
+      "chiaroscuro"
+    ]
+  },
+  {
+    "label": "decayed-beauty",
+    "conceptIds": [
+      "cleanliness"
+    ]
+  },
+  {
+    "label": "organic-disarray",
+    "conceptIds": [
+      "cleanliness"
+    ]
+  },
+  {
+    "label": "dissociation",
+    "conceptIds": [
+      "clustering"
+    ]
+  },
+  {
+    "label": "disarray",
+    "conceptIds": [
+      "composition"
+    ]
+  },
+  {
+    "label": "improvise",
+    "conceptIds": [
+      "composition"
+    ]
+  },
+  {
+    "label": "straightness",
+    "conceptIds": [
+      "curvature"
+    ]
+  },
+  {
+    "label": "ambiguity",
+    "conceptIds": [
+      "directness"
+    ]
+  },
+  {
+    "label": "indirectness",
+    "conceptIds": [
+      "directness"
+    ]
+  },
+  {
+    "label": "obscurity",
+    "conceptIds": [
+      "directness"
+    ]
+  },
+  {
+    "label": "subtle-nuance",
+    "conceptIds": [
+      "directness"
+    ]
+  },
+  {
+    "label": "indirection",
+    "conceptIds": [
+      "directness"
+    ]
+  },
+  {
+    "label": "consolidation",
+    "conceptIds": [
+      "dispersal"
+    ]
+  },
+  {
+    "label": "centralization",
+    "conceptIds": [
+      "dispersal"
+    ]
+  },
+  {
+    "label": "aggregation",
+    "conceptIds": [
+      "dispersal"
+    ]
+  },
+  {
+    "label": "obscure",
+    "conceptIds": [
+      "display"
+    ]
+  },
+  {
+    "label": "conceal",
+    "conceptIds": [
+      "display"
+    ]
+  },
+  {
+    "label": "veil",
+    "conceptIds": [
+      "display"
+    ]
+  },
+  {
+    "label": "submerge",
+    "conceptIds": [
+      "display"
+    ]
+  },
+  {
+    "label": "concentration",
+    "conceptIds": [
+      "distribution"
+    ]
+  },
+  {
+    "label": "playful-disarray",
+    "conceptIds": [
+      "docs"
+    ]
+  },
+  {
+    "label": "improvisation",
+    "conceptIds": [
+      "docs"
+    ]
+  },
+  {
+    "label": "visual-noise",
+    "conceptIds": [
+      "docs"
+    ]
+  },
+  {
+    "label": "informal-vibes",
+    "conceptIds": [
+      "docs"
+    ]
+  },
+  {
+    "label": "reveal",
+    "conceptIds": [
+      "drawer"
+    ]
+  },
+  {
+    "label": "unfolded",
+    "conceptIds": [
+      "drawer"
+    ]
+  },
+  {
+    "label": "expose",
+    "conceptIds": [
+      "drawer"
+    ]
+  },
+  {
+    "label": "elevate",
+    "conceptIds": [
+      "drop"
+    ]
+  },
+  {
+    "label": "ascend",
+    "conceptIds": [
+      "drop"
+    ]
+  },
+  {
+    "label": "lifted-ambience",
+    "conceptIds": [
+      "drop"
+    ]
+  },
+  {
+    "label": "rise-up",
+    "conceptIds": [
+      "drop"
+    ]
+  },
+  {
+    "label": "lift",
+    "conceptIds": [
+      "drop"
+    ]
+  },
+  {
+    "label": "stasis",
+    "conceptIds": [
+      "dynamism"
+    ]
+  },
+  {
+    "label": "inertia",
+    "conceptIds": [
+      "dynamism"
+    ]
+  },
+  {
+    "label": "unstructured",
+    "conceptIds": [
+      "editorial"
+    ]
+  },
+  {
+    "label": "spontaneous",
+    "conceptIds": [
+      "editorial"
+    ]
+  },
+  {
+    "label": "rawness",
+    "conceptIds": [
+      "effects"
+    ]
+  },
+  {
+    "label": "chaotic-flair",
+    "conceptIds": [
+      "elegant"
+    ]
+  },
+  {
+    "label": "ephemeral-forms",
+    "conceptIds": [
+      "elements"
+    ]
+  },
+  {
+    "label": "disjointed-aesthetics",
+    "conceptIds": [
+      "elements"
+    ]
+  },
+  {
+    "label": "traditionalist",
+    "conceptIds": [
+      "experimental"
+    ]
+  },
+  {
+    "label": "static-aesthetics",
+    "conceptIds": [
+      "experimental"
+    ]
+  },
+  {
+    "label": "utility-wear",
+    "conceptIds": [
+      "fashion"
+    ]
+  },
+  {
+    "label": "raw-aesthetics",
+    "conceptIds": [
+      "fashion"
+    ]
+  },
+  {
+    "label": "distract",
+    "conceptIds": [
+      "focus"
+    ]
+  },
+  {
+    "label": "ethereal-ambiguity",
+    "conceptIds": [
+      "focus"
+    ]
+  },
+  {
+    "label": "chaos-markings",
+    "conceptIds": [
+      "font"
+    ]
+  },
+  {
+    "label": "raw-scribbles",
+    "conceptIds": [
+      "font"
+    ]
+  },
+  {
+    "label": "impermanent-ink",
+    "conceptIds": [
+      "font"
+    ]
+  },
+  {
+    "label": "abstract-symbols",
+    "conceptIds": [
+      "fonts"
+    ]
+  },
+  {
+    "label": "roughness",
+    "conceptIds": [
+      "grace"
+    ]
+  },
+  {
+    "label": "brashness",
+    "conceptIds": [
+      "grace"
+    ]
+  },
+  {
+    "label": "harshness",
+    "conceptIds": [
+      "grace"
+    ]
+  },
+  {
+    "label": "clumsiness",
+    "conceptIds": [
+      "grace"
+    ]
+  },
+  {
+    "label": "clash",
+    "conceptIds": [
+      "harmony"
+    ]
+  },
+  {
+    "label": "footer",
+    "conceptIds": [
+      "header"
+    ]
+  },
+  {
+    "label": "subtext",
+    "conceptIds": [
+      "header"
+    ]
+  },
+  {
+    "label": "understatement",
+    "conceptIds": [
+      "header"
+    ]
+  },
+  {
+    "label": "background",
+    "conceptIds": [
+      "header"
+    ]
+  },
+  {
+    "label": "subtextual",
+    "conceptIds": [
+      "header"
+    ]
+  },
+  {
+    "label": "fragmented-reality",
+    "conceptIds": [
+      "image"
+    ]
+  },
+  {
+    "label": "noise",
+    "conceptIds": [
+      "image"
+    ]
+  },
+  {
+    "label": "monologue",
+    "conceptIds": [
+      "interactions"
+    ]
+  },
+  {
+    "label": "detachment",
+    "conceptIds": [
+      "interactions"
+    ]
+  },
+  {
+    "label": "visual-monologue",
+    "conceptIds": [
+      "interactive"
+    ]
+  },
+  {
+    "label": "solitary-aesthetics",
+    "conceptIds": [
+      "interactive"
+    ]
+  },
+  {
+    "label": "unresponsive",
+    "conceptIds": [
+      "interactive"
+    ]
+  },
+  {
+    "label": "essentialist",
+    "conceptIds": [
+      "intricate"
+    ]
+  },
+  {
+    "label": "simplistic",
+    "conceptIds": [
+      "intricate"
+    ]
+  },
+  {
+    "label": "clean-cut",
+    "conceptIds": [
+      "intricate"
+    ]
+  },
+  {
+    "label": "repulsion",
+    "conceptIds": [
+      "like"
+    ]
+  },
+  {
+    "label": "disdain",
+    "conceptIds": [
+      "like"
+    ]
+  },
+  {
+    "label": "neglect",
+    "conceptIds": [
+      "like"
+    ]
+  },
+  {
+    "label": "indifference",
+    "conceptIds": [
+      "like"
+    ]
+  },
+  {
+    "label": "reject",
+    "conceptIds": [
+      "like"
+    ]
+  },
+  {
+    "label": "unfavor",
+    "conceptIds": [
+      "like"
+    ]
+  },
+  {
+    "label": "nonlinearity",
+    "conceptIds": [
+      "linearity"
+    ]
+  },
+  {
+    "label": "instant-delivery",
+    "conceptIds": [
+      "loading"
+    ]
+  },
+  {
+    "label": "full-realization",
+    "conceptIds": [
+      "loading"
+    ]
+  },
+  {
+    "label": "completed",
+    "conceptIds": [
+      "loading"
+    ]
+  },
+  {
+    "label": "fulfilled",
+    "conceptIds": [
+      "loading"
+    ]
+  },
+  {
+    "label": "finalized",
+    "conceptIds": [
+      "loading"
+    ]
+  },
+  {
+    "label": "dullness",
+    "conceptIds": [
+      "luminosity"
+    ]
+  },
+  {
+    "label": "everyday",
+    "conceptIds": [
+      "luxurious"
+    ]
+  },
+  {
+    "label": "everyday-practicality",
+    "conceptIds": [
+      "luxurious"
+    ]
+  },
+  {
+    "label": "raw-unedited",
+    "conceptIds": [
+      "magazine"
+    ]
+  },
+  {
+    "label": "physicality",
+    "conceptIds": [
+      "magazine"
+    ]
+  },
+  {
+    "label": "candid-notation",
+    "conceptIds": [
+      "magazine"
+    ]
+  },
+  {
+    "label": "impressionism",
+    "conceptIds": [
+      "measurement"
+    ]
+  },
+  {
+    "label": "intuition",
+    "conceptIds": [
+      "measurement"
+    ]
+  },
+  {
+    "label": "imprecision",
+    "conceptIds": [
+      "measurement"
+    ]
+  },
+  {
+    "label": "freeform",
+    "conceptIds": [
+      "menu"
+    ]
+  },
+  {
+    "label": "improv",
+    "conceptIds": [
+      "menu"
+    ]
+  },
+  {
+    "label": "extravagant",
+    "conceptIds": [
+      "minimalistic"
+    ]
+  },
+  {
+    "label": "vibrant-opulence",
+    "conceptIds": [
+      "minimalistic"
+    ]
+  },
+  {
+    "label": "rigid-aesthetics",
+    "conceptIds": [
+      "modal"
+    ]
+  },
+  {
+    "label": "radical",
+    "conceptIds": [
+      "modal"
+    ]
+  },
+  {
+    "label": "erratic",
+    "conceptIds": [
+      "modal"
+    ]
+  },
+  {
+    "label": "rustic-charm",
+    "conceptIds": [
+      "modern"
+    ]
+  },
+  {
+    "label": "vintage-revival",
+    "conceptIds": [
+      "modern"
+    ]
+  },
+  {
+    "label": "expressive-glyphs",
+    "conceptIds": [
+      "monospace"
+    ]
+  },
+  {
+    "label": "variable-width",
+    "conceptIds": [
+      "monospace"
+    ]
+  },
+  {
+    "label": "varied-typefaces",
+    "conceptIds": [
+      "monospace"
+    ]
+  },
+  {
+    "label": "subtle-forms",
+    "conceptIds": [
+      "monumental"
+    ]
+  },
+  {
+    "label": "delicate-aesthetics",
+    "conceptIds": [
+      "monumental"
+    ]
+  },
+  {
+    "label": "rhythmlessness",
+    "conceptIds": [
+      "music"
+    ]
+  },
+  {
+    "label": "invigorating",
+    "conceptIds": [
+      "negative"
+    ]
+  },
+  {
+    "label": "affirmative",
+    "conceptIds": [
+      "negative"
+    ]
+  },
+  {
+    "label": "revealed",
+    "conceptIds": [
+      "obscured"
+    ]
+  },
+  {
+    "label": "transitory",
+    "conceptIds": [
+      "old"
+    ]
+  },
+  {
+    "label": "energized",
+    "conceptIds": [
+      "old"
+    ]
+  },
+  {
+    "label": "unadorned",
+    "conceptIds": [
+      "ornamentation"
+    ]
+  },
+  {
+    "label": "unembellished",
+    "conceptIds": [
+      "ornamentation"
+    ]
+  },
+  {
+    "label": "planarity",
+    "conceptIds": [
+      "perspective"
+    ]
+  },
+  {
+    "label": "literalism",
+    "conceptIds": [
+      "perspective"
+    ]
+  },
+  {
+    "label": "imperfect-charm",
+    "conceptIds": [
+      "polish"
+    ]
+  },
+  {
+    "label": "roughhewn",
+    "conceptIds": [
+      "polish"
+    ]
+  },
+  {
+    "label": "uncurated",
+    "conceptIds": [
+      "portfolio"
+    ]
+  },
+  {
+    "label": "landscape",
+    "conceptIds": [
+      "portrait"
+    ]
+  },
+  {
+    "label": "unfinished-thought",
+    "conceptIds": [
+      "product"
+    ]
+  },
+  {
+    "label": "fixed-view",
+    "conceptIds": [
+      "scroll"
+    ]
+  },
+  {
+    "label": "fixate",
+    "conceptIds": [
+      "scroll"
+    ]
+  },
+  {
+    "label": "static-view",
+    "conceptIds": [
+      "scroll"
+    ]
+  },
+  {
+    "label": "intricacy",
+    "conceptIds": [
+      "simplicity"
+    ]
+  },
+  {
+    "label": "layered-intricacy",
+    "conceptIds": [
+      "simplicity"
+    ]
+  },
+  {
+    "label": "irregularity",
+    "conceptIds": [
+      "sleekness"
+    ]
+  },
+  {
+    "label": "abrasiveness",
+    "conceptIds": [
+      "softness"
+    ]
+  },
+  {
+    "label": "rigidity",
+    "conceptIds": [
+      "softness"
+    ]
+  },
+  {
+    "label": "casual-clutter",
+    "conceptIds": [
+      "sophisticated"
+    ]
+  },
+  {
+    "label": "unrefined",
+    "conceptIds": [
+      "sophisticated"
+    ]
+  },
+  {
+    "label": "crowd",
+    "conceptIds": [
+      "space"
+    ]
+  },
+  {
+    "label": "clutter",
+    "conceptIds": [
+      "space"
+    ]
+  },
+  {
+    "label": "congestion",
+    "conceptIds": [
+      "space"
+    ]
+  },
+  {
+    "label": "closure",
+    "conceptIds": [
+      "space"
+    ]
+  },
+  {
+    "label": "cocooned",
+    "conceptIds": [
+      "spacious"
+    ]
+  },
+  {
+    "label": "constricted",
+    "conceptIds": [
+      "spacious"
+    ]
+  },
+  {
+    "label": "cramped",
+    "conceptIds": [
+      "spacious"
+    ]
+  },
+  {
+    "label": "temporal",
+    "conceptIds": [
+      "spatial"
+    ]
+  },
+  {
+    "label": "contextual",
+    "conceptIds": [
+      "spatial"
+    ]
+  },
+  {
+    "label": "surface-only",
+    "conceptIds": [
+      "spatial"
+    ]
+  },
+  {
+    "label": "evanescence",
+    "conceptIds": [
+      "states"
+    ]
+  },
+  {
+    "label": "ebb",
+    "conceptIds": [
+      "states"
+    ]
+  },
+  {
+    "label": "fragmented-forms",
+    "conceptIds": [
+      "symmetry"
+    ]
+  },
+  {
+    "label": "infinite-loop",
+    "conceptIds": [
+      "timeline"
+    ]
+  },
+  {
+    "label": "eternal-now",
+    "conceptIds": [
+      "timeline"
+    ]
+  },
+  {
+    "label": "anarchy",
+    "conceptIds": [
+      "type"
+    ]
+  },
+  {
+    "label": "caged-aesthetics",
+    "conceptIds": [
+      "unbounded"
+    ]
+  },
+  {
+    "label": "confined",
+    "conceptIds": [
+      "unbounded"
+    ]
+  },
+  {
+    "label": "defined-boundaries",
+    "conceptIds": [
+      "unbounded"
+    ]
+  },
+  {
+    "label": "structured-limits",
+    "conceptIds": [
+      "unbounded"
+    ]
+  },
+  {
+    "label": "bounded-dimensions",
+    "conceptIds": [
+      "unbounded"
+    ]
+  },
+  {
+    "label": "merge",
+    "conceptIds": [
+      "underline"
+    ]
+  },
+  {
+    "label": "erase",
+    "conceptIds": [
+      "underline"
+    ]
+  },
+  {
+    "label": "overline",
+    "conceptIds": [
+      "underline"
+    ]
+  },
+  {
+    "label": "emphasize",
+    "conceptIds": [
+      "underline"
+    ]
+  },
+  {
+    "label": "eclecticism",
+    "conceptIds": [
+      "uniformity"
+    ]
+  },
+  {
+    "label": "variegation",
+    "conceptIds": [
+      "uniformity"
+    ]
+  },
+  {
+    "label": "contradiction",
+    "conceptIds": [
+      "unity"
+    ]
+  },
+  {
+    "label": "monotony",
+    "conceptIds": [
+      "variety"
+    ]
+  },
+  {
+    "label": "consistency",
+    "conceptIds": [
+      "variety"
+    ]
+  },
+  {
+    "label": "homogeneity",
+    "conceptIds": [
+      "accent"
+    ]
+  },
+  {
+    "label": "neutrality",
+    "conceptIds": [
+      "accent"
+    ]
+  },
+  {
+    "label": "neon-glare",
+    "conceptIds": [
+      "amber"
+    ]
+  },
+  {
+    "label": "cyanic",
+    "conceptIds": [
+      "amber"
+    ]
+  },
+  {
+    "label": "multichrome",
+    "conceptIds": [
+      "binary"
+    ]
+  },
+  {
+    "label": "dissonant",
+    "conceptIds": [
+      "complementary"
+    ]
+  },
+  {
+    "label": "clashing",
+    "conceptIds": [
+      "complementary"
+    ]
+  },
+  {
+    "label": "conflicting",
+    "conceptIds": [
+      "complementary"
+    ]
+  },
+  {
+    "label": "hectic-vibe",
+    "conceptIds": [
+      "coolness"
+    ]
+  },
+  {
+    "label": "overexposure",
+    "conceptIds": [
+      "coolness"
+    ]
+  },
+  {
+    "label": "abrasive",
+    "conceptIds": [
+      "cozy"
+    ]
+  },
+  {
+    "label": "clinical-vibe",
+    "conceptIds": [
+      "cozy"
+    ]
+  },
+  {
+    "label": "futuristic-gleam",
+    "conceptIds": [
+      "earthen"
+    ]
+  },
+  {
+    "label": "rust",
+    "conceptIds": [
+      "emerald"
+    ]
+  },
+  {
+    "label": "ashen",
+    "conceptIds": [
+      "emerald"
+    ]
+  },
+  {
+    "label": "faded",
+    "conceptIds": [
+      "emerald"
+    ]
+  },
+  {
+    "label": "somnolent",
+    "conceptIds": [
+      "energetic"
+    ]
+  },
+  {
+    "label": "muted-ambiance",
+    "conceptIds": [
+      "expressive"
+    ]
+  },
+  {
+    "label": "desolation",
+    "conceptIds": [
+      "food"
+    ]
+  },
+  {
+    "label": "austerity",
+    "conceptIds": [
+      "food"
+    ]
+  },
+  {
+    "label": "mechanical-aesthetics",
+    "conceptIds": [
+      "food"
+    ]
+  },
+  {
+    "label": "alienating",
+    "conceptIds": [
+      "friendly"
+    ]
+  },
+  {
+    "label": "hostile",
+    "conceptIds": [
+      "friendly"
+    ]
+  },
+  {
+    "label": "desaturation",
+    "conceptIds": [
+      "hues"
+    ]
+  },
+  {
+    "label": "ochre",
+    "conceptIds": [
+      "indigo"
+    ]
+  },
+  {
+    "label": "vibrant-yellow",
+    "conceptIds": [
+      "indigo"
+    ]
+  },
+  {
+    "label": "pastel-blush",
+    "conceptIds": [
+      "indigo"
+    ]
+  },
+  {
+    "label": "neon-green",
+    "conceptIds": [
+      "indigo"
+    ]
+  },
+  {
+    "label": "repulsive",
+    "conceptIds": [
+      "inviting"
+    ]
+  },
+  {
+    "label": "cold-ambiance",
+    "conceptIds": [
+      "inviting"
+    ]
+  },
+  {
+    "label": "deterring",
+    "conceptIds": [
+      "inviting"
+    ]
+  },
+  {
+    "label": "exclusionary",
+    "conceptIds": [
+      "inviting"
+    ]
+  },
+  {
+    "label": "matte-obscura",
+    "conceptIds": [
+      "iridescent"
+    ]
+  },
+  {
+    "label": "flat-dullness",
+    "conceptIds": [
+      "iridescent"
+    ]
+  },
+  {
+    "label": "opaque-neutrality",
+    "conceptIds": [
+      "iridescent"
+    ]
+  },
+  {
+    "label": "unrestricted",
+    "conceptIds": [
+      "limited"
+    ]
+  },
+  {
+    "label": "solidarity",
+    "conceptIds": [
+      "mesh"
+    ]
+  },
+  {
+    "label": "monolith",
+    "conceptIds": [
+      "mesh"
+    ]
+  },
+  {
+    "label": "harmonic-clash",
+    "conceptIds": [
+      "monochromatic"
+    ]
+  },
+  {
+    "label": "color-clash",
+    "conceptIds": [
+      "monochromatic"
+    ]
+  },
+  {
+    "label": "resonant",
+    "conceptIds": [
+      "muted"
+    ]
+  },
+  {
+    "label": "diurnus",
+    "conceptIds": [
+      "nocturne"
+    ]
+  },
+  {
+    "label": "vibrance",
+    "conceptIds": [
+      "nocturne"
+    ]
+  },
+  {
+    "label": "brand-monopoly",
+    "conceptIds": [
+      "nonprofit"
+    ]
+  },
+  {
+    "label": "unfinished",
+    "conceptIds": [
+      "palette"
+    ]
+  },
+  {
+    "label": "conformity",
+    "conceptIds": [
+      "play"
+    ]
+  },
+  {
+    "label": "seriousness",
+    "conceptIds": [
+      "play"
+    ]
+  },
+  {
+    "label": "solemnity",
+    "conceptIds": [
+      "play"
+    ]
+  },
+  {
+    "label": "fragile",
+    "conceptIds": [
+      "powerful"
+    ]
+  },
+  {
+    "label": "secondary",
+    "conceptIds": [
+      "primary"
+    ]
+  },
+  {
+    "label": "hyperreal",
+    "conceptIds": [
+      "sepia"
+    ]
+  },
+  {
+    "label": "prismatica",
+    "conceptIds": [
+      "sepia"
+    ]
+  },
+  {
+    "label": "prismatic-brightness",
+    "conceptIds": [
+      "sepia"
+    ]
+  },
+  {
+    "label": "highlight",
+    "conceptIds": [
+      "shadow"
+    ]
+  },
+  {
+    "label": "lucent",
+    "conceptIds": [
+      "shadow"
+    ]
+  },
+  {
+    "label": "repose",
+    "conceptIds": [
+      "sports"
+    ]
+  },
+  {
+    "label": "meditative",
+    "conceptIds": [
+      "sports"
+    ]
+  },
+  {
+    "label": "embellished",
+    "conceptIds": [
+      "stark"
+    ]
+  },
+  {
+    "label": "sedentary",
+    "conceptIds": [
+      "travel"
+    ]
+  },
+  {
+    "label": "dichotomy",
+    "conceptIds": [
+      "triadic"
+    ]
+  },
+  {
+    "label": "complementary-clash",
+    "conceptIds": [
+      "triadic"
+    ]
+  },
+  {
+    "label": "homogeneous",
+    "conceptIds": [
+      "varied"
+    ]
+  },
+  {
+    "label": "uninviting",
+    "conceptIds": [
+      "welcoming"
+    ]
+  },
+  {
+    "label": "vibrant-visuals",
+    "conceptIds": [
+      "ascii"
+    ]
+  },
+  {
+    "label": "organic-abandon",
+    "conceptIds": [
+      "bauhaus"
+    ]
+  },
+  {
+    "label": "urban-distopia",
+    "conceptIds": [
+      "biophilic"
+    ]
+  },
+  {
+    "label": "mechanistic",
+    "conceptIds": [
+      "biophilic"
+    ]
+  },
+  {
+    "label": "whimsical-aesthetics",
+    "conceptIds": [
+      "brutalist"
+    ]
+  },
+  {
+    "label": "curated-reality",
+    "conceptIds": [
+      "candid"
+    ]
+  },
+  {
+    "label": "contrived",
+    "conceptIds": [
+      "candid"
+    ]
+  },
+  {
+    "label": "literal",
+    "conceptIds": [
+      "conceptual"
+    ]
+  },
+  {
+    "label": "sensory",
+    "conceptIds": [
+      "conceptual"
+    ]
+  },
+  {
+    "label": "tangible",
+    "conceptIds": [
+      "conceptual"
+    ]
+  },
+  {
+    "label": "pragmatic",
+    "conceptIds": [
+      "conceptual"
+    ]
+  },
+  {
+    "label": "biodynamic",
+    "conceptIds": [
+      "cybernetic"
+    ]
+  },
+  {
+    "label": "industrial-roughness",
+    "conceptIds": [
+      "deco"
+    ]
+  },
+  {
+    "label": "spartan",
+    "conceptIds": [
+      "deco"
+    ]
+  },
+  {
+    "label": "harmonized",
+    "conceptIds": [
+      "deconstructed"
+    ]
+  },
+  {
+    "label": "integrated",
+    "conceptIds": [
+      "deconstructed"
+    ]
+  },
+  {
+    "label": "sculpted",
+    "conceptIds": [
+      "deconstructed"
+    ]
+  },
+  {
+    "label": "ephemeral-scene",
+    "conceptIds": [
+      "diorama"
+    ]
+  },
+  {
+    "label": "extravagance",
+    "conceptIds": [
+      "essentialism"
+    ]
+  },
+  {
+    "label": "static-presentation",
+    "conceptIds": [
+      "experiential"
+    ]
+  },
+  {
+    "label": "isolationist",
+    "conceptIds": [
+      "experiential"
+    ]
+  },
+  {
+    "label": "aestheticism",
+    "conceptIds": [
+      "functionalism"
+    ]
+  },
+  {
+    "label": "emotionalist",
+    "conceptIds": [
+      "functionalist"
+    ]
+  },
+  {
+    "label": "rooted-aesthetics",
+    "conceptIds": [
+      "futurism"
+    ]
+  },
+  {
+    "label": "retro-revival",
+    "conceptIds": [
+      "futurist"
+    ]
+  },
+  {
+    "label": "opaque-structurism",
+    "conceptIds": [
+      "glassmorphism"
+    ]
+  },
+  {
+    "label": "everyday-eats",
+    "conceptIds": [
+      "gourmet"
+    ]
+  },
+  {
+    "label": "rustic-fare",
+    "conceptIds": [
+      "gourmet"
+    ]
+  },
+  {
+    "label": "basic-bites",
+    "conceptIds": [
+      "gourmet"
+    ]
+  },
+  {
+    "label": "casual-cuisine",
+    "conceptIds": [
+      "gourmet"
+    ]
+  },
+  {
+    "label": "sterile",
+    "conceptIds": [
+      "homely"
+    ]
+  },
+  {
+    "label": "transcendent",
+    "conceptIds": [
+      "homely"
+    ]
+  },
+  {
+    "label": "analogue-aesthetics",
+    "conceptIds": [
+      "hud"
+    ]
+  },
+  {
+    "label": "mechanist",
+    "conceptIds": [
+      "humanist"
+    ]
+  },
+  {
+    "label": "objectivist",
+    "conceptIds": [
+      "humanist"
+    ]
+  },
+  {
+    "label": "cynical-aesthetics",
+    "conceptIds": [
+      "humanist"
+    ]
+  },
+  {
+    "label": "conceptual-formalism",
+    "conceptIds": [
+      "impressionist"
+    ]
+  },
+  {
+    "label": "realist",
+    "conceptIds": [
+      "impressionist"
+    ]
+  },
+  {
+    "label": "precisionist",
+    "conceptIds": [
+      "impressionist"
+    ]
+  },
+  {
+    "label": "structuralist",
+    "conceptIds": [
+      "impressionist"
+    ]
+  },
+  {
+    "label": "ambiguous",
+    "conceptIds": [
+      "informative"
+    ]
+  },
+  {
+    "label": "nostalgic-noise",
+    "conceptIds": [
+      "informative"
+    ]
+  },
+  {
+    "label": "vibrant-clutter",
+    "conceptIds": [
+      "japandi"
+    ]
+  },
+  {
+    "label": "subdued-aesthetics",
+    "conceptIds": [
+      "maximalism"
+    ]
+  },
+  {
+    "label": "exuberance",
+    "conceptIds": [
+      "minimalism"
+    ]
+  },
+  {
+    "label": "artificial-aesthetics",
+    "conceptIds": [
+      "naturalistic"
+    ]
+  },
+  {
+    "label": "urban-grit",
+    "conceptIds": [
+      "nordic"
+    ]
+  },
+  {
+    "label": "classicism",
+    "conceptIds": [
+      "nouveau"
+    ]
+  },
+  {
+    "label": "immaterial",
+    "conceptIds": [
+      "object"
+    ]
+  },
+  {
+    "label": "inconspicuous",
+    "conceptIds": [
+      "performative"
+    ]
+  },
+  {
+    "label": "practical-function",
+    "conceptIds": [
+      "performative"
+    ]
+  },
+  {
+    "label": "silent-aesthetics",
+    "conceptIds": [
+      "performative"
+    ]
+  },
+  {
+    "label": "monoform",
+    "conceptIds": [
+      "poly"
+    ]
+  },
+  {
+    "label": "authenticism",
+    "conceptIds": [
+      "postmodernism"
+    ]
+  },
+  {
+    "label": "grimy",
+    "conceptIds": [
+      "pure"
+    ]
+  },
+  {
+    "label": "unapproachable",
+    "conceptIds": [
+      "relatable"
+    ]
+  },
+  {
+    "label": "niche",
+    "conceptIds": [
+      "relatable"
+    ]
+  },
+  {
+    "label": "alienated",
+    "conceptIds": [
+      "relatable"
+    ]
+  },
+  {
+    "label": "industrial-grit",
+    "conceptIds": [
+      "romantic"
+    ]
+  },
+  {
+    "label": "vividness",
+    "conceptIds": [
+      "shade"
+    ]
+  },
+  {
+    "label": "non-representational",
+    "conceptIds": [
+      "skeuomorphic"
+    ]
+  },
+  {
+    "label": "digital-purism",
+    "conceptIds": [
+      "skeuomorphic"
+    ]
+  },
+  {
+    "label": "urbane",
+    "conceptIds": [
+      "street"
+    ]
+  },
+  {
+    "label": "refined-aesthetics",
+    "conceptIds": [
+      "street"
+    ]
+  },
+  {
+    "label": "chaos-aesthetics",
+    "conceptIds": [
+      "structural"
+    ]
+  },
+  {
+    "label": "literal-interpretation",
+    "conceptIds": [
+      "surrealism"
+    ]
+  },
+  {
+    "label": "structured-aesthetics",
+    "conceptIds": [
+      "surrealism"
+    ]
+  },
+  {
+    "label": "impromptu",
+    "conceptIds": [
+      "technic"
+    ]
+  },
+  {
+    "label": "nature-infused",
+    "conceptIds": [
+      "techno"
+    ]
+  },
+  {
+    "label": "subterranean",
+    "conceptIds": [
+      "aerial"
+    ]
+  },
+  {
+    "label": "earthbound",
+    "conceptIds": [
+      "aerial"
+    ]
+  },
+  {
+    "label": "fixed-aesthetics",
+    "conceptIds": [
+      "animated"
+    ]
+  },
+  {
+    "label": "formulaic",
+    "conceptIds": [
+      "artistic"
+    ]
+  },
+  {
+    "label": "standardized",
+    "conceptIds": [
+      "artistic"
+    ]
+  },
+  {
+    "label": "release",
+    "conceptIds": [
+      "capture"
+    ]
+  },
+  {
+    "label": "evoke",
+    "conceptIds": [
+      "capture"
+    ]
+  },
+  {
+    "label": "dissolve",
+    "conceptIds": [
+      "capture"
+    ]
+  },
+  {
+    "label": "transcend",
+    "conceptIds": [
+      "capture"
+    ]
+  },
+  {
+    "label": "unframed",
+    "conceptIds": [
+      "cinematography"
+    ]
+  },
+  {
+    "label": "static-imagery",
+    "conceptIds": [
+      "cinematography"
+    ]
+  },
+  {
+    "label": "separation",
+    "conceptIds": [
+      "compositing"
+    ]
+  },
+  {
+    "label": "randomness",
+    "conceptIds": [
+      "curation"
+    ]
+  },
+  {
+    "label": "oversimplification",
+    "conceptIds": [
+      "detail"
+    ]
+  },
+  {
+    "label": "broad-stroke",
+    "conceptIds": [
+      "detail"
+    ]
+  },
+  {
+    "label": "sculpting",
+    "conceptIds": [
+      "drawing"
+    ]
+  },
+  {
+    "label": "submersion",
+    "conceptIds": [
+      "exhibition"
+    ]
+  },
+  {
+    "label": "intimacy",
+    "conceptIds": [
+      "exhibition"
+    ]
+  },
+  {
+    "label": "concealment",
+    "conceptIds": [
+      "exhibition"
+    ]
+  },
+  {
+    "label": "conglomerating",
+    "conceptIds": [
+      "filtering"
+    ]
+  },
+  {
+    "label": "amplifying",
+    "conceptIds": [
+      "filtering"
+    ]
+  },
+  {
+    "label": "saturating",
+    "conceptIds": [
+      "filtering"
+    ]
+  },
+  {
+    "label": "revealing",
+    "conceptIds": [
+      "filtering"
+    ]
+  },
+  {
+    "label": "reality",
+    "conceptIds": [
+      "game"
+    ]
+  },
+  {
+    "label": "routine",
+    "conceptIds": [
+      "game"
+    ]
+  },
+  {
+    "label": "stagnation",
+    "conceptIds": [
+      "generation"
+    ]
+  },
+  {
+    "label": "contraction",
+    "conceptIds": [
+      "generation"
+    ]
+  },
+  {
+    "label": "reversion",
+    "conceptIds": [
+      "generation"
+    ]
+  },
+  {
+    "label": "traditional-mural",
+    "conceptIds": [
+      "graffiti"
+    ]
+  },
+  {
+    "label": "analog-aesthetics",
+    "conceptIds": [
+      "graphics"
+    ]
+  },
+  {
+    "label": "textuality",
+    "conceptIds": [
+      "imaging"
+    ]
+  },
+  {
+    "label": "soundscapes",
+    "conceptIds": [
+      "imaging"
+    ]
+  },
+  {
+    "label": "intangibility",
+    "conceptIds": [
+      "imaging"
+    ]
+  },
+  {
+    "label": "disconnection",
+    "conceptIds": [
+      "interface"
+    ]
+  },
+  {
+    "label": "blanket",
+    "conceptIds": [
+      "lens"
+    ]
+  },
+  {
+    "label": "illuminating",
+    "conceptIds": [
+      "masking"
+    ]
+  },
+  {
+    "label": "exposing",
+    "conceptIds": [
+      "masking"
+    ]
+  },
+  {
+    "label": "raw-material",
+    "conceptIds": [
+      "media"
+    ]
+  },
+  {
+    "label": "sculpture",
+    "conceptIds": [
+      "painting"
+    ]
+  },
+  {
+    "label": "transitory-visuals",
+    "conceptIds": [
+      "photography"
+    ]
+  },
+  {
+    "label": "textured-dream",
+    "conceptIds": [
+      "photoreal"
+    ]
+  },
+  {
+    "label": "dreamlike-imagery",
+    "conceptIds": [
+      "photorealistic"
+    ]
+  },
+  {
+    "label": "surrealist-interpretation",
+    "conceptIds": [
+      "photorealistic"
+    ]
+  },
+  {
+    "label": "immediacy",
+    "conceptIds": [
+      "projection"
+    ]
+  },
+  {
+    "label": "absorb",
+    "conceptIds": [
+      "render"
+    ]
+  },
+  {
+    "label": "deconstruct",
+    "conceptIds": [
+      "render"
+    ]
+  },
+  {
+    "label": "unfiltered-reality",
+    "conceptIds": [
+      "retouching"
+    ]
+  },
+  {
+    "label": "fluid-aesthetics",
+    "conceptIds": [
+      "schematic"
+    ]
+  },
+  {
+    "label": "chaotic-forms",
+    "conceptIds": [
+      "schematic"
+    ]
+  },
+  {
+    "label": "highlighting",
+    "conceptIds": [
+      "shading"
+    ]
+  },
+  {
+    "label": "brightness",
+    "conceptIds": [
+      "shading"
+    ]
+  },
+  {
+    "label": "precision-drafting",
+    "conceptIds": [
+      "sketching"
+    ]
+  },
+  {
+    "label": "polished-output",
+    "conceptIds": [
+      "sketching"
+    ]
+  },
+  {
+    "label": "spontaneous-reality",
+    "conceptIds": [
+      "staging"
+    ]
+  },
+  {
+    "label": "functionality-first",
+    "conceptIds": [
+      "styling"
+    ]
+  },
+  {
+    "label": "disjunction",
+    "conceptIds": [
+      "synthesis"
+    ]
+  },
+  {
+    "label": "unstructured-glyphs",
+    "conceptIds": [
+      "typeset"
+    ]
+  },
+  {
+    "label": "abstract-hieroglyphs",
+    "conceptIds": [
+      "typesetting"
+    ]
+  },
+  {
+    "label": "intuitive-obscurity",
+    "conceptIds": [
+      "ui-ux"
+    ]
+  },
+  {
+    "label": "raster",
+    "conceptIds": [
+      "vector"
+    ]
+  },
+  {
+    "label": "handcrafted",
+    "conceptIds": [
+      "vector"
+    ]
+  },
+  {
+    "label": "obfuscation",
+    "conceptIds": [
+      "visualization"
+    ]
+  },
+  {
+    "label": "invisibility",
+    "conceptIds": [
+      "visualization"
+    ]
+  },
+  {
+    "label": "tactile-reality",
+    "conceptIds": [
+      "vr"
+    ]
+  },
+  {
+    "label": "embracing",
+    "conceptIds": [
+      "aloof"
+    ]
+  },
+  {
+    "label": "clashing-vibes",
+    "conceptIds": [
+      "analogous"
+    ]
+  },
+  {
+    "label": "euphoria",
+    "conceptIds": [
+      "anger"
+    ]
+  },
+  {
+    "label": "resignation",
+    "conceptIds": [
+      "anticipation"
+    ]
+  },
+  {
+    "label": "disillusionment",
+    "conceptIds": [
+      "anticipation"
+    ]
+  },
+  {
+    "label": "grounded-acceptance",
+    "conceptIds": [
+      "aspirant"
+    ]
+  },
+  {
+    "label": "contented",
+    "conceptIds": [
+      "aspirant"
+    ]
+  },
+  {
+    "label": "settled-mindset",
+    "conceptIds": [
+      "aspirant"
+    ]
+  },
+  {
+    "label": "complacency",
+    "conceptIds": [
+      "aspiration"
+    ]
+  },
+  {
+    "label": "decline",
+    "conceptIds": [
+      "aspire"
+    ]
+  },
+  {
+    "label": "banality",
+    "conceptIds": [
+      "awe"
+    ]
+  },
+  {
+    "label": "triviality",
+    "conceptIds": [
+      "awe"
+    ]
+  },
+  {
+    "label": "disdainful",
+    "conceptIds": [
+      "awe"
+    ]
+  },
+  {
+    "label": "vibrant-distress",
+    "conceptIds": [
+      "calm"
+    ]
+  },
+  {
+    "label": "unrestrained-passion",
+    "conceptIds": [
+      "caution"
+    ]
+  },
+  {
+    "label": "sombre-aesthetics",
+    "conceptIds": [
+      "cheer"
+    ]
+  },
+  {
+    "label": "murkiness",
+    "conceptIds": [
+      "clarity"
+    ]
+  },
+  {
+    "label": "discomfort-zone",
+    "conceptIds": [
+      "comfort"
+    ]
+  },
+  {
+    "label": "harsh-aesthetics",
+    "conceptIds": [
+      "comfort"
+    ]
+  },
+  {
+    "label": "apathy",
+    "conceptIds": [
+      "compassion"
+    ]
+  },
+  {
+    "label": "hostility",
+    "conceptIds": [
+      "compassion"
+    ]
+  },
+  {
+    "label": "incompetence",
+    "conceptIds": [
+      "competence"
+    ]
+  },
+  {
+    "label": "fractured",
+    "conceptIds": [
+      "composed"
+    ]
+  },
+  {
+    "label": "disordered",
+    "conceptIds": [
+      "composed"
+    ]
+  },
+  {
+    "label": "unraveled",
+    "conceptIds": [
+      "composed"
+    ]
+  },
+  {
+    "label": "insecurity",
+    "conceptIds": [
+      "confidence"
+    ]
+  },
+  {
+    "label": "tentativeness",
+    "conceptIds": [
+      "confidence"
+    ]
+  },
+  {
+    "label": "segregation",
+    "conceptIds": [
+      "connection"
+    ]
+  },
+  {
+    "label": "impulsive",
+    "conceptIds": [
+      "contemplative"
+    ]
+  },
+  {
+    "label": "chaotic-ambivalence",
+    "conceptIds": [
+      "contentment"
+    ]
+  },
+  {
+    "label": "restlessness",
+    "conceptIds": [
+      "contentment"
+    ]
+  },
+  {
+    "label": "discontent",
+    "conceptIds": [
+      "contentment"
+    ]
+  },
+  {
+    "label": "surrender",
+    "conceptIds": [
+      "control"
+    ]
+  },
+  {
+    "label": "serendipity",
+    "conceptIds": [
+      "control"
+    ]
+  },
+  {
+    "label": "disengagement",
+    "conceptIds": [
+      "curiosity"
+    ]
+  },
+  {
+    "label": "satiation",
+    "conceptIds": [
+      "curiosity"
+    ]
+  },
+  {
+    "label": "predictable-routine",
+    "conceptIds": [
+      "curious"
+    ]
+  },
+  {
+    "label": "submissive",
+    "conceptIds": [
+      "defiance"
+    ]
+  },
+  {
+    "label": "compliance",
+    "conceptIds": [
+      "defiance"
+    ]
+  },
+  {
+    "label": "satisfaction",
+    "conceptIds": [
+      "desire"
+    ]
+  },
+  {
+    "label": "indirect",
+    "conceptIds": [
+      "direct"
+    ]
+  },
+  {
+    "label": "lethargy",
+    "conceptIds": [
+      "drive"
+    ]
+  },
+  {
+    "label": "calm-disengagement",
+    "conceptIds": [
+      "drive"
+    ]
+  },
+  {
+    "label": "playful-irony",
+    "conceptIds": [
+      "earnest"
+    ]
+  },
+  {
+    "label": "satirical",
+    "conceptIds": [
+      "earnest"
+    ]
+  },
+  {
+    "label": "facetious",
+    "conceptIds": [
+      "earnest"
+    ]
+  },
+  {
+    "label": "laborious",
+    "conceptIds": [
+      "effortless"
+    ]
+  },
+  {
+    "label": "passive-discontent",
+    "conceptIds": [
+      "empowered"
+    ]
+  },
+  {
+    "label": "withdrawal",
+    "conceptIds": [
+      "engagement"
+    ]
+  },
+  {
+    "label": "alien-aesthetics",
+    "conceptIds": [
+      "familiarity"
+    ]
+  },
+  {
+    "label": "uncharted-terrain",
+    "conceptIds": [
+      "familiarity"
+    ]
+  },
+  {
+    "label": "novelty-shock",
+    "conceptIds": [
+      "familiarity"
+    ]
+  },
+  {
+    "label": "estrangement",
+    "conceptIds": [
+      "familiarity"
+    ]
+  },
+  {
+    "label": "imposition",
+    "conceptIds": [
+      "freedom"
+    ]
+  },
+  {
+    "label": "constraint",
+    "conceptIds": [
+      "freedom"
+    ]
+  },
+  {
+    "label": "subjugation",
+    "conceptIds": [
+      "freedom"
+    ]
+  },
+  {
+    "label": "despair",
+    "conceptIds": [
+      "hope"
+    ]
+  },
+  {
+    "label": "cynicism",
+    "conceptIds": [
+      "hope"
+    ]
+  },
+  {
+    "label": "dread",
+    "conceptIds": [
+      "humor"
+    ]
+  },
+  {
+    "label": "conclusion",
+    "conceptIds": [
+      "inquiry"
+    ]
+  },
+  {
+    "label": "acceptance",
+    "conceptIds": [
+      "inquiry"
+    ]
+  },
+  {
+    "label": "certainty",
+    "conceptIds": [
+      "inquiry"
+    ]
+  },
+  {
+    "label": "stagnate",
+    "conceptIds": [
+      "inspire"
+    ]
+  },
+  {
+    "label": "dampen",
+    "conceptIds": [
+      "inspire"
+    ]
+  },
+  {
+    "label": "confine",
+    "conceptIds": [
+      "inspire"
+    ]
+  },
+  {
+    "label": "discourage",
+    "conceptIds": [
+      "inspire"
+    ]
+  },
+  {
+    "label": "intuitive-aesthetics",
+    "conceptIds": [
+      "intellect"
+    ]
+  },
+  {
+    "label": "ambivalence",
+    "conceptIds": [
+      "intent"
+    ]
+  },
+  {
+    "label": "predictability",
+    "conceptIds": [
+      "intrigue"
+    ]
+  },
+  {
+    "label": "collective-vibe",
+    "conceptIds": [
+      "introspection"
+    ]
+  },
+  {
+    "label": "extroverted",
+    "conceptIds": [
+      "introspective"
+    ]
+  },
+  {
+    "label": "connected",
+    "conceptIds": [
+      "isolated"
+    ]
+  },
+  {
+    "label": "nostalgic-dissonance",
+    "conceptIds": [
+      "joy"
+    ]
+  },
+  {
+    "label": "quietude",
+    "conceptIds": [
+      "kinetic"
+    ]
+  },
+  {
+    "label": "weightiness",
+    "conceptIds": [
+      "lightness"
+    ]
+  },
+  {
+    "label": "sombre-vibes",
+    "conceptIds": [
+      "merriment"
+    ]
+  },
+  {
+    "label": "explicitness",
+    "conceptIds": [
+      "mystery"
+    ]
+  },
+  {
+    "label": "nowism",
+    "conceptIds": [
+      "nostalgia"
+    ]
+  },
+  {
+    "label": "presentism",
+    "conceptIds": [
+      "nostalgia"
+    ]
+  },
+  {
+    "label": "brevity",
+    "conceptIds": [
+      "overload"
+    ]
+  },
+  {
+    "label": "conflict-zone",
+    "conceptIds": [
+      "peace"
+    ]
+  },
+  {
+    "label": "sombre",
+    "conceptIds": [
+      "playful"
+    ]
+  },
+  {
+    "label": "recklessness",
+    "conceptIds": [
+      "prudence"
+    ]
+  },
+  {
+    "label": "spontaneous-vibes",
+    "conceptIds": [
+      "prudence"
+    ]
+  },
+  {
+    "label": "impulsiveness",
+    "conceptIds": [
+      "prudence"
+    ]
+  },
+  {
+    "label": "instability",
+    "conceptIds": [
+      "reassurance"
+    ]
+  },
+  {
+    "label": "uncertainty",
+    "conceptIds": [
+      "reassurance"
+    ]
+  },
+  {
+    "label": "disquiet",
+    "conceptIds": [
+      "reassurance"
+    ]
+  },
+  {
+    "label": "conformist",
+    "conceptIds": [
+      "rebellious"
+    ]
+  },
+  {
+    "label": "instinctive",
+    "conceptIds": [
+      "reflective"
+    ]
+  },
+  {
+    "label": "heavyweight",
+    "conceptIds": [
+      "refreshing"
+    ]
+  },
+  {
+    "label": "overwhelm",
+    "conceptIds": [
+      "refreshing"
+    ]
+  },
+  {
+    "label": "stagnant",
+    "conceptIds": [
+      "refreshing"
+    ]
+  },
+  {
+    "label": "unpredictability",
+    "conceptIds": [
+      "reliability"
+    ]
+  },
+  {
+    "label": "fluctuation",
+    "conceptIds": [
+      "reliability"
+    ]
+  },
+  {
+    "label": "neoteric",
+    "conceptIds": [
+      "retro"
+    ]
+  },
+  {
+    "label": "irreverence",
+    "conceptIds": [
+      "reverence"
+    ]
+  },
+  {
+    "label": "mockery",
+    "conceptIds": [
+      "reverence"
+    ]
+  },
+  {
+    "label": "unstable-aesthetics",
+    "conceptIds": [
+      "secure"
+    ]
+  },
+  {
+    "label": "disruptive-vibe",
+    "conceptIds": [
+      "serene"
+    ]
+  },
+  {
+    "label": "tumultuous",
+    "conceptIds": [
+      "serene"
+    ]
+  },
+  {
+    "label": "turbulent-aesthetics",
+    "conceptIds": [
+      "serenity"
+    ]
+  },
+  {
+    "label": "surface-charm",
+    "conceptIds": [
+      "sincere"
+    ]
+  },
+  {
+    "label": "jubilant",
+    "conceptIds": [
+      "solemn"
+    ]
+  },
+  {
+    "label": "carefree",
+    "conceptIds": [
+      "solemn"
+    ]
+  },
+  {
+    "label": "ebullient",
+    "conceptIds": [
+      "solemn"
+    ]
+  },
+  {
+    "label": "eccentric-flair",
+    "conceptIds": [
+      "stately"
+    ]
+  },
+  {
+    "label": "playful-abandon",
+    "conceptIds": [
+      "stately"
+    ]
+  },
+  {
+    "label": "overtness",
+    "conceptIds": [
+      "subtlety"
+    ]
+  },
+  {
+    "label": "subside",
+    "conceptIds": [
+      "surge"
+    ]
+  },
+  {
+    "label": "dwindle",
+    "conceptIds": [
+      "surge"
+    ]
+  },
+  {
+    "label": "joyful-resolution",
+    "conceptIds": [
+      "suspense"
+    ]
+  },
+  {
+    "label": "unrestrained",
+    "conceptIds": [
+      "thoughtful"
+    ]
+  },
+  {
+    "label": "mundane-routine",
+    "conceptIds": [
+      "thrill"
+    ]
+  },
+  {
+    "label": "rootedness",
+    "conceptIds": [
+      "transit"
+    ]
+  },
+  {
+    "label": "seclusion",
+    "conceptIds": [
+      "transit"
+    ]
+  },
+  {
+    "label": "defeat",
+    "conceptIds": [
+      "triumph"
+    ]
+  },
+  {
+    "label": "subdue",
+    "conceptIds": [
+      "uplift"
+    ]
+  },
+  {
+    "label": "diminish",
+    "conceptIds": [
+      "uplift"
+    ]
+  },
+  {
+    "label": "refined-detachment",
+    "conceptIds": [
+      "visceral"
+    ]
+  },
+  {
+    "label": "exclusion",
+    "conceptIds": [
+      "welcome"
+    ]
+  },
+  {
+    "label": "rejection",
+    "conceptIds": [
+      "welcome"
+    ]
+  },
+  {
+    "label": "serious-undertone",
+    "conceptIds": [
+      "whimsical"
+    ]
+  },
+  {
+    "label": "flatplane",
+    "conceptIds": [
+      "accordion"
+    ]
+  },
+  {
+    "label": "ethereal-forms",
+    "conceptIds": [
+      "anatomy"
+    ]
+  },
+  {
+    "label": "disintegration",
+    "conceptIds": [
+      "assembly"
+    ]
+  },
+  {
+    "label": "imbalance",
+    "conceptIds": [
+      "balance"
+    ]
+  },
+  {
+    "label": "structured-boundaries",
+    "conceptIds": [
+      "boundless"
+    ]
+  },
+  {
+    "label": "formulated-limits",
+    "conceptIds": [
+      "boundless"
+    ]
+  },
+  {
+    "label": "immateriality",
+    "conceptIds": [
+      "canvas"
+    ]
+  },
+  {
+    "label": "decentralized",
+    "conceptIds": [
+      "centralized"
+    ]
+  },
+  {
+    "label": "linear-path",
+    "conceptIds": [
+      "circle"
+    ]
+  },
+  {
+    "label": "segmented",
+    "conceptIds": [
+      "circular"
+    ]
+  },
+  {
+    "label": "solitary",
+    "conceptIds": [
+      "clustered"
+    ]
+  },
+  {
+    "label": "straight",
+    "conceptIds": [
+      "coil"
+    ]
+  },
+  {
+    "label": "flat-plane",
+    "conceptIds": [
+      "coil"
+    ]
+  },
+  {
+    "label": "dissolution",
+    "conceptIds": [
+      "containment"
+    ]
+  },
+  {
+    "label": "liberation",
+    "conceptIds": [
+      "containment"
+    ]
+  },
+  {
+    "label": "angularity",
+    "conceptIds": [
+      "curve"
+    ]
+  },
+  {
+    "label": "nonlinear",
+    "conceptIds": [
+      "cylindrical"
+    ]
+  },
+  {
+    "label": "chaos-board",
+    "conceptIds": [
+      "dashboard"
+    ]
+  },
+  {
+    "label": "congregated",
+    "conceptIds": [
+      "dispersed"
+    ]
+  },
+  {
+    "label": "consolidated",
+    "conceptIds": [
+      "distributed"
+    ]
+  },
+  {
+    "label": "pit",
+    "conceptIds": [
+      "dome"
+    ]
+  },
+  {
+    "label": "local-market",
+    "conceptIds": [
+      "ecommerce"
+    ]
+  },
+  {
+    "label": "physical-exchange",
+    "conceptIds": [
+      "ecommerce"
+    ]
+  },
+  {
+    "label": "handcrafted-goods",
+    "conceptIds": [
+      "ecommerce"
+    ]
+  },
+  {
+    "label": "interconnectivity",
+    "conceptIds": [
+      "enclosure"
+    ]
+  },
+  {
+    "label": "discomfort-aesthetics",
+    "conceptIds": [
+      "ergonomic"
+    ]
+  },
+  {
+    "label": "uncomfortable",
+    "conceptIds": [
+      "ergonomic"
+    ]
+  },
+  {
+    "label": "boundary",
+    "conceptIds": [
+      "field"
+    ]
+  }
+]

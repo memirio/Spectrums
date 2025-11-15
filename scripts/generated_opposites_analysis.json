@@ -1,0 +1,8635 @@
+[
+  {
+    "id": "academia",
+    "label": "Academia",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "accessible",
+    "label": "Accessible",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "art",
+    "label": "Art",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "art",
+    "label": "Art",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "asymmetry",
+    "label": "Asymmetry",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "symmetry",
+      "balance",
+      "centered",
+      "asymmetry",
+      "chaotic"
+    ],
+    "suggestedLabels": [
+      "symmetrical",
+      "balanced",
+      "centered",
+      "asymmetric",
+      "chaotic",
+      "unbalanced"
+    ]
+  },
+  {
+    "id": "based",
+    "label": "Based",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "organic",
+      "fluid"
+    ],
+    "suggestedLabels": [
+      "organic",
+      "fluid",
+      "freeform"
+    ]
+  },
+  {
+    "id": "caps",
+    "label": "Caps",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "gentle"
+    ],
+    "suggestedLabels": [
+      "lowercase",
+      "mixed-case",
+      "subtle"
+    ]
+  },
+  {
+    "id": "caps",
+    "label": "Caps",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "gentle"
+    ],
+    "suggestedLabels": [
+      "lowercase",
+      "mixed-case",
+      "subtle"
+    ]
+  },
+  {
+    "id": "carousel",
+    "label": "Carousel",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "centered",
+    "label": "Centered",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "asymmetry",
+      "asymmetrical",
+      "scatter"
+    ],
+    "suggestedLabels": [
+      "asymmetric",
+      "offset",
+      "scattered"
+    ]
+  },
+  {
+    "id": "centrality",
+    "label": "Centrality",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chiaroscuro",
+    "label": "Chiaroscuro",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cleanliness",
+    "label": "Cleanliness",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "clustering",
+    "label": "Clustering",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "composition",
+    "label": "Composition",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "contrast",
+    "label": "Contrast",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curvature",
+    "label": "Curvature",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "design",
+    "label": "Design",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "directness",
+    "label": "Directness",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dispersal",
+    "label": "Dispersal",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dispersion",
+    "label": "Dispersion",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "display",
+    "label": "Display",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "distribution",
+    "label": "Distribution",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "docs",
+    "label": "Docs",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dominance",
+    "label": "Dominance",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "drawer",
+    "label": "Drawer",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "drop",
+    "label": "Drop",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dynamism",
+    "label": "Dynamism",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "eclectic",
+    "label": "Eclectic",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "edge",
+    "label": "Edge",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "editorial",
+    "label": "Editorial",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "effects",
+    "label": "Effects",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "effects",
+    "label": "Effects",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "elegant",
+    "label": "Elegant",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "elements",
+    "label": "Elements",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "experimental",
+    "label": "Experimental",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fashion",
+    "label": "Fashion",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "focus",
+    "label": "Focus",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "font",
+    "label": "Font",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fonts",
+    "label": "Fonts",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "geometry",
+    "label": "Geometry",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grace",
+    "label": "Grace",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "harmony",
+    "label": "Harmony",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "header",
+    "label": "Header",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "image",
+    "label": "Image",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interactions",
+    "label": "Interactions",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interactive",
+    "label": "Interactive",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intricate",
+    "label": "Intricate",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "light",
+    "label": "Light",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "dark",
+      "shadow"
+    ],
+    "suggestedLabels": [
+      "dark",
+      "shadow",
+      "obscure"
+    ]
+  },
+  {
+    "id": "like",
+    "label": "Like",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "linearity",
+    "label": "Linearity",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "loading",
+    "label": "Loading",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "luminosity",
+    "label": "Luminosity",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "luxurious",
+    "label": "Luxurious",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "magazine",
+    "label": "Magazine",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "measurement",
+    "label": "Measurement",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "menu",
+    "label": "Menu",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "minimalistic",
+    "label": "Minimalistic",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "maximalist",
+      "dense",
+      "maximalist"
+    ],
+    "suggestedLabels": [
+      "maximal",
+      "dense",
+      "ornate"
+    ]
+  },
+  {
+    "id": "modal",
+    "label": "Modal",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "modern",
+    "label": "Modern",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "serif",
+      "serif",
+      "vintage"
+    ],
+    "suggestedLabels": [
+      "traditional",
+      "classical",
+      "vintage"
+    ]
+  },
+  {
+    "id": "monospace",
+    "label": "Monospace",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "monumental",
+    "label": "Monumental",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "music",
+    "label": "Music",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "negative",
+    "label": "Negative",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "obscured",
+    "label": "Obscured",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "old",
+    "label": "Old",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ornamentation",
+    "label": "Ornamentation",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "page",
+    "label": "Page",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "perspective",
+    "label": "Perspective",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "polish",
+    "label": "Polish",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "portfolio",
+    "label": "Portfolio",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "portrait",
+    "label": "Portrait",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "product",
+    "label": "Product",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "screen",
+    "label": "Screen",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scroll",
+    "label": "Scroll",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scroll",
+    "label": "Scroll",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "simplicity",
+    "label": "Simplicity",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "simplification",
+    "label": "Simplification",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sleekness",
+    "label": "Sleekness",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "softness",
+    "label": "Softness",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "hard",
+      "strict",
+      "sharp"
+    ],
+    "suggestedLabels": [
+      "hard",
+      "rigid",
+      "sharp"
+    ]
+  },
+  {
+    "id": "sophisticated",
+    "label": "Sophisticated",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "space",
+    "label": "Space",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spacious",
+    "label": "Spacious",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spatial",
+    "label": "Spatial",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spontaneity",
+    "label": "Spontaneity",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "states",
+    "label": "States",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "static",
+    "label": "Static",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "asymmetrical",
+      "animated",
+      "kinetic"
+    ],
+    "suggestedLabels": [
+      "dynamic",
+      "animated",
+      "kinetic"
+    ]
+  },
+  {
+    "id": "symmetry",
+    "label": "Symmetry",
+    "category": "Aesthetic / Formal",
+    "opposites": [
+      "asymmetry",
+      "chaotic",
+      "asymmetrical"
+    ],
+    "suggestedLabels": [
+      "asymmetric",
+      "chaotic",
+      "unbalanced"
+    ]
+  },
+  {
+    "id": "tension",
+    "label": "Tension",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "texture",
+    "label": "Texture",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "timeline",
+    "label": "Timeline",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "type",
+    "label": "Type",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "type",
+    "label": "Type",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ui",
+    "label": "UI",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "unbounded",
+    "label": "Unbounded",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "underline",
+    "label": "Underline",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "uniformity",
+    "label": "Uniformity",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "unity",
+    "label": "Unity",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "variety",
+    "label": "Variety",
+    "category": "Aesthetic / Formal",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "accent",
+    "label": "Accent",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "amber",
+    "label": "Amber",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "binary",
+    "label": "Binary",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bold",
+    "label": "Bold",
+    "category": "Color & Tone",
+    "opposites": [
+      "gentle",
+      "understated",
+      "gentle"
+    ],
+    "suggestedLabels": [
+      "subtle",
+      "muted",
+      "gentle"
+    ]
+  },
+  {
+    "id": "chromatic",
+    "label": "Chromatic",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "colorful",
+    "label": "Colorful",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "colorless",
+    "label": "Colorless",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "complementary",
+    "label": "Complementary",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "contrast",
+    "label": "Contrast",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cool",
+    "label": "Cool",
+    "category": "Color & Tone",
+    "opposites": [
+      "warm"
+    ],
+    "suggestedLabels": [
+      "warm",
+      "fiery",
+      "hot"
+    ]
+  },
+  {
+    "id": "coolness",
+    "label": "Coolness",
+    "category": "Color & Tone",
+    "opposites": [
+      "warm"
+    ],
+    "suggestedLabels": [
+      "warm",
+      "fiery",
+      "hot"
+    ]
+  },
+  {
+    "id": "cozy",
+    "label": "Cozy",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cyberpunk",
+    "label": "Cyberpunk",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "design",
+    "label": "Design",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dramatic",
+    "label": "Dramatic",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "duotone",
+    "label": "Duotone",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "earthen",
+    "label": "Earthen",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "emerald",
+    "label": "Emerald",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "energetic",
+    "label": "Energetic",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "expressive",
+    "label": "Expressive",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "food",
+    "label": "Food",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "friendly",
+    "label": "Friendly",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gradient",
+    "label": "Gradient",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "harmony",
+    "label": "Harmony",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hues",
+    "label": "Hues",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "indigo",
+    "label": "Indigo",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inviting",
+    "label": "Inviting",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "iridescent",
+    "label": "Iridescent",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "key",
+    "label": "key",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "key",
+    "label": "key",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "limited",
+    "label": "Limited",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mesh",
+    "label": "Mesh",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "monochromatic",
+    "label": "Monochromatic",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "monochrome",
+    "label": "Monochrome",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "muted",
+    "label": "Muted",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "neon",
+    "label": "Neon",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nocturne",
+    "label": "Nocturne",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nonprofit",
+    "label": "Nonprofit",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "palette",
+    "label": "Palette",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pastel",
+    "label": "Pastel",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "play",
+    "label": "Play",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pop",
+    "label": "Pop",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "powerful",
+    "label": "Powerful",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "primary",
+    "label": "Primary",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rainbow",
+    "label": "Rainbow",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "saturation",
+    "label": "Saturation",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "saturation",
+    "label": "Saturation",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sepia",
+    "label": "Sepia",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shadow",
+    "label": "Shadow",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "silver",
+    "label": "Silver",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sports",
+    "label": "Sports",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stark",
+    "label": "Stark",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "startup",
+    "label": "Startup",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "strict",
+    "label": "Strict",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tones",
+    "label": "Tones",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tones",
+    "label": "Tones",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "travel",
+    "label": "Travel",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "triadic",
+    "label": "Triadic",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "understated",
+    "label": "Understated",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "varied",
+    "label": "Varied",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vibrant",
+    "label": "Vibrant",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "warm",
+    "label": "Warm",
+    "category": "Color & Tone",
+    "opposites": [
+      "cool",
+      "cool"
+    ],
+    "suggestedLabels": [
+      "cool",
+      "cold",
+      "icy"
+    ]
+  },
+  {
+    "id": "welcoming",
+    "label": "Welcoming",
+    "category": "Color & Tone",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "action",
+    "label": "Action",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aqueous",
+    "label": "Aqueous",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ascii",
+    "label": "ASCII",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "atmospheric",
+    "label": "Atmospheric",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "baroque",
+    "label": "Baroque",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bauhaus",
+    "label": "Bauhaus",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "biophilic",
+    "label": "Biophilic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "botanical",
+    "label": "Botanical",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "brutalism",
+    "label": "Brutalism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "brutalist",
+    "label": "Brutalist",
+    "category": "Design Style",
+    "opposites": [
+      "serif",
+      "professional",
+      "professional"
+    ],
+    "suggestedLabels": [
+      "elegant",
+      "refined",
+      "polished"
+    ]
+  },
+  {
+    "id": "brutalist",
+    "label": "Brutalist",
+    "category": "Design Style",
+    "opposites": [
+      "serif",
+      "professional",
+      "professional"
+    ],
+    "suggestedLabels": [
+      "elegant",
+      "refined",
+      "polished"
+    ]
+  },
+  {
+    "id": "candid",
+    "label": "Candid",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cartoon",
+    "label": "Cartoon",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chunky",
+    "label": "Chunky",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "comic",
+    "label": "Comic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "computational",
+    "label": "Computational",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "conceptual",
+    "label": "Conceptual",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cybernetic",
+    "label": "Cybernetic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "darkmode",
+    "label": "Darkmode",
+    "category": "Design Style",
+    "opposites": [
+      "light",
+      "neon",
+      "vibrant"
+    ],
+    "suggestedLabels": [
+      "light",
+      "bright",
+      "luminous"
+    ]
+  },
+  {
+    "id": "deco",
+    "label": "Deco",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "deconstructed",
+    "label": "Deconstructed",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "deconstructivist",
+    "label": "Deconstructivist",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "diorama",
+    "label": "Diorama",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "doodle",
+    "label": "Doodle",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "essentialism",
+    "label": "Essentialism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "experiential",
+    "label": "Experiential",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "folk",
+    "label": "Folk",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "functionalism",
+    "label": "Functionalism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "functionalist",
+    "label": "Functionalist",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "futurism",
+    "label": "futurism",
+    "category": "Design Style",
+    "opposites": [
+      "vintage",
+      "vintage",
+      "serif"
+    ],
+    "suggestedLabels": [
+      "retro",
+      "vintage",
+      "classical"
+    ]
+  },
+  {
+    "id": "futurism",
+    "label": "Futurism",
+    "category": "Design Style",
+    "opposites": [
+      "vintage",
+      "vintage",
+      "serif"
+    ],
+    "suggestedLabels": [
+      "retro",
+      "vintage",
+      "classical"
+    ]
+  },
+  {
+    "id": "futurism",
+    "label": "Futurism",
+    "category": "Design Style",
+    "opposites": [
+      "vintage",
+      "vintage",
+      "serif"
+    ],
+    "suggestedLabels": [
+      "retro",
+      "vintage",
+      "classical"
+    ]
+  },
+  {
+    "id": "futurist",
+    "label": "futurist",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gamified",
+    "label": "Gamified",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "glassmorphism",
+    "label": "Glassmorphism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "glitch",
+    "label": "Glitch",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gourmet",
+    "label": "Gourmet",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "groovy",
+    "label": "Groovy",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grunge",
+    "label": "Grunge",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "homely",
+    "label": "Homely",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hud",
+    "label": "HUD",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "humanist",
+    "label": "Humanist",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "impressionist",
+    "label": "Impressionist",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "informative",
+    "label": "Informative",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "japandi",
+    "label": "Japandi",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "kitsch",
+    "label": "Kitsch",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "maximalism",
+    "label": "Maximalism",
+    "category": "Design Style",
+    "opposites": [
+      "minimal",
+      "minimalistic"
+    ],
+    "suggestedLabels": [
+      "minimal",
+      "simple",
+      "restrained",
+      "minimal",
+      "simple",
+      "restrained"
+    ]
+  },
+  {
+    "id": "maximalist",
+    "label": "Maximalist",
+    "category": "Design Style",
+    "opposites": [
+      "minimal",
+      "minimalistic"
+    ],
+    "suggestedLabels": [
+      "minimal",
+      "simple",
+      "restrained",
+      "minimal",
+      "simple",
+      "restrained"
+    ]
+  },
+  {
+    "id": "memphis",
+    "label": "Memphis",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "minimalism",
+    "label": "Minimalism",
+    "category": "Design Style",
+    "opposites": [
+      "maximalist",
+      "maximalist",
+      "type",
+      "maximalist",
+      "dense"
+    ],
+    "suggestedLabels": [
+      "maximalist",
+      "ornate",
+      "decorative",
+      "maximal",
+      "dense",
+      "ornate"
+    ]
+  },
+  {
+    "id": "naturalistic",
+    "label": "Naturalistic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "neumorphism",
+    "label": "Neumorphism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "noir",
+    "label": "noir",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nordic",
+    "label": "Nordic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nouveau",
+    "label": "Nouveau",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "object",
+    "label": "Object",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "performative",
+    "label": "Performative",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "poly",
+    "label": "poly",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "postmodernism",
+    "label": "Postmodernism",
+    "category": "Design Style",
+    "opposites": [
+      "serif",
+      "serif",
+      "vintage"
+    ],
+    "suggestedLabels": [
+      "traditional",
+      "classical",
+      "vintage"
+    ]
+  },
+  {
+    "id": "pure",
+    "label": "Pure",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "relatable",
+    "label": "Relatable",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "romantic",
+    "label": "romantic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shade",
+    "label": "shade",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "skeuomorphic",
+    "label": "Skeuomorphic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "skeuomorphism",
+    "label": "Skeuomorphism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "street",
+    "label": "Street",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "structural",
+    "label": "Structural",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "surreal",
+    "label": "Surreal",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "surrealism",
+    "label": "Surrealism",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "swiss",
+    "label": "Swiss",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "technic",
+    "label": "Technic",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "techno",
+    "label": "Techno",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "traditional",
+    "label": "Traditional",
+    "category": "Design Style",
+    "opposites": [
+      "new",
+      "futuristic",
+      "new"
+    ],
+    "suggestedLabels": [
+      "modern",
+      "futuristic",
+      "contemporary",
+      "modern",
+      "contemporary",
+      "futuristic"
+    ]
+  },
+  {
+    "id": "zen",
+    "label": "Zen",
+    "category": "Design Style",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "3d",
+    "label": "3D",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aerial",
+    "label": "Aerial",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "animated",
+    "label": "Animated",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "art",
+    "label": "Art",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "art",
+    "label": "Art",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "artistic",
+    "label": "Artistic",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "blank",
+    "label": "Blank",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "blur",
+    "label": "Blur",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "capture",
+    "label": "Capture",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cinematography",
+    "label": "Cinematography",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "collage",
+    "label": "Collage",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "compositing",
+    "label": "Compositing",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curation",
+    "label": "Curation",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "design",
+    "label": "Design",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "detail",
+    "label": "Detail",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "digital",
+    "label": "Digital",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "drawing",
+    "label": "Drawing",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "exhibition",
+    "label": "Exhibition",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "filmic",
+    "label": "Filmic",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "filtering",
+    "label": "Filtering",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "game",
+    "label": "Game",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "generation",
+    "label": "Generation",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "generative",
+    "label": "Generative",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "graffiti",
+    "label": "Graffiti",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "graphics",
+    "label": "Graphics",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "iconography",
+    "label": "Iconography",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "illustration",
+    "label": "Illustration",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "imaging",
+    "label": "Imaging",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interface",
+    "label": "Interface",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "isometric",
+    "label": "Isometric",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "led",
+    "label": "Led",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "led",
+    "label": "Led",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lens",
+    "label": "Lens",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "manipulation",
+    "label": "Manipulation",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "masking",
+    "label": "Masking",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "media",
+    "label": "Media",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "modeling",
+    "label": "Modeling",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "painting",
+    "label": "Painting",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "photography",
+    "label": "Photography",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "photoreal",
+    "label": "Photoreal",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "photorealistic",
+    "label": "Photorealistic",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "process",
+    "label": "Process",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "projection",
+    "label": "Projection",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "render",
+    "label": "Render",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rendering",
+    "label": "Rendering",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "retouching",
+    "label": "Retouching",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "schematic",
+    "label": "Schematic",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shading",
+    "label": "Shading",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "simulation",
+    "label": "Simulation",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sketching",
+    "label": "Sketching",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "staging",
+    "label": "Staging",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "styling",
+    "label": "Styling",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "synthesis",
+    "label": "Synthesis",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "typeset",
+    "label": "Typeset",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "typesetting",
+    "label": "Typesetting",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "typographic",
+    "label": "Typographic",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "typography",
+    "label": "Typography",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ui-ux",
+    "label": "UI/UX",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vector",
+    "label": "Vector",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "video",
+    "label": "Video",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "visualization",
+    "label": "Visualization",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "volumetrics",
+    "label": "Volumetrics",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vr",
+    "label": "VR",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "web",
+    "label": "Web",
+    "category": "Design Technique",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "academia",
+    "label": "Academia",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aloof",
+    "label": "Aloof",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "warm",
+      "playful",
+      "welcoming"
+    ],
+    "suggestedLabels": [
+      "warm",
+      "friendly",
+      "inviting"
+    ]
+  },
+  {
+    "id": "analogous",
+    "label": "Analogous",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anger",
+    "label": "Anger",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anticipation",
+    "label": "Anticipation",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anxiety",
+    "label": "Anxiety",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "apprehension",
+    "label": "Apprehension",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aspirant",
+    "label": "Aspirant",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aspiration",
+    "label": "Aspiration",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aspire",
+    "label": "Aspire",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "awe",
+    "label": "Awe",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bliss",
+    "label": "Bliss",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "calm",
+    "label": "Calm",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "chaotic",
+      "heavy",
+      "immersive"
+    ],
+    "suggestedLabels": [
+      "chaotic",
+      "energetic",
+      "dramatic"
+    ]
+  },
+  {
+    "id": "caution",
+    "label": "Caution",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cheer",
+    "label": "Cheer",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "clarity",
+    "label": "Clarity",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "comfort",
+    "label": "Comfort",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "compassion",
+    "label": "Compassion",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "competence",
+    "label": "Competence",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "composed",
+    "label": "Composed",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "confidence",
+    "label": "Confidence",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "connection",
+    "label": "Connection",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "constrained",
+    "label": "Constrained",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "contemplation",
+    "label": "Contemplation",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "contemplative",
+    "label": "Contemplative",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "contentment",
+    "label": "Contentment",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "control",
+    "label": "Control",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "craving",
+    "label": "Craving",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curiosity",
+    "label": "Curiosity",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curious",
+    "label": "Curious",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "defiance",
+    "label": "Defiance",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "desire",
+    "label": "Desire",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "direct",
+    "label": "Direct",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "distraction",
+    "label": "Distraction",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "drive",
+    "label": "Drive",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "earnest",
+    "label": "Earnest",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ease",
+    "label": "Ease",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "eerie",
+    "label": "Eerie",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "effortless",
+    "label": "Effortless",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "electrified",
+    "label": "Electrified",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "empowered",
+    "label": "Empowered",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "engagement",
+    "label": "Engagement",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "excite",
+    "label": "Excite",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "excitement",
+    "label": "Excitement",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "familiarity",
+    "label": "Familiarity",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "freedom",
+    "label": "Freedom",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "heavy",
+    "label": "Heavy",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hope",
+    "label": "Hope",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "humor",
+    "label": "Humor",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inquiry",
+    "label": "Inquiry",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inspiration",
+    "label": "Inspiration",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inspire",
+    "label": "Inspire",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intellect",
+    "label": "Intellect",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intensity",
+    "label": "Intensity",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intent",
+    "label": "Intent",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intrigue",
+    "label": "Intrigue",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "introspection",
+    "label": "Introspection",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "introspective",
+    "label": "Introspective",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "isolated",
+    "label": "Isolated",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "joy",
+    "label": "Joy",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "melancholy",
+      "somber"
+    ],
+    "suggestedLabels": [
+      "melancholy",
+      "somber",
+      "serious"
+    ]
+  },
+  {
+    "id": "kinetic",
+    "label": "Kinetic",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lightness",
+    "label": "Lightness",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "dark",
+      "shadow"
+    ],
+    "suggestedLabels": [
+      "dark",
+      "shadow",
+      "obscure"
+    ]
+  },
+  {
+    "id": "melancholy",
+    "label": "Melancholy",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "playful",
+      "whimsical",
+      "playful"
+    ],
+    "suggestedLabels": [
+      "joyful",
+      "playful",
+      "lighthearted"
+    ]
+  },
+  {
+    "id": "merriment",
+    "label": "Merriment",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mirth",
+    "label": "Mirth",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mystery",
+    "label": "Mystery",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mystique",
+    "label": "Mystique",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nostalgia",
+    "label": "Nostalgia",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "overload",
+    "label": "Overload",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "peace",
+    "label": "Peace",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "chaotic",
+      "heavy",
+      "immersive"
+    ],
+    "suggestedLabels": [
+      "chaotic",
+      "energetic",
+      "dramatic"
+    ]
+  },
+  {
+    "id": "peaceful",
+    "label": "Peaceful",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "chaotic",
+      "heavy",
+      "immersive"
+    ],
+    "suggestedLabels": [
+      "chaotic",
+      "energetic",
+      "dramatic"
+    ]
+  },
+  {
+    "id": "playful",
+    "label": "Playful",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "melancholy",
+      "somber"
+    ],
+    "suggestedLabels": [
+      "melancholy",
+      "somber",
+      "serious"
+    ]
+  },
+  {
+    "id": "poised",
+    "label": "Poised",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "potency",
+    "label": "Potency",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "prudence",
+    "label": "Prudence",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reassurance",
+    "label": "Reassurance",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rebellious",
+    "label": "Rebellious",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reflective",
+    "label": "Reflective",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "refreshing",
+    "label": "Refreshing",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "relax",
+    "label": "Relax",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reliability",
+    "label": "Reliability",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "retro",
+    "label": "Retro",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reverence",
+    "label": "Reverence",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "secure",
+    "label": "Secure",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "serene",
+    "label": "Serene",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "chaotic",
+      "heavy",
+      "immersive"
+    ],
+    "suggestedLabels": [
+      "chaotic",
+      "energetic",
+      "dramatic"
+    ]
+  },
+  {
+    "id": "serenity",
+    "label": "Serenity",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sincere",
+    "label": "Sincere",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "social",
+    "label": "Social",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "solemn",
+    "label": "Solemn",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stately",
+    "label": "Stately",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "subtlety",
+    "label": "Subtlety",
+    "category": "Feeling / Emotion",
+    "opposites": [
+      "confident",
+      "immersive",
+      "confident"
+    ],
+    "suggestedLabels": [
+      "bold",
+      "dramatic",
+      "confident"
+    ]
+  },
+  {
+    "id": "surge",
+    "label": "Surge",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "suspense",
+    "label": "Suspense",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "systemic",
+    "label": "Systemic",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "thoughtful",
+    "label": "Thoughtful",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "thrill",
+    "label": "Thrill",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transit",
+    "label": "Transit",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "triumph",
+    "label": "Triumph",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "uplift",
+    "label": "Uplift",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "urgency",
+    "label": "Urgency",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vintage",
+    "label": "Vintage",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "visceral",
+    "label": "Visceral",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "welcome",
+    "label": "Welcome",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "whimsical",
+    "label": "Whimsical",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "whimsy",
+    "label": "Whimsy",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wonder",
+    "label": "Wonder",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "zest",
+    "label": "Zest",
+    "category": "Feeling / Emotion",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "accordion",
+    "label": "Accordion",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "alignment",
+    "label": "Alignment",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "amorphous",
+    "label": "Amorphous",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anatomy",
+    "label": "Anatomy",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anchored",
+    "label": "Anchored",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "arch",
+    "label": "Arch",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "architecture",
+    "label": "Architecture",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "array",
+    "label": "Array",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "assembly",
+    "label": "Assembly",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "axial",
+    "label": "Axial",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "balance",
+    "label": "Balance",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "based",
+    "label": "Based",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "based",
+    "label": "Based",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "basic",
+    "label": "Basic",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "blob",
+    "label": "Blob",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "block",
+    "label": "Block",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "boundless",
+    "label": "Boundless",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "canvas",
+    "label": "Canvas",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "centralized",
+    "label": "Centralized",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "centric",
+    "label": "Centric",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "circle",
+    "label": "Circle",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "circular",
+    "label": "Circular",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "clustered",
+    "label": "Clustered",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "coil",
+    "label": "Coil",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "columnar",
+    "label": "Columnar",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "condensed",
+    "label": "Condensed",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "constellation",
+    "label": "Constellation",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "containment",
+    "label": "Containment",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "contour",
+    "label": "Contour",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "corridor",
+    "label": "Corridor",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curve",
+    "label": "Curve",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curvilinear",
+    "label": "Curvilinear",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cylindrical",
+    "label": "Cylindrical",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dashboard",
+    "label": "Dashboard",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "diagonal",
+    "label": "Diagonal",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dispersed",
+    "label": "Dispersed",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "distributed",
+    "label": "Distributed",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dome",
+    "label": "Dome",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ecommerce",
+    "label": "Ecommerce",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "enclosure",
+    "label": "Enclosure",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ergonomic",
+    "label": "Ergonomic",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "field",
+    "label": "Field",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "float",
+    "label": "Float",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flow",
+    "label": "Flow",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flowchart",
+    "label": "Flowchart",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "formless",
+    "label": "Formless",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fragmentation",
+    "label": "Fragmentation",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "frame",
+    "label": "Frame",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "framing",
+    "label": "Framing",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "geometric",
+    "label": "Geometric",
+    "category": "Form & Structure",
+    "opposites": [
+      "organic",
+      "organic",
+      "script"
+    ],
+    "suggestedLabels": [
+      "organic",
+      "curved",
+      "flowing",
+      "organic",
+      "curved",
+      "flowing"
+    ]
+  },
+  {
+    "id": "grid",
+    "label": "Grid",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grouping",
+    "label": "Grouping",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hierarchy",
+    "label": "Hierarchy",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "imposing",
+    "label": "Imposing",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interrupted",
+    "label": "Interrupted",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intersect",
+    "label": "Intersect",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interwoven",
+    "label": "Interwoven",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "jagged",
+    "label": "Jagged",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lattice",
+    "label": "Lattice",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "layers",
+    "label": "Layers",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "line",
+    "label": "Line",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mass",
+    "label": "Mass",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "matrix",
+    "label": "Matrix",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mesh",
+    "label": "Mesh",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "modular",
+    "label": "Modular",
+    "category": "Form & Structure",
+    "opposites": [
+      "monolithic"
+    ],
+    "suggestedLabels": [
+      "monolithic",
+      "unified",
+      "integrated"
+    ]
+  },
+  {
+    "id": "modularity",
+    "label": "Modularity",
+    "category": "Form & Structure",
+    "opposites": [
+      "monolithic"
+    ],
+    "suggestedLabels": [
+      "monolithic",
+      "unified",
+      "integrated"
+    ]
+  },
+  {
+    "id": "module",
+    "label": "Module",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "monolithic",
+    "label": "Monolithic",
+    "category": "Form & Structure",
+    "opposites": [
+      "modular",
+      "fragment"
+    ],
+    "suggestedLabels": [
+      "modular",
+      "segmented",
+      "fragmented"
+    ]
+  },
+  {
+    "id": "nodes",
+    "label": "Nodes",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "obscured",
+    "label": "Obscured",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "octagonal",
+    "label": "Octagonal",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pathway",
+    "label": "Pathway",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pinnacle",
+    "label": "Pinnacle",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "polygon",
+    "label": "Polygon",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "polyhedron",
+    "label": "Polyhedron",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "proportion",
+    "label": "Proportion",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pyramid",
+    "label": "Pyramid",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "radial",
+    "label": "Radial",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rectangle",
+    "label": "Rectangle",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rectangular",
+    "label": "Rectangular",
+    "category": "Form & Structure",
+    "opposites": [
+      "organic",
+      "organic",
+      "script"
+    ],
+    "suggestedLabels": [
+      "organic",
+      "curved",
+      "flowing"
+    ]
+  },
+  {
+    "id": "rectilinear",
+    "label": "Rectilinear",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "repetition",
+    "label": "Repetition",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rhythm",
+    "label": "Rhythm",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scaffold",
+    "label": "Scaffold",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scale",
+    "label": "Scale",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scatter",
+    "label": "Scatter",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scroll",
+    "label": "Scroll",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "serif",
+    "label": "Serif",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shape",
+    "label": "Shape",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sidebar",
+    "label": "Sidebar",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "silhouette",
+    "label": "Silhouette",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sphere",
+    "label": "Sphere",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spherical",
+    "label": "Spherical",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spiral",
+    "label": "Spiral",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stack",
+    "label": "Stack",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "statuary",
+    "label": "Statuary",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "streamline",
+    "label": "Streamline",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tabs",
+    "label": "Tabs",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tiered",
+    "label": "Tiered",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "topography",
+    "label": "Topography",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tubular",
+    "label": "Tubular",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tunnel",
+    "label": "Tunnel",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "type",
+    "label": "Type",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "undefined",
+    "label": "Undefined",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "undulation",
+    "label": "Undulation",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "uniform",
+    "label": "Uniform",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "verticality",
+    "label": "Verticality",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "volume",
+    "label": "Volume",
+    "category": "Form & Structure",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "absorption",
+    "label": "Absorption",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "abstraction",
+    "label": "Abstraction",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "abyss",
+    "label": "Abyss",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "accumulation",
+    "label": "Accumulation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "archetype",
+    "label": "Archetype",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "arid",
+    "label": "Arid",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "arrangement",
+    "label": "Arrangement",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "assemblage",
+    "label": "Assemblage",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "astral",
+    "label": "Astral",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "asymmetrical",
+    "label": "Asymmetrical",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "atmosphere",
+    "label": "Atmosphere",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aura",
+    "label": "Aura",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "aurora",
+    "label": "Aurora",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "being",
+    "label": "Being",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bloom",
+    "label": "Bloom",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bond",
+    "label": "Bond",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "burst",
+    "label": "Burst",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "celestial",
+    "label": "Celestial",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chronos",
+    "label": "Chronos",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chthonic",
+    "label": "Chthonic",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "circuit",
+    "label": "Circuit",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cloud",
+    "label": "Cloud",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "conduit",
+    "label": "Conduit",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "construct",
+    "label": "Construct",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "core",
+    "label": "Core",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cosmos",
+    "label": "Cosmos",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cottagecore",
+    "label": "Cottagecore",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "crystalline",
+    "label": "Crystalline",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cultivation",
+    "label": "Cultivation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cycle",
+    "label": "Cycle",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dawn",
+    "label": "Dawn",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "decay",
+    "label": "Decay",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "delicacy",
+    "label": "Delicacy",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "diffusion",
+    "label": "Diffusion",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "disruption",
+    "label": "Disruption",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "distinctness",
+    "label": "Distinctness",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "domain",
+    "label": "Domain",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "drift",
+    "label": "Drift",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "echo",
+    "label": "Echo",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "element",
+    "label": "Element",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "elevation",
+    "label": "Elevation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "emanation",
+    "label": "Emanation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ember",
+    "label": "Ember",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "emotion",
+    "label": "Emotion",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "energy",
+    "label": "Energy",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "envelop",
+    "label": "Envelop",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "environment",
+    "label": "Environment",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ephemeral",
+    "label": "Ephemeral",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "equilibrium",
+    "label": "Equilibrium",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "evolution",
+    "label": "Evolution",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "evolve",
+    "label": "Evolve",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "expanse",
+    "label": "Expanse",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "expansion",
+    "label": "Expansion",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "expression",
+    "label": "Expression",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fantasy",
+    "label": "Fantasy",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fire",
+    "label": "Fire",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flare",
+    "label": "Flare",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flex",
+    "label": "Flex",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flora",
+    "label": "Flora",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flourish",
+    "label": "Flourish",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "force",
+    "label": "Force",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "formation",
+    "label": "Formation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "foundation",
+    "label": "Foundation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "framework",
+    "label": "Framework",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "freeze",
+    "label": "Freeze",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "freshness",
+    "label": "Freshness",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "genesis",
+    "label": "Genesis",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "geology",
+    "label": "Geology",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "germination",
+    "label": "Germination",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gravity",
+    "label": "Gravity",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grounding",
+    "label": "Grounding",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "growth",
+    "label": "Growth",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "handwritten",
+    "label": "Handwritten",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "haze",
+    "label": "Haze",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "horizon",
+    "label": "Horizon",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ice",
+    "label": "Ice",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ideal",
+    "label": "Ideal",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "instinct",
+    "label": "Instinct",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interconnection",
+    "label": "Interconnection",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interlock",
+    "label": "Interlock",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "life",
+    "label": "Life",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "liquid",
+    "label": "Liquid",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lumen",
+    "label": "Lumen",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "luminance",
+    "label": "Luminance",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "luminescence",
+    "label": "Luminescence",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lunar",
+    "label": "Lunar",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "manifestation",
+    "label": "Manifestation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "masonry",
+    "label": "Masonry",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "melody",
+    "label": "Melody",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "micro",
+    "label": "Micro",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mineral",
+    "label": "Mineral",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mist",
+    "label": "Mist",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "molecular",
+    "label": "Molecular",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "momentum",
+    "label": "Momentum",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "morph",
+    "label": "Morph",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "movement",
+    "label": "Movement",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mystic",
+    "label": "Mystic",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nebula",
+    "label": "Nebula",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "network",
+    "label": "Network",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nexus",
+    "label": "Nexus",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "night",
+    "label": "Night",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nourish",
+    "label": "Nourish",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "observation",
+    "label": "Observation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "openness",
+    "label": "Openness",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "orbit",
+    "label": "Orbit",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "organic",
+    "label": "Organic",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [
+      "synthetic",
+      "serif",
+      "geometric",
+      "modular"
+    ],
+    "suggestedLabels": [
+      "artificial",
+      "synthetic",
+      "manufactured",
+      "geometric",
+      "angular",
+      "structured"
+    ]
+  },
+  {
+    "id": "pattern",
+    "label": "Pattern",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "penetration",
+    "label": "Penetration",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "planetary",
+    "label": "Planetary",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "portal",
+    "label": "Portal",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "primal",
+    "label": "Primal",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "principle",
+    "label": "Principle",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "protection",
+    "label": "Protection",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "psyche",
+    "label": "Psyche",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pulse",
+    "label": "Pulse",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "radiance",
+    "label": "Radiance",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "refraction",
+    "label": "Refraction",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "remnant",
+    "label": "Remnant",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "renewal",
+    "label": "Renewal",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "resonance",
+    "label": "Resonance",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "restraint",
+    "label": "Restraint",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "revelation",
+    "label": "Revelation",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ripple",
+    "label": "Ripple",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rupture",
+    "label": "Rupture",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "script",
+    "label": "Script",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sculptural",
+    "label": "Sculptural",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "seasons",
+    "label": "Seasons",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "seed",
+    "label": "Seed",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shaping",
+    "label": "Shaping",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shelter",
+    "label": "Shelter",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "shimmer",
+    "label": "Shimmer",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "signal",
+    "label": "Signal",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "silence",
+    "label": "Silence",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sky",
+    "label": "Sky",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "skyward",
+    "label": "Skyward",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "solar",
+    "label": "Solar",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spark",
+    "label": "Spark",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "speed",
+    "label": "Speed",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spirit",
+    "label": "Spirit",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stillness",
+    "label": "Stillness",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stratum",
+    "label": "Stratum",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "streak",
+    "label": "Streak",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stream",
+    "label": "Stream",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "substance",
+    "label": "Substance",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sun",
+    "label": "Sun",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "swirl",
+    "label": "Swirl",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "symbiosis",
+    "label": "Symbiosis",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "terrestrial",
+    "label": "Terrestrial",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "trace",
+    "label": "Trace",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "trajectory",
+    "label": "Trajectory",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transcendence",
+    "label": "Transcendence",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transient",
+    "label": "Transient",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transparency",
+    "label": "Transparency",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "unfolding",
+    "label": "Unfolding",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "units",
+    "label": "Units",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vanishing",
+    "label": "Vanishing",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "velocity",
+    "label": "Velocity",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "verdant",
+    "label": "Verdant",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vibrancy",
+    "label": "Vibrancy",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vigor",
+    "label": "Vigor",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "virtual",
+    "label": "Virtual",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vista",
+    "label": "Vista",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vitality",
+    "label": "Vitality",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "void",
+    "label": "Void",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vortex",
+    "label": "Vortex",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "voyage",
+    "label": "Voyage",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "water",
+    "label": "Water",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "weave",
+    "label": "Weave",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wild",
+    "label": "Wild",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wilderness",
+    "label": "Wilderness",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wind",
+    "label": "Wind",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "world",
+    "label": "World",
+    "category": "Natural / Metaphysical Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "absence",
+    "label": "Absence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [
+      "presence"
+    ],
+    "suggestedLabels": [
+      "presence",
+      "existence",
+      "fullness"
+    ]
+  },
+  {
+    "id": "absurdity",
+    "label": "Absurdity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "abundance",
+    "label": "Abundance",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "analysis",
+    "label": "Analysis",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "archival",
+    "label": "Archival",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "artifice",
+    "label": "Artifice",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ascension",
+    "label": "Ascension",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ascent",
+    "label": "Ascent",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "assertion",
+    "label": "Assertion",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "augmentation",
+    "label": "Augmentation",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "autonomy",
+    "label": "Autonomy",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "barrier",
+    "label": "Barrier",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "becoming",
+    "label": "Becoming",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "beginning",
+    "label": "Beginning",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "belonging",
+    "label": "Belonging",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "catalog",
+    "label": "Catalog",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "categorization",
+    "label": "Categorization",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "celebration",
+    "label": "Celebration",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "challenge",
+    "label": "Challenge",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chaos",
+    "label": "Chaos",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [
+      "order",
+      "grid",
+      "harmony"
+    ],
+    "suggestedLabels": [
+      "order",
+      "structure",
+      "harmony"
+    ]
+  },
+  {
+    "id": "coexistence",
+    "label": "Coexistence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [
+      "absence",
+      "void",
+      "empty"
+    ],
+    "suggestedLabels": [
+      "absence",
+      "void",
+      "emptiness"
+    ]
+  },
+  {
+    "id": "cohesion",
+    "label": "Cohesion",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "collaboration",
+    "label": "Collaboration",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "collective",
+    "label": "Collective",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "complexity",
+    "label": "Complexity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "confinement",
+    "label": "Confinement",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "connectedness",
+    "label": "Connectedness",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "connection",
+    "label": "Connection",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "conscience",
+    "label": "Conscience",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "continuity",
+    "label": "Continuity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "continuum",
+    "label": "Continuum",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "convergence",
+    "label": "Convergence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "craft",
+    "label": "Craft",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "creation",
+    "label": "Creation",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dawn",
+    "label": "Dawn",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "deconstruction",
+    "label": "Deconstruction",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "discipline",
+    "label": "Discipline",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "disconnect",
+    "label": "Disconnect",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "discovery",
+    "label": "Discovery",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "distortion",
+    "label": "Distortion",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "divergence",
+    "label": "Divergence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "duality",
+    "label": "Duality",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dwelling",
+    "label": "Dwelling",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "embodiment",
+    "label": "Embodiment",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "emergence",
+    "label": "Emergence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "empathy",
+    "label": "Empathy",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "empowerment",
+    "label": "Empowerment",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "endurance",
+    "label": "Endurance",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "enduring",
+    "label": "Enduring",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "escape",
+    "label": "Escape",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "evaluation",
+    "label": "Evaluation",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "exposure",
+    "label": "Exposure",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "expressiveness",
+    "label": "Expressiveness",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fantasy",
+    "label": "Fantasy",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flux",
+    "label": "Flux",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fragility",
+    "label": "Fragility",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fragment",
+    "label": "Fragment",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fulfillment",
+    "label": "Fulfillment",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "future",
+    "label": "Future",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "humanity",
+    "label": "Humanity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "identity",
+    "label": "Identity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "idyll",
+    "label": "Idyll",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "illumination",
+    "label": "Illumination",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "illusion",
+    "label": "Illusion",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "imagination",
+    "label": "Imagination",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "immensity",
+    "label": "Immensity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "impact",
+    "label": "Impact",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "imperfection",
+    "label": "Imperfection",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "impermanence",
+    "label": "Impermanence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "infinity",
+    "label": "Infinity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "innocence",
+    "label": "Innocence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "insight",
+    "label": "Insight",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "integration",
+    "label": "Integration",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interconnectedness",
+    "label": "Interconnectedness",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interdependence",
+    "label": "Interdependence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "interplay",
+    "label": "Interplay",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intertwined",
+    "label": "Intertwined",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "journey",
+    "label": "Journey",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "juxtaposition",
+    "label": "Juxtaposition",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "layering",
+    "label": "Layering",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "legacy",
+    "label": "Legacy",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "limbo",
+    "label": "Limbo",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "liminality",
+    "label": "Liminality",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "linkage",
+    "label": "Linkage",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "logic",
+    "label": "Logic",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mastery",
+    "label": "Mastery",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "measure",
+    "label": "Measure",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mechanism",
+    "label": "Mechanism",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "memory",
+    "label": "Memory",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "moment",
+    "label": "Moment",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mortality",
+    "label": "Mortality",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mythos",
+    "label": "Mythos",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nature",
+    "label": "Nature",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nullity",
+    "label": "Nullity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nurture",
+    "label": "Nurture",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "optimization",
+    "label": "Optimization",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "order",
+    "label": "Order",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [
+      "chaos"
+    ],
+    "suggestedLabels": [
+      "chaos",
+      "disorder",
+      "randomness"
+    ]
+  },
+  {
+    "id": "origin",
+    "label": "Origin",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "passage",
+    "label": "Passage",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "perception",
+    "label": "Perception",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "persistence",
+    "label": "Persistence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "plurality",
+    "label": "Plurality",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "possibility",
+    "label": "Possibility",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "potential",
+    "label": "Potential",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "presence",
+    "label": "Presence",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [
+      "absence",
+      "void",
+      "empty"
+    ],
+    "suggestedLabels": [
+      "absence",
+      "void",
+      "emptiness"
+    ]
+  },
+  {
+    "id": "preservation",
+    "label": "Preservation",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "preserve",
+    "label": "Preserve",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "progress",
+    "label": "Progress",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "purity",
+    "label": "Purity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "purpose",
+    "label": "Purpose",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pursuit",
+    "label": "Pursuit",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "quest",
+    "label": "Quest",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "realm",
+    "label": "Realm",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rebellion",
+    "label": "Rebellion",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rebirth",
+    "label": "Rebirth",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "redefinition",
+    "label": "Redefinition",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reflection",
+    "label": "Reflection",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "remembrance",
+    "label": "Remembrance",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "resilience",
+    "label": "Resilience",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ritual",
+    "label": "Ritual",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sanctuary",
+    "label": "Sanctuary",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "selection",
+    "label": "Selection",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "significance",
+    "label": "Significance",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "singularity",
+    "label": "Singularity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "solitude",
+    "label": "Solitude",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "source",
+    "label": "Source",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "subjectivity",
+    "label": "Subjectivity",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "suspension",
+    "label": "Suspension",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sustenance",
+    "label": "Sustenance",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "systems",
+    "label": "Systems",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tangibility",
+    "label": "Tangibility",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "threshold",
+    "label": "Threshold",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "time",
+    "label": "Time",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "timelessness",
+    "label": "Timelessness",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transformation",
+    "label": "Transformation",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transience",
+    "label": "Transience",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "truth",
+    "label": "Truth",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "understanding",
+    "label": "Understanding",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "unseen",
+    "label": "Unseen",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "value",
+    "label": "Value",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vastness",
+    "label": "Vastness",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vision",
+    "label": "Vision",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vulnerability",
+    "label": "Vulnerability",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wholeness",
+    "label": "Wholeness",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "yearning",
+    "label": "Yearning",
+    "category": "Philosophical / Existential Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "access",
+    "label": "Access",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "activity",
+    "label": "Activity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "adaptation",
+    "label": "Adaptation",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "adoption",
+    "label": "Adoption",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "advancement",
+    "label": "Advancement",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "affluence",
+    "label": "Affluence",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "agency",
+    "label": "Agency",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "algorithm",
+    "label": "Algorithm",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ambition",
+    "label": "Ambition",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anonymity",
+    "label": "Anonymity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "anonymous",
+    "label": "Anonymous",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "artistry",
+    "label": "Artistry",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "attention",
+    "label": "Attention",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "authenticity",
+    "label": "Authenticity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "authoritative",
+    "label": "Authoritative",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "authority",
+    "label": "Authority",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "authorship",
+    "label": "Authorship",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "automation",
+    "label": "Automation",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "automotive",
+    "label": "Automotive",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "avatar",
+    "label": "Avatar",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "awareness",
+    "label": "Awareness",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bespoke",
+    "label": "Bespoke",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "biophilia",
+    "label": "Biophilia",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "branding",
+    "label": "Branding",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "camp",
+    "label": "Camp",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "care",
+    "label": "Care",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "celebrity",
+    "label": "Celebrity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "childhood",
+    "label": "Childhood",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chronicle",
+    "label": "Chronicle",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "coding",
+    "label": "Coding",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cognition",
+    "label": "Cognition",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "communal",
+    "label": "Communal",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "communication",
+    "label": "Communication",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "community",
+    "label": "Community",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "computing",
+    "label": "Computing",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "confident",
+    "label": "Confident",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "connectivity",
+    "label": "Connectivity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "conscientious",
+    "label": "Conscientious",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "conscious",
+    "label": "Conscious",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "consumerism",
+    "label": "Consumerism",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "convenience",
+    "label": "Convenience",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "corporate",
+    "label": "Corporate",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "craft",
+    "label": "Craft",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "craftsmanship",
+    "label": "Craftsmanship",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "creativity",
+    "label": "Creativity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "critique",
+    "label": "Critique",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "culture",
+    "label": "Culture",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curatorial",
+    "label": "Curatorial",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "data",
+    "label": "Data",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "decentralization",
+    "label": "Decentralization",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "digitalization",
+    "label": "Digitalization",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "digitization",
+    "label": "Digitization",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "diversity",
+    "label": "Diversity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "domestic",
+    "label": "Domestic",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ecology",
+    "label": "Ecology",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "economy",
+    "label": "Economy",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "education",
+    "label": "Education",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "efficiency",
+    "label": "Efficiency",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "escapism",
+    "label": "Escapism",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "estate",
+    "label": "Estate",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "european",
+    "label": "European",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "exclusivity",
+    "label": "Exclusivity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "experience",
+    "label": "Experience",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "expertise",
+    "label": "Expertise",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "feminine",
+    "label": "Feminine",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "finance",
+    "label": "Finance",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "focused",
+    "label": "Focused",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gamification",
+    "label": "Gamification",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gaming",
+    "label": "Gaming",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gathering",
+    "label": "Gathering",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gender",
+    "label": "Gender",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "glamour",
+    "label": "Glamour",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "global",
+    "label": "Global",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "globalization",
+    "label": "Globalization",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "government",
+    "label": "Government",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "healthcare",
+    "label": "Healthcare",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "heritage",
+    "label": "Heritage",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hidden",
+    "label": "Hidden",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hospitality",
+    "label": "Hospitality",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "icon",
+    "label": "Icon",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "immersion",
+    "label": "Immersion",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inclusion",
+    "label": "Inclusion",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inclusivity",
+    "label": "Inclusivity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "independence",
+    "label": "Independence",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "individualism",
+    "label": "Individualism",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "industry",
+    "label": "Industry",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "influence",
+    "label": "Influence",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "infrastructure",
+    "label": "Infrastructure",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "innovate",
+    "label": "Innovate",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intelligence",
+    "label": "Intelligence",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intentional",
+    "label": "Intentional",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "isolation",
+    "label": "Isolation",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "knowledge",
+    "label": "Knowledge",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "language",
+    "label": "Language",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "layout",
+    "label": "Layout",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "leisure",
+    "label": "Leisure",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lifestyle",
+    "label": "Lifestyle",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "literacy",
+    "label": "Literacy",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "local",
+    "label": "Local",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lore",
+    "label": "Lore",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "media",
+    "label": "Media",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "memorial",
+    "label": "Memorial",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "modernity",
+    "label": "Modernity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [
+      "serif",
+      "serif",
+      "vintage"
+    ],
+    "suggestedLabels": [
+      "traditional",
+      "classical",
+      "vintage"
+    ]
+  },
+  {
+    "id": "naturalism",
+    "label": "Naturalism",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "neurodiversity",
+    "label": "Neurodiversity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nonconformity",
+    "label": "Nonconformity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "novelty",
+    "label": "Novelty",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nurturing",
+    "label": "Nurturing",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pause",
+    "label": "Pause",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "personalization",
+    "label": "Personalization",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "philanthropy",
+    "label": "Philanthropy",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "planning",
+    "label": "Planning",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "posthuman",
+    "label": "Posthuman",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "power",
+    "label": "Power",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "premium",
+    "label": "Premium",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "prestige",
+    "label": "Prestige",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "privacy",
+    "label": "Privacy",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "privilege",
+    "label": "Privilege",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "productivity",
+    "label": "Productivity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "professional",
+    "label": "Professional",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "prosperity",
+    "label": "Prosperity",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "readiness",
+    "label": "Readiness",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "refinement",
+    "label": "Refinement",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "regulation",
+    "label": "Regulation",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reinvention",
+    "label": "Reinvention",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "relevance",
+    "label": "Relevance",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "reliable",
+    "label": "Reliable",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "representation",
+    "label": "Representation",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "responsive",
+    "label": "Responsive",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "retrofuture",
+    "label": "Retrofuture",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "saas",
+    "label": "SaaS",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "serif",
+    "label": "Serif",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "spectacle",
+    "label": "Spectacle",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "status",
+    "label": "Status",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stewardship",
+    "label": "Stewardship",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "story",
+    "label": "Story",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "subversion",
+    "label": "Subversion",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "surveillance",
+    "label": "Surveillance",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "survival",
+    "label": "Survival",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sustain",
+    "label": "Sustain",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sustainability",
+    "label": "Sustainability",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "synergy",
+    "label": "Synergy",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "technology",
+    "label": "Technology",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "text",
+    "label": "Text",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "top",
+    "label": "Top",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "trend",
+    "label": "Trend",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "trustworthy",
+    "label": "Trustworthy",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "type",
+    "label": "Type",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "utility",
+    "label": "Utility",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "visibility",
+    "label": "Visibility",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wanderlust",
+    "label": "Wanderlust",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "welfare",
+    "label": "Welfare",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wellbeing",
+    "label": "Wellbeing",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "youth",
+    "label": "Youth",
+    "category": "Social / Cultural Concepts",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "acoustic",
+    "label": "Acoustic",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "baked",
+    "label": "Baked",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "braided",
+    "label": "Braided",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "brittle",
+    "label": "Brittle",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "brushed",
+    "label": "Brushed",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "brushwork",
+    "label": "Brushwork",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ceramic",
+    "label": "Ceramic",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chipped",
+    "label": "Chipped",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "clear",
+    "label": "Clear",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "coarse",
+    "label": "Coarse",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cracked",
+    "label": "Cracked",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "crisp",
+    "label": "Crisp",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dense",
+    "label": "Dense",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "diffused",
+    "label": "Diffused",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "digital",
+    "label": "Digital",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "distorted",
+    "label": "Distorted",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dot",
+    "label": "Dot",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dust",
+    "label": "Dust",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "emissive",
+    "label": "Emissive",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "empty",
+    "label": "Empty",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "engineered",
+    "label": "Engineered",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fabric",
+    "label": "Fabric",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "faceted",
+    "label": "Faceted",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fibrous",
+    "label": "Fibrous",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fine",
+    "label": "Fine",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flaky",
+    "label": "Flaky",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flatness",
+    "label": "Flatness",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "flesh",
+    "label": "Flesh",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fluid",
+    "label": "Fluid",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "solid",
+      "strict",
+      "static"
+    ],
+    "suggestedLabels": [
+      "solid",
+      "rigid",
+      "static"
+    ]
+  },
+  {
+    "id": "gentle",
+    "label": "Gentle",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "hard",
+      "strict",
+      "sharp"
+    ],
+    "suggestedLabels": [
+      "hard",
+      "rigid",
+      "sharp"
+    ]
+  },
+  {
+    "id": "glassy",
+    "label": "Glassy",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "glazed",
+    "label": "Glazed",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "glossy",
+    "label": "Glossy",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "gritty",
+      "gritty",
+      "grainy"
+    ],
+    "suggestedLabels": [
+      "rough",
+      "textured",
+      "grainy"
+    ]
+  },
+  {
+    "id": "grained",
+    "label": "Grained",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grainy",
+    "label": "Grainy",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "gradient",
+      "professional",
+      "glossy"
+    ],
+    "suggestedLabels": [
+      "smooth",
+      "polished",
+      "glossy"
+    ]
+  },
+  {
+    "id": "granular",
+    "label": "Granular",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "graphite",
+    "label": "Graphite",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gritty",
+    "label": "Gritty",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "hard",
+    "label": "Hard",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "soft",
+      "gentle"
+    ],
+    "suggestedLabels": [
+      "soft",
+      "gentle",
+      "pliable",
+      "soft",
+      "gentle",
+      "pliable"
+    ]
+  },
+  {
+    "id": "hazy",
+    "label": "Hazy",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "layered",
+    "label": "Layered",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "layout",
+    "label": "Layout",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "layout",
+    "label": "Layout",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "luminescent",
+    "label": "Luminescent",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "lustrous",
+    "label": "Lustrous",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "marble",
+    "label": "Marble",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "matte",
+    "label": "Matte",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "metallic",
+    "label": "Metallic",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "overlapping",
+    "label": "Overlapping",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "painterly",
+    "label": "Painterly",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "paneled",
+    "label": "Paneled",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "panelled",
+    "label": "Panelled",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "paper",
+    "label": "Paper",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "particle",
+    "label": "Particle",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "particulate",
+    "label": "Particulate",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pixel",
+    "label": "Pixel",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pixelated",
+    "label": "Pixelated",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "planar",
+    "label": "Planar",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "plastic",
+    "label": "Plastic",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "plush",
+    "label": "Plush",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "powder",
+    "label": "Powder",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pulp",
+    "label": "Pulp",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "relief",
+    "label": "Relief",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rocky",
+    "label": "Rocky",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "rugged",
+    "label": "Rugged",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scrolling",
+    "label": "Scrolling",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sharp",
+    "label": "Sharp",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "soft",
+      "gentle"
+    ],
+    "suggestedLabels": [
+      "soft",
+      "gentle",
+      "pliable"
+    ]
+  },
+  {
+    "id": "sheen",
+    "label": "Sheen",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sheer",
+    "label": "Sheer",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "silk",
+    "label": "Silk",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "skeletal",
+    "label": "Skeletal",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "slick",
+    "label": "Slick",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "smoothness",
+    "label": "Smoothness",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "gritty",
+      "gritty",
+      "grainy"
+    ],
+    "suggestedLabels": [
+      "rough",
+      "textured",
+      "grainy",
+      "rough",
+      "textured",
+      "grainy"
+    ]
+  },
+  {
+    "id": "soft",
+    "label": "Soft",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "hard",
+      "strict",
+      "sharp"
+    ],
+    "suggestedLabels": [
+      "hard",
+      "rigid",
+      "sharp",
+      "hard",
+      "rigid",
+      "sharp"
+    ]
+  },
+  {
+    "id": "solid",
+    "label": "Solid",
+    "category": "Texture & Materiality",
+    "opposites": [
+      "fluid"
+    ],
+    "suggestedLabels": [
+      "fluid",
+      "hollow",
+      "porous"
+    ]
+  },
+  {
+    "id": "speckled",
+    "label": "Speckled",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sticker",
+    "label": "Sticker",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "stone",
+    "label": "Stone",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "subsurface",
+    "label": "Subsurface",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "synthetic",
+    "label": "Synthetic",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "textural",
+    "label": "Textural",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "translucent",
+    "label": "Translucent",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "transparent",
+    "label": "Transparent",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vapor",
+    "label": "Vapor",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "vapour",
+    "label": "Vapour",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "velvet",
+    "label": "Velvet",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wood",
+    "label": "Wood",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "worn",
+    "label": "Worn",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "woven",
+    "label": "Woven",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "y2k",
+    "label": "Y2K",
+    "category": "Texture & Materiality",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ai",
+    "label": "AI",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ambient",
+    "label": "Ambient",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "analytical",
+    "label": "Analytical",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "artisanal",
+    "label": "Artisanal",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "biographical",
+    "label": "Biographical",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "bleed",
+    "label": "Bleed",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "calculated",
+    "label": "Calculated",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cerebral",
+    "label": "Cerebral",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chaotic",
+    "label": "Chaotic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chic",
+    "label": "Chic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "chill",
+    "label": "Chill",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cinematic",
+    "label": "Cinematic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "clinical",
+    "label": "Clinical",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "coded",
+    "label": "Coded",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "cosmic",
+    "label": "Cosmic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "curated",
+    "label": "Curated",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dark",
+    "label": "Dark",
+    "category": "Vibe / Mood",
+    "opposites": [
+      "light",
+      "neon",
+      "vibrant"
+    ],
+    "suggestedLabels": [
+      "light",
+      "bright",
+      "luminous"
+    ]
+  },
+  {
+    "id": "desolate",
+    "label": "Desolate",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "disruptive",
+    "label": "Disruptive",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "dreamlike",
+    "label": "Dreamlike",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "driven",
+    "label": "Driven",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "edge",
+    "label": "Edge",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "elevated",
+    "label": "Elevated",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "enchanted",
+    "label": "Enchanted",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "enchanting",
+    "label": "Enchanting",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "enigmatic",
+    "label": "Enigmatic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "epic",
+    "label": "Epic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ethereal",
+    "label": "Ethereal",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "evening",
+    "label": "Evening",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "evocative",
+    "label": "Evocative",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "exploratory",
+    "label": "Exploratory",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fanciful",
+    "label": "Fanciful",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "festive",
+    "label": "Festive",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "fi",
+    "label": "fi",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "forward",
+    "label": "Forward",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "frontier",
+    "label": "Frontier",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "futuristic",
+    "label": "Futuristic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "glitch",
+    "label": "Glitch",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "gloom",
+    "label": "Gloom",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grandeur",
+    "label": "Grandeur",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "grounded",
+    "label": "Grounded",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "haunting",
+    "label": "Haunting",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "immediate",
+    "label": "Immediate",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "immersive",
+    "label": "Immersive",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "industrial",
+    "label": "Industrial",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "infinite",
+    "label": "Infinite",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "innovative",
+    "label": "Innovative",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "intimate",
+    "label": "Intimate",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "inventive",
+    "label": "Inventive",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "led",
+    "label": "Led",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "literary",
+    "label": "Literary",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "luxe",
+    "label": "Luxe",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "majestic",
+    "label": "Majestic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "methodical",
+    "label": "Methodical",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "minimal",
+    "label": "Minimal",
+    "category": "Vibe / Mood",
+    "opposites": [
+      "maximalist",
+      "dense",
+      "maximalist"
+    ],
+    "suggestedLabels": [
+      "maximal",
+      "dense",
+      "ornate"
+    ]
+  },
+  {
+    "id": "mysterious",
+    "label": "Mysterious",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "mythic",
+    "label": "Mythic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "new",
+    "label": "New",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "nomadic",
+    "label": "Nomadic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ominous",
+    "label": "Ominous",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "optimism",
+    "label": "Optimism",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "optimistic",
+    "label": "Optimistic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "parallax",
+    "label": "Parallax",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pastoral",
+    "label": "Pastoral",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "perceptive",
+    "label": "Perceptive",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "performative",
+    "label": "Performative",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "poetic",
+    "label": "Poetic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "ponderous",
+    "label": "Ponderous",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "prelude",
+    "label": "Prelude",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "pristine",
+    "label": "Pristine",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "profound",
+    "label": "Profound",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "provocative",
+    "label": "Provocative",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "punchy",
+    "label": "Punchy",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "romantic",
+    "label": "Romantic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "scientific",
+    "label": "Scientific",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "silent",
+    "label": "Silent",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "somber",
+    "label": "Somber",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "soulful",
+    "label": "Soulful",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "strategic",
+    "label": "Strategic",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "studious",
+    "label": "Studious",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "sublime",
+    "label": "Sublime",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "timeless",
+    "label": "Timeless",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "tranquility",
+    "label": "Tranquility",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "urban",
+    "label": "Urban",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "utilitarian",
+    "label": "Utilitarian",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "utopian",
+    "label": "Utopian",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "weightless",
+    "label": "Weightless",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  },
+  {
+    "id": "wholesome",
+    "label": "Wholesome",
+    "category": "Vibe / Mood",
+    "opposites": [],
+    "suggestedLabels": []
+  }
+]

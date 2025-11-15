@@ -19,16 +19,21 @@ async function main() {
 
   let upserted = 0
 
+  // Use centralized embedding generation to ensure consistency
+  const { generateConceptEmbedding } = await import('../lib/concept-embeddings')
+  
   for (const c of items) {
-    const tokens = [c.label, ...(c.synonyms || []), ...(c.related || [])]
-    const prompts = tokens.map(t => `website UI with a ${t} visual style`)
-    const vecs = await embedTextBatch(prompts)
-    if (vecs.length === 0) {
-      console.warn('No embeddings for concept', c.id)
+    let emb: number[]
+    try {
+      emb = await generateConceptEmbedding(
+        c.label,
+        c.synonyms || [],
+        c.related || []
+      )
+    } catch (error: any) {
+      console.warn(`No embeddings for concept ${c.id}: ${error.message}`)
       continue
     }
-    const avg = meanVec(vecs)
-    const emb = l2norm(avg)
 
     const row = await prisma.concept.upsert({
       where: { id: c.id },

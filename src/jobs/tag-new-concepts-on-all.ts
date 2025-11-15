@@ -48,19 +48,19 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
       continue
     }
 
-    // Embed the new concept
-    const tokens = [concept.label, ...(concept.synonyms || []), ...(concept.related || [])]
-    const prompts = tokens.map(t => `website UI with a ${t} visual style`)
-    const vecs = await embedTextBatch(prompts)
-    
-    if (vecs.length === 0) {
-      console.warn(`[tag-new-concepts] No embeddings for concept ${concept.id}`)
+    // Embed the new concept using centralized method
+    const { generateConceptEmbedding } = await import('@/lib/concept-embeddings')
+    let normalized: number[]
+    try {
+      normalized = await generateConceptEmbedding(
+        concept.label,
+        concept.synonyms || [],
+        concept.related || []
+      )
+    } catch (error: any) {
+      console.warn(`[tag-new-concepts] No embeddings for concept ${concept.id}: ${error.message}`)
       continue
     }
-
-    // Average and normalize
-    const avg = meanVec(vecs)
-    const normalized = l2norm(avg)
     
     conceptEmbeddings.set(concept.id, normalized)
     

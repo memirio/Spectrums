@@ -142,12 +142,13 @@ The production pipeline automatically processes new sites when added via the API
 7. **First Round: Concept Scoring & Tagging (Existing Concepts)**
    - Computes cosine similarity between image embedding and all seeded concept embeddings
    - Sorts concepts by similarity score (highest first)
-   - Filters concepts above `MIN_SCORE` threshold (0.15)
+   - Filters concepts above `MIN_SCORE` threshold (0.18)
    - Applies dynamic cutoff logic:
-     - Stops when score drops by more than `MIN_SCORE_DROP_PCT` (10%)
+     - Stops when score drops by more than `MIN_SCORE_DROP_PCT` (30%)
      - Respects `MAX_K` limit (700 concepts)
      - Ensures minimum 8 tags per image for coverage
    - Creates `ImageTag` records with scores (using existing concepts only)
+   - **Note**: Images are tagged only with directly matched concepts. Synonyms are not automatically added as tags.
    - Removes old tags that are no longer in top-K
 
 8. **Gemini Concept Generation**
@@ -299,6 +300,9 @@ npx tsx scripts/add_sites.ts
 - **Concept boosting**: If your query matches seeded concepts (e.g., "playful", "modern"), images tagged with those concepts get a subtle 5% ranking boost
 - **No hard cutoffs**: All images are ranked and returned (no filtering)
 
+**For detailed search logic documentation**, including tag matching weights, multi-term query handling, and opposite tag penalties, see:
+- [Search Logic Documentation](./docs/SEARCH_LOGIC.md) — Complete guide to ranking algorithm, weights, and penalties
+
 ---
 
 ## Scripts & Developer Tools
@@ -319,6 +323,9 @@ npx tsx scripts/list_concepts.ts
 
 # Check similarity: which concepts match a query phrase?
 npx tsx scripts/check_concept_similarity.ts "playful gradient 3d"
+
+# Sync opposites from seed_concepts.json to concept-opposites.ts and re-tag all images
+npx tsx scripts/sync_and_retag_all.ts
 ```
 
 ### Site & Image Management
@@ -405,6 +412,7 @@ npm run validate:search
 3. **Quarterly**: Run `npm run check:tagging` for major concepts to find false negatives
 
 For detailed guidance, see:
+- [Search Logic Documentation](./docs/SEARCH_LOGIC.md) — Complete guide to ranking algorithm, tag weights, and opposite penalties
 - [Search Quality Maintenance Guide](./docs/SEARCH_QUALITY_MAINTENANCE.md) — Quick reference and maintenance checklist
 - [Synonym Expansion Guide](./docs/SYNONYM_EXPANSION_GUIDE.md) — How to expand synonyms when queries don't match
 
@@ -506,11 +514,14 @@ Edit `src/lib/tagging-config.ts` to tune auto-tagging:
 
 ```typescript
 export const TAG_CONFIG = {
-  TOP_K: 5,              // Number of concepts to tag per image
-  MIN_SCORE: 0.12,       // Minimum cosine similarity to create a tag
-  FALLBACK_K: 3,         // Fallback if no concepts pass MIN_SCORE
+  MAX_K: 700,            // Maximum concepts to tag per image (not a target - only tag if truly relevant)
+  MIN_SCORE: 0.18,       // Minimum cosine similarity to create a tag (absolute floor)
+  MIN_SCORE_DROP_PCT: 0.30,  // Minimum percentage drop allowed between consecutive tags (30% drop indicates significantly less relevant)
+  FALLBACK_K: 6,         // Fallback if no concepts pass MIN_SCORE
 }
 ```
+
+**Note**: Images are tagged only with directly matched concepts. Synonyms are not automatically added as tags.
 
 ### Search Ranking Constants
 
@@ -534,8 +545,9 @@ All application data is stored in a **single SQLite database** (via Prisma):
 - **Tags** — Legacy tag system (many-to-many with sites)
 - **Images** — Image metadata (URL, dimensions, bytes, timestamps)
 - **ImageEmbeddings** — CLIP image embeddings (768-dim vectors) with contentHash for deduplication
-- **Concepts** — Design concept definitions (labels, synonyms, related terms, embeddings)
+- **Concepts** — Design concept definitions (labels, synonyms, related terms, opposites, embeddings)
 - **ImageTags** — Auto-tagging relationships (image ↔ concept with similarity scores)
+  - Images are tagged only with directly matched concepts (no synonym expansion)
 
 **Stored Separately (Not in Database):**
 - **Screenshot files** — Stored in MinIO (S3-compatible object storage)
@@ -595,9 +607,29 @@ See [Production Pipeline (Add Photo Pipeline)](#5-production-pipeline-add-photo-
 Each concept includes:
 - `id`: Unique identifier (kebab-case)
 - `label`: Display name (Title Case)
-- `synonyms`: 3-8 related terms for matching
+- `synonyms`: 3-8 related terms for matching (used in search, not for image tagging)
 - `related`: 3-8 visual terms for embedding
+- `opposites`: Array of opposite concept IDs (synced to `concept-opposites.ts`)
 - `embedding`: Unit-normalized CLIP text vector
+
+**Note**: Images are tagged only with directly matched concepts based on cosine similarity. Synonyms are used for search query matching but are not automatically added as tags to images.
+
+### Concept Opposites
+
+Concepts can have opposite relationships defined in `seed_concepts.json`. These opposites are automatically synced to `src/lib/concept-opposites.ts` and are used in:
+
+- **Search ranking**: Images with opposite tags receive penalties in search results
+- **Tag validation**: Helps filter false positive tags
+
+To sync opposites from `seed_concepts.json` to `concept-opposites.ts` and re-tag all images:
+
+```bash
+npx tsx scripts/sync_and_retag_all.ts
+```
+
+This script:
+1. Syncs all opposites from `seed_concepts.json` to `concept-opposites.ts` (ensures bidirectional relationships)
+2. Re-tags all images using the current tagging logic (direct matches only, no synonym expansion)
 
 ---
 
@@ -688,7 +720,9 @@ Looma/
 │   ├── lib/
 │   │   ├── embeddings.ts            # CLIP embedding functions
 │   │   ├── prisma.ts                # Prisma client singleton
-│   │   └── tagging-config.ts        # Auto-tagging constants
+│   │   ├── tagging-config.ts        # Auto-tagging constants
+│   │   ├── concept-opposites.ts     # Concept opposites mapping (synced from seed_concepts.json)
+│   │   └── update-concept-opposites.ts  # Utility to sync opposites
 │   └── jobs/
 │       └── tagging.ts               # Auto-tagging job (used inline)
 ├── scripts/
@@ -702,8 +736,10 @@ Looma/
 │   ├── validate_search_quality.ts   # Validate search ranking quality
 │   ├── retag_latest.ts              # Retag most recent image
 │   ├── backfill_tagging.ts          # Tag all untagged images
+│   ├── sync_and_retag_all.ts        # Sync opposites and re-tag all images
 │   └── ...                          # More utility scripts
 ├── docs/
+│   ├── SEARCH_LOGIC.md                # Complete search ranking algorithm documentation
 │   ├── SEARCH_QUALITY_MAINTENANCE.md  # Search quality maintenance guide
 │   └── SYNONYM_EXPANSION_GUIDE.md     # Synonym expansion guide
 ├── screenshot-service/              # Optional screenshot service

@@ -1,0 +1,1959 @@
+Regenerating corrupted concept embeddings using NEW method...
+
+Total concepts: 1469
+Using NEW method: "website UI with a {term} visual style" (multiple prompts, averaged)
+
+Starting from index: 0
+
+[1/147] Processing batch (10 concepts)...
+  - 3d                        3D                             similarity: 1.0000 (healthy, skipped)
+  - absence                   Absence                        similarity: 1.0000 (healthy, skipped)
+  - absorption                Absorption                     similarity: 1.0000 (healthy, skipped)
+  - abstraction               Abstraction                    similarity: 1.0000 (healthy, skipped)
+  - absurdity                 Absurdity                      similarity: 1.0000 (healthy, skipped)
+  - abundance                 Abundance                      similarity: 1.0000 (healthy, skipped)
+  - abyss                     Abyss                          similarity: 1.0000 (healthy, skipped)
+  - academia                  Academia                       similarity: 1.0000 (healthy, skipped)
+  - accent                    Accent                         similarity: 1.0000 (healthy, skipped)
+  - access                    Access                         similarity: 1.0000 (healthy, skipped)
+  Batch complete: 10/1469 (0.7%) - 0 regenerated, 10 skipped, 0 errors
+
+[2/147] Processing batch (10 concepts)...
+  - accessible                Accessible                     similarity: 1.0000 (healthy, skipped)
+  - accordion                 Accordion                      similarity: 1.0000 (healthy, skipped)
+  - accumulation              Accumulation                   similarity: 1.0000 (healthy, skipped)
+  - acoustic                  Acoustic                       similarity: 1.0000 (healthy, skipped)
+  - action                    Action                         similarity: 1.0000 (healthy, skipped)
+  - activity                  Activity                       similarity: 1.0000 (healthy, skipped)
+  - adaptability              Adaptability                   similarity: 1.0000 (healthy, skipped)
+  - adaptation                Adaptation                     similarity: 1.0000 (healthy, skipped)
+  - adoption                  Adoption                       similarity: 1.0000 (healthy, skipped)
+  - advancement               Advancement                    similarity: 1.0000 (healthy, skipped)
+  Batch complete: 20/1469 (1.4%) - 0 regenerated, 20 skipped, 0 errors
+
+[3/147] Processing batch (10 concepts)...
+  - adventurous               Adventurous                    similarity: 1.0000 (healthy, skipped)
+  - advertising               Advertising                    similarity: 1.0000 (healthy, skipped)
+  - aerial                    Aerial                         similarity: 1.0000 (healthy, skipped)
+  - aero                      Aero                           similarity: 1.0000 (healthy, skipped)
+  - aerodynamic               Aerodynamic                    similarity: 1.0000 (healthy, skipped)
+  - aesthetics                Aesthetics                     similarity: 1.0000 (healthy, skipped)
+  - affluence                 Affluence                      similarity: 1.0000 (healthy, skipped)
+  - agency                    Agency                         similarity: 1.0000 (healthy, skipped)
+  - aggregate                 Aggregate                      similarity: 1.0000 (healthy, skipped)
+  - ai                        AI                             similarity: 1.0000 (healthy, skipped)
+  Batch complete: 30/1469 (2.0%) - 0 regenerated, 30 skipped, 0 errors
+
+[4/147] Processing batch (10 concepts)...
+  - algorithm                 Algorithm                      similarity: 1.0000 (healthy, skipped)
+  - alignment                 Alignment                      similarity: 1.0000 (healthy, skipped)
+  - all-caps                  All-Caps                       similarity: 1.0000 (healthy, skipped)
+  - aloof                     Aloof                          similarity: 1.0000 (healthy, skipped)
+  - amber                     Amber                          similarity: 1.0000 (healthy, skipped)
+  - ambient                   Ambient                        similarity: 1.0000 (healthy, skipped)
+  - ambition                  Ambition                       similarity: 1.0000 (healthy, skipped)
+  - amorphous                 Amorphous                      similarity: 1.0000 (healthy, skipped)
+  - analogous                 Analogous                      similarity: 1.0000 (healthy, skipped)
+  - analysis                  Analysis                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 40/1469 (2.7%) - 0 regenerated, 40 skipped, 0 errors
+
+[5/147] Processing batch (10 concepts)...
+  - analytical                Analytical                     similarity: 1.0000 (healthy, skipped)
+  - analytics                 Analytics                      similarity: 1.0000 (healthy, skipped)
+  - anatomy                   Anatomy                        similarity: 1.0000 (healthy, skipped)
+  - anchored                  Anchored                       similarity: 1.0000 (healthy, skipped)
+  - anger                     Anger                          similarity: 1.0000 (healthy, skipped)
+  - angularity                Angularity                     similarity: 1.0000 (healthy, skipped)
+  - animated                  Animated                       similarity: 1.0000 (healthy, skipped)
+  - annotation                Annotation                     similarity: 1.0000 (healthy, skipped)
+  - anonymity                 Anonymity                      similarity: 1.0000 (healthy, skipped)
+  - anonymous                 Anonymous                      similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 50/1469 (0 regenerated)
+  Batch complete: 50/1469 (3.4%) - 0 regenerated, 50 skipped, 0 errors
+
+[6/147] Processing batch (10 concepts)...
+  - anticipation              Anticipation                   similarity: 1.0000 (healthy, skipped)
+  - anxiety                   Anxiety                        similarity: 1.0000 (healthy, skipped)
+  - apprehension              Apprehension                   similarity: 1.0000 (healthy, skipped)
+  - aqueous                   Aqueous                        similarity: 1.0000 (healthy, skipped)
+  - ar-vr                     AR-VR                          similarity: 1.0000 (healthy, skipped)
+  - arcade                    Arcade                         similarity: 1.0000 (healthy, skipped)
+  - arch                      Arch                           similarity: 1.0000 (healthy, skipped)
+  - archetype                 Archetype                      similarity: 1.0000 (healthy, skipped)
+  - architecture              Architecture                   similarity: 1.0000 (healthy, skipped)
+  - archival                  Archival                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 60/1469 (4.1%) - 0 regenerated, 60 skipped, 0 errors
+
+[7/147] Processing batch (10 concepts)...
+  - arid                      Arid                           similarity: 1.0000 (healthy, skipped)
+  - arrangement               Arrangement                    similarity: 1.0000 (healthy, skipped)
+  - array                     Array                          similarity: 1.0000 (healthy, skipped)
+  - art                       Art                            similarity: 1.0000 (healthy, skipped)
+  - art-deco                  Art Deco                       similarity: 1.0000 (healthy, skipped)
+  - artifact                  Artifact                       similarity: 1.0000 (healthy, skipped)
+  - artifice                  Artifice                       similarity: 1.0000 (healthy, skipped)
+  - artisanal                 Artisanal                      similarity: 1.0000 (healthy, skipped)
+  - artistic                  Artistic                       similarity: 1.0000 (healthy, skipped)
+  - artistry                  Artistry                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 70/1469 (4.8%) - 0 regenerated, 70 skipped, 0 errors
+
+[8/147] Processing batch (10 concepts)...
+  - ascendancy                Ascendancy                     similarity: 1.0000 (healthy, skipped)
+  ✓ ascension                 Ascension                      similarity: 0.7275 → regenerated
+  ✓ ascent                    Ascent                         similarity: 0.7405 → regenerated
+  ✓ ascii                     ASCII                          similarity: 0.5030 → regenerated
+  ✓ aspirant                  Aspirant                       similarity: 0.7250 → regenerated
+  ✓ aspiration                Aspiration                     similarity: 0.5063 → regenerated
+  ✓ aspire                    Aspire                         similarity: 0.5028 → regenerated
+  ✓ assemblage                Assemblage                     similarity: 0.5021 → regenerated
+  ✓ assembly                  Assembly                       similarity: 0.4998 → regenerated
+  ✓ assertion                 Assertion                      similarity: 0.7798 → regenerated
+  Batch complete: 80/1469 (5.4%) - 9 regenerated, 71 skipped, 0 errors
+
+[9/147] Processing batch (10 concepts)...
+  - assertiveness             Assertiveness                  similarity: 1.0000 (healthy, skipped)
+  - astral                    Astral                         similarity: 1.0000 (healthy, skipped)
+  ✓ asymmetrical              Asymmetrical                   similarity: 0.5030 → regenerated
+  ✓ asymmetry                 Asymmetry                      similarity: 0.5045 → regenerated
+  - athlete                   Athlete                        similarity: 1.0000 (healthy, skipped)
+  ✓ atmosphere                Atmosphere                     similarity: 0.5041 → regenerated
+  ✓ atmospheric               Atmospheric                    similarity: 0.5037 → regenerated
+  ✓ attention                 Attention                      similarity: 0.7595 → regenerated
+  ✓ augmentation              Augmentation                   similarity: 0.5072 → regenerated
+  ✓ aura                      Aura                           similarity: 0.7572 → regenerated
+  Batch complete: 90/1469 (6.1%) - 16 regenerated, 74 skipped, 0 errors
+
+[10/147] Processing batch (10 concepts)...
+  ✓ aurora                    Aurora                         similarity: 0.7147 → regenerated
+  ✓ authenticity              Authenticity                   similarity: 0.5059 → regenerated
+  ✓ authoritative             Authoritative                  similarity: 0.5076 → regenerated
+  ✓ authority                 Authority                      similarity: 0.5022 → regenerated
+  ✓ authorship                Authorship                     similarity: 0.7335 → regenerated
+  ✓ automation                Automation                     similarity: 0.7661 → regenerated
+  ✓ automotive                Automotive                     similarity: 0.5066 → regenerated
+  ✓ autonomy                  Autonomy                       similarity: 0.5081 → regenerated
+  ✓ avatar                    Avatar                         similarity: 0.7449 → regenerated
+  - awakening                 Awakening                      similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 100/1469 (25 regenerated)
+  Batch complete: 100/1469 (6.8%) - 25 regenerated, 75 skipped, 0 errors
+
+[11/147] Processing batch (10 concepts)...
+  ✓ awareness                 Awareness                      similarity: 0.7836 → regenerated
+  ✓ awe                       Awe                            similarity: 0.7662 → regenerated
+  ✓ axial                     Axial                          similarity: 0.7418 → regenerated
+  - axis                      Axis                           similarity: 1.0000 (healthy, skipped)
+  ✓ baked                     Baked                          similarity: 0.7318 → regenerated
+  - bakery                    Bakery                         similarity: 1.0000 (healthy, skipped)
+  ✓ balance                   Balance                        similarity: 0.7489 → regenerated
+  ✓ baroque                   Baroque                        similarity: 0.4980 → regenerated
+  ✓ barrier                   Barrier                        similarity: 0.7610 → regenerated
+  ✓ based                     Based                          similarity: 0.5058 → regenerated
+  Batch complete: 110/1469 (7.5%) - 33 regenerated, 77 skipped, 0 errors
+
+[12/147] Processing batch (10 concepts)...
+  - basic                     Basic                          similarity: 1.0000 (healthy, skipped)
+  ✓ bauhaus                   Bauhaus                        similarity: 0.5025 → regenerated
+  - beacon                    Beacon                         similarity: 1.0000 (healthy, skipped)
+  - beauty                    Beauty                         similarity: 1.0000 (healthy, skipped)
+  ✓ becoming                  Becoming                       similarity: 0.7594 → regenerated
+  ✓ beginning                 Beginning                      similarity: 0.7477 → regenerated
+  - behavioral                Behavioral                     similarity: 1.0000 (healthy, skipped)
+  ✓ being                     Being                          similarity: 0.7612 → regenerated
+  ✓ belonging                 Belonging                      similarity: 0.7643 → regenerated
+  ✓ bespoke                   Bespoke                        similarity: 0.5035 → regenerated
+  Batch complete: 120/1469 (8.2%) - 39 regenerated, 81 skipped, 0 errors
+
+[13/147] Processing batch (10 concepts)...
+  - beverage                  Beverage                       similarity: 1.0000 (healthy, skipped)
+  ✓ binary                    Binary                         similarity: 0.5069 → regenerated
+  - bio                       Bio                            similarity: 1.0000 (healthy, skipped)
+  ✓ biographical              Biographical                   similarity: 0.7695 → regenerated
+  - biomorphic                Biomorphic                     similarity: 1.0000 (healthy, skipped)
+  ✓ biophilia                 Biophilia                      similarity: 0.5048 → regenerated
+  ✓ biophilic                 Biophilic                      similarity: 0.5007 → regenerated
+  - bistro                    Bistro                         similarity: 1.0000 (healthy, skipped)
+  ✓ blank                     Blank                          similarity: 0.7908 → regenerated
+  ✓ bleed                     Bleed                          similarity: 0.5065 → regenerated
+  Batch complete: 130/1469 (8.8%) - 45 regenerated, 85 skipped, 0 errors
+
+[14/147] Processing batch (10 concepts)...
+  ✓ bliss                     Bliss                          similarity: 0.5063 → regenerated
+  ✓ blob                      Blob                           similarity: 0.7626 → regenerated
+  ✓ block                     Block                          similarity: 0.7245 → regenerated
+  - blockchain                Blockchain                     similarity: 1.0000 (healthy, skipped)
+  ✓ bloom                     Bloom                          similarity: 0.7274 → regenerated
+  ✓ blur                      Blur                           similarity: 0.7680 → regenerated
+  - body-text                 Body-Text                      similarity: 1.0000 (healthy, skipped)
+  - bokeh                     Bokeh                          similarity: 1.0000 (healthy, skipped)
+  ✓ bold                      Bold                           similarity: 0.5042 → regenerated
+  ✓ bond                      Bond                           similarity: 0.7050 → regenerated
+  Batch complete: 140/1469 (9.5%) - 52 regenerated, 88 skipped, 0 errors
+
+[15/147] Processing batch (10 concepts)...
+  ✓ botanical                 Botanical                      similarity: 0.4998 → regenerated
+  ✓ boundless                 Boundless                      similarity: 0.5073 → regenerated
+  - bounty                    Bounty                         similarity: 1.0000 (healthy, skipped)
+  - boutique                  Boutique                       similarity: 1.0000 (healthy, skipped)
+  ✓ braided                   Braided                        similarity: 0.7261 → regenerated
+  ✓ branding                  Branding                       similarity: 0.7600 → regenerated
+  ✓ brittle                   Brittle                        similarity: 0.5028 → regenerated
+  ✓ brushed                   Brushed                        similarity: 0.7215 → regenerated
+  - brushstroke               Brushstroke                    similarity: 1.0000 (healthy, skipped)
+  ✓ brushwork                 Brushwork                      similarity: 0.6946 → regenerated
+  💾 Progress saved: 150/1469 (59 regenerated)
+  Batch complete: 150/1469 (10.2%) - 59 regenerated, 91 skipped, 0 errors
+
+[16/147] Processing batch (10 concepts)...
+  ✓ brutalism                 Brutalism                      similarity: 0.5035 → regenerated
+  ✓ brutalist                 Brutalist                      similarity: 0.4979 → regenerated
+  ✓ burst                     Burst                          similarity: 0.7074 → regenerated
+  ✓ calculated                Calculated                     similarity: 0.7394 → regenerated
+  ✓ calm                      Calm                           similarity: 0.5052 → regenerated
+  ✓ camp                      Camp                           similarity: 0.7716 → regenerated
+  ✓ candid                    Candid                         similarity: 0.7127 → regenerated
+  ✓ canvas                    Canvas                         similarity: 0.5106 → regenerated
+  - capable                   Capable                        similarity: 1.0000 (healthy, skipped)
+  ✓ caps                      Caps                           similarity: 0.5044 → regenerated
+  Batch complete: 160/1469 (10.9%) - 68 regenerated, 92 skipped, 0 errors
+
+[17/147] Processing batch (10 concepts)...
+  ✓ capture                   Capture                        similarity: 0.5097 → regenerated
+  - card-based                Card-Based                     similarity: 0.9999 (healthy, skipped)
+  ✓ care                      Care                           similarity: 0.7461 → regenerated
+  ✓ carousel                  Carousel                       similarity: 0.5120 → regenerated
+  ✓ cartoon                   Cartoon                        similarity: 0.7698 → regenerated
+  - casual                    Casual                         similarity: 1.0000 (healthy, skipped)
+  ✓ catalog                   Catalog                        similarity: 0.7813 → regenerated
+  - catalyst                  Catalyst                       similarity: 1.0000 (healthy, skipped)
+  ✓ categorization            Categorization                 similarity: 0.5108 → regenerated
+  - catering                  Catering                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 170/1469 (11.6%) - 74 regenerated, 96 skipped, 0 errors
+
+[18/147] Processing batch (10 concepts)...
+  ✓ caution                   Caution                        similarity: 0.6970 → regenerated
+  - cel-shade                 Cel-shade                      similarity: 1.0000 (healthy, skipped)
+  ✓ celebration               Celebration                    similarity: 0.7254 → regenerated
+  ✓ celebrity                 Celebrity                      similarity: 0.5017 → regenerated
+  ✓ celestial                 Celestial                      similarity: 0.7395 → regenerated
+  - cellular                  Cellular                       similarity: 1.0000 (healthy, skipped)
+  ✓ centered                  Centered                       similarity: 0.5008 → regenerated
+  ✓ centrality                Centrality                     similarity: 0.5045 → regenerated
+  ✓ centralized               Centralized                    similarity: 0.7780 → regenerated
+  ✓ centric                   Centric                        similarity: 0.7286 → regenerated
+  Batch complete: 180/1469 (12.3%) - 82 regenerated, 98 skipped, 0 errors
+
+[19/147] Processing batch (10 concepts)...
+  ✓ ceramic                   Ceramic                        similarity: 0.6778 → regenerated
+  ✓ cerebral                  Cerebral                       similarity: 0.7496 → regenerated
+  - cgi                       CGI                            similarity: 1.0000 (healthy, skipped)
+  ✓ challenge                 Challenge                      similarity: 0.7446 → regenerated
+  - challenging               Challenging                    similarity: 1.0000 (healthy, skipped)
+  ✓ chaos                     Chaos                          similarity: 0.5079 → regenerated
+  ✓ chaotic                   Chaotic                        similarity: 0.7692 → regenerated
+  ✓ cheer                     Cheer                          similarity: 0.7056 → regenerated
+  ✓ chiaroscuro               Chiaroscuro                    similarity: 0.5086 → regenerated
+  ✓ chic                      Chic                           similarity: 0.7753 → regenerated
+  Batch complete: 190/1469 (12.9%) - 90 regenerated, 100 skipped, 0 errors
+
+[20/147] Processing batch (10 concepts)...
+  - childcare                 Childcare                      similarity: 1.0000 (healthy, skipped)
+  ✓ childhood                 Childhood                      similarity: 0.7387 → regenerated
+  - childlike                 Childlike                      similarity: 1.0000 (healthy, skipped)
+  ✓ chill                     Chill                          similarity: 0.7552 → regenerated
+  ✓ chipped                   Chipped                        similarity: 0.7084 → regenerated
+  ✓ chromatic                 Chromatic                      similarity: 0.7631 → regenerated
+  ✓ chronicle                 Chronicle                      similarity: 0.7688 → regenerated
+  ✓ chronos                   Chronos                        similarity: 0.5045 → regenerated
+  ✓ chthonic                  Chthonic                       similarity: 0.5060 → regenerated
+  ✓ chunky                    Chunky                         similarity: 0.5059 → regenerated
+  💾 Progress saved: 200/1469 (98 regenerated)
+  Batch complete: 200/1469 (13.6%) - 98 regenerated, 102 skipped, 0 errors
+
+[21/147] Processing batch (10 concepts)...
+  ✓ cinematic                 Cinematic                      similarity: 0.5021 → regenerated
+  ✓ cinematography            Cinematography                 similarity: 0.5038 → regenerated
+  ✓ circle                    Circle                         similarity: 0.7281 → regenerated
+  ✓ circuit                   Circuit                        similarity: 0.7245 → regenerated
+  ✓ circular                  Circular                       similarity: 0.7233 → regenerated
+  ✓ clarity                   Clarity                        similarity: 0.5065 → regenerated
+  - classicism                Classicism                     similarity: 1.0000 (healthy, skipped)
+  ✓ cleanliness               Cleanliness                    similarity: 0.5071 → regenerated
+  ✓ clear                     Clear                          similarity: 0.7478 → regenerated
+  - climate                   Climate                        similarity: 1.0000 (healthy, skipped)
+  Batch complete: 210/1469 (14.3%) - 106 regenerated, 104 skipped, 0 errors
+
+[22/147] Processing batch (10 concepts)...
+  ✓ clinical                  Clinical                       similarity: 0.7248 → regenerated
+  ✓ cloud                     Cloud                          similarity: 0.7234 → regenerated
+  ✓ clustered                 Clustered                      similarity: 0.7280 → regenerated
+  ✓ clustering                Clustering                     similarity: 0.5060 → regenerated
+  ✓ coarse                    Coarse                         similarity: 0.5053 → regenerated
+  ✓ coded                     Coded                          similarity: 0.7749 → regenerated
+  ✓ coding                    Coding                         similarity: 0.7795 → regenerated
+  ✓ coexistence               Coexistence                    similarity: 0.5090 → regenerated
+  ✓ cognition                 Cognition                      similarity: 0.7744 → regenerated
+  ✓ cohesion                  Cohesion                       similarity: 0.7750 → regenerated
+  Batch complete: 220/1469 (15.0%) - 116 regenerated, 104 skipped, 0 errors
+
+[23/147] Processing batch (10 concepts)...
+  ✓ coil                      Coil                           similarity: 0.7274 → regenerated
+  ✓ collaboration             Collaboration                  similarity: 0.7700 → regenerated
+  ✓ collage                   Collage                        similarity: 0.5089 → regenerated
+  ✓ collective                Collective                     similarity: 0.7786 → regenerated
+  - collectivism              Collectivism                   similarity: 1.0000 (healthy, skipped)
+  - colorful                  Colorful                       similarity: 1.0000 (healthy, skipped)
+  ✓ colorless                 Colorless                      similarity: 0.5054 → regenerated
+  ✓ columnar                  Columnar                       similarity: 0.6854 → regenerated
+  ✓ comfort                   Comfort                        similarity: 0.7184 → regenerated
+  ✓ comic                     Comic                          similarity: 0.7551 → regenerated
+  Batch complete: 230/1469 (15.7%) - 124 regenerated, 106 skipped, 0 errors
+
+[24/147] Processing batch (10 concepts)...
+  - command                   Command                        similarity: 1.0000 (healthy, skipped)
+  - commercial                Commercial                     similarity: 1.0000 (healthy, skipped)
+  - commodity                 Commodity                      similarity: 1.0000 (healthy, skipped)
+  ✓ communal                  Communal                       similarity: 0.7566 → regenerated
+  ✓ communication             Communication                  similarity: 0.7531 → regenerated
+  ✓ community                 Community                      similarity: 0.5025 → regenerated
+  ✓ compassion                Compassion                     similarity: 0.7414 → regenerated
+  ✓ competence                Competence                     similarity: 0.5074 → regenerated
+  ✓ complementary             Complementary                  similarity: 0.5044 → regenerated
+  ✓ complexity                Complexity                     similarity: 0.5050 → regenerated
+  Batch complete: 240/1469 (16.3%) - 131 regenerated, 109 skipped, 0 errors
+
+[25/147] Processing batch (10 concepts)...
+  ✓ composed                  Composed                       similarity: 0.7432 → regenerated
+  ✓ compositing               Compositing                    similarity: 0.5064 → regenerated
+  ✓ composition               Composition                    similarity: 0.7752 → regenerated
+  ✓ computational             Computational                  similarity: 0.5015 → regenerated
+  ✓ computing                 Computing                      similarity: 0.7508 → regenerated
+  - concentricity             Concentricity                  similarity: 1.0000 (healthy, skipped)
+  - conception                Conception                     similarity: 1.0000 (healthy, skipped)
+  ✓ conceptual                Conceptual                     similarity: 0.7744 → regenerated
+  ✓ condensed                 Condensed                      similarity: 0.5027 → regenerated
+  ✓ conduit                   Conduit                        similarity: 0.7147 → regenerated
+  💾 Progress saved: 250/1469 (139 regenerated)
+  Batch complete: 250/1469 (17.0%) - 139 regenerated, 111 skipped, 0 errors
+
+[26/147] Processing batch (10 concepts)...
+  ✓ confidence                Confidence                     similarity: 0.5062 → regenerated
+  ✓ confident                 Confident                      similarity: 0.5076 → regenerated
+  ✓ confinement               Confinement                    similarity: 0.7559 → regenerated
+  ✓ connectedness             Connectedness                  similarity: 0.7592 → regenerated
+  ✓ connection                Connection                     similarity: 0.7505 → regenerated
+  ✓ connectivity              Connectivity                   similarity: 0.5053 → regenerated
+  ✓ conscience                Conscience                     similarity: 0.5097 → regenerated
+  ✓ conscientious             Conscientious                  similarity: 0.5030 → regenerated
+  ✓ conscious                 Conscious                      similarity: 0.7472 → regenerated
+  - consequence               Consequence                    similarity: 1.0000 (healthy, skipped)
+  Batch complete: 260/1469 (17.7%) - 148 regenerated, 112 skipped, 0 errors
+
+[27/147] Processing batch (10 concepts)...
+  - conservation              Conservation                   similarity: 1.0000 (healthy, skipped)
+  ✓ constellation             Constellation                  similarity: 0.7523 → regenerated
+  ✓ constrained               Constrained                    similarity: 0.7466 → regenerated
+  - constraint                Constraint                     similarity: 1.0000 (healthy, skipped)
+  ✓ construct                 Construct                      similarity: 0.7477 → regenerated
+  - consulting                Consulting                     similarity: 1.0000 (healthy, skipped)
+  ✓ consumerism               Consumerism                    similarity: 0.7433 → regenerated
+  - consumption               Consumption                    similarity: 1.0000 (healthy, skipped)
+  ✓ containment               Containment                    similarity: 0.7521 → regenerated
+  ✓ contemplation             Contemplation                  similarity: 0.7621 → regenerated
+  Batch complete: 270/1469 (18.4%) - 154 regenerated, 116 skipped, 0 errors
+
+[28/147] Processing batch (10 concepts)...
+  ✓ contemplative             Contemplative                  similarity: 0.5055 → regenerated
+  ✓ contentment               Contentment                    similarity: 0.7396 → regenerated
+  ✓ continuity                Continuity                     similarity: 0.5085 → regenerated
+  ✓ continuum                 Continuum                      similarity: 0.7675 → regenerated
+  ✓ contour                   Contour                        similarity: 0.6941 → regenerated
+  - contradiction             Contradiction                  similarity: 1.0000 (healthy, skipped)
+  ✓ contrast                  Contrast                       similarity: 0.5040 → regenerated
+  ✓ control                   Control                        similarity: 0.7194 → regenerated
+  ✓ convenience               Convenience                    similarity: 0.5080 → regenerated
+  ✓ convergence               Convergence                    similarity: 0.5079 → regenerated
+  Batch complete: 280/1469 (19.1%) - 163 regenerated, 117 skipped, 0 errors
+
+[29/147] Processing batch (10 concepts)...
+  ✓ cool                      Cool                           similarity: 0.5045 → regenerated
+  ✓ coolness                  Coolness                       similarity: 0.5092 → regenerated
+  ✓ core                      Core                           similarity: 0.7383 → regenerated
+  ✓ corporate                 Corporate                      similarity: 0.5078 → regenerated
+  ✓ corridor                  Corridor                       similarity: 0.7027 → regenerated
+  - cosmetics                 Cosmetics                      similarity: 1.0000 (healthy, skipped)
+  ✓ cosmic                    Cosmic                         similarity: 0.7367 → regenerated
+  ✓ cosmos                    Cosmos                         similarity: 0.5072 → regenerated
+  ✓ cottagecore               Cottagecore                    similarity: 0.5120 → regenerated
+  - counterculture            Counterculture                 similarity: 1.0000 (healthy, skipped)
+  Batch complete: 290/1469 (19.7%) - 171 regenerated, 119 skipped, 0 errors
+
+[30/147] Processing batch (10 concepts)...
+  ✓ cozy                      Cozy                           similarity: 0.5091 → regenerated
+  ✓ cracked                   Cracked                        similarity: 0.7396 → regenerated
+  ✓ craft                     Craft                          similarity: 0.7571 → regenerated
+  ✓ craftsmanship             Craftsmanship                  similarity: 0.7410 → regenerated
+  - craggy                    Craggy                         similarity: 1.0000 (healthy, skipped)
+  ✓ craving                   Craving                        similarity: 0.7122 → regenerated
+  ✓ creation                  Creation                       similarity: 0.7670 → regenerated
+  ✓ creativity                Creativity                     similarity: 0.5120 → regenerated
+  ✓ crisp                     Crisp                          similarity: 0.6934 → regenerated
+  ✓ critique                  Critique                       similarity: 0.7774 → regenerated
+  💾 Progress saved: 300/1469 (180 regenerated)
+  Batch complete: 300/1469 (20.4%) - 180 regenerated, 120 skipped, 0 errors
+
+[31/147] Processing batch (10 concepts)...
+  ✓ crystalline               Crystalline                    similarity: 0.5095 → regenerated
+  ✓ cultivation               Cultivation                    similarity: 0.7292 → regenerated
+  ✓ culture                   Culture                        similarity: 0.7575 → regenerated
+  ✓ curated                   Curated                        similarity: 0.7942 → regenerated
+  ✓ curation                  Curation                       similarity: 0.5086 → regenerated
+  ✓ curatorial                Curatorial                     similarity: 0.5079 → regenerated
+  ✓ curiosity                 Curiosity                      similarity: 0.5065 → regenerated
+  ✓ curious                   Curious                        similarity: 0.5073 → regenerated
+  ✓ curvature                 Curvature                      similarity: 0.5085 → regenerated
+  ✓ curve                     Curve                          similarity: 0.6988 → regenerated
+  Batch complete: 310/1469 (21.1%) - 190 regenerated, 120 skipped, 0 errors
+
+[32/147] Processing batch (10 concepts)...
+  ✓ curvilinear               Curvilinear                    similarity: 0.5068 → regenerated
+  - customization             Customization                  similarity: 1.0000 (healthy, skipped)
+  - cutting-edge              Cutting-Edge                   similarity: 1.0000 (healthy, skipped)
+  ✓ cybernetic                Cybernetic                     similarity: 0.5022 → regenerated
+  ✓ cyberpunk                 Cyberpunk                      similarity: 0.4995 → regenerated
+  ✓ cycle                     Cycle                          similarity: 0.7601 → regenerated
+  - cylinder                  Cylinder                       similarity: 1.0000 (healthy, skipped)
+  ✓ cylindrical               Cylindrical                    similarity: 0.5045 → regenerated
+  ✓ dark                      Dark                           similarity: 0.5030 → regenerated
+  - dark-academia             Dark-Academia                  similarity: 0.9999 (healthy, skipped)
+  Batch complete: 320/1469 (21.8%) - 196 regenerated, 124 skipped, 0 errors
+
+[33/147] Processing batch (10 concepts)...
+  ✓ darkmode                  Darkmode                       similarity: 0.5013 → regenerated
+  ✓ dashboard                 Dashboard                      similarity: 0.5059 → regenerated
+  ✓ data                      Data                           similarity: 0.7606 → regenerated
+  ✓ dawn                      Dawn                           similarity: 0.7144 → regenerated
+  ✓ decay                     Decay                          similarity: 0.5070 → regenerated
+  ✓ decentralization          Decentralization               similarity: 0.5073 → regenerated
+  ✓ deco                      Deco                           similarity: 0.7449 → regenerated
+  ✓ deconstructed             Deconstructed                  similarity: 0.5008 → regenerated
+  ✓ deconstruction            Deconstruction                 similarity: 0.7826 → regenerated
+  - deconstructivism          Deconstructivism               similarity: 1.0000 (healthy, skipped)
+  Batch complete: 330/1469 (22.5%) - 205 regenerated, 125 skipped, 0 errors
+
+[34/147] Processing batch (10 concepts)...
+  ✓ deconstructivist          Deconstructivist               similarity: 0.5052 → regenerated
+  - deeptech                  DeepTech                       similarity: 1.0000 (healthy, skipped)
+  ✓ defiance                  Defiance                       similarity: 0.5060 → regenerated
+  - deliberate                Deliberate                     similarity: 1.0000 (healthy, skipped)
+  ✓ delicacy                  Delicacy                       similarity: 0.5092 → regenerated
+  ✓ dense                     Dense                          similarity: 0.5004 → regenerated
+  - dentistry                 Dentistry                      similarity: 1.0000 (healthy, skipped)
+  ✓ design                    Design                         similarity: 0.8131 → regenerated
+  ✓ desire                    Desire                         similarity: 0.5095 → regenerated
+  - desolate                  Desolate                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 340/1469 (23.1%) - 211 regenerated, 129 skipped, 0 errors
+
+[35/147] Processing batch (10 concepts)...
+  - detachment                Detachment                     similarity: 1.0000 (healthy, skipped)
+  ✓ detail                    Detail                         similarity: 0.7288 → regenerated
+  - developer-docs            Developer-Docs                 similarity: 0.9999 (healthy, skipped)
+  - development               Development                    similarity: 1.0000 (healthy, skipped)
+  ✓ diagonal                  Diagonal                       similarity: 0.7313 → regenerated
+  ✓ diffused                  Diffused                       similarity: 0.6594 → regenerated
+  ✓ diffusion                 Diffusion                      similarity: 0.7296 → regenerated
+  ✓ digital                   Digital                        similarity: 0.7499 → regenerated
+  ✓ digitalization            Digitalization                 similarity: 0.5091 → regenerated
+  - digitization              Digitization                   similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 350/1469 (217 regenerated)
+  Batch complete: 350/1469 (23.8%) - 217 regenerated, 133 skipped, 0 errors
+
+[36/147] Processing batch (10 concepts)...
+  - dignity                   Dignity                        similarity: 1.0000 (healthy, skipped)
+  ✓ diorama                   Diorama                        similarity: 0.5034 → regenerated
+  ✓ direct                    Direct                         similarity: 0.7031 → regenerated
+  ✓ directness                Directness                     similarity: 0.5073 → regenerated
+  ✓ discipline                Discipline                     similarity: 0.7401 → regenerated
+  ✓ disconnect                Disconnect                     similarity: 0.7453 → regenerated
+  ✓ discovery                 Discovery                      similarity: 0.5041 → regenerated
+  - discretion                Discretion                     similarity: 1.0000 (healthy, skipped)
+  ✓ dispersal                 Dispersal                      similarity: 0.5113 → regenerated
+  ✓ dispersed                 Dispersed                      similarity: 0.7494 → regenerated
+  Batch complete: 360/1469 (24.5%) - 225 regenerated, 135 skipped, 0 errors
+
+[37/147] Processing batch (10 concepts)...
+  ✓ dispersion                Dispersion                     similarity: 0.5090 → regenerated
+  ✓ display                   Display                        similarity: 0.5001 → regenerated
+  - display-type              Display-Type                   similarity: 1.0000 (healthy, skipped)
+  ✓ disruption                Disruption                     similarity: 0.7567 → regenerated
+  ✓ disruptive                Disruptive                     similarity: 0.7667 → regenerated
+  - distinct                  Distinct                       similarity: 1.0000 (healthy, skipped)
+  ✓ distinctness              Distinctness                   similarity: 0.5105 → regenerated
+  ✓ distorted                 Distorted                      similarity: 0.7731 → regenerated
+  ✓ distortion                Distortion                     similarity: 0.7876 → regenerated
+  ✓ distraction               Distraction                    similarity: 0.7183 → regenerated
+  Batch complete: 370/1469 (25.2%) - 233 regenerated, 137 skipped, 0 errors
+
+[38/147] Processing batch (10 concepts)...
+  - distress                  Distress                       similarity: 1.0000 (healthy, skipped)
+  - distressed                Distressed                     similarity: 1.0000 (healthy, skipped)
+  ✓ distributed               Distributed                    similarity: 0.7317 → regenerated
+  ✓ distribution              Distribution                   similarity: 0.7344 → regenerated
+  ✓ divergence                Divergence                     similarity: 0.5072 → regenerated
+  - diverse                   Diverse                        similarity: 1.0000 (healthy, skipped)
+  ✓ diversity                 Diversity                      similarity: 0.5051 → regenerated
+  ✓ docs                      Docs                           similarity: 0.5079 → regenerated
+  ✓ domain                    Domain                         similarity: 0.7546 → regenerated
+  - dome                      Dome                           similarity: 1.0000 (healthy, skipped)
+  Batch complete: 380/1469 (25.9%) - 239 regenerated, 141 skipped, 0 errors
+
+[39/147] Processing batch (10 concepts)...
+  ✓ domestic                  Domestic                       similarity: 0.7599 → regenerated
+  ✓ dominance                 Dominance                      similarity: 0.5038 → regenerated
+  ✓ doodle                    Doodle                         similarity: 0.5028 → regenerated
+  ✓ dot                       Dot                            similarity: 0.7360 → regenerated
+  - drag-drop                 Drag-Drop                      similarity: 1.0000 (healthy, skipped)
+  ✓ dramatic                  Dramatic                       similarity: 0.4997 → regenerated
+  ✓ drawer                    Drawer                         similarity: 0.5070 → regenerated
+  ✓ drawing                   Drawing                        similarity: 0.7680 → regenerated
+  ✓ dreamlike                 Dreamlike                      similarity: 0.5017 → regenerated
+  ✓ drift                     Drift                          similarity: 0.7229 → regenerated
+  Batch complete: 390/1469 (26.5%) - 248 regenerated, 142 skipped, 0 errors
+
+[40/147] Processing batch (10 concepts)...
+  ✓ drive                     Drive                          similarity: 0.6915 → regenerated
+  ✓ driven                    Driven                         similarity: 0.5049 → regenerated
+  ✓ drop                      Drop                           similarity: 0.5018 → regenerated
+  ✓ duality                   Duality                        similarity: 0.5063 → regenerated
+  ✓ duotone                   Duotone                        similarity: 0.5044 → regenerated
+  ✓ dust                      Dust                           similarity: 0.7140 → regenerated
+  ✓ dwelling                  Dwelling                       similarity: 0.7519 → regenerated
+  ✓ dynamism                  Dynamism                       similarity: 0.5052 → regenerated
+  ✓ earnest                   Earnest                        similarity: 0.7019 → regenerated
+  - earth-tones               Earth-Tones                    similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 400/1469 (257 regenerated)
+  Batch complete: 400/1469 (27.2%) - 257 regenerated, 143 skipped, 0 errors
+
+[41/147] Processing batch (10 concepts)...
+  ✓ earthen                   Earthen                        similarity: 0.7596 → regenerated
+  - earthiness                Earthiness                     similarity: 1.0000 (healthy, skipped)
+  ✓ ease                      Ease                           similarity: 0.5042 → regenerated
+  ✓ echo                      Echo                           similarity: 0.7449 → regenerated
+  ✓ eclectic                  Eclectic                       similarity: 0.7815 → regenerated
+  - eco-tech                  Eco-tech                       similarity: 1.0000 (healthy, skipped)
+  ✓ ecology                   Ecology                        similarity: 0.5086 → regenerated
+  ✓ ecommerce                 Ecommerce                      similarity: 0.5144 → regenerated
+  ✓ economy                   Economy                        similarity: 0.5089 → regenerated
+  - ecosystem                 Ecosystem                      similarity: 1.0000 (healthy, skipped)
+  Batch complete: 410/1469 (27.9%) - 264 regenerated, 146 skipped, 0 errors
+
+[42/147] Processing batch (10 concepts)...
+  ✓ edge                      Edge                           similarity: 0.5066 → regenerated
+  ✓ editorial                 Editorial                      similarity: 0.4984 → regenerated
+  - editorial-type            Editorial-Type                 similarity: 1.0000 (healthy, skipped)
+  - edtech                    EdTech                         similarity: 1.0000 (healthy, skipped)
+  ✓ education                 Education                      similarity: 0.5026 → regenerated
+  - edutainment               Edutainment                    similarity: 1.0000 (healthy, skipped)
+  ✓ eerie                     Eerie                          similarity: 0.5088 → regenerated
+  ✓ effects                   Effects                        similarity: 0.5087 → regenerated
+  - efficacy                  Efficacy                       similarity: 1.0000 (healthy, skipped)
+  ✓ efficiency                Efficiency                     similarity: 0.5047 → regenerated
+  Batch complete: 420/1469 (28.6%) - 270 regenerated, 150 skipped, 0 errors
+
+[43/147] Processing batch (10 concepts)...
+  ✓ effortless                Effortless                     similarity: 0.7305 → regenerated
+  ✓ electrified               Electrified                    similarity: 0.7066 → regenerated
+  ✓ elegant                   Elegant                        similarity: 0.5134 → regenerated
+  ✓ element                   Element                        similarity: 0.7321 → regenerated
+  ✓ elements                  Elements                       similarity: 0.5064 → regenerated
+  ✓ elevated                  Elevated                       similarity: 0.7538 → regenerated
+  ✓ elevation                 Elevation                      similarity: 0.7557 → regenerated
+  - elite                     Elite                          similarity: 1.0000 (healthy, skipped)
+  - emanation                 Emanation                      similarity: 1.0000 (healthy, skipped)
+  ✓ ember                     Ember                          similarity: 0.7261 → regenerated
+  Batch complete: 430/1469 (29.3%) - 278 regenerated, 152 skipped, 0 errors
+
+[44/147] Processing batch (10 concepts)...
+  ✓ embodiment                Embodiment                     similarity: 0.7677 → regenerated
+  ✓ emerald                   Emerald                        similarity: 0.7086 → regenerated
+  ✓ emergence                 Emergence                      similarity: 0.7579 → regenerated
+  - emission                  Emission                       similarity: 1.0000 (healthy, skipped)
+  ✓ emissive                  Emissive                       similarity: 0.5024 → regenerated
+  ✓ emotion                   Emotion                        similarity: 0.7566 → regenerated
+  - empathetic                Empathetic                     similarity: 1.0000 (healthy, skipped)
+  ✓ empathy                   Empathy                        similarity: 0.5071 → regenerated
+  ✓ empowered                 Empowered                      similarity: 0.7092 → regenerated
+  - empowering                Empowering                     similarity: 1.0000 (healthy, skipped)
+  Batch complete: 440/1469 (30.0%) - 285 regenerated, 155 skipped, 0 errors
+
+[45/147] Processing batch (10 concepts)...
+  ✓ empowerment               Empowerment                    similarity: 0.7516 → regenerated
+  ✓ empty                     Empty                          similarity: 0.5042 → regenerated
+  - encasement                Encasement                     similarity: 1.0000 (healthy, skipped)
+  ✓ enchanted                 Enchanted                      similarity: 0.7563 → regenerated
+  ✓ enchanting                Enchanting                     similarity: 0.7553 → regenerated
+  - enclosed                  Enclosed                       similarity: 1.0000 (healthy, skipped)
+  ✓ enclosure                 Enclosure                      similarity: 0.5082 → regenerated
+  ✓ endurance                 Endurance                      similarity: 0.7285 → regenerated
+  ✓ enduring                  Enduring                       similarity: 0.7533 → regenerated
+  ✓ energetic                 Energetic                      similarity: 0.5090 → regenerated
+  💾 Progress saved: 450/1469 (293 regenerated)
+  Batch complete: 450/1469 (30.6%) - 293 regenerated, 157 skipped, 0 errors
+
+[46/147] Processing batch (10 concepts)...
+  ✓ energy                    Energy                         similarity: 0.5046 → regenerated
+  ✓ engagement                Engagement                     similarity: 0.7327 → regenerated
+  ✓ engineered                Engineered                     similarity: 0.7334 → regenerated
+  - engineering               Engineering                    similarity: 1.0000 (healthy, skipped)
+  ✓ enigmatic                 Enigmatic                      similarity: 0.7668 → regenerated
+  ✓ envelop                   Envelop                        similarity: 0.7488 → regenerated
+  - envelopment               Envelopment                    similarity: 1.0000 (healthy, skipped)
+  ✓ environment               Environment                    similarity: 0.7662 → regenerated
+  ✓ ephemeral                 Ephemeral                      similarity: 0.5061 → regenerated
+  ✓ epic                      Epic                           similarity: 0.7627 → regenerated
+  Batch complete: 460/1469 (31.3%) - 301 regenerated, 159 skipped, 0 errors
+
+[47/147] Processing batch (10 concepts)...
+  ✓ equilibrium               Equilibrium                    similarity: 0.5051 → regenerated
+  ✓ ergonomic                 Ergonomic                      similarity: 0.7628 → regenerated
+  ✓ escape                    Escape                         similarity: 0.7747 → regenerated
+  ✓ escapism                  Escapism                       similarity: 0.7608 → regenerated
+  - essentialism              Essentialism                   similarity: 1.0000 (healthy, skipped)
+  ✓ estate                    Estate                         similarity: 0.5062 → regenerated
+  ✓ ethereal                  Ethereal                       similarity: 0.7578 → regenerated
+  - euphoria                  Euphoria                       similarity: 1.0000 (healthy, skipped)
+  ✓ euphoric                  Euphoric                       similarity: 0.5104 → regenerated
+  ✓ european                  European                       similarity: 0.7709 → regenerated
+  Batch complete: 470/1469 (32.0%) - 309 regenerated, 161 skipped, 0 errors
+
+[48/147] Processing batch (10 concepts)...
+  ✓ evaluation                Evaluation                     similarity: 0.7683 → regenerated
+  ✓ evening                   Evening                        similarity: 0.7534 → regenerated
+  - event                     Event                          similarity: 0.9959 (healthy, skipped)
+  ✓ evocative                 Evocative                      similarity: 0.5081 → regenerated
+  ✓ evolution                 Evolution                      similarity: 0.7634 → regenerated
+  ✓ evolve                    Evolve                         similarity: 0.7295 → regenerated
+  - excellence                Excellence                     similarity: 1.0000 (healthy, skipped)
+  ✓ excite                    Excite                         similarity: 0.5088 → regenerated
+  ✓ excitement                Excitement                     similarity: 0.7196 → regenerated
+  ✓ exclusivity               Exclusivity                    similarity: 0.5070 → regenerated
+  Batch complete: 480/1469 (32.7%) - 317 regenerated, 163 skipped, 0 errors
+
+[49/147] Processing batch (10 concepts)...
+  ✓ exhibition                Exhibition                     similarity: 0.7327 → regenerated
+  ✓ expanse                   Expanse                        similarity: 0.7594 → regenerated
+  ✓ expansion                 Expansion                      similarity: 0.7515 → regenerated
+  ✓ experience                Experience                     similarity: 0.7730 → regenerated
+  ✓ experiential              Experiential                   similarity: 0.5066 → regenerated
+  ✓ experimental              Experimental                   similarity: 0.5051 → regenerated
+  ✓ expertise                 Expertise                      similarity: 0.5102 → regenerated
+  ✓ exploratory               Exploratory                    similarity: 0.5028 → regenerated
+  ✓ exposure                  Exposure                       similarity: 0.5097 → regenerated
+  ✓ expression                Expression                     similarity: 0.7529 → regenerated
+  Batch complete: 490/1469 (33.4%) - 327 regenerated, 163 skipped, 0 errors
+
+[50/147] Processing batch (10 concepts)...
+  ✓ expressive                Expressive                     similarity: 0.5117 → regenerated
+  ✓ expressiveness            Expressiveness                 similarity: 0.5124 → regenerated
+  - exuberance                Exuberance                     similarity: 1.0000 (healthy, skipped)
+  - eyewear                   Eyewear                        similarity: 1.0000 (healthy, skipped)
+  - f-layout                  F-Layout                       similarity: 0.9998 (healthy, skipped)
+  ✓ fabric                    Fabric                         similarity: 0.7510 → regenerated
+  - facade                    Facade                         similarity: 1.0000 (healthy, skipped)
+  ✓ faceted                   Faceted                        similarity: 0.7408 → regenerated
+  ✓ familiarity               Familiarity                    similarity: 0.5080 → regenerated
+  ✓ fanciful                  Fanciful                       similarity: 0.7681 → regenerated
+  💾 Progress saved: 500/1469 (333 regenerated)
+  Batch complete: 500/1469 (34.0%) - 333 regenerated, 167 skipped, 0 errors
+
+[51/147] Processing batch (10 concepts)...
+  - fandom                    Fandom                         similarity: 1.0000 (healthy, skipped)
+  ✓ fantasy                   Fantasy                        similarity: 0.5042 → regenerated
+  ✓ fashion                   Fashion                        similarity: 0.5116 → regenerated
+  ✓ feminine                  Feminine                       similarity: 0.7599 → regenerated
+  ✓ festive                   Festive                        similarity: 0.7274 → regenerated
+  ✓ fi                        fi                             similarity: 0.7306 → regenerated
+  ✓ fibrous                   Fibrous                        similarity: 0.5035 → regenerated
+  ✓ field                     Field                          similarity: 0.7314 → regenerated
+  - figurative                Figurative                     similarity: 1.0000 (healthy, skipped)
+  ✓ filmic                    Filmic                         similarity: 0.5050 → regenerated
+  Batch complete: 510/1469 (34.7%) - 341 regenerated, 169 skipped, 0 errors
+
+[52/147] Processing batch (10 concepts)...
+  ✓ filtering                 Filtering                      similarity: 0.5084 → regenerated
+  ✓ finance                   Finance                        similarity: 0.5076 → regenerated
+  ✓ fine                      Fine                           similarity: 0.7157 → regenerated
+  - fintech                   Fintech                        similarity: 1.0000 (healthy, skipped)
+  ✓ fire                      Fire                           similarity: 0.7307 → regenerated
+  ✓ flaky                     Flaky                          similarity: 0.5002 → regenerated
+  ✓ flare                     Flare                          similarity: 0.7452 → regenerated
+  - flat-design               Flat-Design                    similarity: 1.0000 (healthy, skipped)
+  ✓ flatness                  Flatness                       similarity: 0.7257 → regenerated
+  ✓ flesh                     Flesh                          similarity: 0.7314 → regenerated
+  Batch complete: 520/1469 (35.4%) - 349 regenerated, 171 skipped, 0 errors
+
+[53/147] Processing batch (10 concepts)...
+  ✓ flex                      Flex                           similarity: 0.7483 → regenerated
+  - flexibility               Flexibility                    similarity: 1.0000 (healthy, skipped)
+  ✓ float                     Float                          similarity: 0.7279 → regenerated
+  - floating-elements         Floating-Elements              similarity: 1.0000 (healthy, skipped)
+  ✓ flora                     Flora                          similarity: 0.7599 → regenerated
+  - flotilla                  Flotilla                       similarity: 1.0000 (healthy, skipped)
+  ✓ flourish                  Flourish                       similarity: 0.7441 → regenerated
+  ✓ flow                      Flow                           similarity: 0.7472 → regenerated
+  ✓ flowchart                 Flowchart                      similarity: 0.5063 → regenerated
+  ✓ fluid                     Fluid                          similarity: 0.7479 → regenerated
+  Batch complete: 530/1469 (36.1%) - 356 regenerated, 174 skipped, 0 errors
+
+[54/147] Processing batch (10 concepts)...
+  ✓ flux                      Flux                           similarity: 0.7594 → regenerated
+  - foamy                     Foamy                          similarity: 1.0000 (healthy, skipped)
+  ✓ focus                     Focus                          similarity: 0.5027 → regenerated
+  ✓ focused                   Focused                        similarity: 0.5019 → regenerated
+  - foliage                   Foliage                        similarity: 1.0000 (healthy, skipped)
+  ✓ folk                      Folk                           similarity: 0.7402 → regenerated
+  ✓ font                      Font                           similarity: 0.5057 → regenerated
+  ✓ fonts                     Fonts                          similarity: 0.5054 → regenerated
+  ✓ food                      Food                           similarity: 0.5048 → regenerated
+  ✓ force                     Force                          similarity: 0.7149 → regenerated
+  Batch complete: 540/1469 (36.8%) - 364 regenerated, 176 skipped, 0 errors
+
+[55/147] Processing batch (10 concepts)...
+  ✓ formation                 Formation                      similarity: 0.7291 → regenerated
+  ✓ formless                  Formless                       similarity: 0.7327 → regenerated
+  ✓ forward                   Forward                        similarity: 0.7443 → regenerated
+  ✓ foundation                Foundation                     similarity: 0.7339 → regenerated
+  - fracture                  Fracture                       similarity: 1.0000 (healthy, skipped)
+  ✓ fragility                 Fragility                      similarity: 0.5090 → regenerated
+  ✓ fragment                  Fragment                       similarity: 0.7683 → regenerated
+  ✓ fragmentation             Fragmentation                  similarity: 0.7532 → regenerated
+  ✓ frame                     Frame                          similarity: 0.7736 → regenerated
+  ✓ framework                 Framework                      similarity: 0.7636 → regenerated
+  💾 Progress saved: 550/1469 (373 regenerated)
+  Batch complete: 550/1469 (37.4%) - 373 regenerated, 177 skipped, 0 errors
+
+[56/147] Processing batch (10 concepts)...
+  ✓ framing                   Framing                        similarity: 0.7629 → regenerated
+  ✓ freedom                   Freedom                        similarity: 0.7017 → regenerated
+  - freeform                  Freeform                       similarity: 1.0000 (healthy, skipped)
+  ✓ freeze                    Freeze                         similarity: 0.5045 → regenerated
+  - freight                   Freight                        similarity: 1.0000 (healthy, skipped)
+  ✓ freshness                 Freshness                      similarity: 0.7334 → regenerated
+  ✓ friendly                  Friendly                       similarity: 0.5079 → regenerated
+  ✓ frontier                  Frontier                       similarity: 0.7439 → regenerated
+  ✓ fulfillment               Fulfillment                    similarity: 0.7563 → regenerated
+  - full-bleed                Full-Bleed                     similarity: 1.0000 (healthy, skipped)
+  Batch complete: 560/1469 (38.1%) - 380 regenerated, 180 skipped, 0 errors
+
+[57/147] Processing batch (10 concepts)...
+  ✓ functionalism             Functionalism                  similarity: 0.5064 → regenerated
+  ✓ functionalist             Functionalist                  similarity: 0.5021 → regenerated
+  ✓ future                    Future                         similarity: 0.7587 → regenerated
+  ✓ futurism                  futurism                       similarity: 0.5046 → regenerated
+  ✓ futurist                  futurist                       similarity: 0.7405 → regenerated
+  ✓ futuristic                Futuristic                     similarity: 0.5023 → regenerated
+  ✓ game                      Game                           similarity: 0.7405 → regenerated
+  ✓ gamification              Gamification                   similarity: 0.5070 → regenerated
+  ✓ gamified                  Gamified                       similarity: 0.5018 → regenerated
+  ✓ gaming                    Gaming                         similarity: 0.7254 → regenerated
+  Batch complete: 570/1469 (38.8%) - 390 regenerated, 180 skipped, 0 errors
+
+[58/147] Processing batch (10 concepts)...
+  ✓ gathering                 Gathering                      similarity: 0.7485 → regenerated
+  ✓ gender                    Gender                         similarity: 0.7549 → regenerated
+  ✓ generation                Generation                     similarity: 0.7542 → regenerated
+  ✓ generative                Generative                     similarity: 0.5075 → regenerated
+  - generative-art            Generative Art                 similarity: 1.0000 (healthy, skipped)
+  ✓ genesis                   Genesis                        similarity: 0.5053 → regenerated
+  ✓ gentle                    Gentle                         similarity: 0.5042 → regenerated
+  - genuine                   Genuine                        similarity: 1.0000 (healthy, skipped)
+  ✓ geology                   Geology                        similarity: 0.4956 → regenerated
+  ✓ geometric                 Geometric                      similarity: 0.5064 → regenerated
+  Batch complete: 580/1469 (39.5%) - 398 regenerated, 182 skipped, 0 errors
+
+[59/147] Processing batch (10 concepts)...
+  - geometric-type            Geometric-Type                 similarity: 1.0000 (healthy, skipped)
+  ✓ geometry                  Geometry                       similarity: 0.5055 → regenerated
+  - germination               Germination                    similarity: 1.0000 (healthy, skipped)
+  - gesture-based             Gesture-Based                  similarity: 1.0000 (healthy, skipped)
+  - glacial                   Glacial                        similarity: 1.0000 (healthy, skipped)
+  ✓ glamour                   Glamour                        similarity: 0.7423 → regenerated
+  - glare                     Glare                          similarity: 1.0000 (healthy, skipped)
+  ✓ glassmorphism             Glassmorphism                  similarity: 0.5020 → regenerated
+  ✓ glassy                    Glassy                         similarity: 0.4985 → regenerated
+  ✓ glazed                    Glazed                         similarity: 0.7108 → regenerated
+  Batch complete: 590/1469 (40.2%) - 403 regenerated, 187 skipped, 0 errors
+
+[60/147] Processing batch (10 concepts)...
+  - glimpse                   Glimpse                        similarity: 1.0000 (healthy, skipped)
+  ✓ glitch                    Glitch                         similarity: 0.7686 → regenerated
+  - glitch-art                Glitch Art                     similarity: 1.0000 (healthy, skipped)
+  ✓ global                    Global                         similarity: 0.7631 → regenerated
+  ✓ globalization             Globalization                  similarity: 0.7645 → regenerated
+  - globe                     Globe                          similarity: 1.0000 (healthy, skipped)
+  ✓ gloom                     Gloom                          similarity: 0.7334 → regenerated
+  ✓ glossy                    Glossy                         similarity: 0.5067 → regenerated
+  - gothic                    Gothic                         similarity: 1.0000 (healthy, skipped)
+  ✓ gourmet                   Gourmet                        similarity: 0.7516 → regenerated
+  💾 Progress saved: 600/1469 (409 regenerated)
+  Batch complete: 600/1469 (40.8%) - 409 regenerated, 191 skipped, 0 errors
+
+[61/147] Processing batch (10 concepts)...
+  ✓ government                Government                     similarity: 0.5016 → regenerated
+  ✓ grace                     Grace                          similarity: 0.7298 → regenerated
+  - graded                    Graded                         similarity: 1.0000 (healthy, skipped)
+  ✓ gradient                  Gradient                       similarity: 0.5065 → regenerated
+  - gradient-mesh             Gradient-Mesh                  similarity: 1.0000 (healthy, skipped)
+  - grading                   Grading                        similarity: 1.0000 (healthy, skipped)
+  ✓ graffiti                  Graffiti                       similarity: 0.7518 → regenerated
+  ✓ grained                   Grained                        similarity: 0.7352 → regenerated
+  ✓ grainy                    Grainy                         similarity: 0.5015 → regenerated
+  ✓ grandeur                  Grandeur                       similarity: 0.7626 → regenerated
+  Batch complete: 610/1469 (41.5%) - 416 regenerated, 194 skipped, 0 errors
+
+[62/147] Processing batch (10 concepts)...
+  ✓ granular                  Granular                       similarity: 0.5043 → regenerated
+  ✓ graphics                  Graphics                       similarity: 0.7986 → regenerated
+  ✓ graphite                  Graphite                       similarity: 0.5025 → regenerated
+  - gravitas                  Gravitas                       similarity: 1.0000 (healthy, skipped)
+  ✓ gravity                   Gravity                        similarity: 0.5050 → regenerated
+  ✓ grid                      Grid                           similarity: 0.5041 → regenerated
+  - grid-based                Grid-Based                     similarity: 0.9999 (healthy, skipped)
+  ✓ gritty                    Gritty                         similarity: 0.5006 → regenerated
+  ✓ groovy                    Groovy                         similarity: 0.5062 → regenerated
+  - grotesque                 Grotesque                      similarity: 1.0000 (healthy, skipped)
+  Batch complete: 620/1469 (42.2%) - 423 regenerated, 197 skipped, 0 errors
+
+[63/147] Processing batch (10 concepts)...
+  ✓ grounded                  Grounded                       similarity: 0.7386 → regenerated
+  ✓ grounding                 Grounding                      similarity: 0.7663 → regenerated
+  ✓ grouping                  Grouping                       similarity: 0.7193 → regenerated
+  ✓ growth                    Growth                         similarity: 0.7613 → regenerated
+  ✓ grunge                    Grunge                         similarity: 0.5018 → regenerated
+  - gym                       Gym                            similarity: 1.0000 (healthy, skipped)
+  - hamburger-menu            Hamburger-Menu                 similarity: 1.0000 (healthy, skipped)
+  ✓ handwritten               Handwritten                    similarity: 0.5082 → regenerated
+  - hard                      Hard                           similarity: 1.0000 (healthy, skipped)
+  ✓ harmony                   Harmony                        similarity: 0.5055 → regenerated
+  Batch complete: 630/1469 (42.9%) - 430 regenerated, 200 skipped, 0 errors
+
+[64/147] Processing batch (10 concepts)...
+  ✓ haunting                  Haunting                       similarity: 0.7406 → regenerated
+  ✓ haze                      Haze                           similarity: 0.7128 → regenerated
+  ✓ hazy                      Hazy                           similarity: 0.5035 → regenerated
+  ✓ header                    Header                         similarity: 0.5061 → regenerated
+  ✓ healthcare                Healthcare                     similarity: 0.5042 → regenerated
+  - healthtech                HealthTech                     similarity: 1.0000 (healthy, skipped)
+  - healthy                   Healthy                        similarity: 1.0000 (healthy, skipped)
+  ✓ heavy                     Heavy                          similarity: 0.5081 → regenerated
+  ✓ heritage                  Heritage                       similarity: 0.7434 → regenerated
+  - hero-led                  Hero-Led                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 640/1469 (43.6%) - 437 regenerated, 203 skipped, 0 errors
+
+[65/147] Processing batch (10 concepts)...
+  ✓ hidden                    Hidden                         similarity: 0.7628 → regenerated
+  ✓ hierarchy                 Hierarchy                      similarity: 0.5043 → regenerated
+  - high-contrast             High-Contrast                  similarity: 1.0000 (healthy, skipped)
+  - high-key                  High-key                       similarity: 1.0000 (healthy, skipped)
+  - high-saturation           High-Saturation                similarity: 1.0000 (healthy, skipped)
+  - highlight                 Highlight                      similarity: 1.0000 (healthy, skipped)
+  - historical                Historical                     similarity: 1.0000 (healthy, skipped)
+  - hollow                    Hollow                         similarity: 1.0000 (healthy, skipped)
+  ✓ homely                    Homely                         similarity: 0.5073 → regenerated
+  - honest                    Honest                         similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 650/1469 (440 regenerated)
+  Batch complete: 650/1469 (44.2%) - 440 regenerated, 210 skipped, 0 errors
+
+[66/147] Processing batch (10 concepts)...
+  ✓ hope                      Hope                           similarity: 0.7125 → regenerated
+  ✓ horizon                   Horizon                        similarity: 0.7250 → regenerated
+  - horology                  Horology                       similarity: 1.0000 (healthy, skipped)
+  ✓ hospitality               Hospitality                    similarity: 0.5048 → regenerated
+  - hotels                    Hotels                         similarity: 1.0000 (healthy, skipped)
+  - hover-effects             Hover-Effects                  similarity: 1.0000 (healthy, skipped)
+  ✓ hud                       HUD                            similarity: 0.7414 → regenerated
+  ✓ hues                      Hues                           similarity: 0.5085 → regenerated
+  - humanism                  Humanism                       similarity: 1.0000 (healthy, skipped)
+  ✓ humanist                  Humanist                       similarity: 0.5023 → regenerated
+  Batch complete: 660/1469 (44.9%) - 446 regenerated, 214 skipped, 0 errors
+
+[67/147] Processing batch (10 concepts)...
+  ✓ humanity                  Humanity                       similarity: 0.5078 → regenerated
+  ✓ humor                     Humor                          similarity: 0.7682 → regenerated
+  - hybrid                    Hybrid                         similarity: 1.0000 (healthy, skipped)
+  - hype                      Hype                           similarity: 1.0000 (healthy, skipped)
+  - hyperreal                 Hyperreal                      similarity: 0.9970 (healthy, skipped)
+  ✓ ice                       Ice                            similarity: 0.6937 → regenerated
+  ✓ icon                      Icon                           similarity: 0.7662 → regenerated
+  ✓ iconography               Iconography                    similarity: 0.5136 → regenerated
+  ✓ ideal                     Ideal                          similarity: 0.7548 → regenerated
+  ✓ identity                  Identity                       similarity: 0.5062 → regenerated
+  Batch complete: 670/1469 (45.6%) - 453 regenerated, 217 skipped, 0 errors
+
+[68/147] Processing batch (10 concepts)...
+  ✓ idyll                     Idyll                          similarity: 0.7039 → regenerated
+  ✓ illumination              Illumination                   similarity: 0.7298 → regenerated
+  ✓ illusion                  Illusion                       similarity: 0.7666 → regenerated
+  ✓ illustration              Illustration                   similarity: 0.7644 → regenerated
+  - illustration-led          Illustration-Led               similarity: 1.0000 (healthy, skipped)
+  ✓ image                     Image                          similarity: 0.5049 → regenerated
+  ✓ imagination               Imagination                    similarity: 0.7487 → regenerated
+  ✓ imaging                   Imaging                        similarity: 0.7664 → regenerated
+  ✓ immediate                 Immediate                      similarity: 0.7753 → regenerated
+  ✓ immensity                 Immensity                      similarity: 0.5078 → regenerated
+  Batch complete: 680/1469 (46.3%) - 462 regenerated, 218 skipped, 0 errors
+
+[69/147] Processing batch (10 concepts)...
+  ✓ immersion                 Immersion                      similarity: 0.7454 → regenerated
+  ✓ immersive                 Immersive                      similarity: 0.5068 → regenerated
+  ✓ impact                    Impact                         similarity: 0.7425 → regenerated
+  ✓ imperfection              Imperfection                   similarity: 0.5075 → regenerated
+  ✓ impermanence              Impermanence                   similarity: 0.5065 → regenerated
+  ✓ imposing                  Imposing                       similarity: 0.7507 → regenerated
+  - imposition                Imposition                     similarity: 1.0000 (healthy, skipped)
+  ✓ impressionist             Impressionist                  similarity: 0.5036 → regenerated
+  - improvement               Improvement                    similarity: 1.0000 (healthy, skipped)
+  ✓ inclusion                 Inclusion                      similarity: 0.7628 → regenerated
+  Batch complete: 690/1469 (47.0%) - 470 regenerated, 220 skipped, 0 errors
+
+[70/147] Processing batch (10 concepts)...
+  ✓ inclusivity               Inclusivity                    similarity: 0.5058 → regenerated
+  ✓ independence              Independence                   similarity: 0.7415 → regenerated
+  ✓ indigo                    Indigo                         similarity: 0.7323 → regenerated
+  ✓ individualism             Individualism                  similarity: 0.7733 → regenerated
+  ✓ industrial                Industrial                     similarity: 0.7755 → regenerated
+  ✓ industry                  Industry                       similarity: 0.5062 → regenerated
+  ✓ infinite                  Infinite                       similarity: 0.7838 → regenerated
+  - infinite-scroll           Infinite-Scroll                similarity: 1.0000 (healthy, skipped)
+  ✓ infinity                  Infinity                       similarity: 0.5023 → regenerated
+  ✓ influence                 Influence                      similarity: 0.7367 → regenerated
+  💾 Progress saved: 700/1469 (479 regenerated)
+  Batch complete: 700/1469 (47.7%) - 479 regenerated, 221 skipped, 0 errors
+
+[71/147] Processing batch (10 concepts)...
+  - informal                  Informal                       similarity: 1.0000 (healthy, skipped)
+  ✓ informative               Informative                    similarity: 0.5073 → regenerated
+  ✓ infrastructure            Infrastructure                 similarity: 0.5088 → regenerated
+  - ingenuity                 Ingenuity                      similarity: 1.0000 (healthy, skipped)
+  - ingredients               Ingredients                    similarity: 1.0000 (healthy, skipped)
+  ✓ innocence                 Innocence                      similarity: 0.5123 → regenerated
+  ✓ innovate                  Innovate                       similarity: 0.7653 → regenerated
+  ✓ innovative                Innovative                     similarity: 0.5116 → regenerated
+  ✓ inquiry                   Inquiry                        similarity: 0.5095 → regenerated
+  ✓ insight                   Insight                        similarity: 0.7703 → regenerated
+  Batch complete: 710/1469 (48.3%) - 486 regenerated, 224 skipped, 0 errors
+
+[72/147] Processing batch (10 concepts)...
+  ✓ inspiration               Inspiration                    similarity: 0.7653 → regenerated
+  ✓ inspire                   Inspire                        similarity: 0.7400 → regenerated
+  ✓ instinct                  Instinct                       similarity: 0.7393 → regenerated
+  - intangible                Intangible                     similarity: 1.0000 (healthy, skipped)
+  - integrated                Integrated                     similarity: 1.0000 (healthy, skipped)
+  ✓ integration               Integration                    similarity: 0.7640 → regenerated
+  ✓ intellect                 Intellect                      similarity: 0.7802 → regenerated
+  ✓ intelligence              Intelligence                   similarity: 0.5060 → regenerated
+  ✓ intensity                 Intensity                      similarity: 0.5031 → regenerated
+  ✓ intent                    Intent                         similarity: 0.7353 → regenerated
+  Batch complete: 720/1469 (49.0%) - 494 regenerated, 226 skipped, 0 errors
+
+[73/147] Processing batch (10 concepts)...
+  ✓ intentional               Intentional                    similarity: 0.7410 → regenerated
+  ✓ interactions              Interactions                   similarity: 0.5092 → regenerated
+  ✓ interactive               Interactive                    similarity: 0.5080 → regenerated
+  ✓ interconnectedness        Interconnectedness             similarity: 0.5095 → regenerated
+  ✓ interconnection           Interconnection                similarity: 0.5061 → regenerated
+  ✓ interdependence           Interdependence                similarity: 0.5163 → regenerated
+  ✓ interface                 Interface                      similarity: 0.5060 → regenerated
+  - interfacing               Interfacing                    similarity: 1.0000 (healthy, skipped)
+  - interference              Interference                   similarity: 1.0000 (healthy, skipped)
+  - interior                  Interior                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 730/1469 (49.7%) - 501 regenerated, 229 skipped, 0 errors
+
+[74/147] Processing batch (10 concepts)...
+  - interlink                 Interlink                      similarity: 1.0000 (healthy, skipped)
+  ✓ interlock                 Interlock                      similarity: 0.7567 → regenerated
+  ✓ interplay                 Interplay                      similarity: 0.5098 → regenerated
+  - interpretation            Interpretation                 similarity: 1.0000 (healthy, skipped)
+  ✓ interrupted               Interrupted                    similarity: 0.7643 → regenerated
+  ✓ intersect                 Intersect                      similarity: 0.7472 → regenerated
+  - interstitial              Interstitial                   similarity: 1.0000 (healthy, skipped)
+  ✓ intertwined               Intertwined                    similarity: 0.5066 → regenerated
+  ✓ interwoven                Interwoven                     similarity: 0.7646 → regenerated
+  - intimacy                  Intimacy                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 740/1469 (50.4%) - 507 regenerated, 233 skipped, 0 errors
+
+[75/147] Processing batch (10 concepts)...
+  ✓ intimate                  Intimate                       similarity: 0.7699 → regenerated
+  ✓ intricate                 Intricate                      similarity: 0.5042 → regenerated
+  ✓ intrigue                  Intrigue                       similarity: 0.5071 → regenerated
+  ✓ introspection             Introspection                  similarity: 0.5069 → regenerated
+  ✓ introspective             Introspective                  similarity: 0.5094 → regenerated
+  ✓ inventive                 Inventive                      similarity: 0.7338 → regenerated
+  ✓ inviting                  Inviting                       similarity: 0.5064 → regenerated
+  ✓ iridescent                Iridescent                     similarity: 0.7144 → regenerated
+  - irreverent                Irreverent                     similarity: 1.0000 (healthy, skipped)
+  ✓ isolated                  Isolated                       similarity: 0.7411 → regenerated
+  💾 Progress saved: 750/1469 (516 regenerated)
+  Batch complete: 750/1469 (51.1%) - 516 regenerated, 234 skipped, 0 errors
+
+[76/147] Processing batch (10 concepts)...
+  ✓ isolation                 Isolation                      similarity: 0.7635 → regenerated
+  ✓ isometric                 Isometric                      similarity: 0.5090 → regenerated
+  ✓ jagged                    Jagged                         similarity: 0.7457 → regenerated
+  ✓ japandi                   Japandi                        similarity: 0.5068 → regenerated
+  - jewelry                   Jewelry                        similarity: 1.0000 (healthy, skipped)
+  ✓ journey                   Journey                        similarity: 0.5073 → regenerated
+  ✓ joy                       Joy                            similarity: 0.5093 → regenerated
+  ✓ juxtaposition             Juxtaposition                  similarity: 0.7755 → regenerated
+  ✓ key                       key                            similarity: 0.5045 → regenerated
+  ✓ kinetic                   Kinetic                        similarity: 0.7218 → regenerated
+  Batch complete: 760/1469 (51.7%) - 525 regenerated, 235 skipped, 0 errors
+
+[77/147] Processing batch (10 concepts)...
+  ✓ kitsch                    Kitsch                         similarity: 0.5037 → regenerated
+  ✓ knowledge                 Knowledge                      similarity: 0.7729 → regenerated
+  - landing-page              Landing-Page                   similarity: 1.0000 (healthy, skipped)
+  - language                  Language                       similarity: 1.0000 (healthy, skipped)
+  - large-type                Large-Type                     similarity: 1.0000 (healthy, skipped)
+  ✓ lattice                   Lattice                        similarity: 0.5044 → regenerated
+  ✓ layered                   Layered                        similarity: 0.7292 → regenerated
+  ✓ layering                  Layering                       similarity: 0.7569 → regenerated
+  ✓ layers                    Layers                         similarity: 0.5056 → regenerated
+  ✓ layout                    Layout                         similarity: 0.5036 → regenerated
+  Batch complete: 770/1469 (52.4%) - 532 regenerated, 238 skipped, 0 errors
+
+[78/147] Processing batch (10 concepts)...
+  - lazy-loading              Lazy-Loading                   similarity: 0.9999 (healthy, skipped)
+  ✓ led                       Led                            similarity: 0.5004 → regenerated
+  ✓ legacy                    Legacy                         similarity: 0.5052 → regenerated
+  ✓ leisure                   Leisure                        similarity: 0.7560 → regenerated
+  ✓ lens                      Lens                           similarity: 0.5056 → regenerated
+  - liberation                Liberation                     similarity: 0.9932 (healthy, skipped)
+  ✓ life                      Life                           similarity: 0.7297 → regenerated
+  ✓ lifestyle                 Lifestyle                      similarity: 0.7614 → regenerated
+  ✓ light                     Light                          similarity: 0.5058 → regenerated
+  - light-academia            Light-Academia                 similarity: 1.0000 (healthy, skipped)
+  Batch complete: 780/1469 (53.1%) - 539 regenerated, 241 skipped, 0 errors
+
+[79/147] Processing batch (10 concepts)...
+  ✓ lightness                 Lightness                      similarity: 0.5049 → regenerated
+  ✓ like                      Like                           similarity: 0.4964 → regenerated
+  - limbo                     Limbo                          similarity: 1.0000 (healthy, skipped)
+  ✓ liminality                Liminality                     similarity: 0.5095 → regenerated
+  - limitation                Limitation                     similarity: 1.0000 (healthy, skipped)
+  ✓ limited                   Limited                        similarity: 0.7701 → regenerated
+  ✓ line                      Line                           similarity: 0.7441 → regenerated
+  - line-art                  Line-Art                       similarity: 0.9999 (healthy, skipped)
+  ✓ linearity                 Linearity                      similarity: 0.5037 → regenerated
+  ✓ linkage                   Linkage                        similarity: 0.5070 → regenerated
+  Batch complete: 790/1469 (53.8%) - 546 regenerated, 244 skipped, 0 errors
+
+[80/147] Processing batch (10 concepts)...
+  ✓ liquid                    Liquid                         similarity: 0.7647 → regenerated
+  - literacy                  Literacy                       similarity: 1.0000 (healthy, skipped)
+  ✓ literary                  Literary                       similarity: 0.5018 → regenerated
+  - liveliness                Liveliness                     similarity: 1.0000 (healthy, skipped)
+  - lo-fi                     Lo-fi                          similarity: 1.0000 (healthy, skipped)
+  ✓ loading                   Loading                        similarity: 0.5059 → regenerated
+  - loading-states            Loading-States                 similarity: 1.0000 (healthy, skipped)
+  ✓ local                     Local                          similarity: 0.7855 → regenerated
+  ✓ logic                     Logic                          similarity: 0.7691 → regenerated
+  - logistics                 Logistics                      similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 800/1469 (551 regenerated)
+  Batch complete: 800/1469 (54.5%) - 551 regenerated, 249 skipped, 0 errors
+
+[81/147] Processing batch (10 concepts)...
+  - long-scroll               Long-Scroll                    similarity: 0.9998 (healthy, skipped)
+  - loop                      Loop                           similarity: 1.0000 (healthy, skipped)
+  ✓ lore                      Lore                           similarity: 0.7620 → regenerated
+  - low-key                   Low-key                        similarity: 1.0000 (healthy, skipped)
+  - low-poly                  Low-poly                       similarity: 1.0000 (healthy, skipped)
+  - low-saturation            Low-Saturation                 similarity: 1.0000 (healthy, skipped)
+  ✓ lumen                     Lumen                          similarity: 0.7591 → regenerated
+  ✓ luminance                 Luminance                      similarity: 0.5055 → regenerated
+  ✓ luminescence              Luminescence                   similarity: 0.5082 → regenerated
+  ✓ luminescent               Luminescent                    similarity: 0.5038 → regenerated
+  Batch complete: 810/1469 (55.1%) - 556 regenerated, 254 skipped, 0 errors
+
+[82/147] Processing batch (10 concepts)...
+  ✓ luminosity                Luminosity                     similarity: 0.5067 → regenerated
+  ✓ lunar                     Lunar                          similarity: 0.7167 → regenerated
+  ✓ lustrous                  Lustrous                       similarity: 0.5047 → regenerated
+  ✓ luxe                      Luxe                           similarity: 0.7811 → regenerated
+  ✓ luxurious                 Luxurious                      similarity: 0.5136 → regenerated
+  - macro                     Macro                          similarity: 1.0000 (healthy, skipped)
+  ✓ magazine                  Magazine                       similarity: 0.4951 → regenerated
+  - magazine-layout           Magazine-Layout                similarity: 1.0000 (healthy, skipped)
+  - magnify                   Magnify                        similarity: 1.0000 (healthy, skipped)
+  ✓ majestic                  Majestic                       similarity: 0.7567 → regenerated
+  Batch complete: 820/1469 (55.8%) - 563 regenerated, 257 skipped, 0 errors
+
+[83/147] Processing batch (10 concepts)...
+  ✓ manifestation             Manifestation                  similarity: 0.7232 → regenerated
+  ✓ manipulation              Manipulation                   similarity: 0.7818 → regenerated
+  - manufacturing             Manufacturing                  similarity: 1.0000 (healthy, skipped)
+  ✓ marble                    Marble                         similarity: 0.6558 → regenerated
+  - marine                    Marine                         similarity: 1.0000 (healthy, skipped)
+  - marketing                 Marketing                      similarity: 1.0000 (healthy, skipped)
+  ✓ masking                   Masking                        similarity: 0.7528 → regenerated
+  ✓ masonry                   Masonry                        similarity: 0.5066 → regenerated
+  ✓ mass                      Mass                           similarity: 0.5077 → regenerated
+  ✓ mastery                   Mastery                        similarity: 0.5089 → regenerated
+  Batch complete: 830/1469 (56.5%) - 570 regenerated, 260 skipped, 0 errors
+
+[84/147] Processing batch (10 concepts)...
+  - material-design           Material-Design                similarity: 1.0000 (healthy, skipped)
+  - materials                 Materials                      similarity: 1.0000 (healthy, skipped)
+  ✓ matrix                    Matrix                         similarity: 0.7506 → regenerated
+  ✓ matte                     Matte                          similarity: 0.7474 → regenerated
+  ✓ maximalism                Maximalism                     similarity: 0.5050 → regenerated
+  ✓ maximalist                Maximalist                     similarity: 0.5083 → regenerated
+  ✓ measure                   Measure                        similarity: 0.7381 → regenerated
+  ✓ measurement               Measurement                    similarity: 0.4994 → regenerated
+  ✓ mechanism                 Mechanism                      similarity: 0.7459 → regenerated
+  ✓ media                     Media                          similarity: 0.7780 → regenerated
+  Batch complete: 840/1469 (57.2%) - 578 regenerated, 262 skipped, 0 errors
+
+[85/147] Processing batch (10 concepts)...
+  ✓ melancholy                Melancholy                     similarity: 0.5121 → regenerated
+  - mellow                    Mellow                         similarity: 1.0000 (healthy, skipped)
+  ✓ melody                    Melody                         similarity: 0.5096 → regenerated
+  ✓ memorial                  Memorial                       similarity: 0.7617 → regenerated
+  ✓ memory                    Memory                         similarity: 0.5049 → regenerated
+  ✓ memphis                   Memphis                        similarity: 0.5027 → regenerated
+  ✓ menu                      Menu                           similarity: 0.5080 → regenerated
+  - merchandise               Merchandise                    similarity: 1.0000 (healthy, skipped)
+  ✓ merriment                 Merriment                      similarity: 0.7227 → regenerated
+  ✓ mesh                      Mesh                           similarity: 0.7173 → regenerated
+  💾 Progress saved: 850/1469 (586 regenerated)
+  Batch complete: 850/1469 (57.9%) - 586 regenerated, 264 skipped, 0 errors
+
+[86/147] Processing batch (10 concepts)...
+  - messaging                 Messaging                      similarity: 1.0000 (healthy, skipped)
+  ✓ metallic                  Metallic                       similarity: 0.6622 → regenerated
+  - metaverse                 Metaverse                      similarity: 1.0000 (healthy, skipped)
+  ✓ methodical                Methodical                     similarity: 0.7504 → regenerated
+  ✓ micro                     Micro                          similarity: 0.7170 → regenerated
+  - micro-interactions        Micro-Interactions             similarity: 1.0000 (healthy, skipped)
+  - microcosm                 Microcosm                      similarity: 1.0000 (healthy, skipped)
+  - milestone                 Milestone                      similarity: 1.0000 (healthy, skipped)
+  ✓ mineral                   Mineral                        similarity: 0.6837 → regenerated
+  - miniature                 Miniature                      similarity: 1.0000 (healthy, skipped)
+  Batch complete: 860/1469 (58.5%) - 590 regenerated, 270 skipped, 0 errors
+
+[87/147] Processing batch (10 concepts)...
+  ✓ minimal                   Minimal                        similarity: 0.7833 → regenerated
+  ✓ minimalism                Minimalism                     similarity: 0.5036 → regenerated
+  ✓ minimalistic              Minimalistic                   similarity: 0.5020 → regenerated
+  ✓ mirth                     Mirth                          similarity: 0.7300 → regenerated
+  ✓ mist                      Mist                           similarity: 0.7272 → regenerated
+  - mixed-fonts               Mixed-Fonts                    similarity: 1.0000 (healthy, skipped)
+  - mobile                    Mobile                         similarity: 1.0000 (healthy, skipped)
+  - mobility                  Mobility                       similarity: 1.0000 (healthy, skipped)
+  ✓ modal                     Modal                          similarity: 0.5041 → regenerated
+  ✓ modeling                  Modeling                       similarity: 0.7574 → regenerated
+  Batch complete: 870/1469 (59.2%) - 597 regenerated, 273 skipped, 0 errors
+
+[88/147] Processing batch (10 concepts)...
+  - modelling                 Modelling                      similarity: 1.0000 (healthy, skipped)
+  ✓ modern                    Modern                         similarity: 0.4997 → regenerated
+  ✓ modernity                 Modernity                      similarity: 0.5029 → regenerated
+  ✓ modular                   Modular                        similarity: 0.5069 → regenerated
+  ✓ modularity                Modularity                     similarity: 0.5033 → regenerated
+  - module                    Module                         similarity: 1.0000 (healthy, skipped)
+  ✓ molecular                 Molecular                      similarity: 0.7352 → regenerated
+  - molten                    Molten                         similarity: 1.0000 (healthy, skipped)
+  ✓ moment                    Moment                         similarity: 0.7639 → regenerated
+  ✓ momentum                  Momentum                       similarity: 0.7569 → regenerated
+  Batch complete: 880/1469 (59.9%) - 604 regenerated, 276 skipped, 0 errors
+
+[89/147] Processing batch (10 concepts)...
+  ✓ monochromatic             Monochromatic                  similarity: 0.5004 → regenerated
+  ✓ monochrome                Monochrome                     similarity: 0.4995 → regenerated
+  ✓ monolithic                Monolithic                     similarity: 0.5039 → regenerated
+  ✓ monospace                 Monospace                      similarity: 0.5053 → regenerated
+  ✓ monumental                Monumental                     similarity: 0.5071 → regenerated
+  ✓ morph                     Morph                          similarity: 0.7444 → regenerated
+  ✓ mortality                 Mortality                      similarity: 0.5022 → regenerated
+  - motion-design             Motion Design                  similarity: 1.0000 (healthy, skipped)
+  - motion-heavy              Motion-Heavy                   similarity: 1.0000 (healthy, skipped)
+  - motorsport                Motorsport                     similarity: 1.0000 (healthy, skipped)
+  Batch complete: 890/1469 (60.6%) - 611 regenerated, 279 skipped, 0 errors
+
+[90/147] Processing batch (10 concepts)...
+  ✓ movement                  Movement                       similarity: 0.7274 → regenerated
+  - murals                    Murals                         similarity: 1.0000 (healthy, skipped)
+  - museum                    Museum                         similarity: 1.0000 (healthy, skipped)
+  ✓ music                     Music                          similarity: 0.5050 → regenerated
+  ✓ muted                     Muted                          similarity: 0.5012 → regenerated
+  ✓ mysterious                Mysterious                     similarity: 0.5056 → regenerated
+  ✓ mystery                   Mystery                        similarity: 0.5060 → regenerated
+  ✓ mystic                    Mystic                         similarity: 0.7614 → regenerated
+  ✓ mystique                  Mystique                       similarity: 0.5076 → regenerated
+  ✓ mythic                    Mythic                         similarity: 0.7584 → regenerated
+  💾 Progress saved: 900/1469 (619 regenerated)
+  Batch complete: 900/1469 (61.3%) - 619 regenerated, 281 skipped, 0 errors
+
+[91/147] Processing batch (10 concepts)...
+  ✓ mythos                    Mythos                         similarity: 0.7671 → regenerated
+  ✓ naturalism                Naturalism                     similarity: 0.7393 → regenerated
+  ✓ naturalistic              Naturalistic                   similarity: 0.5056 → regenerated
+  ✓ nature                    Nature                         similarity: 0.7510 → regenerated
+  - nautical                  Nautical                       similarity: 1.0000 (healthy, skipped)
+  - navbar-top                Navbar-Top                     similarity: 1.0000 (healthy, skipped)
+  ✓ nebula                    Nebula                         similarity: 0.7211 → regenerated
+  ✓ negative                  Negative                       similarity: 0.5036 → regenerated
+  - negative-space            Negative Space                 similarity: 1.0000 (healthy, skipped)
+  - neo-brutalist             Neo-Brutalist                  similarity: 1.0000 (healthy, skipped)
+  Batch complete: 910/1469 (61.9%) - 625 regenerated, 285 skipped, 0 errors
+
+[92/147] Processing batch (10 concepts)...
+  - neo-futurism              Neo-futurism                   similarity: 1.0000 (healthy, skipped)
+  - neo-noir                  Neo-noir                       similarity: 1.0000 (healthy, skipped)
+  - neo-romantic              Neo-romantic                   similarity: 1.0000 (healthy, skipped)
+  ✓ neon                      Neon                           similarity: 0.5029 → regenerated
+  ✓ network                   Network                        similarity: 0.7463 → regenerated
+  - neumorphic                Neumorphic                     similarity: 1.0000 (healthy, skipped)
+  ✓ neumorphism               Neumorphism                    similarity: 0.5084 → regenerated
+  ✓ neurodiversity            Neurodiversity                 similarity: 0.4996 → regenerated
+  ✓ new                       New                            similarity: 0.5034 → regenerated
+  ✓ nexus                     Nexus                          similarity: 0.5050 → regenerated
+  Batch complete: 920/1469 (62.6%) - 631 regenerated, 289 skipped, 0 errors
+
+[93/147] Processing batch (10 concepts)...
+  ✓ night                     Night                          similarity: 0.7258 → regenerated
+  ✓ nocturne                  Nocturne                       similarity: 0.5019 → regenerated
+  ✓ nodes                     Nodes                          similarity: 0.5063 → regenerated
+  ✓ noir                      noir                           similarity: 0.7190 → regenerated
+  ✓ nomadic                   Nomadic                        similarity: 0.7497 → regenerated
+  - non-profit                Non-profit                     similarity: 1.0000 (healthy, skipped)
+  ✓ nonconformity             Nonconformity                  similarity: 0.5070 → regenerated
+  ✓ nonprofit                 Nonprofit                      similarity: 0.5057 → regenerated
+  ✓ nordic                    Nordic                         similarity: 0.7320 → regenerated
+  ✓ nostalgia                 Nostalgia                      similarity: 0.5060 → regenerated
+  Batch complete: 930/1469 (63.3%) - 640 regenerated, 290 skipped, 0 errors
+
+[94/147] Processing batch (10 concepts)...
+  ✓ nourish                   Nourish                        similarity: 0.7393 → regenerated
+  - nourishment               Nourishment                    similarity: 1.0000 (healthy, skipped)
+  ✓ nouveau                   Nouveau                        similarity: 0.5057 → regenerated
+  ✓ novelty                   Novelty                        similarity: 0.5046 → regenerated
+  - nullity                   Nullity                        similarity: 1.0000 (healthy, skipped)
+  ✓ nurture                   Nurture                        similarity: 0.7752 → regenerated
+  ✓ nurturing                 Nurturing                      similarity: 0.7268 → regenerated
+  ✓ object                    Object                         similarity: 0.7492 → regenerated
+  - oblique                   Oblique                        similarity: 1.0000 (healthy, skipped)
+  ✓ obscured                  Obscured                       similarity: 0.7710 → regenerated
+  Batch complete: 940/1469 (64.0%) - 647 regenerated, 293 skipped, 0 errors
+
+[95/147] Processing batch (10 concepts)...
+  - obscurity                 Obscurity                      similarity: 1.0000 (healthy, skipped)
+  ✓ observation               Observation                    similarity: 0.7503 → regenerated
+  - ocean-tones               Ocean-Tones                    similarity: 0.9999 (healthy, skipped)
+  - oceanic                   Oceanic                        similarity: 1.0000 (healthy, skipped)
+  - ochre                     Ochre                          similarity: 1.0000 (healthy, skipped)
+  ✓ octagonal                 Octagonal                      similarity: 0.7055 → regenerated
+  ✓ old                       Old                            similarity: 0.4895 → regenerated
+  ✓ ominous                   Ominous                        similarity: 0.7731 → regenerated
+  ✓ openness                  Openness                       similarity: 0.5083 → regenerated
+  ✓ optimism                  Optimism                       similarity: 0.7617 → regenerated
+  💾 Progress saved: 950/1469 (653 regenerated)
+  Batch complete: 950/1469 (64.7%) - 653 regenerated, 297 skipped, 0 errors
+
+[96/147] Processing batch (10 concepts)...
+  ✓ optimistic                Optimistic                     similarity: 0.7524 → regenerated
+  ✓ optimization              Optimization                   similarity: 0.7737 → regenerated
+  ✓ orbit                     Orbit                          similarity: 0.7473 → regenerated
+  ✓ order                     Order                          similarity: 0.7554 → regenerated
+  ✓ organic                   Organic                        similarity: 0.5064 → regenerated
+  ✓ origin                    Origin                         similarity: 0.7615 → regenerated
+  ✓ ornamentation             Ornamentation                  similarity: 0.5005 → regenerated
+  - orthodontics              Orthodontics                   similarity: 1.0000 (healthy, skipped)
+  - outlining                 Outlining                      similarity: 1.0000 (healthy, skipped)
+  ✓ overlapping               Overlapping                    similarity: 0.5058 → regenerated
+  Batch complete: 960/1469 (65.4%) - 661 regenerated, 299 skipped, 0 errors
+
+[97/147] Processing batch (10 concepts)...
+  ✓ overload                  Overload                       similarity: 0.7573 → regenerated
+  ✓ page                      Page                           similarity: 0.5085 → regenerated
+  ✓ painterly                 Painterly                      similarity: 0.5053 → regenerated
+  ✓ painting                  Painting                       similarity: 0.7855 → regenerated
+  ✓ palette                   Palette                        similarity: 0.5066 → regenerated
+  ✓ paneled                   Paneled                        similarity: 0.7347 → regenerated
+  ✓ panelled                  Panelled                       similarity: 0.7310 → regenerated
+  ✓ paper                     Paper                          similarity: 0.7279 → regenerated
+  - paradox                   Paradox                        similarity: 1.0000 (healthy, skipped)
+  ✓ parallax                  Parallax                       similarity: 0.5071 → regenerated
+  Batch complete: 970/1469 (66.0%) - 670 regenerated, 300 skipped, 0 errors
+
+[98/147] Processing batch (10 concepts)...
+  - parametric                Parametric                     similarity: 1.0000 (healthy, skipped)
+  ✓ particle                  Particle                       similarity: 0.7498 → regenerated
+  ✓ particulate               Particulate                    similarity: 0.5004 → regenerated
+  ✓ passage                   Passage                        similarity: 0.7413 → regenerated
+  ✓ pastel                    Pastel                         similarity: 0.5013 → regenerated
+  ✓ pastoral                  Pastoral                       similarity: 0.7007 → regenerated
+  ✓ pathway                   Pathway                        similarity: 0.5048 → regenerated
+  - patina                    Patina                         similarity: 1.0000 (healthy, skipped)
+  ✓ pattern                   Pattern                        similarity: 0.7534 → regenerated
+  - pause                     Pause                          similarity: 1.0000 (healthy, skipped)
+  Batch complete: 980/1469 (66.7%) - 677 regenerated, 303 skipped, 0 errors
+
+[99/147] Processing batch (10 concepts)...
+  - payments                  Payments                       similarity: 1.0000 (healthy, skipped)
+  ✓ peace                     Peace                          similarity: 0.5063 → regenerated
+  ✓ peaceful                  Peaceful                       similarity: 0.5093 → regenerated
+  ✓ penetration               Penetration                    similarity: 0.7437 → regenerated
+  ✓ perception                Perception                     similarity: 0.7705 → regenerated
+  ✓ perceptive                Perceptive                     similarity: 0.7573 → regenerated
+  ✓ performative              Performative                   similarity: 0.5049 → regenerated
+  ✓ persistence               Persistence                    similarity: 0.5086 → regenerated
+  ✓ personalization           Personalization                similarity: 0.5103 → regenerated
+  - personalized              Personalized                   similarity: 1.0000 (healthy, skipped)
+  Batch complete: 990/1469 (67.4%) - 685 regenerated, 305 skipped, 0 errors
+
+[100/147] Processing batch (10 concepts)...
+  ✓ perspective               Perspective                    similarity: 0.5012 → regenerated
+  ✓ philanthropy              Philanthropy                   similarity: 0.4961 → regenerated
+  - phosphor                  Phosphor                       similarity: 1.0000 (healthy, skipped)
+  ✓ photography               Photography                    similarity: 0.5058 → regenerated
+  - photography-led           Photography-Led                similarity: 1.0000 (healthy, skipped)
+  ✓ photoreal                 Photoreal                      similarity: 0.5083 → regenerated
+  ✓ photorealistic            Photorealistic                 similarity: 0.5071 → regenerated
+  - pillow                    Pillow                         similarity: 1.0000 (healthy, skipped)
+  ✓ pinnacle                  Pinnacle                       similarity: 0.4996 → regenerated
+  ✓ pixel                     Pixel                          similarity: 0.7804 → regenerated
+  💾 Progress saved: 1000/1469 (692 regenerated)
+  Batch complete: 1000/1469 (68.1%) - 692 regenerated, 308 skipped, 0 errors
+
+[101/147] Processing batch (10 concepts)...
+  ✓ pixelated                 Pixelated                      similarity: 0.7406 → regenerated
+  - pixelation                Pixelation                     similarity: 1.0000 (healthy, skipped)
+  ✓ planar                    Planar                         similarity: 0.7266 → regenerated
+  ✓ planetary                 Planetary                      similarity: 0.4979 → regenerated
+  ✓ planning                  Planning                       similarity: 0.7601 → regenerated
+  - plasma                    Plasma                         similarity: 1.0000 (healthy, skipped)
+  ✓ plastic                   Plastic                        similarity: 0.7245 → regenerated
+  ✓ play                      Play                           similarity: 0.5055 → regenerated
+  ✓ playful                   Playful                        similarity: 0.5075 → regenerated
+  - pleasure                  Pleasure                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1010/1469 (68.8%) - 699 regenerated, 311 skipped, 0 errors
+
+[102/147] Processing batch (10 concepts)...
+  ✓ plurality                 Plurality                      similarity: 0.5063 → regenerated
+  ✓ plush                     Plush                          similarity: 0.6909 → regenerated
+  ✓ poetic                    Poetic                         similarity: 0.7991 → regenerated
+  ✓ poised                    Poised                         similarity: 0.7271 → regenerated
+  ✓ polish                    Polish                         similarity: 0.7049 → regenerated
+  ✓ poly                      poly                           similarity: 0.5044 → regenerated
+  ✓ polygon                   Polygon                        similarity: 0.7409 → regenerated
+  ✓ polyhedron                Polyhedron                     similarity: 0.5034 → regenerated
+  ✓ ponderous                 Ponderous                      similarity: 0.7598 → regenerated
+  ✓ pop                       Pop                            similarity: 0.7571 → regenerated
+  Batch complete: 1020/1469 (69.4%) - 709 regenerated, 311 skipped, 0 errors
+
+[103/147] Processing batch (10 concepts)...
+  - porous                    Porous                         similarity: 1.0000 (healthy, skipped)
+  ✓ portal                    Portal                         similarity: 0.7413 → regenerated
+  ✓ portfolio                 Portfolio                      similarity: 0.5118 → regenerated
+  ✓ portrait                  Portrait                       similarity: 0.7940 → regenerated
+  ✓ possibility               Possibility                    similarity: 0.5059 → regenerated
+  - post-process              Post-process                   similarity: 1.0000 (healthy, skipped)
+  - postdigital               Postdigital                    similarity: 1.0000 (healthy, skipped)
+  - poster-like               Poster-Like                    similarity: 1.0000 (healthy, skipped)
+  ✓ posthuman                 Posthuman                      similarity: 0.5061 → regenerated
+  ✓ postmodernism             Postmodernism                  similarity: 0.5035 → regenerated
+  Batch complete: 1030/1469 (70.1%) - 715 regenerated, 315 skipped, 0 errors
+
+[104/147] Processing batch (10 concepts)...
+  ✓ potency                   Potency                        similarity: 0.5085 → regenerated
+  ✓ potential                 Potential                      similarity: 0.7305 → regenerated
+  ✓ powder                    Powder                         similarity: 0.6703 → regenerated
+  ✓ power                     Power                          similarity: 0.7489 → regenerated
+  ✓ powerful                  Powerful                       similarity: 0.5062 → regenerated
+  - prelude                   Prelude                        similarity: 1.0000 (healthy, skipped)
+  ✓ premium                   Premium                        similarity: 0.5131 → regenerated
+  ✓ presence                  Presence                       similarity: 0.7644 → regenerated
+  ✓ preservation              Preservation                   similarity: 0.7801 → regenerated
+  ✓ preserve                  Preserve                       similarity: 0.7446 → regenerated
+  Batch complete: 1040/1469 (70.8%) - 724 regenerated, 316 skipped, 0 errors
+
+[105/147] Processing batch (10 concepts)...
+  ✓ prestige                  Prestige                       similarity: 0.7558 → regenerated
+  ✓ primal                    Primal                         similarity: 0.7708 → regenerated
+  ✓ primary                   Primary                        similarity: 0.5015 → regenerated
+  - principle                 Principle                      similarity: 1.0000 (healthy, skipped)
+  ✓ pristine                  Pristine                       similarity: 0.5065 → regenerated
+  ✓ privacy                   Privacy                        similarity: 0.5044 → regenerated
+  ✓ privilege                 Privilege                      similarity: 0.5047 → regenerated
+  - procedural                Procedural                     similarity: 1.0000 (healthy, skipped)
+  ✓ process                   Process                        similarity: 0.5071 → regenerated
+  - produce                   Produce                        similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 1050/1469 (731 regenerated)
+  Batch complete: 1050/1469 (71.5%) - 731 regenerated, 319 skipped, 0 errors
+
+[106/147] Processing batch (10 concepts)...
+  ✓ product                   Product                        similarity: 0.5079 → regenerated
+  ✓ productivity              Productivity                   similarity: 0.5093 → regenerated
+  ✓ professional              Professional                   similarity: 0.5087 → regenerated
+  ✓ profound                  Profound                       similarity: 0.7613 → regenerated
+  ✓ progress                  Progress                       similarity: 0.5072 → regenerated
+  ✓ projection                Projection                     similarity: 0.7633 → regenerated
+  - promotion                 Promotion                      similarity: 1.0000 (healthy, skipped)
+  ✓ proportion                Proportion                     similarity: 0.7624 → regenerated
+  - propulsive                Propulsive                     similarity: 1.0000 (healthy, skipped)
+  ✓ prosperity                Prosperity                     similarity: 0.5075 → regenerated
+  Batch complete: 1060/1469 (72.2%) - 739 regenerated, 321 skipped, 0 errors
+
+[107/147] Processing batch (10 concepts)...
+  - protection                Protection                     similarity: 1.0000 (healthy, skipped)
+  ✓ provocative               Provocative                    similarity: 0.7961 → regenerated
+  ✓ prudence                  Prudence                       similarity: 0.5110 → regenerated
+  ✓ psyche                    Psyche                         similarity: 0.7400 → regenerated
+  - publishing                Publishing                     similarity: 1.0000 (healthy, skipped)
+  ✓ pulp                      Pulp                           similarity: 0.6939 → regenerated
+  ✓ pulse                     Pulse                          similarity: 0.7180 → regenerated
+  ✓ punchy                    Punchy                         similarity: 0.5038 → regenerated
+  ✓ pure                      Pure                           similarity: 0.5046 → regenerated
+  ✓ purity                    Purity                         similarity: 0.5104 → regenerated
+  Batch complete: 1070/1469 (72.8%) - 747 regenerated, 323 skipped, 0 errors
+
+[108/147] Processing batch (10 concepts)...
+  ✓ purpose                   Purpose                        similarity: 0.7465 → regenerated
+  ✓ pursuit                   Pursuit                        similarity: 0.7479 → regenerated
+  ✓ pyramid                   Pyramid                        similarity: 0.7446 → regenerated
+  ✓ quest                     Quest                          similarity: 0.7163 → regenerated
+  ✓ radial                    Radial                         similarity: 0.7431 → regenerated
+  ✓ radiance                  Radiance                       similarity: 0.7589 → regenerated
+  ✓ rainbow                   Rainbow                        similarity: 0.5085 → regenerated
+  - rational                  Rational                       similarity: 1.0000 (healthy, skipped)
+  - readiness                 Readiness                      similarity: 1.0000 (healthy, skipped)
+  - real-estate               Real-Estate                    similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1080/1469 (73.5%) - 754 regenerated, 326 skipped, 0 errors
+
+[109/147] Processing batch (10 concepts)...
+  - reality                   Reality                        similarity: 1.0000 (healthy, skipped)
+  ✓ realm                     Realm                          similarity: 0.7716 → regenerated
+  ✓ reassurance               Reassurance                    similarity: 0.5085 → regenerated
+  - reassuring                Reassuring                     similarity: 1.0000 (healthy, skipped)
+  ✓ rebellion                 Rebellion                      similarity: 0.7331 → regenerated
+  ✓ rebellious                Rebellious                     similarity: 0.5061 → regenerated
+  ✓ rebirth                   Rebirth                        similarity: 0.7470 → regenerated
+  - recruitment               Recruitment                    similarity: 1.0000 (healthy, skipped)
+  - rectangle                 Rectangle                      similarity: 1.0000 (healthy, skipped)
+  ✓ rectangular               Rectangular                    similarity: 0.7383 → regenerated
+  Batch complete: 1090/1469 (74.2%) - 760 regenerated, 330 skipped, 0 errors
+
+[110/147] Processing batch (10 concepts)...
+  ✓ rectilinear               Rectilinear                    similarity: 0.5047 → regenerated
+  ✓ redefinition              Redefinition                   similarity: 0.5082 → regenerated
+  ✓ refinement                Refinement                     similarity: 0.7535 → regenerated
+  ✓ reflection                Reflection                     similarity: 0.7545 → regenerated
+  ✓ reflective                Reflective                     similarity: 0.5035 → regenerated
+  - reflectivity              Reflectivity                   similarity: 1.0000 (healthy, skipped)
+  ✓ refraction                Refraction                     similarity: 0.7582 → regenerated
+  ✓ refreshing                Refreshing                     similarity: 0.7331 → regenerated
+  ✓ regulation                Regulation                     similarity: 0.7548 → regenerated
+  ✓ reinvention               Reinvention                    similarity: 0.7568 → regenerated
+  💾 Progress saved: 1100/1469 (769 regenerated)
+  Batch complete: 1100/1469 (74.9%) - 769 regenerated, 331 skipped, 0 errors
+
+[111/147] Processing batch (10 concepts)...
+  ✓ relatable                 Relatable                      similarity: 0.5045 → regenerated
+  ✓ relax                     Relax                          similarity: 0.7386 → regenerated
+  - relaxation                Relaxation                     similarity: 1.0000 (healthy, skipped)
+  ✓ relevance                 Relevance                      similarity: 0.5061 → regenerated
+  ✓ reliability               Reliability                    similarity: 0.5035 → regenerated
+  ✓ reliable                  Reliable                       similarity: 0.5064 → regenerated
+  ✓ relief                    Relief                         similarity: 0.7244 → regenerated
+  ✓ remembrance               Remembrance                    similarity: 0.7405 → regenerated
+  ✓ remnant                   Remnant                        similarity: 0.7610 → regenerated
+  ✓ render                    Render                         similarity: 0.7687 → regenerated
+  Batch complete: 1110/1469 (75.6%) - 778 regenerated, 332 skipped, 0 errors
+
+[112/147] Processing batch (10 concepts)...
+  ✓ rendering                 Rendering                      similarity: 0.7700 → regenerated
+  ✓ renewal                   Renewal                        similarity: 0.7127 → regenerated
+  ✓ repetition                Repetition                     similarity: 0.7551 → regenerated
+  ✓ representation            Representation                 similarity: 0.7442 → regenerated
+  - residential               Residential                    similarity: 1.0000 (healthy, skipped)
+  ✓ resilience                Resilience                     similarity: 0.5066 → regenerated
+  - resilient                 Resilient                      similarity: 1.0000 (healthy, skipped)
+  ✓ resonance                 Resonance                      similarity: 0.7552 → regenerated
+  ✓ responsive                Responsive                     similarity: 0.5094 → regenerated
+  ✓ restraint                 Restraint                      similarity: 0.7407 → regenerated
+  Batch complete: 1120/1469 (76.2%) - 786 regenerated, 334 skipped, 0 errors
+
+[113/147] Processing batch (10 concepts)...
+  ✓ retouching                Retouching                     similarity: 0.5095 → regenerated
+  ✓ retro                     Retro                          similarity: 0.4909 → regenerated
+  - retro-futurism            Retro-Futurism                 similarity: 1.0000 (healthy, skipped)
+  - retro-futurist            Retro-futurist                 similarity: 1.0000 (healthy, skipped)
+  ✓ retrofuture               Retrofuture                    similarity: 0.4982 → regenerated
+  - retrofuturism             Retrofuturism                  similarity: 1.0000 (healthy, skipped)
+  ✓ revelation                Revelation                     similarity: 0.7341 → regenerated
+  ✓ reverence                 Reverence                      similarity: 0.5086 → regenerated
+  ✓ rhythm                    Rhythm                         similarity: 0.7249 → regenerated
+  - richness                  Richness                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1130/1469 (76.9%) - 792 regenerated, 338 skipped, 0 errors
+
+[114/147] Processing batch (10 concepts)...
+  ✓ ripple                    Ripple                         similarity: 0.7405 → regenerated
+  - risk                      Risk                           similarity: 1.0000 (healthy, skipped)
+  ✓ ritual                    Ritual                         similarity: 0.7794 → regenerated
+  - robotics                  Robotics                       similarity: 1.0000 (healthy, skipped)
+  - robust                    Robust                         similarity: 1.0000 (healthy, skipped)
+  ✓ rocky                     Rocky                          similarity: 0.5008 → regenerated
+  ✓ romantic                  Romantic                       similarity: 0.7608 → regenerated
+  - rooting                   Rooting                        similarity: 1.0000 (healthy, skipped)
+  - roots                     Roots                          similarity: 1.0000 (healthy, skipped)
+  - roughness                 Roughness                      similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1140/1469 (77.6%) - 796 regenerated, 344 skipped, 0 errors
+
+[115/147] Processing batch (10 concepts)...
+  - rows                      Rows                           similarity: 1.0000 (healthy, skipped)
+  ✓ rugged                    Rugged                         similarity: 0.7453 → regenerated
+  ✓ rupture                   Rupture                        similarity: 0.5092 → regenerated
+  ✓ saas                      SaaS                           similarity: 0.5087 → regenerated
+  ✓ sanctuary                 Sanctuary                      similarity: 0.5046 → regenerated
+  - sans-serif                Sans-Serif                     similarity: 1.0000 (healthy, skipped)
+  ✓ saturation                Saturation                     similarity: 0.5025 → regenerated
+  ✓ scaffold                  Scaffold                       similarity: 0.6713 → regenerated
+  ✓ scale                     Scale                          similarity: 0.7447 → regenerated
+  - scaly                     Scaly                          similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 1150/1469 (803 regenerated)
+  Batch complete: 1150/1469 (78.3%) - 803 regenerated, 347 skipped, 0 errors
+
+[116/147] Processing batch (10 concepts)...
+  ✓ scatter                   Scatter                        similarity: 0.7497 → regenerated
+  ✓ schematic                 Schematic                      similarity: 0.5075 → regenerated
+  - scholarship               Scholarship                    similarity: 1.0000 (healthy, skipped)
+  ✓ scientific                Scientific                     similarity: 0.7405 → regenerated
+  ✓ screen                    Screen                         similarity: 0.4989 → regenerated
+  ✓ script                    Script                         similarity: 0.5063 → regenerated
+  ✓ scroll                    Scroll                         similarity: 0.7786 → regenerated
+  - scroll-driven             Scroll-Driven                  similarity: 1.0000 (healthy, skipped)
+  ✓ scrolling                 Scrolling                      similarity: 0.5050 → regenerated
+  - sculpt                    Sculpt                         similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1160/1469 (79.0%) - 810 regenerated, 350 skipped, 0 errors
+
+[117/147] Processing batch (10 concepts)...
+  ✓ sculptural                Sculptural                     similarity: 0.7693 → regenerated
+  - seamless                  Seamless                       similarity: 1.0000 (healthy, skipped)
+  - search-focused            Search-Focused                 similarity: 1.0000 (healthy, skipped)
+  ✓ seasons                   Seasons                        similarity: 0.5047 → regenerated
+  ✓ secure                    Secure                         similarity: 0.7161 → regenerated
+  - seed                      Seed                           similarity: 1.0000 (healthy, skipped)
+  - segmented                 Segmented                      similarity: 1.0000 (healthy, skipped)
+  ✓ selection                 Selection                      similarity: 0.7762 → regenerated
+  - self-expression           Self-expression                similarity: 1.0000 (healthy, skipped)
+  - selfcare                  Selfcare                       similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1170/1469 (79.6%) - 814 regenerated, 356 skipped, 0 errors
+
+[118/147] Processing batch (10 concepts)...
+  ✓ sepia                     Sepia                          similarity: 0.5018 → regenerated
+  - sequential                Sequential                     similarity: 1.0000 (healthy, skipped)
+  ✓ serene                    Serene                         similarity: 0.5086 → regenerated
+  ✓ serenity                  Serenity                       similarity: 0.5079 → regenerated
+  ✓ serif                     Serif                          similarity: 0.5034 → regenerated
+  ✓ shade                     shade                          similarity: 0.4996 → regenerated
+  ✓ shading                   Shading                        similarity: 0.7526 → regenerated
+  ✓ shadow                    Shadow                         similarity: 0.7058 → regenerated
+  - shadow-play               Shadow Play                    similarity: 1.0000 (healthy, skipped)
+  ✓ shape                     Shape                          similarity: 0.7256 → regenerated
+  Batch complete: 1180/1469 (80.3%) - 822 regenerated, 358 skipped, 0 errors
+
+[119/147] Processing batch (10 concepts)...
+  ✓ shaping                   Shaping                        similarity: 0.7597 → regenerated
+  ✓ sharp                     Sharp                          similarity: 0.7591 → regenerated
+  ✓ sheen                     Sheen                          similarity: 0.7427 → regenerated
+  ✓ sheer                     Sheer                          similarity: 0.7249 → regenerated
+  ✓ shelter                   Shelter                        similarity: 0.7519 → regenerated
+  - shift                     Shift                          similarity: 1.0000 (healthy, skipped)
+  ✓ shimmer                   Shimmer                        similarity: 0.7390 → regenerated
+  ✓ sidebar                   Sidebar                        similarity: 0.5064 → regenerated
+  - sidebar-drawer            Sidebar-Drawer                 similarity: 1.0000 (healthy, skipped)
+  ✓ signal                    Signal                         similarity: 0.7454 → regenerated
+  Batch complete: 1190/1469 (81.0%) - 830 regenerated, 360 skipped, 0 errors
+
+[120/147] Processing batch (10 concepts)...
+  ✓ significance              Significance                   similarity: 0.7770 → regenerated
+  ✓ silence                   Silence                        similarity: 0.7592 → regenerated
+  - silent                    Silent                         similarity: 1.0000 (healthy, skipped)
+  ✓ silhouette                Silhouette                     similarity: 0.4917 → regenerated
+  ✓ silk                      Silk                           similarity: 0.6431 → regenerated
+  ✓ silver                    Silver                         similarity: 0.7200 → regenerated
+  ✓ simplicity                Simplicity                     similarity: 0.5050 → regenerated
+  ✓ simplification            Simplification                 similarity: 0.5104 → regenerated
+  - simulacrum                Simulacrum                     similarity: 1.0000 (healthy, skipped)
+  - simulated                 Simulated                      similarity: 1.0000 (healthy, skipped)
+  💾 Progress saved: 1200/1469 (837 regenerated)
+  Batch complete: 1200/1469 (81.7%) - 837 regenerated, 363 skipped, 0 errors
+
+[121/147] Processing batch (10 concepts)...
+  ✓ simulation                Simulation                     similarity: 0.7754 → regenerated
+  ✓ sincere                   Sincere                        similarity: 0.5084 → regenerated
+  - singularity               Singularity                    similarity: 1.0000 (healthy, skipped)
+  ✓ skeletal                  Skeletal                       similarity: 0.7153 → regenerated
+  ✓ sketching                 Sketching                      similarity: 0.7747 → regenerated
+  ✓ skeuomorphic              Skeuomorphic                   similarity: 0.5060 → regenerated
+  ✓ skeuomorphism             Skeuomorphism                  similarity: 0.5086 → regenerated
+  - skincare                  Skincare                       similarity: 1.0000 (healthy, skipped)
+  ✓ sky                       Sky                            similarity: 0.5018 → regenerated
+  ✓ skyward                   Skyward                        similarity: 0.7396 → regenerated
+  Batch complete: 1210/1469 (82.4%) - 845 regenerated, 365 skipped, 0 errors
+
+[122/147] Processing batch (10 concepts)...
+  ✓ sleekness                 Sleekness                      similarity: 0.5090 → regenerated
+  - slender                   Slender                        similarity: 1.0000 (healthy, skipped)
+  ✓ slick                     Slick                          similarity: 0.7233 → regenerated
+  - small-caps                Small-Caps                     similarity: 1.0000 (healthy, skipped)
+  - smoky                     Smoky                          similarity: 1.0000 (healthy, skipped)
+  - smooth-scrolling          Smooth-Scrolling               similarity: 1.0000 (healthy, skipped)
+  ✓ smoothness                Smoothness                     similarity: 0.7592 → regenerated
+  ✓ social                    Social                         similarity: 0.7538 → regenerated
+  ✓ soft                      Soft                           similarity: 0.6792 → regenerated
+  ✓ softness                  Softness                       similarity: 0.5064 → regenerated
+  Batch complete: 1220/1469 (83.0%) - 851 regenerated, 369 skipped, 0 errors
+
+[123/147] Processing batch (10 concepts)...
+  ✓ solar                     Solar                          similarity: 0.7141 → regenerated
+  - solemn                    Solemn                         similarity: 1.0000 (healthy, skipped)
+  ✓ solid                     Solid                          similarity: 0.7501 → regenerated
+  ✓ solitude                  Solitude                       similarity: 0.5074 → regenerated
+  - solutions                 Solutions                      similarity: 1.0000 (healthy, skipped)
+  ✓ somber                    Somber                         similarity: 0.7450 → regenerated
+  ✓ sophisticated             Sophisticated                  similarity: 0.5120 → regenerated
+  ✓ soulful                   Soulful                        similarity: 0.7521 → regenerated
+  ✓ source                    Source                         similarity: 0.7537 → regenerated
+  - sovereignty               Sovereignty                    similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1230/1469 (83.7%) - 858 regenerated, 372 skipped, 0 errors
+
+[124/147] Processing batch (10 concepts)...
+  ✓ space                     Space                          similarity: 0.4994 → regenerated
+  ✓ spacious                  Spacious                       similarity: 0.5072 → regenerated
+  ✓ spark                     Spark                          similarity: 0.7494 → regenerated
+  ✓ spatial                   Spatial                        similarity: 0.7447 → regenerated
+  ✓ speckled                  Speckled                       similarity: 0.6722 → regenerated
+  ✓ spectacle                 Spectacle                      similarity: 0.7128 → regenerated
+  ✓ speed                     Speed                          similarity: 0.7276 → regenerated
+  ✓ sphere                    Sphere                         similarity: 0.7083 → regenerated
+  ✓ spherical                 Spherical                      similarity: 0.7272 → regenerated
+  ✓ spiral                    Spiral                         similarity: 0.7100 → regenerated
+  Batch complete: 1240/1469 (84.4%) - 868 regenerated, 372 skipped, 0 errors
+
+[125/147] Processing batch (10 concepts)...
+  ✓ spirit                    Spirit                         similarity: 0.7533 → regenerated
+  - split-screen              Split-Screen                   similarity: 0.9999 (healthy, skipped)
+  ✓ spontaneity               Spontaneity                    similarity: 0.5036 → regenerated
+  ✓ sports                    Sports                         similarity: 0.4940 → regenerated
+  - square                    Square                         similarity: 1.0000 (healthy, skipped)
+  - stability                 Stability                      similarity: 1.0000 (healthy, skipped)
+  ✓ stack                     Stack                          similarity: 0.7211 → regenerated
+  ✓ staging                   Staging                        similarity: 0.7806 → regenerated
+  ✓ stark                     Stark                          similarity: 0.7170 → regenerated
+  ✓ startup                   Startup                        similarity: 0.5135 → regenerated
+  💾 Progress saved: 1250/1469 (875 regenerated)
+  Batch complete: 1250/1469 (85.1%) - 875 regenerated, 375 skipped, 0 errors
+
+[126/147] Processing batch (10 concepts)...
+  ✓ stately                   Stately                        similarity: 0.5064 → regenerated
+  - statement                 Statement                      similarity: 1.0000 (healthy, skipped)
+  ✓ states                    States                         similarity: 0.5028 → regenerated
+  ✓ static                    Static                         similarity: 0.5010 → regenerated
+  ✓ statuary                  Statuary                       similarity: 0.5053 → regenerated
+  ✓ status                    Status                         similarity: 0.7640 → regenerated
+  - steam                     Steam                          similarity: 0.9864 (healthy, skipped)
+  - stellar                   Stellar                        similarity: 1.0000 (healthy, skipped)
+  - sterile                   Sterile                        similarity: 1.0000 (healthy, skipped)
+  ✓ stewardship               Stewardship                    similarity: 0.7681 → regenerated
+  Batch complete: 1260/1469 (85.8%) - 881 regenerated, 379 skipped, 0 errors
+
+[127/147] Processing batch (10 concepts)...
+  ✓ sticker                   Sticker                        similarity: 0.6724 → regenerated
+  - sticky-header             Sticky-Header                  similarity: 1.0000 (healthy, skipped)
+  ✓ stillness                 Stillness                      similarity: 0.5070 → regenerated
+  - stimulation               Stimulation                    similarity: 1.0000 (healthy, skipped)
+  - stoic                     Stoic                          similarity: 1.0000 (healthy, skipped)
+  ✓ stone                     Stone                          similarity: 0.7227 → regenerated
+  ✓ story                     Story                          similarity: 0.5033 → regenerated
+  - strata                    Strata                         similarity: 1.0000 (healthy, skipped)
+  ✓ strategic                 Strategic                      similarity: 0.7441 → regenerated
+  - stratosphere              Stratosphere                   similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1270/1469 (86.5%) - 886 regenerated, 384 skipped, 0 errors
+
+[128/147] Processing batch (10 concepts)...
+  ✓ stratum                   Stratum                        similarity: 0.7032 → regenerated
+  ✓ streak                    Streak                         similarity: 0.6962 → regenerated
+  ✓ stream                    Stream                         similarity: 0.7453 → regenerated
+  ✓ streamline                Streamline                     similarity: 0.7291 → regenerated
+  ✓ street                    Street                         similarity: 0.7283 → regenerated
+  - streetwear                Streetwear                     similarity: 1.0000 (healthy, skipped)
+  ✓ strict                    Strict                         similarity: 0.5034 → regenerated
+  ✓ structural                Structural                     similarity: 0.5041 → regenerated
+  ✓ studious                  Studious                       similarity: 0.5056 → regenerated
+  ✓ styling                   Styling                        similarity: 0.7661 → regenerated
+  Batch complete: 1280/1469 (87.1%) - 895 regenerated, 385 skipped, 0 errors
+
+[129/147] Processing batch (10 concepts)...
+  ✓ subjectivity              Subjectivity                   similarity: 0.5082 → regenerated
+  ✓ sublime                   Sublime                        similarity: 0.7489 → regenerated
+  ✓ substance                 Substance                      similarity: 0.5024 → regenerated
+  ✓ subsurface                Subsurface                     similarity: 0.4995 → regenerated
+  - subtlety                  Subtlety                       similarity: 1.0000 (healthy, skipped)
+  ✓ subversion                Subversion                     similarity: 0.7689 → regenerated
+  ✓ sun                       Sun                            similarity: 0.7419 → regenerated
+  - superimposition           Superimposition                similarity: 1.0000 (healthy, skipped)
+  - supple                    Supple                         similarity: 1.0000 (healthy, skipped)
+  - support                   Support                        similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1290/1469 (87.8%) - 901 regenerated, 389 skipped, 0 errors
+
+[130/147] Processing batch (10 concepts)...
+  ✓ surge                     Surge                          similarity: 0.5075 → regenerated
+  ✓ surreal                   Surreal                        similarity: 0.5106 → regenerated
+  ✓ surrealism                Surrealism                     similarity: 0.5070 → regenerated
+  ✓ surveillance              Surveillance                   similarity: 0.7142 → regenerated
+  - survival                  Survival                       similarity: 1.0000 (healthy, skipped)
+  ✓ suspense                  Suspense                       similarity: 0.5056 → regenerated
+  ✓ suspension                Suspension                     similarity: 0.7317 → regenerated
+  ✓ sustain                   Sustain                        similarity: 0.7615 → regenerated
+  ✓ sustainability            Sustainability                 similarity: 0.5040 → regenerated
+  ✓ sustenance                Sustenance                     similarity: 0.5063 → regenerated
+  💾 Progress saved: 1300/1469 (910 regenerated)
+  Batch complete: 1300/1469 (88.5%) - 910 regenerated, 390 skipped, 0 errors
+
+[131/147] Processing batch (10 concepts)...
+  - sweet                     Sweet                          similarity: 1.0000 (healthy, skipped)
+  ✓ swirl                     Swirl                          similarity: 0.7552 → regenerated
+  ✓ swiss                     Swiss                          similarity: 0.7462 → regenerated
+  ✓ symbiosis                 Symbiosis                      similarity: 0.5049 → regenerated
+  ✓ symmetry                  Symmetry                       similarity: 0.5018 → regenerated
+  ✓ synergy                   Synergy                        similarity: 0.5012 → regenerated
+  ✓ synthesis                 Synthesis                      similarity: 0.7743 → regenerated
+  ✓ synthetic                 Synthetic                      similarity: 0.7423 → regenerated
+  ✓ systemic                  Systemic                       similarity: 0.7686 → regenerated
+  ✓ systems                   Systems                        similarity: 0.5074 → regenerated
+  Batch complete: 1310/1469 (89.2%) - 919 regenerated, 391 skipped, 0 errors
+
+[132/147] Processing batch (10 concepts)...
+  ✓ tabs                      Tabs                           similarity: 0.5086 → regenerated
+  ✓ tangibility               Tangibility                    similarity: 0.5139 → regenerated
+  ✓ technic                   Technic                        similarity: 0.7260 → regenerated
+  ✓ techno                    Techno                         similarity: 0.7186 → regenerated
+  - techno-futurism           Techno-futurism                similarity: 1.0000 (healthy, skipped)
+  - technographic             Technographic                  similarity: 1.0000 (healthy, skipped)
+  ✓ technology                Technology                     similarity: 0.5046 → regenerated
+  - techwear                  Techwear                       similarity: 1.0000 (healthy, skipped)
+  ✓ tension                   Tension                        similarity: 0.7500 → regenerated
+  - terrain                   Terrain                        similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1320/1469 (89.9%) - 925 regenerated, 395 skipped, 0 errors
+
+[133/147] Processing batch (10 concepts)...
+  ✓ terrestrial               Terrestrial                    similarity: 0.7271 → regenerated
+  ✓ text                      Text                           similarity: 0.5004 → regenerated
+  - text-as-image             Text-As-Image                  similarity: 1.0000 (healthy, skipped)
+  - text-underline            Text-Underline                 similarity: 1.0000 (healthy, skipped)
+  ✓ textural                  Textural                       similarity: 0.7237 → regenerated
+  ✓ texture                   Texture                        similarity: 0.5015 → regenerated
+  ✓ thoughtful                Thoughtful                     similarity: 0.7440 → regenerated
+  ✓ threshold                 Threshold                      similarity: 0.7550 → regenerated
+  ✓ thrill                    Thrill                         similarity: 0.7208 → regenerated
+  ✓ tiered                    Tiered                         similarity: 0.7434 → regenerated
+  Batch complete: 1330/1469 (90.5%) - 933 regenerated, 397 skipped, 0 errors
+
+[134/147] Processing batch (10 concepts)...
+  ✓ time                      Time                           similarity: 0.7447 → regenerated
+  ✓ timeless                  Timeless                       similarity: 0.7521 → regenerated
+  ✓ timelessness              Timelessness                   similarity: 0.5108 → regenerated
+  ✓ timeline                  Timeline                       similarity: 0.4978 → regenerated
+  - tonal-harmony             Tonal Harmony                  similarity: 1.0000 (healthy, skipped)
+  ✓ tones                     Tones                          similarity: 0.5083 → regenerated
+  ✓ top                       Top                            similarity: 0.5079 → regenerated
+  ✓ topography                Topography                     similarity: 0.5044 → regenerated
+  ✓ trace                     Trace                          similarity: 0.7805 → regenerated
+  ✓ traditional               Traditional                    similarity: 0.4999 → regenerated
+  Batch complete: 1340/1469 (91.2%) - 942 regenerated, 398 skipped, 0 errors
+
+[135/147] Processing batch (10 concepts)...
+  ✓ trajectory                Trajectory                     similarity: 0.4960 → regenerated
+  ✓ tranquility               Tranquility                    similarity: 0.5085 → regenerated
+  ✓ transcendence             Transcendence                  similarity: 0.5039 → regenerated
+  ✓ transformation            Transformation                 similarity: 0.7597 → regenerated
+  ✓ transience                Transience                     similarity: 0.5077 → regenerated
+  ✓ transient                 Transient                      similarity: 0.7670 → regenerated
+  ✓ transit                   Transit                        similarity: 0.7108 → regenerated
+  - transition-effects        Transition-Effects             similarity: 1.0000 (healthy, skipped)
+  - translucency              Translucency                   similarity: 1.0000 (healthy, skipped)
+  ✓ translucent               Translucent                    similarity: 0.5019 → regenerated
+  💾 Progress saved: 1350/1469 (950 regenerated)
+  Batch complete: 1350/1469 (91.9%) - 950 regenerated, 400 skipped, 0 errors
+
+[136/147] Processing batch (10 concepts)...
+  ✓ transparency              Transparency                   similarity: 0.5059 → regenerated
+  ✓ transparent               Transparent                    similarity: 0.7287 → regenerated
+  ✓ travel                    Travel                         similarity: 0.5140 → regenerated
+  ✓ trend                     Trend                          similarity: 0.7616 → regenerated
+  ✓ triadic                   Triadic                        similarity: 0.5072 → regenerated
+  ✓ triumph                   Triumph                        similarity: 0.6946 → regenerated
+  ✓ trustworthy               Trustworthy                    similarity: 0.5078 → regenerated
+  ✓ truth                     Truth                          similarity: 0.7113 → regenerated
+  ✓ tubular                   Tubular                        similarity: 0.7135 → regenerated
+  ✓ tunnel                    Tunnel                         similarity: 0.7364 → regenerated
+  Batch complete: 1360/1469 (92.6%) - 960 regenerated, 400 skipped, 0 errors
+
+[137/147] Processing batch (10 concepts)...
+  ✓ type                      Type                           similarity: 0.4973 → regenerated
+  - typecraft                 Typecraft                      similarity: 1.0000 (healthy, skipped)
+  ✓ typeset                   Typeset                        similarity: 0.5069 → regenerated
+  ✓ typesetting               Typesetting                    similarity: 0.5038 → regenerated
+  ✓ typographic               Typographic                    similarity: 0.5012 → regenerated
+  ✓ typography                Typography                     similarity: 0.5052 → regenerated
+  ✓ ui                        UI                             similarity: 0.5055 → regenerated
+  ✓ ui-ux                     UI/UX                          similarity: 0.5110 → regenerated
+  ✓ unbounded                 Unbounded                      similarity: 0.5062 → regenerated
+  ✓ undefined                 Undefined                      similarity: 0.7498 → regenerated
+  Batch complete: 1370/1469 (93.3%) - 969 regenerated, 401 skipped, 0 errors
+
+[138/147] Processing batch (10 concepts)...
+  ✓ underline                 Underline                      similarity: 0.4991 → regenerated
+  ✓ understanding             Understanding                  similarity: 0.7720 → regenerated
+  ✓ understated               Understated                    similarity: 0.5002 → regenerated
+  - undulating                Undulating                     similarity: 1.0000 (healthy, skipped)
+  ✓ undulation                Undulation                     similarity: 0.5069 → regenerated
+  ✓ unfolding                 Unfolding                      similarity: 0.7557 → regenerated
+  ✓ uniform                   Uniform                        similarity: 0.7306 → regenerated
+  ✓ uniformity                Uniformity                     similarity: 0.5070 → regenerated
+  - uniqueness                Uniqueness                     similarity: 1.0000 (healthy, skipped)
+  ✓ units                     Units                          similarity: 0.5040 → regenerated
+  Batch complete: 1380/1469 (93.9%) - 977 regenerated, 403 skipped, 0 errors
+
+[139/147] Processing batch (10 concepts)...
+  ✓ unity                     Unity                          similarity: 0.5003 → regenerated
+  ✓ unseen                    Unseen                         similarity: 0.7811 → regenerated
+  - unveiling                 Unveiling                      similarity: 1.0000 (healthy, skipped)
+  ✓ uplift                    Uplift                         similarity: 0.7520 → regenerated
+  ✓ urban                     Urban                          similarity: 0.7417 → regenerated
+  ✓ urgency                   Urgency                        similarity: 0.5063 → regenerated
+  - user-centric              User-Centric                   similarity: 1.0000 (healthy, skipped)
+  ✓ utilitarian               Utilitarian                    similarity: 0.5042 → regenerated
+  ✓ utility                   Utility                        similarity: 0.5063 → regenerated
+  ✓ utopian                   Utopian                        similarity: 0.7768 → regenerated
+  Batch complete: 1390/1469 (94.6%) - 985 regenerated, 405 skipped, 0 errors
+
+[140/147] Processing batch (10 concepts)...
+  ✓ value                     Value                          similarity: 0.7667 → regenerated
+  - vanguard                  Vanguard                       similarity: 1.0000 (healthy, skipped)
+  ✓ vanishing                 Vanishing                      similarity: 0.7709 → regenerated
+  ✓ vapor                     Vapor                          similarity: 0.7299 → regenerated
+  ✓ vapour                    Vapour                         similarity: 0.7063 → regenerated
+  - variable-font             Variable-Font                  similarity: 1.0000 (healthy, skipped)
+  ✓ varied                    Varied                         similarity: 0.7769 → regenerated
+  ✓ variety                   Variety                        similarity: 0.5056 → regenerated
+  ✓ vastness                  Vastness                       similarity: 0.5091 → regenerated
+  ✓ vector                    Vector                         similarity: 0.7609 → regenerated
+  💾 Progress saved: 1400/1469 (993 regenerated)
+  Batch complete: 1400/1469 (95.3%) - 993 regenerated, 407 skipped, 0 errors
+
+[141/147] Processing batch (10 concepts)...
+  ✓ velocity                  Velocity                       similarity: 0.5047 → regenerated
+  ✓ velvet                    Velvet                         similarity: 0.6850 → regenerated
+  ✓ verdant                   Verdant                        similarity: 0.7554 → regenerated
+  ✓ verticality               Verticality                    similarity: 0.5065 → regenerated
+  ✓ vibrancy                  Vibrancy                       similarity: 0.5072 → regenerated
+  ✓ vibrant                   Vibrant                        similarity: 0.5065 → regenerated
+  ✓ video                     Video                          similarity: 0.7940 → regenerated
+  ✓ vigor                     Vigor                          similarity: 0.7209 → regenerated
+  ✓ vintage                   Vintage                        similarity: 0.4935 → regenerated
+  ✓ virtual                   Virtual                        similarity: 0.7802 → regenerated
+  Batch complete: 1410/1469 (96.0%) - 1003 regenerated, 407 skipped, 0 errors
+
+[142/147] Processing batch (10 concepts)...
+  ✓ visceral                  Visceral                       similarity: 0.5062 → regenerated
+  - viscous                   Viscous                        similarity: 1.0000 (healthy, skipped)
+  ✓ visibility                Visibility                     similarity: 0.5091 → regenerated
+  ✓ vision                    Vision                         similarity: 0.7645 → regenerated
+  ✓ vista                     Vista                          similarity: 0.7598 → regenerated
+  - visualization             Visualization                  similarity: 1.0000 (healthy, skipped)
+  ✓ vitality                  Vitality                       similarity: 0.5047 → regenerated
+  - vividness                 Vividness                      similarity: 1.0000 (healthy, skipped)
+  - voice-ui                  Voice-UI                       similarity: 1.0000 (healthy, skipped)
+  ✓ void                      Void                           similarity: 0.7752 → regenerated
+  Batch complete: 1420/1469 (96.7%) - 1009 regenerated, 411 skipped, 0 errors
+
+[143/147] Processing batch (10 concepts)...
+  ✓ volume                    Volume                         similarity: 0.7142 → regenerated
+  ✓ volumetrics               Volumetrics                    similarity: 0.5087 → regenerated
+  ✓ vortex                    Vortex                         similarity: 0.7296 → regenerated
+  ✓ voyage                    Voyage                         similarity: 0.7392 → regenerated
+  ✓ vr                        VR                             similarity: 0.5029 → regenerated
+  ✓ vulnerability             Vulnerability                  similarity: 0.5098 → regenerated
+  ✓ wanderlust                Wanderlust                     similarity: 0.7504 → regenerated
+  ✓ warm                      Warm                           similarity: 0.5004 → regenerated
+  - warning                   Warning                        similarity: 1.0000 (healthy, skipped)
+  - watches                   Watches                        similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1430/1469 (97.3%) - 1017 regenerated, 413 skipped, 0 errors
+
+[144/147] Processing batch (10 concepts)...
+  - watchmaking               Watchmaking                    similarity: 1.0000 (healthy, skipped)
+  ✓ water                     Water                          similarity: 0.7466 → regenerated
+  - wavy                      Wavy                           similarity: 1.0000 (healthy, skipped)
+  - wearables                 Wearables                      similarity: 1.0000 (healthy, skipped)
+  ✓ weave                     Weave                          similarity: 0.7636 → regenerated
+  ✓ web                       Web                            similarity: 0.8213 → regenerated
+  ✓ weightless                Weightless                     similarity: 0.5042 → regenerated
+  - weighty                   Weighty                        similarity: 0.9994 (healthy, skipped)
+  ✓ welcome                   Welcome                        similarity: 0.7268 → regenerated
+  ✓ welcoming                 Welcoming                      similarity: 0.5088 → regenerated
+  Batch complete: 1440/1469 (98.0%) - 1023 regenerated, 417 skipped, 0 errors
+
+[145/147] Processing batch (10 concepts)...
+  ✓ welfare                   Welfare                        similarity: 0.5044 → regenerated
+  - well-being                Well-being                     similarity: 1.0000 (healthy, skipped)
+  ✓ wellbeing                 Wellbeing                      similarity: 0.7459 → regenerated
+  ✓ whimsical                 Whimsical                      similarity: 0.5100 → regenerated
+  ✓ whimsy                    Whimsy                         similarity: 0.5089 → regenerated
+  ✓ wholeness                 Wholeness                      similarity: 0.5100 → regenerated
+  ✓ wholesome                 Wholesome                      similarity: 0.7783 → regenerated
+  ✓ wild                      Wild                           similarity: 0.7639 → regenerated
+  ✓ wilderness                Wilderness                     similarity: 0.5039 → regenerated
+  ✓ wind                      Wind                           similarity: 0.6922 → regenerated
+  💾 Progress saved: 1450/1469 (1032 regenerated)
+  Batch complete: 1450/1469 (98.7%) - 1032 regenerated, 418 skipped, 0 errors
+
+[146/147] Processing batch (10 concepts)...
+  - wine                      Wine                           similarity: 1.0000 (healthy, skipped)
+  - winery                    Winery                         similarity: 1.0000 (healthy, skipped)
+  - wire                      Wire                           similarity: 1.0000 (healthy, skipped)
+  ✓ wonder                    Wonder                         similarity: 0.7193 → regenerated
+  ✓ wood                      Wood                           similarity: 0.6959 → regenerated
+  ✓ world                     World                          similarity: 0.7229 → regenerated
+  ✓ worn                      Worn                           similarity: 0.7204 → regenerated
+  ✓ woven                     Woven                          similarity: 0.7460 → regenerated
+  - wrought                   Wrought                        similarity: 1.0000 (healthy, skipped)
+  - xr                        XR                             similarity: 1.0000 (healthy, skipped)
+  Batch complete: 1460/1469 (99.4%) - 1037 regenerated, 423 skipped, 0 errors
+
+[147/147] Processing batch (9 concepts)...
+  ✓ y2k                       Y2K                            similarity: 0.5006 → regenerated
+  - yachting                  Yachting                       similarity: 1.0000 (healthy, skipped)
+  ✓ yearning                  Yearning                       similarity: 0.7445 → regenerated
+  - yield                     Yield                          similarity: 1.0000 (healthy, skipped)
+  ✓ youth                     Youth                          similarity: 0.7600 → regenerated
+  - youthfulness              Youthfulness                   similarity: 1.0000 (healthy, skipped)
+  - z-layout                  Z-Layout                       similarity: 1.0000 (healthy, skipped)
+  ✓ zen                       Zen                            similarity: 0.7449 → regenerated
+  ✓ zest                      Zest                           similarity: 0.7523 → regenerated
+  Batch complete: 1469/1469 (100.0%) - 1042 regenerated, 427 skipped, 0 errors
+
+====================================================================================================
+REGENERATION COMPLETE
+====================================================================================================
+Total concepts processed: 1469
+Concepts regenerated:     1042
+Concepts skipped (healthy): 427
+Errors:                   0
+
+✓ All corrupted concepts have been regenerated using the NEW method
+
+Next steps:
+  1. Re-tag all images to see improved scores
+  2. Or wait for new images to be tagged with updated embeddings

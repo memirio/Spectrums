@@ -9,8 +9,8 @@ export const TAG_CONFIG = {
   MAX_K: 700,
   
   // Minimum cosine similarity score to create an ImageTag (absolute floor)
-  // Set to 0.18 for more selective tagging - no concept-specific thresholds
-  MIN_SCORE: 0.18,
+  // Raised to 0.20 to improve tagging accuracy - only tag images that truly contain the concept
+  MIN_SCORE: 0.20,
   
   // Relative threshold: minimum percentage drop allowed between consecutive tags
   // Reduced from 0.10 (10%) to 0.30 (30%) to be less aggressive

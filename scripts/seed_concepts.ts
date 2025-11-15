@@ -18,8 +18,12 @@ const force = args.includes('--force')
 const onlyFlag = args.find(arg => arg.startsWith('--only='))
 const onlyCategory = onlyFlag ? onlyFlag.split('=')[1] : null
 
-// Build embedding prompt: "<label>. Synonyms: <synonyms-joined>. Related: <related-joined>."
+// DEPRECATED: Old embedding method - DO NOT USE
+// This was the cause of embedding corruption (74.5% of concepts)
+// Use generateConceptEmbedding from @/lib/concept-embeddings instead
 function buildPrompt(c: ConceptSeed): string {
+  console.warn(`⚠️  WARNING: Using deprecated embedding method for ${c.id}. This will cause corruption!`)
+  console.warn(`   Use generateConceptEmbedding() from @/lib/concept-embeddings instead`)
   const synStr = c.synonyms.length > 0 ? c.synonyms.join(', ') : ''
   const relStr = c.related.length > 0 ? c.related.join(', ') : ''
   
@@ -61,27 +65,29 @@ async function main() {
   
   console.log(`[seed] Processing ${items.length} concepts...`)
   console.log(`[seed] Force mode: ${force ? 'ON (will re-embed)' : 'OFF (preserve existing)'}`)
+  console.log(`[seed] ⚠️  WARNING: This script uses the OLD embedding method which causes corruption!`)
+  console.log(`[seed] ⚠️  Use src/concepts/seed.ts instead, which uses the correct method.`)
   
-  // Build prompts and batch embed
-  const prompts = items.map(buildPrompt)
-  const vecs = await embedTextBatch(prompts)
-  
-  if (vecs.length !== items.length) {
-    console.error(`Embedding mismatch: ${items.length} concepts but ${vecs.length} vectors`)
-    process.exit(1)
-  }
-  
-  // Normalize all vectors
-  const normalizedVecs = vecs.map(normalize)
+  // Use centralized embedding generation to prevent corruption
+  const { generateConceptEmbedding } = await import('../src/lib/concept-embeddings')
   
   let created = 0
   let updated = 0
   let skipped = 0
   
   // Upsert each concept
-  for (let i = 0; i < items.length; i++) {
-    const c = items[i]
-    const emb = normalizedVecs[i]
+  for (const c of items) {
+    let emb: number[]
+    try {
+      emb = await generateConceptEmbedding(
+        c.label,
+        c.synonyms || [],
+        c.related || []
+      )
+    } catch (error: any) {
+      console.warn(`[seed] Failed to generate embedding for ${c.id}: ${error.message}`)
+      continue
+    }
     
     // Check if concept exists
     const existing = await prisma.concept.findUnique({ where: { id: c.id } })

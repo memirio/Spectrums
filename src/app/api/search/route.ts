@@ -64,6 +64,13 @@ export async function GET(request: NextRequest) {
       // 2. Find concepts that match query terms (by id, label, or synonyms)
       // Use explicit synonyms only - no partial matching
       const matchedConceptIds = new Set<string>()
+      // Build a map of concept ID -> synonyms for bidirectional synonym matching
+      const conceptSynonymsMap = new Map<string, Set<string>>()
+      for (const c of concepts) {
+        const synonyms = (c.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+        conceptSynonymsMap.set(c.id, new Set(synonyms))
+      }
+      
       for (const term of queryTerms) {
         for (const c of concepts) {
           const conceptId = c.id.toLowerCase()
@@ -72,6 +79,17 @@ export async function GET(request: NextRequest) {
           
           // Exact match only - no partial matching (synonyms should cover word variations)
           if (conceptId === term || label === term || synonyms.includes(term)) {
+            matchedConceptIds.add(c.id)
+          }
+        }
+      }
+      
+      // Also find concepts whose synonyms match the query term (bidirectional synonym matching)
+      // If query is "vibrant" and concept "colorful" has "vibrant" as a synonym, include "colorful"
+      for (const term of queryTerms) {
+        for (const c of concepts) {
+          const synonyms = conceptSynonymsMap.get(c.id)
+          if (synonyms && synonyms.has(term)) {
             matchedConceptIds.add(c.id)
           }
         }
@@ -148,15 +166,64 @@ export async function GET(request: NextRequest) {
           const imageTagIds = imageTagList.map(t => t.conceptId)
           
           // Check if query matches any of the image's tags (when concepts match)
-          const hasMatchingTag = matchedConceptIds.size > 0 && 
-                                 imgTags && 
-                                 Array.from(matchedConceptIds).some(id => imgTags.has(id))
+          // Also check for synonym matches - if image tag is a synonym of matched concept, it's a match
+          let hasMatchingTag = matchedConceptIds.size > 0 && 
+                               imgTags && 
+                               Array.from(matchedConceptIds).some(id => imgTags.has(id))
+          
+          // If no direct match, check for synonym matches
+          if (!hasMatchingTag && matchedConceptIds.size > 0) {
+            for (const queryConceptId of matchedConceptIds) {
+              const queryConcept = concepts.find(c => c.id === queryConceptId)
+              if (!queryConcept) continue
+              const querySynonyms = (queryConcept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+              
+              for (const { conceptId } of imageTagList) {
+                const tagConcept = concepts.find(c => c.id === conceptId)
+                if (!tagConcept) continue
+                const tagLabel = tagConcept.label.toLowerCase()
+                const tagId = tagConcept.id.toLowerCase()
+                
+                if (querySynonyms.includes(tagLabel) || querySynonyms.includes(tagId)) {
+                  hasMatchingTag = true
+                  break
+                }
+              }
+              if (hasMatchingTag) break
+            }
+          }
           
           // For multi-term queries, check if image has tags for ALL matched concepts (AND logic)
           // This prevents images from ranking high if they only match one term in a multi-term query
+          // Count both direct matches and synonym matches (but don't double-count: if direct match exists, don't count synonym)
           matchedConceptCount = matchedConceptIds.size
-          imageMatchedConceptCount = matchedConceptIds.size > 0 && imgTags ?
-            Array.from(matchedConceptIds).filter(id => imgTags.has(id)).length : 0
+          if (matchedConceptIds.size > 0 && imgTags) {
+            imageMatchedConceptCount = Array.from(matchedConceptIds).filter(id => imgTags.has(id)).length
+            
+            // Also count synonym matches, but ONLY if there's no direct match for that concept
+            for (const queryConceptId of matchedConceptIds) {
+              // Skip if we already have a direct match for this concept
+              if (imgTags.has(queryConceptId)) continue
+              
+              const queryConcept = concepts.find(c => c.id === queryConceptId)
+              if (!queryConcept) continue
+              const querySynonyms = (queryConcept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+              
+              for (const { conceptId } of imageTagList) {
+                const tagConcept = concepts.find(c => c.id === conceptId)
+                if (!tagConcept) continue
+                const tagLabel = tagConcept.label.toLowerCase()
+                const tagId = tagConcept.id.toLowerCase()
+                
+                if (querySynonyms.includes(tagLabel) || querySynonyms.includes(tagId)) {
+                  imageMatchedConceptCount++
+                  break // Count each matched concept only once
+                }
+              }
+            }
+          } else {
+            imageMatchedConceptCount = 0
+          }
           const hasAllMatchingTags = matchedConceptCount > 0 && imageMatchedConceptCount === matchedConceptCount
           const hasPartialMatchingTags = hasMatchingTag && !hasAllMatchingTags && matchedConceptCount > 1
           
@@ -190,7 +257,7 @@ export async function GET(request: NextRequest) {
           // Find related/supporting tags (concepts that are similar to the query)
           const supportingTags: Array<{ conceptId: string; score: number }> = []
           if (matchedConceptIds.size > 0) {
-            // Check if matched concepts are in image tags
+            // Check if matched concepts are in image tags (direct matches)
             for (const queryConceptId of matchedConceptIds) {
               const tagScore = imgTags?.get(queryConceptId)
               if (tagScore !== undefined) {
@@ -198,29 +265,53 @@ export async function GET(request: NextRequest) {
               }
             }
             
-            // Also check for related concepts (synonyms/related terms)
+            // Check for synonym matches - if image tag is a synonym of matched concept, treat as direct match
+            // Example: Query "colorful" matches concept "colorful", image has tag "vibrant" (synonym of "colorful")
+            for (const queryConceptId of matchedConceptIds) {
+              const queryConcept = concepts.find(c => c.id === queryConceptId)
+              if (!queryConcept) continue
+              
+              const querySynonyms = (queryConcept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+              
+              for (const { conceptId, score: tagScore } of imageTagList) {
+                // Skip if already added as direct match
+                if (matchedConceptIds.has(conceptId)) continue
+                
+                const tagConcept = concepts.find(c => c.id === conceptId)
+                if (!tagConcept) continue
+                
+                const tagLabel = tagConcept.label.toLowerCase()
+                const tagId = tagConcept.id.toLowerCase()
+                
+                // If image tag's label/ID matches a synonym of the query concept, treat as synonym match (0.9x weight)
+                if (querySynonyms.includes(tagLabel) || querySynonyms.includes(tagId)) {
+                  supportingTags.push({ conceptId, score: tagScore * 0.9 }) // 90% weight for synonyms
+                }
+              }
+            }
+            
+            // Also check for related concepts (non-synonym related terms)
             // For example, "colorful" is related to "neon", "vibrant", "gradient"
             for (const queryConceptId of matchedConceptIds) {
               const queryConcept = concepts.find(c => c.id === queryConceptId)
               if (!queryConcept) continue
               
-              // Check related concepts from synonyms and related fields
-              const relatedTerms = [
-                ...((queryConcept.synonyms as unknown as string[]) || []),
-                ...((queryConcept.related as unknown as string[]) || [])
-              ].map(t => String(t).toLowerCase())
+              // Only check related terms (not synonyms - those are handled above)
+              const relatedTerms = ((queryConcept.related as unknown as string[]) || [])
+                .map(t => String(t).toLowerCase())
               
               for (const { conceptId, score: tagScore } of imageTagList) {
+                // Skip if already added as direct match or synonym match
+                if (matchedConceptIds.has(conceptId) || supportingTags.some(t => t.conceptId === conceptId)) continue
+                
                 const tagConcept = concepts.find(c => c.id === conceptId)
                 if (!tagConcept) continue
                 
-                // Check if this tag's label/synonyms match related terms
                 const tagLabel = tagConcept.label.toLowerCase()
                 const tagId = tagConcept.id.toLowerCase()
                 
                 if (relatedTerms.includes(tagLabel) || relatedTerms.includes(tagId)) {
-                  // This is a related tag - add it with reduced weight
-                  // Use tag score as indicator of presence strength
+                  // This is a related tag (not a synonym) - add it with reduced weight
                   supportingTags.push({ conceptId, score: tagScore * 0.7 }) // 70% weight for related
                 }
               }
@@ -230,6 +321,13 @@ export async function GET(request: NextRequest) {
           // Apply adjustments based on tag strength
           // PRIORITY 1: If image has direct matching tags, apply SIGNIFICANT boost
           // BUT: For multi-term queries, only apply full boost if ALL terms match (AND logic)
+          
+          // Constants for tag weighting (shared across both hasMatchingTag and !hasMatchingTag branches)
+          // Adjusted to give more weight to cosine similarity (baseScore) in final ranking
+          const DIRECT_MULTIPLIER = 8 // direct tags multiplier (reduced from 10 to balance with baseScore)
+          const SYNONYM_WEIGHT = 0.85 // synonyms are worth 85% of direct matches (slightly reduced from 0.9)
+          const RELATED_WEIGHT = 0.08 // related terms are worth 8% of direct matches (reduced from 0.1)
+          
           if (hasMatchingTag) {
             // Image has matching tags - SIGNIFICANTLY boost based on tag strength
             // Direct matches should dominate ranking - boost much more aggressively
@@ -245,36 +343,73 @@ export async function GET(request: NextRequest) {
                 }
               }
             }
-            const relatedMatches = supportingTags.filter(t => 
-              !matchedConceptIds.has(t.conceptId)
-            )
             
             // Simple, scalable rule set aligned with requirements
-            const DIRECT_MULTIPLIER = 10 // direct tags are worth 10x related
-            const ZERO_WITH_DIRECT = 0.10 // base cosine contributes 10% when direct tags exist
-            const ZERO_WITH_RELATED = 0.10 // with only related, keep base influence very small
+            // Increased base cosine contribution to ensure higher similarity scores rank higher
+            const ZERO_WITH_DIRECT = 0.30 // base cosine contributes 30% when direct tags exist (increased from 10%)
+            const ZERO_WITH_RELATED = 0.20 // with only related, base contributes 20% (increased from 10%)
             const RELATED_MIN = 0.20 // require a reasonably strong related tag to count
             
             // CRITICAL: If hasMatchingTag is true, we MUST have directMatches
             // If we don't, it's a bug - don't apply any boost, just use base score
-            if (directMatches.length > 0) {
-              const directSum = directMatches.reduce((s, t) => s + t.score, 0)
-
-              // Penalize partial matches for multi-term queries by downscaling directSum
-              let directComponent = directSum
+            // Separate direct matches, synonym matches, and related matches for different weights
+            const synonymMatches = supportingTags.filter(t => {
+              // If it's already a direct match (in matchedConceptIds), it's not a synonym match
+              if (matchedConceptIds.has(t.conceptId)) return false
+              
+              // Check if this tag is a synonym of any matched concept
+              for (const queryConceptId of matchedConceptIds) {
+                const queryConcept = concepts.find(c => c.id === queryConceptId)
+                if (!queryConcept) continue
+                const querySynonyms = (queryConcept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+                const tagConcept = concepts.find(c => c.id === t.conceptId)
+                if (tagConcept) {
+                  const tagLabel = tagConcept.label.toLowerCase()
+                  const tagId = tagConcept.id.toLowerCase()
+                  if (querySynonyms.includes(tagLabel) || querySynonyms.includes(tagId)) {
+                    return true
+                  }
+                }
+              }
+              return false
+            })
+            
+            // Separate related matches (not synonyms, not direct)
+            const relatedOnlyMatches = supportingTags.filter(t => 
+              !matchedConceptIds.has(t.conceptId) && !synonymMatches.includes(t)
+            )
+            
+            // Calculate weighted sum: direct (1.0x), synonyms (0.9x), related (0.1x)
+            const directSum = directMatches.reduce((s, t) => s + t.score, 0)
+            const synonymSum = synonymMatches.reduce((s, t) => s + t.score, 0) // Already weighted at 0.9x in supportingTags
+            const relatedSum = relatedOnlyMatches.reduce((s, t) => s + t.score, 0) // Already weighted at 0.7x in supportingTags, but we want 0.1x total
+            
+            // Combine all matches with their respective weights
+            // Note: synonymMatches already have 0.9x weight, relatedOnlyMatches have 0.7x weight in supportingTags
+            // We need to adjust relatedOnlyMatches to 0.1x total (0.7x * 0.143 ≈ 0.1x)
+            const adjustedRelatedSum = relatedSum * (RELATED_WEIGHT / 0.7) // Convert from 0.7x to 0.1x
+            const allMatchesSum = directSum + synonymSum + adjustedRelatedSum
+            
+            if (directMatches.length > 0 || synonymMatches.length > 0) {
+              // Penalize partial matches for multi-term queries by downscaling the combined score
+              let weightedComponent = allMatchesSum
               if (matchedConceptCount > 1 && imageMatchedConceptCount < matchedConceptCount) {
                 const completeness = imageMatchedConceptCount / matchedConceptCount // 0..1
-                directComponent *= Math.max(0.4, completeness) // up to 60% penalty
+                weightedComponent *= Math.max(0.4, completeness) // up to 60% penalty for partial matches
               }
 
-              // When we have direct hits, ignore related entirely; tags dominate
-              const tagScore = DIRECT_MULTIPLIER * directComponent
+              // When we have direct hits or synonyms, tags dominate (related already included in weighted sum)
+              const tagScore = DIRECT_MULTIPLIER * weightedComponent
               score = tagScore + baseScore * ZERO_WITH_DIRECT
               
               // Handle opposite tags - always apply penalty, strength based on opposite score and distance to direct
               if (oppositeTags.length > 0) {
                 const maxOppositeScore = Math.max(...oppositeTags.map(t => t.score))
-                const maxDirectScore = Math.max(...directMatches.map(t => t.score))
+                // Use max of direct or synonym matches for penalty calculation
+                const allDirectAndSynonym = [...directMatches, ...synonymMatches]
+                const maxDirectScore = allDirectAndSynonym.length > 0 
+                  ? Math.max(...allDirectAndSynonym.map(t => t.score)) 
+                  : 0
                 
                 // Calculate penalty strength:
                 // 1. Base penalty: proportional to opposite tag strength (normalize 0.15-0.30 range to 0-1)
@@ -307,7 +442,7 @@ export async function GET(request: NextRequest) {
               // Handle opposite tags - no direct matches but has opposites
               if (oppositeTags.length > 0) {
                 const maxOppositeScore = Math.max(...oppositeTags.map(t => t.score))
-                const maxSupportingScore = relatedMatches.reduce((m, t) => Math.max(m, t.score), 0)
+                const maxSupportingScore = relatedOnlyMatches.reduce((m, t) => Math.max(m, t.score), 0)
                 
                 // Calculate penalty based on opposite strength and distance to supporting score
                 const oppositeStrength = Math.max(0, Math.min(1, (maxOppositeScore - 0.15) / (0.30 - 0.15)))
@@ -325,7 +460,7 @@ export async function GET(request: NextRequest) {
           // Simple rule for images without direct matching tags
           if (matchedConceptIds.size > 0 && !hasMatchingTag) {
             const RELATED_MIN = 0.20
-            const ZERO_NO_DIRECT = 0.05 // When no direct tags, base contributes only 5%
+            const ZERO_NO_DIRECT = 0.20 // When no direct tags, base contributes 20% (balanced - not too high, not too low)
             
             // Re-check for opposites if not already detected
             if (oppositeTags.length === 0 && imageTagList.length > 0) {
@@ -340,8 +475,8 @@ export async function GET(request: NextRequest) {
             }
             
             // Check for related tags (synonyms/related of query concept)
-            const relatedMatches = supportingTags.filter(t => !matchedConceptIds.has(t.conceptId))
-            const relatedMax = relatedMatches.reduce((m, t) => Math.max(m, t.score), 0)
+            const relatedOnlyMatches = supportingTags.filter(t => !matchedConceptIds.has(t.conceptId))
+            const relatedMax = relatedOnlyMatches.reduce((m, t) => Math.max(m, t.score), 0)
             
             if (oppositeTags.length > 0) {
               // Heavy penalty for opposite tags when no direct matches - rank very low
@@ -354,8 +489,8 @@ export async function GET(request: NextRequest) {
               const penaltyPercent = 0.40 + (oppositeStrength * 0.15) // 40-55% reduction
               score = baseScore * (1.0 - penaltyPercent) * ZERO_NO_DIRECT
             } else if (relatedMax >= RELATED_MIN) {
-              // Only related tags (no direct) - heavily reduce related to ensure direct always wins
-              const tagScore = relatedMax * 0.1 // Reduce related to 10% (same as above)
+              // Only related tags (no direct, no synonyms) - use RELATED_WEIGHT (10% of direct)
+              const tagScore = relatedMax * RELATED_WEIGHT * DIRECT_MULTIPLIER // 10% weight, then multiply by DIRECT_MULTIPLIER
               score = tagScore + baseScore * ZERO_NO_DIRECT
             } else {
               // No direct, no strong related - minimal base only
@@ -363,10 +498,10 @@ export async function GET(request: NextRequest) {
             }
           }
         } else {
-          // Image has NO tags at all - apply simple rule: minimal base contribution only
+          // Image has NO tags at all - apply simple rule: use base score more prominently
           if (matchedConceptIds.size > 0) {
-            // Query matches a concept but image has no tags - minimal base only
-            score = baseScore * 0.05 // Only 5% of base score when no tags exist
+            // Query matches a concept but image has no tags - use base score more prominently
+            score = baseScore * 0.20 // 20% of base score when no tags exist (balanced)
           }
           // If no concept match, leave base score as-is (fallback to pure zero-shot)
         }
@@ -437,7 +572,8 @@ export async function GET(request: NextRequest) {
         
         // Third: When direct hits are equal, sort by final score (primary ranking)
         // Final score includes the 10x tag boost, which is what we want to rank by
-        if (Math.abs(a.score - b.score) > 0.01) {
+        // Reduced tolerance from 0.01 to 0.001 to prioritize high-scored images more precisely
+        if (Math.abs(a.score - b.score) > 0.001) {
           return b.score - a.score
         }
         
