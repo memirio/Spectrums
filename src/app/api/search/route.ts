@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { embedTextBatch } from '@/lib/embeddings'
 import { prisma } from '@/lib/prisma'
 import { hasOppositeTags } from '@/lib/concept-opposites'
+import { isAbstractQuery, expandAndEmbedQuery } from '@/lib/query-expansion'
+import { logSearchImpressions, type SearchImpression } from '@/lib/interaction-logger'
 
 function cosine(a: number[], b: number[]): number {
   const len = Math.min(a.length, b.length)
@@ -20,8 +22,20 @@ export async function GET(request: NextRequest) {
 
     if (zeroShot) {
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
-      // 1. Compute query embedding directly from user text
-      const [queryVec] = await embedTextBatch([q.trim()])
+      // 1. Compute query embedding (with expansion for abstract terms)
+      let queryVec: number[]
+      const isAbstract = isAbstractQuery(q.trim())
+      console.log(`[search] Query "${q.trim()}" isAbstract: ${isAbstract}`)
+      if (isAbstract) {
+        // Expand abstract queries into visual proxies and average embeddings
+        console.log(`[search] Using query expansion for abstract term`)
+        queryVec = await expandAndEmbedQuery(q.trim())
+      } else {
+        // Direct embedding for concrete queries
+        console.log(`[search] Using direct embedding for concrete term`)
+        const [vec] = await embedTextBatch([q.trim()])
+        queryVec = vec
+      }
       const dim = queryVec.length
       
       // 2. Retrieve all images with embeddings
@@ -208,6 +222,67 @@ export async function GET(request: NextRequest) {
       
       // Combine reranked top K with remaining results
       const finalRanked = [...reranked, ...remaining]
+      
+      // Log search impressions for learned reranker training
+      // Only log top 20 results to avoid excessive logging
+      const topResultsForLogging = finalRanked.slice(0, 20)
+      const impressions: SearchImpression[] = topResultsForLogging.map((item: any, index: number) => {
+        const position = index + 1
+        const imageTags = tagsByImage.get(item.imageId) || new Map()
+        
+        // Extract tag features
+        const tagScores: number[] = []
+        let maxTagScore = 0
+        let sumTagScores = 0
+        let directMatchCount = 0
+        let synonymMatchCount = 0
+        let relatedMatchCount = 0
+        
+        for (const conceptId of relevantConceptIds) {
+          const tagScore = imageTags.get(conceptId)
+          if (tagScore !== undefined) {
+            tagScores.push(tagScore)
+            maxTagScore = Math.max(maxTagScore, tagScore)
+            sumTagScores += tagScore
+            directMatchCount++
+          }
+        }
+        
+        // Extract opposite tag features
+        let maxOppositeTagScore = 0
+        let sumOppositeTagScores = 0
+        for (const oppId of oppositeConceptIds) {
+          const tagScore = imageTags.get(oppId)
+          if (tagScore !== undefined) {
+            maxOppositeTagScore = Math.max(maxOppositeTagScore, tagScore)
+            sumOppositeTagScores += tagScore
+          }
+        }
+        
+        return {
+          query: q.trim(),
+          queryEmbedding: queryVec,
+          imageId: item.imageId,
+          position,
+          baseScore: item.baseScore,
+          tagFeatures: {
+            cosineSimilarity: item.baseScore,
+            cosineSimilaritySquared: item.baseScore * item.baseScore,
+            maxTagScore,
+            sumTagScores,
+            directMatchCount,
+            synonymMatchCount, // TODO: Calculate if needed
+            relatedMatchCount, // TODO: Calculate if needed
+            maxOppositeTagScore,
+            sumOppositeTagScores,
+          },
+        }
+      })
+      
+      // Log impressions asynchronously (don't block response)
+      logSearchImpressions(impressions).catch((error) => {
+        console.error(`[search] Failed to log impressions:`, error.message)
+      })
       
       // Return results
       return NextResponse.json({ 

@@ -17,6 +17,7 @@ interface Site {
   imageUrl: string | null
   author: string | null
   tags: Tag[]
+  imageId?: string // For interaction tracking
 }
 
 interface ConceptSuggestion {
@@ -34,6 +35,7 @@ export default function Gallery() {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [conceptSuggestions, setConceptSuggestions] = useState<ConceptSuggestion[]>([])
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
+  const [clickStartTimes, setClickStartTimes] = useState<Map<string, number>>(new Map())
 
   useEffect(() => {
     fetchSites()
@@ -97,8 +99,16 @@ export default function Gallery() {
           return
         }
         const data = await response.json()
-        // Search API returns sites ranked by cosine similarity
-        setSites(Array.isArray(data.sites) ? data.sites : [])
+        // Search API returns sites and images
+        // Map images to sites for interaction tracking
+        const sitesWithImageIds = (data.sites || []).map((site: Site, index: number) => {
+          const image = data.images?.[index]
+          return {
+            ...site,
+            imageId: image?.imageId || undefined,
+          }
+        })
+        setSites(sitesWithImageIds)
       } else {
         // No search query: show all sites
         const response = await fetch('/api/sites')
@@ -198,6 +208,80 @@ export default function Gallery() {
       .filter(Boolean)
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ')
+
+  // Track click and dwell time for interaction logging
+  const handleSiteClick = async (site: Site) => {
+    if (!site.imageId) return // Skip if no imageId
+
+    const query = selectedConcepts.join(' ')
+    if (!query.trim()) return // Skip if no query
+
+    const clickTime = Date.now()
+    setClickStartTimes(prev => new Map(prev).set(site.imageId!, clickTime))
+
+    // Log click immediately
+    try {
+      await fetch('/api/interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: query.trim(),
+          imageId: site.imageId,
+          clicked: true,
+        }),
+      })
+    } catch (error) {
+      console.error('Failed to log click:', error)
+    }
+
+    // Track dwell time when user navigates back or closes tab
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        const startTime = clickStartTimes.get(site.imageId!)
+        if (startTime) {
+          const dwellTime = Date.now() - startTime
+          // Log dwell time (fire and forget)
+          fetch('/api/interactions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: query.trim(),
+              imageId: site.imageId,
+              clicked: true,
+              dwellTime,
+            }),
+          }).catch(() => {}) // Silently fail
+
+          setClickStartTimes(prev => {
+            const next = new Map(prev)
+            next.delete(site.imageId!)
+            return next
+          })
+        }
+        document.removeEventListener('visibilitychange', handleVisibilityChange)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    // Also track when user comes back (in case they navigate back)
+    const handleBeforeUnload = () => {
+      const startTime = clickStartTimes.get(site.imageId!)
+      if (startTime) {
+        const dwellTime = Date.now() - startTime
+        // Use sendBeacon for reliability on page unload
+        const blob = new Blob([JSON.stringify({
+          query: query.trim(),
+          imageId: site.imageId,
+          clicked: true,
+          dwellTime,
+        })], { type: 'application/json' })
+        navigator.sendBeacon?.('/api/interactions', blob)
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+  }
 
   const getDisplayName = (site: Site) => {
     const brand = site.author?.trim() || ''
@@ -370,6 +454,7 @@ export default function Gallery() {
                          target="_blank"
                          rel="noopener noreferrer"
                          className="block"
+                         onClick={() => handleSiteClick(site)}
                        >
                          <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
                            {site.imageUrl ? (
@@ -401,6 +486,7 @@ export default function Gallery() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-black no-underline text-xs focus:outline-none hover:underline"
+                          onClick={() => handleSiteClick(site)}
                         >
                           {getDisplayName(site)}
                         </a>

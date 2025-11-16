@@ -1,5 +1,8 @@
 // src/lib/gemini.ts
 // Google Gemini API for vision-language generation
+// 
+// Uses GEMINI_API_KEY for concept generation and tagging
+// (Query expansion uses GEMINI_QUERY_EXPANSION_API_KEY - see query-expansion.ts)
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 

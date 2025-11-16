@@ -5,7 +5,9 @@ Looma is a web application that lets users discover great website designs by sea
 ## Features
 
 - **Zero-shot semantic search**: Search with any text query, ranked by CLIP image-text similarity
+- **Abstract query expansion**: Automatically expands abstract queries (e.g., "euphoric", "serene") into concrete visual descriptions for better CLIP matching
 - **Concept-based boosting**: 94+ seeded design concepts provide subtle ranking improvements
+- **Learned reranker (in development)**: Small MLP model that learns from user interactions to improve search relevance (requires ~1000+ interactions to train)
 - **Multi-concept stacking**: Combine multiple terms like "playful gradient 3d"
 - **Automatic tagging**: New screenshots are embedded & auto-tagged on ingest
 - **Screenshot service**: Automated website screenshot capture with cookie banner removal
@@ -19,6 +21,7 @@ Looma is a web application that lets users discover great website designs by sea
 - **Database**: SQLite via Prisma 6
 - **Embeddings**: @xenova/transformers (CLIP ViT-L/14)
 - **Concept Generation**: Google Gemini 1.5 Flash (vision-language model)
+- **Query Expansion**: Groq API (llama-3.3-70b-versatile) for abstract query expansion
 - **Image Processing**: Sharp
 - **Screenshot Service**: Playwright (Chromium) with BullMQ queue
 
@@ -50,6 +53,10 @@ DATABASE_URL="file:./dev-new.db"
 
 # Concept Generation (required for auto-tagging)
 GEMINI_API_KEY="your-google-gemini-api-key"
+
+# Query Expansion (required for abstract query expansion)
+# Uses Groq API (OpenAI-compatible) for fast, low-latency query expansion
+GROQ_API_KEY="your-groq-api-key"
 
 # Screenshot Service (optional - only needed if using local screenshot service)
 SCREENSHOT_API_URL=http://localhost:3001
@@ -297,11 +304,42 @@ npx tsx scripts/add_sites.ts
 ### How Search Works
 
 - **Zero-shot CLIP search**: Your query is embedded as text and compared directly with image embeddings via cosine similarity
-- **Concept boosting**: If your query matches seeded concepts (e.g., "playful", "modern"), images tagged with those concepts get a subtle 5% ranking boost
+- **Abstract query expansion**: For abstract queries (e.g., "euphoric", "serene", "bold"), the system automatically expands them into concrete visual descriptions that CLIP can better match. See [Query Expansion](#query-expansion) below for details.
+- **Light tag-based reranking**: Images with matching concept tags get a subtle 5% boost; opposite tags get a 3% penalty (only applied to top 200 results)
+- **Learned reranker (future)**: Once enough interaction data is collected (~1000+ interactions), a small MLP model will replace the hand-crafted ranking formula. See [Learned Reranker](#learned-reranker-future-enhancement) below for details.
 - **No hard cutoffs**: All images are ranked and returned (no filtering)
 
 **For detailed search logic documentation**, including tag matching weights, multi-term query handling, and opposite tag penalties, see:
 - [Search Logic Documentation](./docs/SEARCH_LOGIC.md) — Complete guide to ranking algorithm, weights, and penalties
+
+### Query Expansion
+
+For abstract queries (emotional, mood-based, or abstract visual concepts), the system uses **query expansion** to improve search relevance. Abstract queries are automatically detected and expanded into concrete visual descriptions that CLIP can better match.
+
+**How it works:**
+1. **Detection**: The system detects if a query is abstract (e.g., "euphoric", "serene", "bold", "elegant")
+2. **Expansion**: Abstract queries are expanded into 4-6 concrete visual descriptions (e.g., "euphoric" → "bright and pastel color palette with soft gradients", "rounded shapes with shimmering effects")
+3. **Embedding**: Each expansion is embedded with CLIP, then averaged and normalized to create the query vector
+4. **Matching**: Images are ranked by cosine similarity to this expanded query embedding
+
+**Storage Strategy:**
+- **Curated expansions**: Hand-crafted expansions stored in `src/lib/query-expansions.json` (versioned, reviewable)
+- **Groq-generated expansions**: LLM-generated expansions cached in SQLite `QueryExpansion` table (efficient, analyzable)
+- **Hybrid lookup**: System checks curated JSON first, then database cache, then generates new expansions if needed
+
+**Example expansions:**
+- **"euphoric"** → "bright and pastel color palette with soft gradients", "rounded shapes with shimmering effects", "vibrant splashes of color on neutral backgrounds"
+- **"serene"** → "soft blue and pale green color palette", "gentle natural textures with muted colors", "calming atmospheric effects with light gradients"
+- **"bold"** → "thick black lines and geometric shapes", "bold sans-serif fonts in dark colors", "high contrast color schemes with deep shadows"
+
+**Configuration:**
+- Requires `GROQ_API_KEY` environment variable
+- Uses Groq API (OpenAI-compatible) with `llama-3.3-70b-versatile` model
+- Automatically tries multiple models if one is blocked
+- Expansions are cached in database to avoid repeated LLM calls
+
+**Adding curated expansions:**
+Edit `src/lib/query-expansions.json` to add hand-crafted expansions for common abstract terms. These take precedence over LLM-generated expansions.
 
 ---
 
@@ -548,6 +586,8 @@ All application data is stored in a **single SQLite database** (via Prisma):
 - **Concepts** — Design concept definitions (labels, synonyms, related terms, opposites, embeddings)
 - **ImageTags** — Auto-tagging relationships (image ↔ concept with similarity scores)
   - Images are tagged only with directly matched concepts (no synonym expansion)
+- **UserInteractions** — User interaction data for learned reranker training (queries, clicks, saves, dwell time, query embeddings, tag features)
+- **QueryExpansion** — Cached LLM-generated query expansions (Groq) for abstract terms
 
 **Stored Separately (Not in Database):**
 - **Screenshot files** — Stored in MinIO (S3-compatible object storage)
@@ -577,8 +617,14 @@ All application data is stored in a **single SQLite database** (via Prisma):
 - **Google Gemini API** — Remote API calls only (no data stored remotely)
   - Used for concept generation from images
   - Requires `GEMINI_API_KEY` environment variable
+- **Groq API** — Remote API calls only (no data stored remotely)
+  - Used for abstract query expansion
+  - Requires `GROQ_API_KEY` environment variable
+  - Expansions are cached locally in SQLite database
 
-**Note:** All data persists locally. The only external dependency is the Gemini API for generating new concepts, which is optional (you can disable it or use existing concepts only).
+**Note:** All data persists locally. The only external dependencies are:
+- Gemini API for generating new concepts (optional - you can disable it or use existing concepts only)
+- Groq API for query expansion (optional - system falls back to direct embedding if expansion fails)
 
 ### Production Pipeline Flow
 
@@ -586,11 +632,19 @@ See [Production Pipeline (Add Photo Pipeline)](#5-production-pipeline-add-photo-
 
 ### Search Flow
 
-1. **Query embedding** → User query embedded as CLIP text vector
-2. **Image ranking** → All images ranked by cosine(query, imageEmbedding)
-3. **Concept matching** → Query terms matched against seeded concepts (by id, label, synonyms)
-4. **Subtle boosting** → Images with matching concept tags get 5% boost
-5. **Result return** → All sites returned, ranked by final score
+1. **Query expansion** (if abstract) → Abstract queries expanded into concrete visual descriptions
+2. **Query embedding** → User query (or expanded query) embedded as CLIP text vector
+3. **Image ranking** → All images ranked by cosine(query, imageEmbedding) - this is the primary ranking signal
+4. **Light reranking** (top 200) → For top results, apply very small tag-based boosts/penalties:
+   - Images with matching concept tags get 5% boost (0.05 * tagScore)
+   - Images with opposite concept tags get 3% penalty (0.03 * tagScore)
+5. **Interaction logging** → Log impressions for learned reranker training (top 20 results)
+6. **Result return** → All sites returned, ranked by final score
+
+**Future: Learned Reranker**
+- Once 1000+ interactions are collected, a small MLP model will replace step 4
+- The learned model will adapt to user behavior and improve over time
+- See [Learned Reranker](#learned-reranker-future-enhancement) section for details
 
 ### Design Concepts
 
@@ -708,8 +762,9 @@ Looma/
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── search/route.ts      # Zero-shot search endpoint
-│   │   │   └── sites/route.ts       # Site creation endpoint
+│   │   │   ├── search/route.ts      # Zero-shot search endpoint (logs impressions)
+│   │   │   ├── sites/route.ts       # Site creation endpoint
+│   │   │   └── interactions/route.ts # User interaction logging endpoint
 │   │   ├── components/
 │   │   │   ├── Gallery.tsx         # Main gallery component
 │   │   │   └── SubmissionForm.tsx   # Site submission form
@@ -722,6 +777,9 @@ Looma/
 │   │   ├── prisma.ts                # Prisma client singleton
 │   │   ├── tagging-config.ts        # Auto-tagging constants
 │   │   ├── concept-opposites.ts     # Concept opposites mapping (synced from seed_concepts.json)
+│   │   ├── query-expansion.ts       # Abstract query expansion (curated + Groq)
+│   │   ├── query-expansions.json    # Curated query expansions (versioned)
+│   │   ├── interaction-logger.ts    # User interaction logging for learned reranker
 │   │   └── update-concept-opposites.ts  # Utility to sync opposites
 │   └── jobs/
 │       └── tagging.ts               # Auto-tagging job (used inline)
@@ -737,11 +795,15 @@ Looma/
 │   ├── retag_latest.ts              # Retag most recent image
 │   ├── backfill_tagging.ts          # Tag all untagged images
 │   ├── sync_and_retag_all.ts        # Sync opposites and re-tag all images
+│   ├── check-interaction-stats.ts   # Check user interaction statistics
+│   ├── check-training-readiness.ts  # Quick check if ready to train learned reranker
+│   ├── create-test-interactions.ts  # Create synthetic interactions for testing
 │   └── ...                          # More utility scripts
 ├── docs/
 │   ├── SEARCH_LOGIC.md                # Complete search ranking algorithm documentation
 │   ├── SEARCH_QUALITY_MAINTENANCE.md  # Search quality maintenance guide
-│   └── SYNONYM_EXPANSION_GUIDE.md     # Synonym expansion guide
+│   ├── SYNONYM_EXPANSION_GUIDE.md     # Synonym expansion guide
+│   └── LEARNED_RERANKER_PLAN.md       # Plan for learned reranker based on user interactions
 ├── screenshot-service/              # Optional screenshot service
 │   ├── docker-compose.yml           # Docker setup (API, worker, Redis, MinIO)
 │   ├── src/
@@ -784,3 +846,75 @@ MIT
 - **Site Inspire** — Web design inspiration
 
 **Looma's twist**: Discovery by abstract concept instead of just categories—stack "playful + precise + editorial" and find visuals that feel right, powered by AI understanding of visual semantics.
+
+---
+
+## Learned Reranker (Future Enhancement)
+
+### Overview
+
+The system is designed to replace the current hand-crafted ranking formula with a **learned reranker** — a small machine learning model that adapts to user behavior. This model learns from actual user interactions to improve search relevance automatically.
+
+**Current Status:**
+- ✅ Infrastructure ready (interaction tracking, database schema, logging)
+- ⏳ Collecting training data (need ~1000+ interactions)
+- ⏳ Model training (once enough data is collected)
+
+### How the Learned Reranker Works
+
+The learned reranker is a small MLP (Multi-Layer Perceptron) that:
+
+1. **Learns from user behavior**: Trained on clicks, saves, and dwell time to understand what users actually find relevant
+2. **Adapts to query-specific patterns**: 
+   - For "3d" queries: learns to prefer actual 3D renders over shadowy photos
+   - For "love" queries: learns to prefer images with faces, warm colors, and intimacy over random hearts
+   - For "fun" queries: learns what "fun" actually means to your users
+3. **Replaces hand-tuning**: Automatically optimizes tag weights and ranking signals instead of manual coefficient adjustment
+4. **Improves over time**: Retrained periodically with new interaction data to adapt to changing preferences
+
+### Architecture
+
+**Input Features:**
+- Query embedding (768-dim CLIP vector)
+- Image embedding (768-dim CLIP vector)
+- Handcrafted features: cosine similarity, tag scores, match counts, opposite penalties
+
+**Model:**
+- Small MLP: 1536+features → 256 → 64 → 1
+- <100KB model size
+- Trained with pairwise ranking loss
+- Exported to ONNX for efficient inference in Node.js
+
+### Data Collection
+
+The system automatically collects interaction data:
+
+- **Impressions**: Logged when search results are shown (top 20 per query)
+- **Clicks**: Tracked when users click on results
+- **Dwell time**: Time spent viewing results (via visibility/beforeunload events)
+- **Saves**: Tracked when users save/favorite results
+
+**Check your progress:**
+```bash
+# Check interaction statistics
+npx tsx scripts/check-interaction-stats.ts
+
+# Quick readiness check (shows notification when 1000+ reached)
+npx tsx scripts/check-training-readiness.ts
+```
+
+**Bootstrap with test data (optional):**
+```bash
+# Create synthetic interactions for testing
+npx tsx scripts/create-test-interactions.ts
+```
+
+### Training the Model
+
+Once you have 1000+ interactions:
+
+1. **Export training data**: `npx tsx scripts/export-training-data.ts` (to be implemented)
+2. **Train model**: `python scripts/train_reranker.py` (to be implemented)
+3. **Deploy**: Model runs in shadow mode first, then gradually replaces hand-crafted ranking
+
+**See [Learned Reranker Plan](./docs/LEARNED_RERANKER_PLAN.md) for complete design, architecture, and implementation details.**

@@ -1,0 +1,83 @@
+{
+  "love": [
+    "happy couple holding hands",
+    "warm lighting, gentle colors",
+    "intimate scene",
+    "soft pastel palette",
+    "affectionate gesture",
+    "romantic atmosphere"
+  ],
+  "fun": [
+    "people laughing",
+    "party with bright colors",
+    "playful cartoonish ui",
+    "friends playing a game",
+    "vibrant celebration",
+    "joyful interaction"
+  ],
+  "cozy": [
+    "warm fireplace scene",
+    "soft blankets and cushions",
+    "comfortable home interior",
+    "gentle warm lighting",
+    "inviting comfortable space",
+    "relaxing atmosphere"
+  ],
+  "serious": [
+    "professional business setting",
+    "formal corporate environment",
+    "stern expression",
+    "minimalist professional design",
+    "authoritative presentation",
+    "sober formal tone"
+  ],
+  "calm": [
+    "peaceful serene landscape",
+    "gentle flowing water",
+    "soft muted colors",
+    "tranquil quiet scene",
+    "relaxing peaceful atmosphere",
+    "meditative zen space"
+  ],
+  "chaotic": [
+    "busy crowded scene",
+    "multiple overlapping elements",
+    "vibrant cluttered design",
+    "energetic disorganized layout",
+    "intense busy composition",
+    "overwhelming visual noise"
+  ],
+  "happy": [
+    "smiling faces",
+    "bright cheerful colors",
+    "joyful celebration",
+    "positive uplifting mood",
+    "sunny bright atmosphere",
+    "optimistic vibrant design"
+  ],
+  "sad": [
+    "melancholic muted tones",
+    "lonely isolated scene",
+    "dark somber atmosphere",
+    "emotional downtrodden mood",
+    "gloomy desaturated colors",
+    "mournful quiet scene"
+  ],
+  "energetic": [
+    "dynamic movement",
+    "vibrant bold colors",
+    "fast-paced action",
+    "intense active scene",
+    "powerful energetic design",
+    "high-energy composition"
+  ],
+  "peaceful": [
+    "tranquil calm scene",
+    "gentle soft colors",
+    "quiet serene atmosphere",
+    "harmonious balanced composition",
+    "meditative peaceful space",
+    "relaxing calm environment"
+  ]
+}
+

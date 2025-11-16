@@ -123,3 +123,40 @@ model ImageTag {
   @@id([imageId, conceptId])
   @@map("image_tags")
 }
+
+model QueryExpansion {
+  term        String
+  expansion   String
+  source      String   // 'groq' | 'curated' (previously 'gemini')
+  model       String?  // 'llama-3.3-70b-versatile', etc.
+  createdAt   DateTime @default(now())
+  lastUsedAt  DateTime @default(now())
+
+  @@id([term, expansion, source])
+  @@index([term, source])
+  @@map("query_expansions")
+}
+
+// User interaction tracking for learned reranker
+model UserInteraction {
+  id            String   @id @default(cuid())
+  query         String   // Original query text
+  queryEmbedding Json?   // CLIP query embedding (stored as array)
+  imageId       String
+  position      Int      // Rank position when shown (1-based)
+  clicked       Boolean  @default(false)
+  saved         Boolean  @default(false)
+  dwellTime     Int?     // Milliseconds spent viewing result
+  timestamp     DateTime @default(now())
+  
+  // Features at time of query (for training)
+  baseScore     Float?   // CLIP cosine similarity
+  tagFeatures   Json?    // Handcrafted tag features (matches, scores, etc.)
+  
+  image         Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  
+  @@index([query, imageId])
+  @@index([timestamp])
+  @@index([query, clicked])
+  @@map("user_interactions")
+}
