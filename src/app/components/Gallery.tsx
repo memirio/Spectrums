@@ -329,7 +329,7 @@ export default function Gallery() {
       {/* Concept Filters */}
       <div className="bg-transparent">
         <div className="max-w-full mx-auto px-[52px] py-4">
-          <div className="mb-4"></div>
+          <div className="mb-2"></div>
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex-1 min-w-[220px] relative flex items-center gap-2">
