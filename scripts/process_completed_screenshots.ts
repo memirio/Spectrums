@@ -137,36 +137,24 @@ async function processSite(site: any) {
       }
     }
 
-    // Tag
-    const cos = (a: number[], b: number[]) => a.reduce((s, x, i) => s + x * (b[i] ?? 0), 0)
+    // Tag using zero-shot CLIP (new approach)
+    const { tagImageWithZeroShot } = await import('../src/lib/tagging-zero-shot')
     const concepts = await prisma.concept.findMany()
-    const scored = concepts
-      .map(c => ({ c, score: cos(ivec, (c.embedding as unknown as number[]) || []) }))
-      .sort((a, b) => b.score - a.score)
     
-    const aboveThreshold = scored.filter(s => s.score >= TAG_CONFIG.MIN_SCORE)
-    const chosen: typeof scored = []
+    const tagResults = await tagImageWithZeroShot(
+      ivec,
+      concepts.map(c => ({
+        id: c.id,
+        label: c.label,
+        synonyms: c.synonyms,
+        related: c.related
+      })),
+      TAG_CONFIG.MIN_SCORE,
+      TAG_CONFIG.MAX_K,
+      TAG_CONFIG.MIN_SCORE_DROP_PCT
+    )
     
-    for (let i = 0; i < aboveThreshold.length && chosen.length < TAG_CONFIG.MAX_K; i++) {
-      const current = aboveThreshold[i]
-      const prev = chosen[chosen.length - 1]
-      
-      if (chosen.length === 0) {
-        chosen.push(current)
-        continue
-      }
-      
-      if (prev && prev.score > 0) {
-        const dropPct = (prev.score - current.score) / prev.score
-        if (dropPct > TAG_CONFIG.MIN_SCORE_DROP_PCT) {
-          break
-        }
-      }
-      
-      chosen.push(current)
-    }
-    
-    const final = chosen.length > 0 ? chosen : scored.slice(0, TAG_CONFIG.FALLBACK_K)
+    const final = tagResults.map(t => ({ c: concepts.find(c => c.id === t.conceptId)!, score: t.score }))
     const chosenConceptIds = new Set(final.map(({ c }) => c.id))
     
     for (const { c, score } of final) {

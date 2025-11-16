@@ -26,7 +26,7 @@ export async function generateConceptEmbedding(
 ): Promise<number[]> {
   // Standard method: multiple prompts with "website UI with a {term} visual style"
   const tokens = [label, ...synonyms, ...related]
-  const prompts = tokens.map(t => `website UI with a ${t} visual style`)
+  const prompts = tokens.map(t => `website with images, typography, color and layout inspired by ${t}`)
   
   const vecs = await embedTextBatch(prompts)
   

@@ -92,100 +92,30 @@ export async function tagImage(imageId: string): Promise<string[]> {
   // Use Gemini to generate concepts directly from the image (no similarity matching)
   const newlyCreatedConcepts = await createNewConceptsFromImage(image.id, buf);
   
-  // STEP 2: Now tag the image with all concepts (existing + newly created)
+  // STEP 2: Tag the image using zero-shot CLIP with concept graph expansion
+  // NEW APPROACH: Uses CLIP zero-shot with concept graph (synonyms) instead of pre-computed concept embeddings
   const { TAG_CONFIG } = await import('@/lib/tagging-config');
+  const { tagImageWithZeroShot } = await import('@/lib/tagging-zero-shot');
   const concepts = await prisma.concept.findMany();
   
-  // Load concepts with category info from seed file
-  let categoryMap = new Map<string, string>();
-  try {
-    const seedPath = require('path').join(process.cwd(), 'src', 'concepts', 'seed_concepts.json');
-    const seedContent = await require('fs/promises').readFile(seedPath, 'utf-8');
-    const seedConcepts = JSON.parse(seedContent);
-    for (const sc of seedConcepts) {
-      if (sc.category) {
-        categoryMap.set(sc.id, sc.category);
-      }
-    }
-  } catch (e) {
-    // If seed file not found, continue without categories
-  }
+  // Use zero-shot tagging (doesn't require concept embeddings)
+  const tagResults = await tagImageWithZeroShot(
+    ivec,
+    concepts.map(c => ({
+      id: c.id,
+      label: c.label,
+      synonyms: c.synonyms,
+      related: c.related
+    })),
+    TAG_CONFIG.MIN_SCORE,
+    TAG_CONFIG.MAX_K,
+    TAG_CONFIG.MIN_SCORE_DROP_PCT
+  );
   
-  const scores = concepts.map(c => ({
-    conceptId: c.id,
-    score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || []),
-    category: categoryMap.get(c.id) || 'Uncategorized',
-  }));
-  scores.sort((a, b) => b.score - a.score);
-  
-  // Group concepts by category
-  const byCategory = new Map<string, typeof scores>();
-  for (const score of scores) {
-    const cat = score.category;
-    if (!byCategory.has(cat)) {
-      byCategory.set(cat, []);
-    }
-    byCategory.get(cat)!.push(score);
-  }
-  
-  // REMOVED: Category guarantees that force tags even when score is low
-  // This was causing false positives - images were tagged with concepts they don't actually contain
-  // Now we only tag if the score is truly high enough, regardless of category
-  
-  // Do pragmatic tagging - only tag concepts that truly match
-  const aboveThreshold = scores.filter(s => s.score >= TAG_CONFIG.MIN_SCORE);
-  const chosen: typeof scores = [];
-  const remainingSlots = TAG_CONFIG.MAX_K;
-  const MIN_TAGS_PER_IMAGE = 8;
-  let prevScore = aboveThreshold.length > 0 ? aboveThreshold[0].score : 0;
-  
-  for (let i = 0; i < aboveThreshold.length && chosen.length < remainingSlots; i++) {
-    const current = aboveThreshold[i];
-    
-    // Check if score drop is acceptable
-    if (chosen.length === 0) {
-      chosen.push(current);
-      prevScore = current.score;
-      continue;
-    }
-    
-    const dropPct = (prevScore - current.score) / prevScore;
-    if (dropPct > TAG_CONFIG.MIN_SCORE_DROP_PCT) {
-      // If we haven't met MIN_TAGS_PER_IMAGE yet, add it anyway
-      if (chosen.length < MIN_TAGS_PER_IMAGE) {
-        chosen.push(current);
-        prevScore = current.score;
-      } else {
-        break; // Significant drop and already have enough tags
-      }
-    } else {
-      chosen.push(current);
-      prevScore = current.score;
-    }
-  }
-  
-  // Fallback: ensure minimum tags for coverage (force fill even if below MIN_SCORE)
-  // CRITICAL: Every image MUST have at least MIN_TAGS_PER_IMAGE tags, even if scores are below threshold
-  if (chosen.length < MIN_TAGS_PER_IMAGE) {
-    // Use ALL scores (not just above threshold) to ensure we can fill to minimum
-    const fallback = scores.slice(0, MIN_TAGS_PER_IMAGE);
-    const keep = new Set(chosen.map(c => c.conceptId));
-    for (const f of fallback) {
-      if (!keep.has(f.conceptId)) {
-        chosen.push(f);
-        keep.add(f.conceptId);
-        if (chosen.length >= MIN_TAGS_PER_IMAGE) break;
-      }
-    }
-  }
-  
-  // Final selection - sorted by score (no category guarantees)
-  const final = chosen.sort((a, b) => b.score - a.score);
-  const fallbackFinal = final.length > 0 ? final : scores.slice(0, TAG_CONFIG.FALLBACK_K);
-  const chosenConceptIds = new Set(fallbackFinal.map(t => t.conceptId));
+  const chosenConceptIds = new Set(tagResults.map(t => t.conceptId));
 
   // Upsert tags
-  for (const t of fallbackFinal) {
+  for (const t of tagResults) {
     await prisma.imageTag.upsert({
       where: { imageId_conceptId: { imageId: image.id, conceptId: t.conceptId } },
       update: { score: t.score },
