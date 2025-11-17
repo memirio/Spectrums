@@ -32,7 +32,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'absorbent': ['dry', 'emissive', 'glossy', 'hard', 'impermeable', 'repellent', 'sealed', 'slick', 'smooth'], // absorbent
   'absorption': ['emission', 'expulsion', 'reflectivity'], // Absorption
   'abstinence': ['consumption'], // abstinence
-  'abstract': ['annotation', 'base', 'concreteness', 'depictive', 'earthiness', 'edutainment', 'engineering', 'figurative', 'foreground', 'hyperreal', 'obtainable', 'practical', 'roots', 'solidity', 'terrain', 'verbal'], // abstract
+  'abstract': ['animalism', 'annotation', 'base', 'concreteness', 'depictive', 'earthiness', 'edutainment', 'engineering', 'figurative', 'foreground', 'hyperreal', 'obtainable', 'pictorial', 'practical', 'roots', 'solidity', 'terrain', 'verbal'], // abstract
   'abstract-non-narrative': ['storyful'], // abstract-non-narrative
   'abstracted': ['specific'], // abstracted
   'absurdity': ['sense'], // Absurdity
@@ -146,12 +146,13 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'angular': ['curvy', 'round'], // angular
   'angular-form': ['round'], // angular-form
   'angularity': ['curved', 'rounded', 'smooth', 'soft'], // Angularity
+  'animalism': ['abstract', 'artificiality', 'digital', 'mechanism'], // Animalism
   'animated': ['apathetic', 'dispassionate', 'dullard', 'lifeless', 'static', 'unmoved'], // Animated
   'animation': ['boredom'], // animation
   'annotation': ['abstract', 'ambiguity', 'chaos', 'confusion', 'disconnection', 'implicit', 'undocumented', 'unlabeled'], // Annotation
   'annoyed': ['pleased'], // annoyed
   'anomaly': ['archetype', 'consistency', 'normalcy', 'order', 'predictability', 'regularity', 'routine', 'standard', 'uniformity'], // anomaly
-  'anonymity': ['fame', 'milestone', 'premium', 'publicity', 'recognition'], // Anonymity
+  'anonymity': ['companionship', 'fame', 'milestone', 'premium', 'publicity', 'recognition'], // Anonymity
   'anonymous': ['famous', 'identified', 'known', 'premium'], // Anonymous
   'anti': ['calm', 'commercial-aesthetics', 'harmonious', 'orderly', 'pro', 'sane', 'structured'], // anti
   'anti-form': ['formed'], // anti-form
@@ -189,12 +190,13 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'arrive': ['disappear', 'wander'], // arrive
   'arrogant': ['humble'], // arrogant
   'art': ['banal', 'bland', 'commodity', 'dull', 'haphazard', 'lack', 'mundane'], // Art
+  'art-deco': ['neo-grotesque'], // Art Deco
   'artful': ['artless'], // artful
   'articulate': ['illiterate', 'nonverbal'], // articulate
   'artifact': ['current', 'dynamic', 'fluid', 'fresh', 'modern', 'novel', 'organic', 'synthetic', 'transient', 'vivid'], // Artifact
   'artifice': ['earth', 'genuineness'], // Artifice
-  'artificial': ['authentic', 'bio', 'biomorphic', 'earthen', 'earthiness', 'genuine', 'genuineness', 'natural', 'real', 'terrain'], // artificial
-  'artificiality': ['earthiness'], // artificiality
+  'artificial': ['authentic', 'bio', 'biomorphic', 'earthen', 'earthiness', 'genuine', 'genuineness', 'natura', 'natural', 'real', 'terrain'], // artificial
+  'artificiality': ['animalism', 'earthiness'], // artificiality
   'artisanal': ['factory', 'massproduced', 'technographic'], // Artisanal
   'artistic': ['commercial', 'mechanic', 'mechanical'], // Artistic
   'artistry': ['tacky'], // Artistry
@@ -221,6 +223,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'asymmetrical': ['balance', 'boxy', 'centered', 'centrality', 'symmetry'], // Asymmetrical
   'asymmetry': ['concentricity', 'rows'], // Asymmetry
   'asynchronous': ['synchronized'], // asynchronous
+  'asynchrony': ['synchronicity'], // asynchrony
   'athlete': ['couch', 'inactive', 'lazy', 'lethargic', 'sluggish'], // Athlete
   'attach': ['detach'], // attach
   'attached': ['detached'], // attached
@@ -242,7 +245,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'authorship': ['premium'], // Authorship
   'automated': ['analog-experience', 'chaotic', 'human', 'imperfect', 'manual', 'natural', 'organic', 'random', 'spontaneous'], // Automated
   'automation': ['premium', 'recruitment', 'typecraft'], // Automation
-  'automotive': ['manual', 'pedestrian'], // Automotive
+  'automotive': ['electronics', 'manual', 'pedestrian'], // Automotive
   'autonomy': ['collectivism', 'dependence', 'submission'], // Autonomy
   'available': ['absent'], // available
   'avant-garde': ['classicism', 'retrofuturism'], // avant-garde
@@ -308,6 +311,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'biomorphic': ['artificial', 'geometric', 'mechanical', 'rigid', 'static', 'structured', 'synthetic'], // Biomorphic
   'biophilia': ['premium'], // Biophilia
   'biophilic': ['concrete'], // Biophilic
+  'biotech': ['electronics'], // biotech
   'bistro': ['bland', 'chaotic', 'formal', 'impersonal', 'industrial', 'rigid', 'stale', 'stark', 'sterile', 'uninviting'], // Bistro
   'bitter': ['bakery', 'bright', 'cheerful', 'gentle', 'jubilant', 'smooth', 'soft', 'sweet', 'warm', 'wine'], // bitter
   'bizarre': ['familiar'], // bizarre
@@ -346,6 +350,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'blurred': ['visible'], // blurred
   'blurring': ['outlining'], // blurring
   'blurry': ['key'], // blurry
+  'boarding': ['homecare', 'residential', 'travel', 'wilderness'], // Boarding
   'boiling': ['glacial'], // boiling
   'boisterous': ['calm', 'gentle', 'peaceful', 'quiet', 'reserved', 'soft', 'still', 'subdued', 'vulnerable-silence'], // boisterous
   'bokeh': ['bright', 'clear', 'crisp', 'defined', 'detailed', 'focused', 'sharp', 'vivid'], // Bokeh
@@ -565,6 +570,8 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'communicative': ['nonverbal'], // communicative
   'community': ['exile', 'premium'], // Community
   'compact': ['loosen', 'porous', 'sprawl', 'sprawled', 'spread'], // compact
+  'companion': ['exclusion', 'isolation', 'separation', 'solitude'], // Companion
+  'companionship': ['anonymity', 'independence', 'isolation', 'solitude'], // Companionship
   'compassion': ['cruelty', 'heavy', 'scorn'], // Compassion
   'competence': ['heavy', 'lost'], // Competence
   'competent': ['amateur'], // competent
@@ -604,6 +611,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'concentration': ['dissipation'], // concentration
   'concentricity': ['asymmetry', 'chaos', 'chaotic', 'disorder', 'dispersed', 'divergence', 'eccentric', 'fragmentation', 'offset', 'randomness', 'scattering', 'separation'], // Concentricity
   'conception': ['chaos', 'disorder', 'disruption', 'emptiness', 'fragmentation', 'void'], // Conception
+  'conceptual': ['pictorial'], // Conceptual
   'conceptual-formalism': ['wacky'], // conceptual-formalism
   'concise': ['extraneous', 'rambling'], // concise
   'conciseness': ['verbosity'], // conciseness
@@ -730,6 +738,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'crowned': ['bareheads', 'barren', 'common', 'humble', 'ordinary', 'plain', 'simple', 'subdued', 'unadorned'], // crowned
   'crude': ['clear', 'delicate', 'dignity', 'elaborate', 'elegant', 'nuanced', 'polished', 'refined', 'sophisticated', 'subtle', 'yielding'], // crude
   'cruelty': ['care', 'compassion', 'empathy', 'gentleness', 'kindness', 'love', 'support', 'warmth'], // cruelty
+  'crystal': ['formless', 'opaque', 'organic', 'rough'], // Crystal
   'crystalline': ['murky'], // Crystalline
   'cube': ['cylinder'], // cube
   'cubism': ['chaos', 'disorder', 'field', 'flatness', 'fluidity', 'literal', 'randomness', 'simplicity', 'spontaneity'], // Cubism
@@ -768,6 +777,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'darkness': ['beacon', 'brightness', 'clarity', 'glow', 'light', 'lightness', 'lucidity', 'luminance', 'morning', 'radiance', 'reflectivity', 'shine', 'vividness'], // darkness
   'dashboard': ['sprawl'], // Dashboard
   'data': ['premium'], // Data
+  'data-driven': ['pictorial'], // data-driven
   'dawn': ['blackout', 'dimness', 'dusk'], // Dawn
   'day': ['dusk', 'end', 'night', 'pause', 'rest', 'sleep', 'stagnation', 'stillness', 'void'], // Day
   'daylight': ['eclipse', 'nocturn'], // daylight
@@ -872,7 +882,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'difficulty': ['success'], // difficulty
   'diffuse': ['concentrated', 'labeled', 'specific'], // diffuse
   'diffusing': ['compressing'], // diffusing
-  'digital': ['brushstroke', 'freight', 'horology', 'illustration', 'led', 'painting', 'typography', 'winery'], // Digital
+  'digital': ['animalism', 'brushstroke', 'freight', 'horology', 'illustration', 'led', 'painting', 'typography', 'winery'], // Digital
   'digital art': ['murals'], // digital art
   'digitization': ['premium'], // Digitization
   'dignity': ['crude', 'disgrace', 'humiliation', 'indecency', 'informality', 'shame', 'vulgarity'], // Dignity
@@ -910,11 +920,11 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'disciplined': ['anarchic', 'slacker'], // disciplined
   'disclosure': ['envelopment'], // disclosure
   'discomfort': ['certainty', 'clarity', 'comfort', 'confidence', 'ease', 'harmony', 'relaxation', 'serenity', 'tranquility'], // discomfort
-  'disconnect': ['connect', 'context', 'engage', 'integrate', 'interlink', 'unite'], // Disconnect
+  'disconnect': ['connect', 'context', 'engage', 'integrate', 'interlink', 'synchronicity', 'unite'], // Disconnect
   'disconnected': ['integrated', 'user-centric', 'wearables'], // disconnected
   'disconnection': ['annotation', 'attachment', 'closeness', 'dialogue', 'embrace', 'fandom', 'fusion', 'interaction', 'interfacing', 'messaging', 'metaverse', 'togetherness'], // disconnection
   'discontent': ['pleased', 'satisfied', 'success'], // discontent
-  'discord': ['harmony', 'unison'], // discord
+  'discord': ['harmony', 'synchronicity', 'unison'], // discord
   'discordant': ['balanced', 'cohesive', 'consistent', 'harmonic', 'harmonious', 'harmonious-blend', 'melodic', 'serene', 'symphonic', 'unified'], // discordant
   'discourage': ['encourage', 'expand', 'motivate', 'positive'], // discourage
   'discovery': ['oblivion'], // Discovery
@@ -1104,7 +1114,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'elaborate': ['bare', 'basic', 'crude', 'dull', 'minimal', 'plain', 'rudimentary', 'simple', 'sparse', 'stoic'], // elaborate
   'elderly-care': ['childcare'], // elderly-care
   'electrified': ['heavy', 'unmoved'], // Electrified
-  'electronics': ['jewelry'], // electronics
+  'electronics': ['automotive', 'biotech', 'hospitality', 'jewelry', 'textile'], // Electronics
   'elegance': ['brutality', 'filth', 'squalor'], // elegance
   'elegant': ['brutal', 'brutalist', 'clumsy', 'clunky', 'composition', 'contrast', 'crude', 'disheveled', 'faddish', 'frumpy', 'fussy', 'gaudy', 'gritty', 'grotesque', 'grungy', 'janky', 'ragged', 'scrappy', 'shabby', 'sloppy', 'streetwear', 'tacky', 'vulgar', 'wacky'], // Elegant
   'elements': ['composition', 'contrast'], // Elements
@@ -1243,6 +1253,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'exciting': ['banal', 'bland', 'boring', 'drag', 'draining', 'dull', 'dullard', 'insipid', 'lame', 'lifeless', 'mediocre', 'monotonous', 'mundane', 'repetitive', 'stale', 'tedious', 'tiring'], // exciting
   'exclude': ['integrate'], // exclude
   'excluded': ['embraced', 'immerse'], // excluded
+  'exclusion': ['companion'], // exclusion
   'exclusive': ['cheap', 'collaborative', 'common', 'peripheral', 'public', 'ubiquitous'], // exclusive
   'exhibition': ['covert', 'illustration', 'led', 'private'], // Exhibition
   'exile': ['acceptance', 'belonging', 'community', 'connection', 'homecoming', 'inclusion', 'integration', 'sanctuary', 'unity'], // exile
@@ -1436,7 +1447,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'formality': ['casual', 'casual-chaos', 'chaotic', 'disorderly', 'informal', 'messy', 'relaxed', 'scribble', 'spontaneous', 'wild', 'youthfulness'], // Formality
   'formed': ['amorphous', 'anti-form', 'chaotic', 'disordered', 'haphazard', 'messy', 'random', 'unconfined', 'undefined', 'unformed', 'unstructured', 'untamed', 'unvalued'], // Formed
   'forming': ['obliterating'], // forming
-  'formless': ['figurative'], // Formless
+  'formless': ['crystal', 'figurative'], // Formless
   'formulated-limits': ['unconfined'], // formulated-limits
   'fortified': ['deficient', 'exposed', 'fragile', 'open', 'uncertain', 'unstable', 'vulnerable', 'vulnerable-space', 'weak', 'weakened'], // fortified
   'fortifying': ['diluting'], // fortifying
@@ -1569,7 +1580,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'glow': ['darkness'], // glow
   'go': ['stop'], // go
   'goodness': ['malice'], // goodness
-  'gothic': ['bright', 'cheerful', 'clean', 'light', 'modern', 'playful', 'simple', 'soft', 'techno-futurism'], // Gothic
+  'gothic': ['bright', 'cheerful', 'clean', 'light', 'modern', 'neo-grotesque', 'playful', 'simple', 'soft', 'techno-futurism'], // Gothic
   'gourmet': ['common'], // Gourmet
   'grace': ['awkwardness', 'brutality', 'editorial', 'harmony'], // Grace
   'graceful': ['awkward', 'clumsy', 'clunky', 'grotesque', 'janky', 'vulgar'], // graceful
@@ -1604,6 +1615,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'grow': ['finish', 'shrink', 'thaw', 'wilt', 'wither'], // grow
   'growing': ['narrowing', 'withering'], // growing
   'growth': ['closing', 'death', 'depletion', 'deprivation', 'destruction', 'deterioration', 'dormancy', 'end', 'ended', 'endgame', 'futility', 'limitation', 'reduction', 'shrink', 'suppression', 'withering'], // Growth
+  'grunge': ['neo-grotesque'], // Grunge
   'grungy': ['bright', 'clean', 'commercial-chic', 'elegant', 'fresh', 'polished', 'refined', 'simple', 'smooth'], // grungy
   'guarded': ['accessible', 'careless', 'exposed', 'free', 'open', 'openness', 'revealed', 'unprotected', 'vulnerable'], // guarded
   'guesswork': ['analytics'], // guesswork
@@ -1671,6 +1683,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'holding': ['fleeing', 'forgetting'], // holding
   'hollow': ['alive', 'certain', 'cylinder', 'dense', 'filled', 'full', 'high', 'sincere', 'solid'], // Hollow
   'home': ['foreign', 'hotels'], // home
+  'homecare': ['boarding'], // homecare
   'homecoming': ['exile'], // homecoming
   'homely': ['impersonal'], // Homely
   'homeware': ['jewelry'], // homeware
@@ -1684,6 +1697,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'hopelessness': ['hopeful'], // hopelessness
   'horizontal': ['vertex'], // horizontal
   'horology': ['absence', 'casual', 'chaos', 'digital', 'disorder', 'ephemera', 'futility', 'imprecision', 'inefficiency', 'informal', 'instability', 'randomness'], // Horology
+  'hospitality': ['electronics'], // Hospitality
   'hostel': ['hotels'], // hostel
   'hostile': ['reassuring'], // hostile
   'hostility': ['affection', 'kindness'], // hostility
@@ -1801,7 +1815,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'indecency': ['dignity'], // indecency
   'indecision': ['assertiveness', 'fortitude', 'resolve'], // indecision
   'indecisive': ['decisive', 'resolved'], // indecisive
-  'independence': ['collectivism', 'dependence', 'obedience', 'premium', 'submission'], // Independence
+  'independence': ['collectivism', 'companionship', 'dependence', 'obedience', 'premium', 'submission'], // Independence
   'independent': ['bound', 'obedient'], // independent
   'indeterminacy': ['definition'], // indeterminacy
   'indeterminate': ['concreteness', 'reachable'], // indeterminate
@@ -1951,7 +1965,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'isolate': ['collect', 'combine', 'compositing', 'connect', 'gather', 'interlink', 'join', 'merge', 'share', 'synthesize', 'unite'], // isolate
   'isolated': ['aggregate', 'blockchain', 'cloistered', 'collaborative', 'globe', 'heavy', 'immerse', 'integrated', 'merged', 'public', 'shared', 'symphonic', 'synchronized', 'ubiquitous', 'unified', 'united', 'user-centric'], // Isolated
   'isolating': ['collaborative', 'communal', 'conglomerating', 'connecting', 'engaging', 'inclusive', 'integrating', 'interactive', 'visible'], // isolating
-  'isolation': ['closeness', 'collectivism', 'connect', 'corner', 'dialogue', 'ecosystem', 'embrace', 'envelopment', 'fame', 'fandom', 'flotilla', 'fusion', 'interaction', 'interfacing', 'intimacy', 'logistics', 'metaverse', 'microcosm', 'participation', 'premium', 'superimposition', 'togetherness', 'unison'], // Isolation
+  'isolation': ['closeness', 'collectivism', 'companion', 'companionship', 'connect', 'corner', 'dialogue', 'ecosystem', 'embrace', 'envelopment', 'fame', 'fandom', 'flotilla', 'fusion', 'interaction', 'interfacing', 'intimacy', 'logistics', 'metaverse', 'microcosm', 'participation', 'premium', 'superimposition', 'togetherness', 'unison'], // Isolation
   'isolationist': ['collaborative'], // isolationist
   'isometric': ['illustration'], // Isometric
   'jaded': ['naive'], // jaded
@@ -2096,6 +2110,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'mainstream': ['alternative', 'artsy', 'counterculture', 'eccentric', 'experimental', 'irregular', 'niche', 'obscure', 'offbeat', 'uncommon'], // mainstream
   'malice': ['benevolence', 'care', 'charity', 'goodness', 'honesty', 'innocence', 'kindness', 'love', 'trust'], // malice
   'malleable': ['brittle', 'firm', 'fixed', 'hard', 'inflexible', 'rigid', 'solid', 'stiff', 'unyielding'], // malleable
+  'man-made': ['natura'], // man-made
   'manifest': ['concealed', 'disappear', 'invisible'], // manifest
   'manifestation': ['negation'], // Manifestation
   'manifesting': ['disband', 'disperse', 'dissipate', 'halt', 'neglect', 'repel', 'suppress', 'vanishing', 'void'], // manifesting
@@ -2122,6 +2137,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'mastery': ['fumbled'], // Mastery
   'matched': ['disparate'], // matched
   'material': ['disembodiment', 'intangible', 'metaverse'], // material
+  'materiality': ['virtualization'], // materiality
   'materialize': ['disappear'], // materialize
   'materials': ['absence', 'depletion', 'emptiness', 'invisibility', 'lack', 'nothing', 'scarcity', 'void'], // Materials
   'matt': ['bright', 'glossy', 'iridescent', 'luminous', 'phosphor', 'polished', 'reflective', 'shiny', 'smooth', 'vivid'], // matt
@@ -2137,6 +2153,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'measurement': ['composition', 'contrast'], // Measurement
   'mechanic': ['artistic', 'chaotic', 'fluid', 'freeform', 'handcrafted', 'improvised', 'natural', 'organic', 'spontaneous'], // mechanic
   'mechanical': ['artistic', 'behavioral', 'bio', 'biomorphic', 'botanical', 'chaotic', 'fluid', 'free', 'natural', 'organic', 'soft', 'spontaneous'], // mechanical
+  'mechanism': ['animalism'], // Mechanism
   'media': ['corporate', 'finance'], // Media
   'mediocre': ['aspiration', 'bold', 'dynamic', 'elite', 'exceptional', 'exciting', 'innovative', 'original', 'unique', 'vibrant'], // mediocre
   'mediocrity': ['excellence'], // mediocrity
@@ -2265,9 +2282,10 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'narrowing': ['broadening', 'expanding', 'expansion', 'filling', 'flowing', 'growing', 'opening', 'stretching', 'unfolding'], // Narrowing
   'narrowness': ['clarity', 'ease', 'emptiness', 'expanse', 'expansion', 'freedom', 'openness', 'vastness', 'width'], // narrowness
   'native': ['alien', 'foreign'], // native
+  'natura': ['artificial', 'man-made', 'synthetic', 'urban'], // Natura
   'natural': ['artificial', 'automated', 'cgi', 'concrete', 'cosmetics', 'eyewear', 'fabricated', 'factory', 'mechanic', 'mechanical', 'polluted', 'post-process', 'pretentious', 'racket', 'robotic', 'robotics', 'simulated', 'staged', 'steel', 'stilted', 'techno-futurism', 'technographic', 'techwear', 'toxic', 'wire', 'wrought'], // natural
   'natural-flow': ['stilted'], // natural-flow
-  'naturalism': ['premium', 'regulated'], // Naturalism
+  'naturalism': ['premium', 'regulated', 'stylization'], // Naturalism
   'nature': ['pollution'], // Nature
   'nautical': ['desert', 'domestic', 'inland', 'land', 'urban'], // Nautical
   'near': ['descent', 'distant'], // near
@@ -2285,6 +2303,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'neglecting': ['cherishing'], // neglecting
   'negligence': ['analytics', 'attention', 'awareness', 'care', 'consideration', 'diligence', 'engagement', 'focus', 'intention', 'remembrance'], // negligence
   'negligent': ['careful', 'diligent', 'focused', 'imaging', 'intentional', 'meticulous', 'orderly', 'structured', 'thorough'], // negligent
+  'neo-grotesque': ['art-deco', 'gothic', 'grunge', 'retro'], // Neo-Grotesque
   'neon': ['cool', 'coolness', 'muted', 'pastel'], // Neon
   'neumorphic': ['bold', 'clear', 'contrasting', 'defined', 'flat', 'harsh', 'rigid', 'sharp', 'solid', 'vibrant'], // Neumorphic
   'neumorphism': ['futurism', 'futurist', 'jarring'], // Neumorphism
@@ -2378,7 +2397,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'ongoing': ['final', 'finished'], // ongoing
   'onsite': ['metaverse'], // onsite
   'opacity': ['reflectivity'], // opacity
-  'opaque': ['bright', 'clear', 'gleaming', 'iridescent', 'phosphor', 'porous', 'translucency', 'transparent', 'visible'], // opaque
+  'opaque': ['bright', 'clear', 'crystal', 'gleaming', 'iridescent', 'phosphor', 'porous', 'translucency', 'transparent', 'visible'], // opaque
   'open': ['armored', 'bind', 'bondage', 'bound', 'bounded', 'burdened', 'cloistered', 'closed', 'cloudy', 'concealed', 'concealing', 'confining', 'constrict', 'contained', 'covered', 'covert', 'curtained', 'deadend', 'deceptive', 'doctrinal', 'enclosed', 'end', 'final', 'finish', 'finished', 'folded', 'fortified', 'fraudulent', 'guarded', 'hiding', 'insincere', 'lock', 'predefined', 'predetermined', 'private', 'restricted', 'restrictive', 'sealed', 'shielded', 'shroud', 'shrouded', 'shy', 'stopped', 'stuffy', 'suppressed', 'veiled', 'withholding'], // open
   'open-crowns': ['veiled'], // open-crowns
   'open-top': ['cloistered', 'enclosed', 'sealed'], // open-top
@@ -2398,7 +2417,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'orderly': ['anarchic', 'anti', 'brushstroke', 'clatter', 'crooked', 'disarrayed', 'disheveled', 'disorderly', 'disorganized', 'distressed', 'feral', 'freestyle', 'fumbled', 'haphazard', 'harried', 'illogical', 'messy', 'negligent', 'ragged', 'raucous', 'rebel', 'reckless', 'scrap', 'scrappy', 'scrawl', 'shabby', 'shifty', 'sloppy', 'spill', 'splat', 'sprawl', 'squiggly', 'twisted', 'unruly', 'unsteady'], // orderly
   'ordinariness': ['customization', 'excellence', 'idiosyncrasy'], // ordinariness
   'ordinary': ['alien', 'attractive', 'captivating', 'colorful', 'crowned', 'deeptech', 'distinctive', 'dynamic', 'elite', 'exceptional', 'excessive', 'exotic', 'extraordinary', 'fame', 'famous', 'flamboyant', 'garnish', 'lofty', 'novel', 'offbeat', 'propulsive', 'rare', 'remarkable', 'retrofuturism', 'roars', 'singular', 'stellar', 'surrealism', 'symbolic', 'uncommon', 'unfamiliar', 'unhinged', 'unique', 'uniqueness', 'vanguard', 'vivid', 'xr'], // ordinary
-  'organic': ['artifact', 'automated', 'based', 'blocky', 'boxy', 'cgi', 'concrete', 'factory', 'geometric', 'grid', 'mechanic', 'mechanical', 'polluted', 'robotic', 'robotics', 'staged', 'steel', 'sterile', 'technographic'], // Organic
+  'organic': ['artifact', 'automated', 'based', 'blocky', 'boxy', 'cgi', 'concrete', 'crystal', 'factory', 'geometric', 'grid', 'mechanic', 'mechanical', 'polluted', 'robotic', 'robotics', 'staged', 'steel', 'sterile', 'technographic'], // Organic
   'organization': ['disorder'], // organization
   'organize': ['discard'], // organize
   'organized': ['cluttered', 'confusing', 'disarrayed', 'disorderly', 'disorganized', 'disregarded', 'messy', 'scatterbrained', 'shifty', 'sprawl', 'sprawled', 'unformed', 'unplanned'], // organized
@@ -2494,7 +2513,8 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'photoreal': ['illustration', 'impression', 'led'], // Photoreal
   'photorealistic': ['illustration', 'led'], // Photorealistic
   'physical': ['behavioral', 'metaverse', 'xr'], // physical
-  'physicality': ['intangible'], // physicality
+  'physicality': ['intangible', 'virtualization'], // physicality
+  'pictorial': ['abstract', 'conceptual', 'data-driven', 'textual'], // Pictorial
   'piece': ['whole'], // piece
   'pillow': ['cold', 'hard', 'rough', 'stiff', 'uncomfortable'], // Pillow
   'pit': ['apex', 'peak', 'vertex'], // pit
@@ -2566,7 +2586,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'premeditated': ['careless', 'chaotic', 'haphazard', 'impromptu-display', 'impulsive', 'random', 'spontaneous', 'unplanned'], // premeditated
   'premiere': ['finale'], // premiere
   'premium': ['accessible', 'adaptation', 'anonymity', 'anonymous', 'authorship', 'automation', 'avatar', 'awareness', 'bespoke', 'biophilia', 'care', 'cheap', 'chronicle', 'cognition', 'communal', 'communication', 'community', 'computing', 'connectivity', 'conscientious', 'convenience', 'critique', 'culture', 'curatorial', 'data', 'digitization', 'domestic', 'ecology', 'escapism', 'european', 'gathering', 'heritage', 'hidden', 'icon', 'immersion', 'inclusion', 'independence', 'individualism', 'influence', 'infrastructure', 'isolation', 'knowledge', 'language', 'literacy', 'local', 'lore', 'low', 'naturalism', 'neurodiversity', 'novelty', 'pause', 'personalization', 'philanthropy', 'posthuman', 'privacy', 'readiness', 'refinement', 'representation', 'scrappy', 'status', 'subversion', 'surveillance', 'survival', 'sustain', 'sustainability', 'synergy', 'technology', 'text', 'utility', 'visibility', 'wanderlust', 'welfare'], // Premium
-  'presence': ['abandon', 'abandonment', 'closing', 'diminution', 'disappear', 'disembodiment', 'disempowerment', 'erasure', 'fleeing', 'nonexist', 'obliteration', 'oblivion', 'vacuum'], // Presence
+  'presence': ['abandon', 'abandonment', 'closing', 'diminution', 'disappear', 'disembodiment', 'disempowerment', 'erasure', 'fleeing', 'nonexist', 'obliteration', 'oblivion', 'vacuum', 'virtualization'], // Presence
   'present': ['absence', 'absent', 'disappear', 'distant', 'erased', 'expire', 'forget', 'forgotten', 'hidden', 'loss', 'lost', 'neglect', 'nostalgia', 'nowhere', 'oblivious', 'passive', 'past', 'shadow', 'unknown', 'vacant', 'void'], // present
   'presented': ['disregarded'], // presented
   'presentism': ['historical'], // presentism
@@ -2649,7 +2669,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'raised': ['depressed', 'dropped', 'flat', 'flat-plane', 'level', 'lowered', 'recessed', 'stagnant', 'sunken'], // raised
   'rambling': ['brevity', 'clear', 'concise', 'focused', 'ordered'], // rambling
   'random': ['achievable', 'align', 'automated', 'axis', 'beat', 'behavioral', 'calculation', 'charted', 'coherent', 'composition', 'concentrated', 'consequence', 'constant', 'context', 'cultivate', 'decisive', 'definite', 'deliberate', 'depictive', 'doctrinal', 'exact', 'fixity', 'formed', 'grading', 'labeled', 'level', 'logical', 'method', 'methodical', 'modelling', 'neat', 'ordered', 'outlining', 'parametric', 'planned', 'practical', 'predefined', 'predetermined', 'predictable', 'premeditated', 'prime', 'procedural', 'rational', 'regression', 'regulated', 'repetitive', 'robotics', 'rows', 'scheduled', 'scholarly', 'sequential', 'serious', 'solidify', 'specific', 'square', 'steadfast', 'storyful', 'structured', 'symbolism', 'symphonic', 'synchronized', 'systematic', 'typecraft'], // random
-  'randomness': ['analytics', 'classicism', 'climate', 'concentricity', 'consulting', 'cubism', 'engineering', 'horology', 'watchmaking'], // randomness
+  'randomness': ['analytics', 'classicism', 'climate', 'concentricity', 'consulting', 'cubism', 'engineering', 'horology', 'synchronicity', 'watchmaking'], // randomness
   'rapid': ['gradual', 'slow'], // rapid
   'rare': ['abundant', 'commodity', 'common', 'everyday', 'frequent', 'ordinary', 'plentiful', 'standard', 'typical', 'ubiquitous', 'usual'], // rare
   'rational': ['arbitrary', 'chaotic', 'disorderly', 'emotional', 'emotional-design', 'foolish', 'haphazard', 'impulsive', 'irrational', 'random', 'unpredictable'], // Rational
@@ -2659,7 +2679,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'reactive': ['consistent', 'fixed', 'monotonous', 'passive', 'predictable', 'stable', 'static', 'stoic', 'uniform', 'unresponsive'], // reactive
   'readiness': ['hesitation', 'premium'], // Readiness
   'real': ['artificial', 'avatar', 'deceptive', 'disembodiment', 'fabricated', 'fake', 'false', 'fictional', 'illusory', 'imaginary', 'insincere', 'pretend', 'simulacrum', 'simulated', 'superficial'], // real
-  'realism': ['metaverse', 'naivety', 'pixelation'], // realism
+  'realism': ['metaverse', 'naivety', 'pixelation', 'stylization'], // realism
   'realistic': ['2d', 'impractical', 'irrational', 'pixelation'], // realistic
   'reality': ['denial', 'disillusion', 'dream', 'fable', 'facade', 'falsehood', 'fantasy', 'illusion', 'impression', 'myth', 'nonexist', 'virtual'], // Reality
   'reason': ['myth'], // reason
@@ -2746,7 +2766,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'research': ['marketing'], // research
   'reserve': ['self-expression'], // reserve
   'reserved': ['active', 'boisterous', 'bold', 'brash', 'bright', 'chaotic', 'dynamic', 'expressive', 'flamboyant', 'loud', 'overt', 'silly', 'vivid'], // reserved
-  'residential': ['commercial', 'hotels', 'industrial', 'logistics', 'office'], // Residential
+  'residential': ['boarding', 'commercial', 'hotels', 'industrial', 'logistics', 'office'], // Residential
   'resign': ['accept', 'agree', 'aspire', 'commit', 'embrace', 'join', 'persist', 'support', 'welcome'], // resign
   'resigned': ['active', 'aspirant', 'assertive', 'determined', 'engaged', 'hopeful', 'joyful', 'passionate', 'vibrant'], // resigned
   'resilience': ['breakdown', 'weakness'], // Resilience
@@ -2780,7 +2800,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'retirement': ['gym'], // retirement
   'retouching': ['flawed', 'illustration', 'led', 'untamed'], // Retouching
   'retreat': ['advance', 'assert', 'attack', 'charge', 'confront', 'engage', 'invade', 'projection', 'pursue'], // Retreat
-  'retro': ['futuristic', 'heavy', 'modern', 'techno-futurism'], // Retro
+  'retro': ['futuristic', 'heavy', 'modern', 'neo-grotesque', 'techno-futurism'], // Retro
   'retrofuture': ['youth'], // Retrofuture
   'retrofuturism': ['actual', 'avant-garde', 'basic', 'classic', 'contemporary', 'mundane', 'ordinary', 'past', 'pragmatic', 'simple', 'static', 'traditional'], // Retrofuturism
   'reveal': ['disguise', 'evade', 'hide', 'muffle', 'shield', 'shroud'], // reveal
@@ -2807,7 +2827,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'rooted': ['chaotic', 'fluid', 'free', 'loose', 'shifting', 'transient', 'transit', 'unbound', 'ungrounded', 'vague', 'wild'], // rooted
   'rooting': ['detached', 'detaching', 'dispersing', 'drifting', 'ephemeral', 'floating', 'scattering'], // Rooting
   'roots': ['abstract', 'detachment', 'dispersal', 'future', 'novelty'], // Roots
-  'rough': ['aerodynamic', 'cgi', 'cosmetics', 'figurative', 'flawless', 'modelling', 'neat', 'perfect', 'pillow', 'seamless', 'shiny', 'skincare', 'spotless', 'sterile', 'supple', 'sweet'], // rough
+  'rough': ['aerodynamic', 'cgi', 'cosmetics', 'crystal', 'figurative', 'flawless', 'modelling', 'neat', 'perfect', 'pillow', 'seamless', 'shiny', 'skincare', 'spotless', 'sterile', 'supple', 'sweet'], // rough
   'roughness': ['calm', 'clear', 'fine', 'gentle', 'polished', 'serene', 'simple', 'slick', 'smooth', 'smoothness', 'soft'], // Roughness
   'round': ['angular', 'angular-form', 'flat', 'jagged', 'linear', 'pointed', 'sharp', 'square', 'uneven'], // round
   'rounded': ['angularity', 'pointed'], // rounded
@@ -2900,7 +2920,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'sensory': ['dispassionate'], // sensory
   'sensory-grounded': ['theoretical'], // sensory-grounded
   'separate': ['align', 'binding', 'blend', 'cohere', 'collaborative', 'combine', 'connect', 'consolidate', 'convolution', 'integrate', 'integrated', 'interlink', 'interwoven', 'join', 'merge', 'merged', 'shared', 'synthesize', 'unify', 'unite', 'united'], // separate
-  'separation': ['attachment', 'closeness', 'concentricity', 'connect', 'embrace', 'envelopment', 'fusion', 'integrity', 'interaction', 'interfacing', 'intimacy', 'superimposition', 'togetherness', 'unison'], // separation
+  'separation': ['attachment', 'closeness', 'companion', 'concentricity', 'connect', 'embrace', 'envelopment', 'fusion', 'integrity', 'interaction', 'interfacing', 'intimacy', 'superimposition', 'togetherness', 'unison'], // separation
   'sepia': ['cool', 'coolness', 'gleaming'], // Sepia
   'sequential': ['chaotic', 'disordered', 'haphazard', 'irregular', 'random', 'scattered', 'spontaneous', 'unstructured'], // Sequential
   'serendipity': ['misfortune'], // serendipity
@@ -3043,7 +3063,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'solidity': ['abstract', 'chaotic', 'disordered', 'fluid', 'fragility', 'metaverse', 'soft', 'temporary', 'uncertain', 'vague', 'whirlwind'], // solidity
   'solipsism': ['dependence'], // solipsism
   'solitary': ['collaborative', 'public', 'shared'], // solitary
-  'solitude': ['collectivism', 'dependence', 'dialogue', 'embrace', 'flotilla', 'interaction', 'togetherness'], // Solitude
+  'solitude': ['collectivism', 'companion', 'companionship', 'dependence', 'dialogue', 'embrace', 'flotilla', 'interaction', 'togetherness'], // Solitude
   'solo': ['multi'], // solo
   'solutions': ['challenges', 'chaos', 'complication', 'confusion', 'disorder', 'failure', 'frustration', 'inefficiency', 'obstacle', 'obstacles', 'problems'], // Solutions
   'somewhere': ['nowhere'], // somewhere
@@ -3180,6 +3200,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'styled': ['untouched'], // styled
   'styling': ['illustration', 'led'], // Styling
   'stylish': ['frumpy', 'tacky'], // stylish
+  'stylization': ['naturalism', 'realism', 'unembellished', 'verisimilitude'], // Stylization
   'subdue': ['amplify', 'erupt', 'highlight', 'intensify', 'overpower', 'unleash'], // subdue
   'subdued': ['aggressive', 'arcade', 'blaring', 'blasts', 'blazing', 'boisterous', 'brilliant', 'crowned', 'erupt', 'excess', 'excessive', 'explosive', 'faddish', 'fiery', 'flamboyant', 'ignited', 'indulgent', 'noisy', 'raucous', 'screaming', 'shouted', 'shouts', 'strident', 'uproarious', 'wacky'], // subdued
   'subdued-illumination': ['dazzling'], // subdued-illumination
@@ -3251,11 +3272,12 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'symbolism': ['ambiguous', 'chaotic', 'literal', 'non-representation', 'random'], // symbolism
   'symmetry': ['asymmetrical', 'clustering', 'curvature', 'scribble'], // Symmetry
   'symphonic': ['bland', 'chaotic', 'discordant', 'dissonant', 'dry', 'isolated', 'random', 'simple'], // symphonic
+  'synchronicity': ['asynchrony', 'disconnect', 'discord', 'randomness'], // Synchronicity
   'synchronized': ['asynchronous', 'chaotic', 'disjointed', 'fragmented', 'fragmented-visions', 'isolated', 'random', 'uncoordinated', 'uneven'], // Synchronized
   'synergy': ['disunity', 'premium'], // Synergy
   'synthesis': ['curation', 'detail', 'divide'], // Synthesis
   'synthesize': ['break', 'deconstruct', 'disperse', 'dissolve', 'divide', 'fragment', 'isolate', 'scatter', 'separate'], // Synthesize
-  'synthetic': ['artifact', 'bio', 'biomorphic', 'earthiness', 'fibrous', 'fluid'], // Synthetic
+  'synthetic': ['artifact', 'bio', 'biomorphic', 'earthiness', 'fibrous', 'fluid', 'natura'], // Synthetic
   'synthetics': ['wine'], // synthetics
   'system-centric': ['user-centric'], // system-centric
   'systematic': ['arbitrary', 'disarrayed', 'disorderly', 'disorganized', 'haphazard', 'random', 'unplanned'], // systematic
@@ -3266,7 +3288,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'tame': ['bold', 'captivating', 'chaotic', 'disorderly', 'feral', 'fierce', 'free', 'raw', 'untamed', 'uproarious', 'vivid', 'wild', 'zesty'], // tame
   'tamed': ['untamed'], // tamed
   'tangential': ['central', 'constant', 'direct', 'focused', 'linear', 'permanent', 'primary', 'stable'], // tangential
-  'tangibility': ['metaverse', 'vacuum'], // Tangibility
+  'tangibility': ['metaverse', 'vacuum', 'virtualization'], // Tangibility
   'tangible': ['2d', 'behavioral', 'disembodied', 'disembodiment', 'illusory', 'intangible'], // tangible
   'tangle': ['aligned', 'calm', 'clear', 'neat', 'order', 'schematic', 'simple', 'smooth', 'straight'], // tangle
   'tangled': ['untouched-space'], // tangled
@@ -3289,6 +3311,8 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'terrain': ['abstract', 'artificial', 'civilized', 'cultivated', 'flat', 'ordered', 'sky', 'smooth', 'structured', 'urban', 'void', 'water'], // Terrain
   'terrestrial': ['aether', 'alien', 'marine', 'stellar', 'yachting'], // Terrestrial
   'text': ['authoritative', 'corporate', 'gesture', 'layout', 'premium', 'saas'], // Text
+  'textile': ['electronics'], // textile
+  'textual': ['pictorial'], // textual
   'textuality': ['nonverbal'], // textuality
   'texture': ['editorial', 'flattening', 'harmony'], // Texture
   'textured': ['flat', 'plain'], // textured
@@ -3341,7 +3365,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'translucency': ['dense', 'heavy', 'opaque', 'solid', 'sturdy', 'thick'], // Translucency
   'transparency': ['concealed', 'discretion', 'disguise', 'distrust', 'encasement', 'facade', 'fog', 'nocturn', 'obscurity', 'shield', 'shroud'], // Transparency
   'transparent': ['concealing', 'covert', 'curtained', 'deceptive', 'fibrous', 'fluid', 'fraudulent', 'insincere', 'opaque', 'private', 'shrouded'], // Transparent
-  'travel': ['cool', 'coolness'], // Travel
+  'travel': ['boarding', 'cool', 'coolness'], // Travel
   'treasure': ['waste'], // treasure
   'tremendous': ['tiny'], // tremendous
   'trendy': ['ancient', 'archaic', 'historical'], // trendy
@@ -3413,6 +3437,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'undocumented': ['annotation'], // undocumented
   'undulating': ['fixed', 'flat', 'rigid', 'solid', 'stable', 'static', 'straight', 'uniform'], // Undulating
   'uneasy': ['calm', 'comfortable', 'confident', 'content', 'contented', 'easy', 'peaceful', 'relaxed', 'secure'], // uneasy
+  'unembellished': ['stylization'], // unembellished
   'uneven': ['balanced', 'consistent', 'even', 'harmonious', 'level', 'regular', 'round', 'seamless', 'smooth', 'smoothness', 'steady', 'synchronized', 'uniform'], // uneven
   'unexpected': ['tainted'], // unexpected
   'unfamiliar': ['common', 'familiar', 'known', 'ordinary', 'relatable', 'standard', 'typical', 'usual'], // unfamiliar
@@ -3516,7 +3541,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'uplifting-contrast': ['dreary'], // uplifting-contrast
   'upper': ['beneath', 'bottom', 'footer', 'lower', 'under'], // Upper
   'uproarious': ['calm', 'dull', 'gentle', 'quiet', 'serene', 'still', 'subdued', 'tame', 'vulnerable-silence'], // uproarious
-  'urban': ['interior', 'marine', 'nautical', 'remote', 'rural', 'terrain'], // Urban
+  'urban': ['interior', 'marine', 'natura', 'nautical', 'remote', 'rural', 'terrain'], // Urban
   'urban-distopia': ['utopia'], // urban-distopia
   'urgency': ['delay', 'heavy', 'slowness'], // Urgency
   'urgent': ['calm', 'complacency', 'delayed', 'leisurely', 'paused', 'slack', 'slow', 'unhurried'], // urgent
@@ -3569,6 +3594,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'veracity': ['falsehood'], // veracity
   'verbal': ['abstract', 'non-textual', 'nonverbal', 'silent', 'visual'], // verbal
   'verbosity': ['brevity', 'clarity', 'conciseness', 'simplicity'], // verbosity
+  'verisimilitude': ['stylization'], // verisimilitude
   'vertex': ['base', 'flat', 'horizontal', 'low', 'pit'], // Vertex
   'vertical': ['rows'], // vertical
   'viable': ['impractical'], // viable
@@ -3583,6 +3609,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'vigor': ['sloth', 'weakness'], // Vigor
   'vintage': ['futuristic', 'heavy', 'joy', 'modern', 'techwear'], // Vintage
   'virtual': ['reality'], // Virtual
+  'virtualization': ['materiality', 'physicality', 'presence', 'tangibility'], // Virtualization
   'virtuous': ['corrupt'], // virtuous
   'visceral': ['heavy'], // Visceral
   'viscous': ['airy', 'clear', 'crisp', 'dry', 'fluid', 'gaseous', 'light', 'simple', 'smooth', 'solid', 'thin'], // Viscous
@@ -3664,7 +3691,7 @@ export const CONCEPT_OPPOSITES: Record<string, string[]> = {
   'wide': ['pointed', 'slender', 'thin'], // wide
   'width': ['narrowness'], // width
   'wild': ['cultivated', 'dentistry', 'formality', 'normal', 'obedient', 'predictable', 'regulated', 'restrained', 'rooted', 'sober', 'tame'], // Wild
-  'wilderness': ['cultivated'], // Wilderness
+  'wilderness': ['boarding', 'cultivated'], // Wilderness
   'wilt': ['alive', 'bloom', 'flourish', 'fresh', 'grow', 'prosper', 'thrive', 'vibrant'], // wilt
   'wine': ['beer', 'bitter', 'grain', 'non-alcoholic', 'soda', 'synthetics', 'water'], // Wine
   'winery': ['chaos', 'destruction', 'digital', 'factory', 'mining', 'poverty', 'service', 'software'], // Winery

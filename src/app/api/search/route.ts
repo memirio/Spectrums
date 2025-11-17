@@ -184,19 +184,20 @@ export async function GET(request: NextRequest) {
         let boost = 0
         let penalty = 0
         
-        // Very light boosts: 0.05-0.08 * tagScore (much lighter than before)
+        // Very light boosts: 0.01 * tagScore (much lighter - only 1% of tag score)
+        // This ensures boosts are minimal relative to base CLIP scores
         for (const conceptId of relevantConceptIds) {
           const tagScore = imageTags.get(conceptId)
           if (tagScore !== undefined) {
-            boost += 0.05 * tagScore  // Very small boost
+            boost += 0.01 * tagScore  // Minimal boost (1% of tag score)
           }
         }
         
-        // Very light penalties: 0.03 * tagScore (much lighter than before)
+        // Very light penalties: 0.005 * tagScore (even lighter)
         for (const oppId of oppositeConceptIds) {
           const tagScore = imageTags.get(oppId)
           if (tagScore !== undefined) {
-            penalty += 0.03 * tagScore  // Very small penalty
+            penalty += 0.005 * tagScore  // Minimal penalty (0.5% of tag score)
           }
         }
         
@@ -284,10 +285,23 @@ export async function GET(request: NextRequest) {
         console.error(`[search] Failed to log impressions:`, error.message)
       })
       
+      // Deduplicate sites by ID (keep best match per site)
+      const siteMap = new Map<string, { site: any; score: number }>()
+      for (const r of finalRanked) {
+        const siteId = r.site.id
+        if (!siteMap.has(siteId) || r.score > siteMap.get(siteId).score) {
+          siteMap.set(siteId, { site: r.site, score: r.score })
+        }
+      }
+      // Sort by score (descending) to maintain ranking
+      const uniqueSites = Array.from(siteMap.values())
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.site)
+      
       // Return results
       return NextResponse.json({ 
         query: q, 
-        sites: finalRanked.map(r => r.site),
+        sites: uniqueSites,
         images: finalRanked
       })
     }

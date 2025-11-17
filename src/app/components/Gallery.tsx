@@ -101,8 +101,21 @@ export default function Gallery() {
         const data = await response.json()
         // Search API returns sites and images
         // Map images to sites for interaction tracking
-        const sitesWithImageIds = (data.sites || []).map((site: Site, index: number) => {
-          const image = data.images?.[index]
+        // Create a map of siteId -> best image for that site
+        const imageMap = new Map<string, any>()
+        for (const image of data.images || []) {
+          const siteId = image.siteId || image.site?.id
+          if (siteId) {
+            // Keep the image with highest score for each site
+            if (!imageMap.has(siteId) || (image.score || 0) > (imageMap.get(siteId)?.score || 0)) {
+              imageMap.set(siteId, image)
+            }
+          }
+        }
+        
+        // Map sites to their corresponding images
+        const sitesWithImageIds = (data.sites || []).map((site: Site) => {
+          const image = imageMap.get(site.id)
           return {
             ...site,
             imageId: image?.imageId || undefined,
@@ -463,15 +476,15 @@ export default function Gallery() {
                                alt={site.title}
                                className="w-full h-full object-cover object-top"
                               onError={(e) => {
-                                // Silently handle image load errors - don't log relative paths
-                                if (site.imageUrl && !site.imageUrl.startsWith('/')) {
+                                // Silently handle image load errors
+                                // Don't log errors for MinIO/localhost URLs (MinIO may not be running)
+                                if (site.imageUrl && 
+                                    !site.imageUrl.startsWith('/') && 
+                                    !site.imageUrl.includes('localhost:9000')) {
                                   console.error('Image failed to load:', site.imageUrl);
                                 }
                                 e.currentTarget.style.display = 'none';
                               }}
-                               onLoad={() => {
-                                 console.log('Image loaded successfully:', site.imageUrl);
-                               }}
                              />
                            ) : (
                              <div className="h-full bg-gray-200 flex items-center justify-center">
