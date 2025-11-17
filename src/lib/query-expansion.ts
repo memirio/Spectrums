@@ -184,10 +184,12 @@ Good examples:
 - "rounded shapes with soft shadows" (concrete elements, general pattern)
 - "large bold text on colorful background" (concrete typography, general composition)
 - "overlapping circles in bright colors" (concrete pattern, general application)
+- "dimly lit scene with high contrast" (concrete lighting, general scene)
 
 Bad examples (too specific):
 - "website header with colorful illustrations of confetti, balloons, and streamers on a light blue background" (too specific scenario)
 - "landing page with animated graphics of fireworks, glitter, and sparkles" (too specific scenario)
+- "portrait of a person wearing a red dress in a studio with specific lighting setup" (too specific scenario)
 
 Bad examples (too abstract):
 - "vibrant explosive color palette" (too abstract, what does it look like?)
@@ -198,6 +200,7 @@ Examples:
 - "fun" → ["bright saturated colors with playful rounded shapes", "vibrant colorful buttons and icons", "bold colorful text on bright backgrounds", "multiple bright colors in playful compositions"]
 - "cozy" → ["warm brown and orange color scheme", "soft rounded corners with warm lighting", "comfortable spacing with earthy tones", "warm ambient colors with soft shadows"]
 - "serious" → ["black and white color scheme", "sharp edges with high contrast", "geometric shapes in monochrome", "structured grid layout with minimal colors"]
+- "dark" → ["black background with white elements", "dark color palette with high contrast", "dimly lit scene with shadows", "low-light composition with bright accents"]
 
 Return ONLY a JSON array of strings. Each string should describe a general visual pattern that CLIP can match across different designs.
 
@@ -354,11 +357,37 @@ export async function expandAbstractQuery(query: string): Promise<string[]> {
 }
 
 /**
- * Expand query and create averaged embedding
- * Returns the averaged, L2-normalized embedding vector
+ * Pool scores using max (hard max)
+ * Returns the maximum score from all expansion scores
  */
-export async function expandAndEmbedQuery(query: string): Promise<number[]> {
-  console.log(`[query-expansion] expandAndEmbedQuery called for "${query}"`)
+export function poolMax(scores: number[]): number {
+  if (scores.length === 0) return 0
+  return Math.max(...scores)
+}
+
+/**
+ * Pool scores using softmax (logsumexp)
+ * Returns a smoothed version of max pooling using temperature
+ * @param scores Array of cosine similarity scores
+ * @param temperature Temperature parameter (lower = sharper, higher = smoother). Default 0.05
+ */
+export function poolSoftmax(scores: number[], temperature: number = 0.05): number {
+  if (scores.length === 0) return 0
+  if (scores.length === 1) return scores[0]
+  
+  // logsumexp: log(sum(exp(s / tau))) * tau
+  // This is numerically stable and gives a smooth approximation of max
+  const tau = temperature
+  const sum = scores.reduce((acc, s) => acc + Math.exp(s / tau), 0)
+  return Math.log(sum) * tau
+}
+
+/**
+ * Get expansion embeddings (not averaged - for max/softmax pooling)
+ * Returns array of L2-normalized embedding vectors, one per expansion
+ */
+export async function getExpansionEmbeddings(query: string): Promise<number[][]> {
+  console.log(`[query-expansion] getExpansionEmbeddings called for "${query}"`)
   const expansions = await expandAbstractQuery(query)
   console.log(`[query-expansion] Got ${expansions.length} expansions, embedding...`)
   
@@ -370,12 +399,28 @@ export async function expandAndEmbedQuery(query: string): Promise<number[]> {
     throw new Error(`Failed to generate embeddings for query "${query}"`)
   }
   
-  // Average the embeddings
+  // L2-normalize each embedding individually
+  const normalized = embeddings.map(emb => l2norm(emb))
+  console.log(`[query-expansion] Returning ${normalized.length} normalized embedding vectors`)
+  
+  return normalized
+}
+
+/**
+ * Expand query and create averaged embedding (legacy - for backward compatibility)
+ * Returns the averaged, L2-normalized embedding vector
+ * @deprecated Use getExpansionEmbeddings with max/softmax pooling instead
+ */
+export async function expandAndEmbedQuery(query: string): Promise<number[]> {
+  console.log(`[query-expansion] expandAndEmbedQuery called for "${query}" (using mean pooling - consider using max/softmax)`)
+  const embeddings = await getExpansionEmbeddings(query)
+  
+  // Average the embeddings (legacy behavior)
   const avg = meanVec(embeddings)
   
   // L2-normalize
   const normalized = l2norm(avg)
-  console.log(`[query-expansion] Returning normalized embedding vector (dim: ${normalized.length})`)
+  console.log(`[query-expansion] Returning averaged normalized embedding vector (dim: ${normalized.length})`)
   
   return normalized
 }

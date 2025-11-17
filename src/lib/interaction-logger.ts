@@ -26,6 +26,17 @@ export interface SearchImpression {
     maxOppositeTagScore: number
     sumOppositeTagScores: number
   }
+  popularityFeatures?: {
+    showCount: number
+    clickCount: number
+    ctr: number
+  }
+  hubFeatures?: {
+    hubCount: number | null
+    hubScore: number | null
+    logHubCount?: number // log(1 + hubCount) for normalization
+    normalizedHubScore?: number // hubScore normalized to 0-1 range
+  }
 }
 
 export interface UserAction {
@@ -72,7 +83,22 @@ export async function logSearchImpressions(impressions: SearchImpression[]): Pro
         imageId: imp.imageId,
         position: imp.position,
         baseScore: imp.baseScore,
-        tagFeatures: imp.tagFeatures,
+        tagFeatures: {
+          ...imp.tagFeatures,
+          // Include popularity features in tagFeatures JSON
+          ...(imp.popularityFeatures && {
+            showCount: imp.popularityFeatures.showCount,
+            clickCount: imp.popularityFeatures.clickCount,
+            ctr: imp.popularityFeatures.ctr,
+          }),
+          // Include hub features in tagFeatures JSON
+          ...(imp.hubFeatures && {
+            hubCount: imp.hubFeatures.hubCount,
+            hubScore: imp.hubFeatures.hubScore,
+            logHubCount: imp.hubFeatures.logHubCount,
+            normalizedHubScore: imp.hubFeatures.normalizedHubScore,
+          }),
+        },
         clicked: false,
         saved: false,
       })),

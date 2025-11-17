@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { embedTextBatch } from '@/lib/embeddings'
 import { prisma } from '@/lib/prisma'
 import { hasOppositeTags } from '@/lib/concept-opposites'
-import { isAbstractQuery, expandAndEmbedQuery } from '@/lib/query-expansion'
+import { isAbstractQuery, expandAndEmbedQuery, getExpansionEmbeddings, poolMax, poolSoftmax } from '@/lib/query-expansion'
 import { logSearchImpressions, type SearchImpression } from '@/lib/interaction-logger'
 
 function cosine(a: number[], b: number[]): number {
@@ -12,23 +12,114 @@ function cosine(a: number[], b: number[]): number {
   return s
 }
 
+/**
+ * Get popularity metrics for images (show_count, click_count, CTR)
+ * Used to penalize "hub" images that appear frequently but are rarely clicked
+ */
+async function getImagePopularityMetrics(
+  imageIds: string[],
+  topN: number = 20
+): Promise<Map<string, { showCount: number; clickCount: number; ctr: number }>> {
+  if (imageIds.length === 0) return new Map()
+
+  try {
+    // Check if userInteraction model exists (use as any to bypass type checking)
+    const userInteractionModel = (prisma as any).userInteraction
+    if (!userInteractionModel) {
+      console.warn(`[search] userInteraction model not available, returning empty metrics`)
+      const emptyMetrics = new Map<string, { showCount: number; clickCount: number; ctr: number }>()
+      for (const imageId of imageIds) {
+        emptyMetrics.set(imageId, { showCount: 0, clickCount: 0, ctr: 0 })
+      }
+      return emptyMetrics
+    }
+
+    // Count how many times each image appears in top N results across all queries
+    const impressions = await userInteractionModel.groupBy({
+      by: ['imageId'],
+      where: {
+        imageId: { in: imageIds },
+        position: { lte: topN }, // Only count top N positions
+      },
+      _count: {
+        id: true,
+      },
+    })
+
+    // Count clicks for each image
+    const clicks = await userInteractionModel.groupBy({
+      by: ['imageId'],
+      where: {
+        imageId: { in: imageIds },
+        clicked: true,
+      },
+      _count: {
+        id: true,
+      },
+    })
+
+    // Build maps for quick lookup
+    const impressionMap = new Map<string, number>()
+    for (const imp of impressions) {
+      impressionMap.set(imp.imageId, imp._count.id)
+    }
+
+    const clickMap = new Map<string, number>()
+    for (const click of clicks) {
+      clickMap.set(click.imageId, click._count.id)
+    }
+
+    // Build result map
+    const metrics = new Map<string, { showCount: number; clickCount: number; ctr: number }>()
+    for (const imageId of imageIds) {
+      const showCount = impressionMap.get(imageId) || 0
+      const clickCount = clickMap.get(imageId) || 0
+      const ctr = showCount > 0 ? clickCount / showCount : 0
+
+      metrics.set(imageId, { showCount, clickCount, ctr })
+    }
+
+    return metrics
+  } catch (error: any) {
+    // If userInteraction table doesn't exist or query fails, return empty metrics
+    console.warn(`[search] Failed to get popularity metrics: ${error.message}`)
+    const emptyMetrics = new Map<string, { showCount: number; clickCount: number; ctr: number }>()
+    for (const imageId of imageIds) {
+      emptyMetrics.set(imageId, { showCount: 0, clickCount: 0, ctr: 0 })
+    }
+    return emptyMetrics
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
+    console.log(`[search] Request received: ${request.url}`)
     const { searchParams } = new URL(request.url)
     const q = searchParams.get('q') || ''
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
     if (!q.trim()) return NextResponse.json({ images: [] })
+    
+    console.log(`[search] Processing query: "${q.trim()}"`)
 
     if (zeroShot) {
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
       // 1. Compute query embedding (with expansion for abstract terms)
-      let queryVec: number[]
       const isAbstract = isAbstractQuery(q.trim())
-      console.log(`[search] Query "${q.trim()}" isAbstract: ${isAbstract}`)
+      const usePooling = searchParams.get('pooling') || 'softmax' // 'max' or 'softmax', default 'softmax'
+      const poolingTemp = parseFloat(searchParams.get('pooling_temp') || '0.05')
+      
+      console.log(`[search] Query "${q.trim()}" isAbstract: ${isAbstract}, pooling: ${usePooling}`)
+      
+      let queryVec: number[] | null = null
+      let expansionEmbeddings: number[][] | null = null
+      const isExpanded = isAbstract
+      
       if (isAbstract) {
-        // Expand abstract queries into visual proxies and average embeddings
-        console.log(`[search] Using query expansion for abstract term`)
+        // Use max/softmax pooling for expansions (OR semantics)
+        console.log(`[search] Using expansion embeddings with ${usePooling} pooling`)
+        expansionEmbeddings = await getExpansionEmbeddings(q.trim())
+        // For backward compatibility, also compute averaged embedding (used in debug mode)
         queryVec = await expandAndEmbedQuery(q.trim())
       } else {
         // Direct embedding for concrete queries
@@ -39,10 +130,12 @@ export async function GET(request: NextRequest) {
       const dim = queryVec.length
       
       // 2. Retrieve all images with embeddings
+      console.log(`[search] Loading images with embeddings...`)
       const images = await (prisma.image.findMany as any)({
         where: { embedding: { isNot: null } },
         include: { embedding: true, site: true },
       })
+      console.log(`[search] Loaded ${images.length} images`)
       
       if (debug) {
         // Debug mode: pure CLIP cosine ranking only
@@ -56,7 +149,20 @@ export async function GET(request: NextRequest) {
         for (const img of images as any[]) {
           const ivec = (img.embedding?.vector as unknown as number[]) || []
           if (ivec.length !== dim) continue
-          const score = cosine(queryVec, ivec)
+          
+          let score: number
+          if (isExpanded && expansionEmbeddings) {
+            // Use pooling for expanded queries in debug mode too
+            const expansionScores = expansionEmbeddings.map(expVec => cosine(expVec, ivec))
+            if (usePooling === 'max') {
+              score = poolMax(expansionScores)
+            } else {
+              score = poolSoftmax(expansionScores, poolingTemp)
+            }
+          } else {
+            score = cosine(queryVec!, ivec)
+          }
+          
           ranked.push({
             imageId: img.id,
             siteUrl: img.site?.url || '',
@@ -69,6 +175,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
           query: q,
           mode: 'debug',
+          pooling: usePooling,
           images: ranked.slice(0, 60),
         })
       }
@@ -90,7 +197,19 @@ export async function GET(request: NextRequest) {
         if (ivec.length !== dim) continue
         
         // PRIMARY: CLIP cosine similarity (this is the main ranking signal)
-        const baseScore = cosine(queryVec, ivec)
+        let baseScore: number
+        if (isExpanded && expansionEmbeddings) {
+          // For expanded queries: compute score with each expansion, then pool
+          const expansionScores = expansionEmbeddings.map(expVec => cosine(expVec, ivec))
+          if (usePooling === 'max') {
+            baseScore = poolMax(expansionScores)
+          } else {
+            baseScore = poolSoftmax(expansionScores, poolingTemp)
+          }
+        } else {
+          // For direct queries: simple cosine similarity
+          baseScore = cosine(queryVec!, ivec)
+        }
         let score = baseScore
         
         ranked.push({
@@ -178,7 +297,42 @@ export async function GET(request: NextRequest) {
         tagsByImage.get(tag.imageId)!.set(tag.conceptId, tag.score)
       }
       
-      // 3. Apply very light boosts/penalties
+      // 3. Load hub scores for top K images (with error handling)
+      const hubScoresByImage = new Map<string, { hubScore: number | null; hubCount: number | null; hubAvgCosineSimilarity: number | null; hubAvgCosineSimilarityMargin: number | null }>()
+      try {
+        // Try using Prisma's typed query first (use as any to bypass type checking for new columns)
+        const topKImagesWithHub = await (prisma.image.findMany as any)({
+          where: { id: { in: topKImageIds } },
+          select: { id: true, hubScore: true, hubCount: true, hubAvgCosineSimilarity: true, hubAvgCosineSimilarityMargin: true },
+        })
+        console.log(`[search] Loaded hub scores for ${topKImagesWithHub.length} images`)
+        let hubScoreCount = 0
+        for (const img of topKImagesWithHub) {
+          const hubScore = img.hubScore ?? null
+          const hubCount = img.hubCount ?? null
+          const hubAvgCosineSimilarity = img.hubAvgCosineSimilarity ?? null
+          const hubAvgCosineSimilarityMargin = img.hubAvgCosineSimilarityMargin ?? null
+          if (hubScore !== null) hubScoreCount++
+          hubScoresByImage.set(img.id, { hubScore, hubCount, hubAvgCosineSimilarity, hubAvgCosineSimilarityMargin })
+        }
+        console.log(`[search] Found ${hubScoreCount} images with non-null hub scores`)
+      } catch (error: any) {
+        // If hub columns don't exist or query fails, continue without hub scores
+        console.warn(`[search] Failed to load hub scores: ${error.message}`)
+        // If error mentions missing columns, it's okay - just continue without hub scores
+      }
+      
+      // Initialize with null values for images not found
+      for (const imageId of topKImageIds) {
+        if (!hubScoresByImage.has(imageId)) {
+          hubScoresByImage.set(imageId, { hubScore: null, hubCount: null, hubAvgCosineSimilarity: null, hubAvgCosineSimilarityMargin: null })
+        }
+      }
+      
+      // 4. Get popularity metrics for top K images
+      const popularityMetrics = await getImagePopularityMetrics(topKImageIds, 20)
+      
+      // 5. Apply very light boosts/penalties (tag-based)
       const reranked = topK.map((item: any) => {
         const imageTags = tagsByImage.get(item.imageId) || new Map()
         let boost = 0
@@ -201,15 +355,99 @@ export async function GET(request: NextRequest) {
           }
         }
         
-        // finalScore = baseScore + tiny boosts - tiny penalties
-        const finalScore = item.baseScore + boost - penalty
+        // 5. Apply popularity/ubiquity penalty (hub effect)
+        // Penalize images that appear frequently but are rarely clicked
+        const metrics = popularityMetrics.get(item.imageId)
+        let popularityPenalty = 0
+        if (metrics) {
+          const { showCount, clickCount, ctr } = metrics
+          
+          // Only penalize if:
+          // - Image has been shown at least 5 times (frequently shown)
+          // - CTR is below 0.1 (10% - rarely clicked)
+          // Penalty scales with showCount and inverse of CTR
+          if (showCount >= 5 && ctr < 0.1) {
+            // Penalty formula: (showCount / 100) * (0.1 - ctr) * 0.1
+            // This gives a small penalty that scales with ubiquity and low CTR
+            const ubiquityFactor = Math.min(showCount / 100, 1.0) // Cap at 1.0
+            const lowCtrFactor = (0.1 - ctr) / 0.1 // 0 to 1, higher for lower CTR
+            popularityPenalty = ubiquityFactor * lowCtrFactor * 0.1 // Max penalty of 0.1
+          }
+        }
+        
+        // 6. Apply hub score penalty (from detect_hub_images.ts)
+        // Penalty directly affects the cosine similarity score (baseScore)
+        // This ensures images with high semantic similarity can still rank well even if they're hubs
+        let hubPenaltyMultiplier = 1.0 // Multiplier applied to baseScore (1.0 = no penalty)
+        const hubData = hubScoresByImage.get(item.imageId)
+        if (hubData?.hubScore !== null && hubData?.hubScore !== undefined) {
+          const hubScore = hubData.hubScore
+          const avgCosineSimilarityMargin = hubData.hubAvgCosineSimilarityMargin ?? 0
+          
+          // Penalize if hub score is high (appears in many queries)
+          // Goal: Drop hubs by as many positions as they gained from being hubs
+          if (hubScore > 0.05) {
+            // Base penalty from margin: how much higher this hub is compared to query averages
+            // Lighter penalty to reduce hub advantage without over-penalizing
+            const marginPenaltyFactor = 5.0 // Reduced from 6.0
+            const marginPenalty = Math.max(0, avgCosineSimilarityMargin * marginPenaltyFactor)
+            
+            // Frequency penalty: more frequently appearing hubs get heavier penalty
+            // Lighter penalty to reduce frequency advantage
+            // For hubScore = 0.5 (appears in 50% of queries), frequency penalty = 0.5 * 0.10 = 0.05
+            // For hubScore = 0.98 (appears in 98% of queries), frequency penalty = 0.98 * 0.10 = 0.098
+            const frequencyPenaltyFactor = 0.10 // Reduced from 0.12
+            
+            // Reduce frequency penalty when margin is negative (performing below average)
+            // If margin is negative, reduce frequency penalty by 50% (multiply by 0.5)
+            // This still penalizes over-exposure but less aggressively when the image isn't actually superior
+            const frequencyPenaltyMultiplier = avgCosineSimilarityMargin < 0 ? 0.5 : 1.0
+            const frequencyPenalty = hubScore * frequencyPenaltyFactor * frequencyPenaltyMultiplier
+            
+            // Combined absolute penalty: margin penalty + frequency penalty
+            const absolutePenalty = marginPenalty + frequencyPenalty
+            
+            // Convert absolute penalty to percentage of baseScore
+            // This ensures high semantic similarity (high baseScore) can still rank well
+            // Example: baseScore=0.25, absolutePenalty=0.04 → penaltyPct=0.04/0.25=0.16 (16% reduction)
+            //          baseScore=0.15, absolutePenalty=0.04 → penaltyPct=0.04/0.15=0.27 (27% reduction, capped at 20%)
+            const penaltyPercentage = item.baseScore > 0 ? Math.min(absolutePenalty / item.baseScore, 0.2) : 0 // Keep cap at 20%
+            
+            // Apply as multiplier: 1.0 = no penalty, 0.8 = 20% penalty
+            hubPenaltyMultiplier = 1.0 - penaltyPercentage
+            
+            // Ensure multiplier doesn't go below 0.5 (max 50% reduction)
+            hubPenaltyMultiplier = Math.max(0.5, hubPenaltyMultiplier)
+            
+            console.log(`[search] Hub penalty applied: imageId=${item.imageId.substring(0, 12)}..., hubScore=${hubScore.toFixed(4)}, margin=${avgCosineSimilarityMargin.toFixed(4)}, absolutePenalty=${absolutePenalty.toFixed(4)}, penaltyPct=${(penaltyPercentage * 100).toFixed(1)}%, multiplier=${hubPenaltyMultiplier.toFixed(3)}, baseScore=${item.baseScore.toFixed(4)}`)
+          }
+        }
+        
+        // Apply hub penalty directly to baseScore (cosine similarity)
+        // This ensures high semantic similarity can still rank well
+        const adjustedBaseScore = item.baseScore * hubPenaltyMultiplier
+        
+        // finalScore = (adjusted baseScore) + tiny boosts - tiny penalties - popularity penalty
+        const finalScore = adjustedBaseScore + boost - penalty - popularityPenalty
+        
+        // Debug: Log top results with significant hub penalties
+        if (hubPenaltyMultiplier < 1.0) {
+          const penaltyAmount = item.baseScore - adjustedBaseScore
+          console.log(`[search] Significant hub penalty: site="${item.site?.title?.substring(0, 40)}", base=${item.baseScore.toFixed(4)}, hub=${hubData?.hubScore?.toFixed(4)}, multiplier=${hubPenaltyMultiplier.toFixed(3)}, adjustedBase=${adjustedBaseScore.toFixed(4)}, penalty=${penaltyAmount.toFixed(4)}, final=${finalScore.toFixed(4)}`)
+        }
         
         return {
           ...item,
           score: finalScore,
-          baseScore: item.baseScore,
+          baseScore: item.baseScore, // Original cosine similarity
+          adjustedBaseScore, // Cosine similarity after hub penalty multiplier
           boost,
           penalty,
+          popularityPenalty,
+          hubPenaltyMultiplier, // Multiplier applied to baseScore
+          popularityMetrics: metrics || { showCount: 0, clickCount: 0, ctr: 0 },
+          hubScore: hubData?.hubScore || null,
+          hubCount: hubData?.hubCount || null,
         }
       })
       
@@ -260,6 +498,15 @@ export async function GET(request: NextRequest) {
           }
         }
         
+        // Get hub features for this image
+        const hubData = hubScoresByImage.get(item.imageId)
+        const hubCount = hubData?.hubCount ?? null
+        const hubScore = hubData?.hubScore ?? null
+        
+        // Compute transformed hub features for learned reranker
+        const logHubCount = hubCount !== null ? Math.log(1 + hubCount) : undefined
+        const normalizedHubScore = hubScore !== null ? Math.min(hubScore, 1.0) : undefined // Already 0-1, but ensure cap
+        
         return {
           query: q.trim(),
           queryEmbedding: queryVec,
@@ -277,6 +524,17 @@ export async function GET(request: NextRequest) {
             maxOppositeTagScore,
             sumOppositeTagScores,
           },
+          popularityFeatures: item.popularityMetrics || {
+            showCount: 0,
+            clickCount: 0,
+            ctr: 0,
+          },
+          hubFeatures: {
+            hubCount,
+            hubScore,
+            logHubCount,
+            normalizedHubScore,
+          },
         }
       })
       
@@ -289,7 +547,8 @@ export async function GET(request: NextRequest) {
       const siteMap = new Map<string, { site: any; score: number }>()
       for (const r of finalRanked) {
         const siteId = r.site.id
-        if (!siteMap.has(siteId) || r.score > siteMap.get(siteId).score) {
+        const existing = siteMap.get(siteId)
+        if (!existing || r.score > existing.score) {
           siteMap.set(siteId, { site: r.site, score: r.score })
         }
       }

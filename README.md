@@ -306,6 +306,7 @@ npx tsx scripts/add_sites.ts
 - **Zero-shot CLIP search**: Your query is embedded as text and compared directly with image embeddings via cosine similarity
 - **Abstract query expansion**: For abstract queries (e.g., "euphoric", "serene", "bold"), the system automatically expands them into concrete visual descriptions that CLIP can better match. See [Query Expansion](#query-expansion) below for details.
 - **Light tag-based reranking**: Images with matching concept tags get a subtle 5% boost; opposite tags get a 3% penalty (only applied to top 200 results)
+- **Hub penalty system**: Images that appear disproportionately frequently across queries are automatically detected and penalized to prevent "hub effect" (see [Hub Detection](#hub-detection--penalty-system) below)
 - **Learned reranker (future)**: Once enough interaction data is collected (~1000+ interactions), a small MLP model will replace the hand-crafted ranking formula. See [Learned Reranker](#learned-reranker-future-enhancement) below for details.
 - **No hard cutoffs**: All images are ranked and returned (no filtering)
 
@@ -416,6 +417,38 @@ npx tsx scripts/regenerate-all-screenshots.ts
 # Retry failed screenshots
 npx tsx scripts/retry-failed-screenshots.ts
 ```
+
+### Hub Detection & Penalty System
+
+The system automatically detects "hub" images that appear disproportionately frequently in search results and applies penalties to prevent them from dominating results.
+
+**Run hub detection:**
+```bash
+# Detect hubs with default settings (topN=40, threshold=1.5x expected)
+npx tsx scripts/detect_hub_images.ts --clear
+
+# Custom threshold (stricter = 2.0x, more lenient = 1.2x)
+npx tsx scripts/detect_hub_images.ts --clear --threshold-multiplier=2.0
+
+# Test penalty effects
+npx tsx scripts/test_hub_penalty.ts --query="dark" --top-n=20
+
+# Check hub statistics
+npx tsx scripts/check_image_counts.ts
+npx tsx scripts/check_negative_margins.ts
+```
+
+**How it works:**
+- Runs 1,517 test queries and tracks how often each image appears in top 40 results
+- Only images that appear **more frequently than statistically expected** are labeled as hubs
+- Applies percentage-based penalties directly to cosine similarity scores (baseScore)
+- Penalty combines margin-based (how much above query average) and frequency-based (how often it appears) components
+- Hubs with negative margins (performing below average) get reduced frequency penalties (50% reduction)
+- Each hub gets a unique penalty based on its margin and frequency, capped at 20% of base score
+
+**For complete documentation**, see:
+- [Hub Detection System](./docs/HUB_DETECTION_SYSTEM.md) — Complete guide to hub detection, penalties, and configuration
+- [Hub Identification Criteria](./docs/HUB_IDENTIFICATION_CRITERIA.md) — Detailed criteria and algorithm documentation
 
 ### Search Quality Maintenance
 
@@ -798,11 +831,17 @@ Looma/
 │   ├── check-interaction-stats.ts   # Check user interaction statistics
 │   ├── check-training-readiness.ts  # Quick check if ready to train learned reranker
 │   ├── create-test-interactions.ts  # Create synthetic interactions for testing
+│   ├── detect_hub_images.ts         # Detect hub images (statistically significant)
+│   ├── test_hub_penalty.ts         # Test hub penalty effects
+│   ├── check_negative_margins.ts   # Check hubs with negative margins
+│   ├── check_image_counts.ts       # Check image and hub statistics
 │   └── ...                          # More utility scripts
 ├── docs/
 │   ├── SEARCH_LOGIC.md                # Complete search ranking algorithm documentation
 │   ├── SEARCH_QUALITY_MAINTENANCE.md  # Search quality maintenance guide
 │   ├── SYNONYM_EXPANSION_GUIDE.md     # Synonym expansion guide
+│   ├── HUB_DETECTION_SYSTEM.md        # Hub detection and penalty system documentation
+│   ├── HUB_IDENTIFICATION_CRITERIA.md # Hub identification criteria and algorithm
 │   └── LEARNED_RERANKER_PLAN.md       # Plan for learned reranker based on user interactions
 ├── screenshot-service/              # Optional screenshot service
 │   ├── docker-compose.yml           # Docker setup (API, worker, Redis, MinIO)

@@ -19,11 +19,11 @@ model Site {
   author      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Many-to-many relationship with tags
-  tags        SiteTag[]
-  images      Image[]
-  
+  tags   SiteTag[]
+  images Image[]
+
   @@map("sites")
 }
 
@@ -31,31 +31,32 @@ model Tag {
   id        String   @id @default(cuid())
   name      String   @unique
   createdAt DateTime @default(now())
-  
+
   // Many-to-many relationship with sites
-  sites     SiteTag[]
+  sites   SiteTag[]
   // Aliases for fuzzy matching
-  aliases   TagAlias[]
-  
+  aliases TagAlias[]
+
   @@map("tags")
 }
 
 model TagAlias {
-  id        String   @id @default(cuid())
-  alias     String   @unique
-  tagId     String
-  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  id    String @id @default(cuid())
+  alias String @unique
+  tagId String
+  tag   Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@map("tag_aliases")
 }
+
 model SiteTag {
   id     String @id @default(cuid())
   siteId String
   tagId  String
-  
-  site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
   @@unique([siteId, tagId])
   @@map("site_tags")
 }
@@ -79,58 +80,67 @@ model Image {
   site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   // Relations for tagging system
-  embedding  ImageEmbedding?
-  tags       ImageTag[]
+  embedding ImageEmbedding?
+  tags      ImageTag[]
+
+  // Hub detection stats (computed by detect_hub_images.ts)
+  hubCount                    Int?    // Number of queries where image appears in top N
+  hubScore                    Float?  // Fraction of queries where image appears (hubCount / totalQueries)
+  hubAvgCosineSimilarity      Float?  // Average cosine similarity across all queries where image appears
+  hubAvgCosineSimilarityMargin Float?  // Average margin above query average (how much higher than average)
+
+  // Relations for interaction tracking
+  interactions UserInteraction[]
 
   @@unique([siteId, url], name: "siteId_url")
   @@map("images")
 }
 
 model ImageEmbedding {
-  id         String   @id @default(cuid())
-  imageId    String   @unique
-  model      String
-  vector     Json     // store as normalized float array
-  contentHash String? @unique // SHA-256 of canonical PNG (nullable for migration)
-  createdAt  DateTime @default(now())
-  image      Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  imageId     String   @unique
+  model       String
+  vector      Json // store as normalized float array
+  contentHash String?  @unique // SHA-256 of canonical PNG (nullable for migration)
+  createdAt   DateTime @default(now())
+  image       Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
 
   @@index([contentHash])
   @@map("image_embeddings")
 }
 
 model Concept {
-  id        String   @id
+  id        String  @id
   label     String
-  locale    String?  @default("en")
-  synonyms  Json     // stored as array in JSON
-  related   Json     // stored as array in JSON
-  opposites Json?    // stored as array in JSON (opposite/excluding concept IDs)
-  weight    Float?   @default(1.0)
+  locale    String? @default("en")
+  synonyms  Json // stored as array in JSON
+  related   Json // stored as array in JSON
+  opposites Json? // stored as array in JSON (opposite/excluding concept IDs)
+  weight    Float?  @default(1.0)
   embedding Json
 
   // Backref
-  images    ImageTag[]
+  images ImageTag[]
 }
 
 model ImageTag {
   imageId   String
   conceptId String
   score     Float
-  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  concept   Concept  @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+  image     Image   @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  concept   Concept @relation(fields: [conceptId], references: [id], onDelete: Cascade)
 
   @@id([imageId, conceptId])
   @@map("image_tags")
 }
 
 model QueryExpansion {
-  term        String
-  expansion   String
-  source      String   // 'groq' | 'curated' (previously 'gemini')
-  model       String?  // 'llama-3.3-70b-versatile', etc.
-  createdAt   DateTime @default(now())
-  lastUsedAt  DateTime @default(now())
+  term       String
+  expansion  String
+  source     String // 'groq' | 'curated' (previously 'gemini')
+  model      String? // 'llama-3.3-70b-versatile', etc.
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @default(now())
 
   @@id([term, expansion, source])
   @@index([term, source])
@@ -139,22 +149,22 @@ model QueryExpansion {
 
 // User interaction tracking for learned reranker
 model UserInteraction {
-  id            String   @id @default(cuid())
-  query         String   // Original query text
-  queryEmbedding Json?   // CLIP query embedding (stored as array)
-  imageId       String
-  position      Int      // Rank position when shown (1-based)
-  clicked       Boolean  @default(false)
-  saved         Boolean  @default(false)
-  dwellTime     Int?     // Milliseconds spent viewing result
-  timestamp     DateTime @default(now())
-  
+  id             String   @id @default(cuid())
+  query          String // Original query text
+  queryEmbedding Json? // CLIP query embedding (stored as array)
+  imageId        String
+  position       Int // Rank position when shown (1-based)
+  clicked        Boolean  @default(false)
+  saved          Boolean  @default(false)
+  dwellTime      Int? // Milliseconds spent viewing result
+  timestamp      DateTime @default(now())
+
   // Features at time of query (for training)
-  baseScore     Float?   // CLIP cosine similarity
-  tagFeatures   Json?    // Handcrafted tag features (matches, scores, etc.)
-  
-  image         Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  
+  baseScore   Float? // CLIP cosine similarity
+  tagFeatures Json? // Handcrafted tag features (matches, scores, etc.)
+
+  image Image @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
   @@index([query, imageId])
   @@index([timestamp])
   @@index([query, clicked])
