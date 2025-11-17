@@ -1,55 +1,51 @@
-import { prisma } from '../src/lib/prisma';
-import 'dotenv/config';
+import { prisma } from '../src/lib/prisma'
 
-(async () => {
-  const sites = [
-    'ponpon-mania.com',
-    'hertzwerk.ch',
-    'quantamagazine.org',
-    'poison.studio',
-    'techunt.fr',
-    'toptier.relats.com'
-  ];
+async function main() {
+  const siteUrl = process.argv[2] || 'synchronized.studio'
   
-  for (const domain of sites) {
-    const site = await prisma.site.findFirst({
-      where: { url: { contains: domain } },
-      include: {
-        images: {
-          include: {
-            tags: {
-              include: { concept: true },
-              orderBy: { score: 'desc' }
-            }
-          }
-        }
-      }
-    });
-    
-    if (!site || !site.images[0]) {
-      console.log(`${domain}: Site not found\n`);
-      continue;
-    }
-    
-    const img = site.images[0];
-    const hasIllustration = img.tags.some(t => t.concept.id === 'illustration-led');
-    const has3d = img.tags.some(t => t.concept.id === '3d');
-    const illustrationTag = img.tags.find(t => t.concept.id === 'illustration-led');
-    const threeDTag = img.tags.find(t => t.concept.id === '3d');
-    
-    console.log(`${domain}:`);
-    console.log(`  Has illustration-led tag: ${hasIllustration ? 'YES ✅' : 'NO ❌'}`);
-    if (illustrationTag) {
-      const rank = img.tags.findIndex(t => t.concept.id === 'illustration-led') + 1;
-      console.log(`    Score: ${illustrationTag.score.toFixed(4)}, Rank: ${rank}/${img.tags.length}`);
-    }
-    console.log(`  Has 3d tag: ${has3d ? 'YES ✅' : 'NO ❌'}`);
-    if (threeDTag) {
-      const rank = img.tags.findIndex(t => t.concept.id === '3d') + 1;
-      console.log(`    Score: ${threeDTag.score.toFixed(4)}, Rank: ${rank}/${img.tags.length}`);
-    }
-    console.log('');
+  const site = await prisma.site.findFirst({
+    where: {
+      OR: [
+        { url: { contains: siteUrl } },
+        { title: { contains: siteUrl } },
+      ],
+    },
+    include: {
+      images: {
+        include: {
+          tags: {
+            include: { concept: true },
+            orderBy: { score: 'desc' },
+          },
+        },
+      },
+    },
+  })
+  
+  if (!site) {
+    console.log(`❌ Site not found: ${siteUrl}`)
+    await prisma.$disconnect()
+    return
   }
   
-  await prisma.$disconnect();
-})().catch(console.error);
+  console.log(`📌 Site: ${site.title}`)
+  console.log(`🔗 URL: ${site.url}`)
+  console.log(`🖼️  Images: ${site.images.length}`)
+  console.log()
+  
+  for (const img of site.images) {
+    console.log(`📸 Image ID: ${img.id.substring(0, 12)}...`)
+    console.log(`📊 Tags (${img.tags.length} total):`)
+    img.tags.slice(0, 20).forEach(t => {
+      console.log(`   - ${t.concept.label} (score: ${t.score.toFixed(4)})`)
+    })
+    if (img.tags.length > 20) {
+      console.log(`   ... and ${img.tags.length - 20} more`)
+    }
+    console.log()
+  }
+  
+  await prisma.$disconnect()
+}
+
+main().catch(console.error)

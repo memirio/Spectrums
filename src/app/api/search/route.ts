@@ -347,11 +347,11 @@ export async function GET(request: NextRequest) {
           }
         }
         
-        // Very light penalties: 0.005 * tagScore (even lighter)
+        // Very light penalties: 0.002 * tagScore (reduced from 0.005)
         for (const oppId of oppositeConceptIds) {
           const tagScore = imageTags.get(oppId)
           if (tagScore !== undefined) {
-            penalty += 0.005 * tagScore  // Minimal penalty (0.5% of tag score)
+            penalty += 0.002 * tagScore  // Reduced penalty (0.2% of tag score, down from 0.5%)
           }
         }
         
