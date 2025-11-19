@@ -104,7 +104,7 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
     include: {
       images: {
         where: {
-          url: { not: null },
+          url: { not: null as any },
           embedding: { isNot: null },
         },
         include: {
@@ -145,22 +145,28 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
         
         // Only tag if similarity is above threshold
         if (similarity >= TAG_CONFIG.MIN_SCORE) {
-          await prisma.imageTag.upsert({
+          // Check if tag already exists (don't update existing tags)
+          const existing = await prisma.imageTag.findUnique({
             where: {
               imageId_conceptId: {
                 imageId: image.id,
                 conceptId: conceptId,
               },
             },
-            update: { score: similarity },
-            create: {
-              imageId: image.id,
-              conceptId: conceptId,
-              score: similarity,
-            },
           })
-          tagsAddedForImage++
-          totalTagsAdded++
+          
+          if (!existing) {
+            // Only create new tags (keep existing tags)
+            await prisma.imageTag.create({
+              data: {
+                imageId: image.id,
+                conceptId: conceptId,
+                score: similarity,
+              },
+            })
+            tagsAddedForImage++
+            totalTagsAdded++
+          }
         }
       }
 
@@ -177,5 +183,10 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
   console.log(`   🖼️  Images processed: ${images.length}`)
   console.log(`   🏷️  Images tagged: ${imagesWithTags}`)
   console.log(`   🏷️  Total tags added: ${totalTagsAdded}`)
+  
+  // Note: We don't trigger hub detection here because we're tagging existing images with new concepts
+  // Hub detection should only run for newly added images, not when existing images get new tags
+  // If you want to update hub scores when tags change, you'd need to recalculate all images
+  // For now, we skip hub detection here to keep it fast
 }
 

@@ -490,74 +490,70 @@ export async function POST(request: NextRequest) {
             })
           }
 
-          // Use zero-shot tagging (new approach - doesn't require concept embeddings)
-          const { TAG_CONFIG } = await import('@/lib/tagging-config')
-          const { tagImageWithZeroShot } = await import('@/lib/tagging-zero-shot')
-          const concepts = await prisma.concept.findMany()
+          // HYBRID APPROACH: Generate new concepts for this site, then tag appropriately
+          console.log(`[sites] Generating new concepts and tagging image ${image.id}...`)
           
-          const tagResults = await tagImageWithZeroShot(
-            ivec,
-            concepts.map(c => ({
-              id: c.id,
-              label: c.label,
-              synonyms: c.synonyms,
-              related: c.related
-            })),
-            TAG_CONFIG.MIN_SCORE,
-            TAG_CONFIG.MAX_K,
-            TAG_CONFIG.MIN_SCORE_DROP_PCT
+          // Check existing concepts BEFORE generating new ones
+          const existingConceptIdsBefore = new Set(
+            (await prisma.concept.findMany({ select: { id: true } })).map(c => c.id)
           )
           
-          const chosenConceptIds = new Set(tagResults.map(t => t.conceptId))
-          
-          for (const { conceptId, score } of tagResults) {
-            await prisma.imageTag.upsert({
-              where: { imageId_conceptId: { imageId: image.id, conceptId } },
-              update: { score },
-              create: { imageId: image.id, conceptId, score },
-            })
-          }
-
-          // Delete tags that are no longer in top-K (cleanup old tags)
-          const existingTags = await prisma.imageTag.findMany({
-            where: { imageId: image.id },
-          })
-          
-          for (const existingTag of existingTags) {
-            if (!chosenConceptIds.has(existingTag.conceptId)) {
-              // This tag is no longer in top-K, delete it
-              await prisma.imageTag.delete({
-                where: { imageId_conceptId: { imageId: image.id, conceptId: existingTag.conceptId } },
-              })
-            }
-          }
-          
-          // Now call tagImage to generate new concepts via Gemini and apply full tagging
           let newlyCreatedConceptIds: string[] = []
           try {
             const { tagImage } = await import('@/jobs/tagging')
             
+            // STEP 1: Generate new concepts for this site only
+            // tagImage will:
+            // - Generate new concepts from the image (Gemini/OpenAI fallback)
+            // - Check if concepts already exist (skips duplicates, merges synonyms)
+            // - Tag the new site with all existing concepts (using pre-computed embeddings - fast!)
+            // - Return IDs of ONLY truly newly created concepts (not duplicates/merges)
             newlyCreatedConceptIds = await tagImage(image.id)
             console.log(`[sites] tagImage completed for image ${image.id}`)
             
             if (newlyCreatedConceptIds.length > 0) {
-              console.log(`[sites] Detected ${newlyCreatedConceptIds.length} new concept(s): ${newlyCreatedConceptIds.join(', ')}`)
+              console.log(`[sites] Generated ${newlyCreatedConceptIds.length} new concept(s): ${newlyCreatedConceptIds.join(', ')}`)
             }
           } catch (tagError) {
             // Non-fatal: logging warning but not failing the request
             console.warn(`[sites] tagImage failed for image ${image.id}:`, (tagError as Error)?.message)
           }
           
-          // If new concepts were created, tag them on all existing images
+          // STEP 2: If new concepts were created, tag all existing images with only these new concepts
+          // (tagImage already tagged the new site with all concepts, including the new ones)
           if (newlyCreatedConceptIds.length > 0) {
             try {
-              const { tagNewConceptsOnAllImages } = await import('@/jobs/tag-new-concepts-on-all')
-              await tagNewConceptsOnAllImages(newlyCreatedConceptIds)
-              console.log(`[sites] Tagged new concepts on all existing images`)
+              // Filter to only concepts that didn't exist before (safety check)
+              const trulyNewConceptIds = newlyCreatedConceptIds.filter(id => !existingConceptIdsBefore.has(id))
+              
+              if (trulyNewConceptIds.length > 0) {
+                // New concepts that didn't exist before - tag all sites with only these new concepts
+                console.log(`[sites] Tagging all existing images with ${trulyNewConceptIds.length} new concept(s)...`)
+                const { tagNewConceptsOnAllImages } = await import('@/jobs/tag-new-concepts-on-all')
+                await tagNewConceptsOnAllImages(trulyNewConceptIds)
+                console.log(`[sites] ✅ Tagged ${trulyNewConceptIds.length} new concept(s) on all existing images (kept existing tags)`)
+              } else {
+                // All returned concepts already existed (shouldn't happen, but safety check)
+                console.log(`[sites] All concepts already existed - new site already tagged with them`)
+              }
             } catch (tagAllError) {
               // Non-fatal: logging warning but not failing the request
               console.warn(`[sites] Failed to tag new concepts on all images:`, (tagAllError as Error)?.message)
             }
+          } else {
+            console.log(`[sites] No new concepts generated - new site tagged with existing concepts only`)
+          }
+          
+          // STEP 3: Trigger incremental hub detection for this image only (debounced, runs in background)
+          try {
+            const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
+            triggerHubDetectionForImages([image.id]).catch((err) => {
+              console.warn(`[sites] Failed to trigger hub detection: ${err.message}`)
+            })
+            console.log(`[sites] ✅ Triggered incremental hub detection for new image (will run after debounce)`)
+          } catch (hubError) {
+            // Non-fatal: hub detection is a background optimization
+            console.warn(`[sites] Failed to trigger hub detection:`, (hubError as Error)?.message)
           }
         }
       } catch (e) {

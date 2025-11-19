@@ -92,48 +92,96 @@ export async function tagImage(imageId: string): Promise<string[]> {
   // Use Gemini to generate concepts directly from the image (no similarity matching)
   const newlyCreatedConcepts = await createNewConceptsFromImage(image.id, buf);
   
-  // STEP 2: Tag the image using zero-shot CLIP with concept graph expansion
-  // NEW APPROACH: Uses CLIP zero-shot with concept graph (synonyms) instead of pre-computed concept embeddings
+  // STEP 2: Tag the image using pre-computed concept embeddings (fast hybrid approach)
   const { TAG_CONFIG } = await import('@/lib/tagging-config');
-  const { tagImageWithZeroShot } = await import('@/lib/tagging-zero-shot');
   const concepts = await prisma.concept.findMany();
   
-  // Use zero-shot tagging (doesn't require concept embeddings)
-  const tagResults = await tagImageWithZeroShot(
-    ivec,
-    concepts.map(c => ({
-      id: c.id,
-      label: c.label,
-      synonyms: c.synonyms,
-      related: c.related
-    })),
-    TAG_CONFIG.MIN_SCORE,
-    TAG_CONFIG.MAX_K,
-    TAG_CONFIG.MIN_SCORE_DROP_PCT
-  );
-  
-  const chosenConceptIds = new Set(tagResults.map(t => t.conceptId));
-
-  // Upsert tags
-  for (const t of tagResults) {
-    await prisma.imageTag.upsert({
-      where: { imageId_conceptId: { imageId: image.id, conceptId: t.conceptId } },
-      update: { score: t.score },
-      create: { imageId: image.id, conceptId: t.conceptId, score: t.score },
-    });
+  // Use pre-computed embeddings (fast approach)
+  function cosineSimilarity(a: number[], b: number[]): number {
+    if (a.length !== b.length) return 0
+    let s = 0
+    for (let i = 0; i < a.length; i++) s += a[i] * b[i]
+    return s
   }
+  
+  const scored = concepts
+    .filter(c => c.embedding && Array.isArray(c.embedding))
+    .map(c => ({ 
+      conceptId: c.id, 
+      score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || []) 
+    }))
+    .filter(s => s.score >= TAG_CONFIG.MIN_SCORE)
+    .sort((a, b) => b.score - a.score)
+  
+  // Apply pragmatic tagging logic
+  const chosen: typeof scored = []
+  const MIN_TAGS_PER_IMAGE = 8
+  let prevScore = scored.length > 0 ? scored[0].score : 0
+  
+  for (let i = 0; i < scored.length && chosen.length < TAG_CONFIG.MAX_K; i++) {
+    const current = scored[i]
+    
+    if (chosen.length === 0) {
+      chosen.push(current)
+      prevScore = current.score
+      continue
+    }
+    
+    const dropPct = (prevScore - current.score) / prevScore
+    if (dropPct > TAG_CONFIG.MIN_SCORE_DROP_PCT) {
+      if (chosen.length < MIN_TAGS_PER_IMAGE) {
+        chosen.push(current)
+        prevScore = current.score
+      } else {
+        break
+      }
+    } else {
+      chosen.push(current)
+      prevScore = current.score
+    }
+  }
+  
+  // Fallback: ensure minimum tags
+  if (chosen.length < MIN_TAGS_PER_IMAGE) {
+    const fallback = scored.slice(0, MIN_TAGS_PER_IMAGE)
+    const keep = new Set(chosen.map(c => c.conceptId))
+    for (const f of fallback) {
+      if (!keep.has(f.conceptId)) {
+        chosen.push(f)
+        keep.add(f.conceptId)
+        if (chosen.length >= MIN_TAGS_PER_IMAGE) break
+      }
+    }
+  }
+  
+  const tagResults = chosen.sort((a, b) => b.score - a.score)
+  const chosenConceptIds = new Set(tagResults.map(t => t.conceptId))
 
-  // Delete tags that are no longer in top-K (cleanup old tags)
+  // Get existing tags to avoid duplicates
   const existingTags = await prisma.imageTag.findMany({
     where: { imageId: image.id },
-  });
-  
-  for (const existingTag of existingTags) {
-    if (!chosenConceptIds.has(existingTag.conceptId)) {
-      await prisma.imageTag.delete({
-        where: { imageId_conceptId: { imageId: image.id, conceptId: existingTag.conceptId } },
-      });
+  })
+  const existingConceptIds = new Set(existingTags.map(t => t.conceptId))
+
+  // Only create new tags (don't update or delete existing ones)
+  for (const t of tagResults) {
+    if (!existingConceptIds.has(t.conceptId)) {
+      await prisma.imageTag.create({
+        data: { imageId: image.id, conceptId: t.conceptId, score: t.score },
+      })
     }
+  }
+  
+  // Trigger incremental hub detection for this image only (debounced, runs in background)
+  // This is much faster than processing all images
+  try {
+    const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
+    triggerHubDetectionForImages([image.id]).catch((err) => {
+      console.warn(`[tagImage] Failed to trigger hub detection: ${err.message}`)
+    })
+  } catch (hubError) {
+    // Non-fatal: hub detection is a background optimization
+    console.warn(`[tagImage] Failed to trigger hub detection:`, (hubError as Error)?.message)
   }
   
   // Return the IDs of newly created concepts
@@ -445,8 +493,22 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       }
       
       // No exact match and no fuzzy match - create new concept
-      const synonyms = generateSynonymsForConcept(conceptLabel, category);
-      const related = generateRelatedForConcept(conceptLabel, category);
+      // Try to generate synonyms and related terms using AI (OpenAI), fallback to basic generation
+      let synonyms: string[] = [];
+      let related: string[] = [];
+      
+      try {
+        const { generateSynonymsAndRelatedWithAI } = await import('@/lib/concept-enrichment');
+        const aiGenerated = await generateSynonymsAndRelatedWithAI(conceptLabel, category?.label || category, existingConcepts);
+        synonyms = aiGenerated.synonyms || [];
+        related = aiGenerated.related || [];
+        console.log(`[tagImage] ✅ Generated ${synonyms.length} synonyms and ${related.length} related terms for "${conceptLabel}" using AI`);
+      } catch (error: any) {
+        // Fallback to basic generation if AI fails
+        console.warn(`[tagImage] ⚠️  AI synonym/related generation failed for "${conceptLabel}": ${error.message}, using basic generation`);
+        synonyms = generateSynonymsForConcept(conceptLabel, category);
+        related = generateRelatedForConcept(conceptLabel, category);
+      }
       
       // Add compound word parts as related terms (not synonyms)
       const allRelated = [...compoundSynonyms, ...related];

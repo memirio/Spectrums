@@ -1,10 +1,13 @@
 #!/usr/bin/env tsx
 /**
- * Detect Hub Images
+ * Detect Hub Images (Standalone Script)
  * 
  * This script identifies "hub" images that appear frequently in top 20 results
  * across many different queries. These images can dominate search results even
  * when they're not the most relevant.
+ * 
+ * Note: Hub detection is now also part of the automatic tagging pipeline.
+ * This script is for manual runs or force updates.
  * 
  * Usage:
  *   npx tsx scripts/detect_hub_images.ts
@@ -14,7 +17,7 @@
 
 import 'dotenv/config'
 import { prisma } from '../src/lib/prisma'
-import { embedTextBatch } from '../src/lib/embeddings'
+import { runHubDetection } from '../src/jobs/hub-detection'
 
 function cosine(a: number[], b: number[]): number {
   const len = Math.min(a.length, b.length)
@@ -423,41 +426,24 @@ async function main() {
   const thresholdMultiplier = thresholdMultiplierArg ? parseFloat(thresholdMultiplierArg.split('=')[1]) || 1.5 : 1.5
   
   console.log('═'.repeat(70))
-  console.log('🔍 Hub Image Detection')
+  console.log('🔍 Hub Image Detection (Standalone Script)')
   console.log('═'.repeat(70))
   console.log(`\nConfiguration:`)
   console.log(`   Top N: ${topN}`)
   console.log(`   Threshold multiplier: ${thresholdMultiplier}x expected frequency`)
   console.log(`   Clear existing: ${clearExisting ? 'Yes' : 'No'}`)
+  console.log(`\n💡 Note: Hub detection is now part of the automatic tagging pipeline.`)
+  console.log(`   This script is for manual runs or force updates.\n`)
   
   try {
-    // 1. Build test queries
-    console.log('\n📝 Building test queries...')
-    const queries = await buildTestQueries()
-    console.log(`   ✅ Built ${queries.length} test queries`)
-    
-    // 2. Load all images with embeddings
-    const images = await loadAllImagesWithEmbeddings()
-    
-    if (images.length === 0) {
-      console.error('\n❌ No images with embeddings found!')
-      process.exit(1)
-    }
-    
-    // 3. Detect hub images
-    const hubStats = await detectHubImages(images, queries, topN)
-    
-    // 4. Print summary
-    printSummary(hubStats, queries.length)
-    
-    // 5. Write to database
-    await writeHubStatsToDatabase(hubStats, clearExisting)
+    // Use the centralized hub detection function
+    await runHubDetection(topN, thresholdMultiplier, clearExisting)
     
     console.log('\n✅ Hub detection complete!')
     console.log('\n💡 Next steps:')
     console.log('   1. Review the hub stats in the database')
     console.log('   2. Use hub_score in ranking to penalize hub images')
-    console.log('   3. Re-run this script periodically to update stats')
+    console.log('   3. Hub detection now runs automatically after tagging operations')
     
   } catch (error: any) {
     console.error('\n❌ Error:', error.message)
