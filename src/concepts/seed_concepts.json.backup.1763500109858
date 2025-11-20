@@ -1583,8 +1583,7 @@
       "agronomy",
       "cultivation",
       "husbandry",
-      "tillage",
-      "Harvest"
+      "tillage"
     ],
     "related": [
       "sustainability",
@@ -4043,13 +4042,7 @@
   {
     "id": "basis",
     "label": "basis",
-    "synonyms": [
-      "foundation",
-      "basis",
-      "ground",
-      "core",
-      "root"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -4776,13 +4769,7 @@
       "limitation"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "limitless",
-      "infinite",
-      "unbounded",
-      "expansive",
-      "vast"
-    ],
+    "synonyms": [],
     "related": [
       "wanderlust",
       "journey",
@@ -5865,13 +5852,7 @@
       "formality"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "informal",
-      "disorder",
-      "random",
-      "spontaneous",
-      "unstructured"
-    ],
+    "synonyms": [],
     "related": [
       "eclectic",
       "spontaneity",
@@ -6161,13 +6142,7 @@
       "solutions"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "obstacles",
-      "difficulties",
-      "tests",
-      "trials",
-      "barriers"
-    ],
+    "synonyms": [],
     "related": [
       "tension",
       "contrast",
@@ -6377,13 +6352,7 @@
   {
     "id": "cherish",
     "label": "cherish",
-    "synonyms": [
-      "treasure",
-      "value",
-      "honor",
-      "esteem",
-      "venerate"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -6511,13 +6480,7 @@
       "heated"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "cool",
-      "sharp",
-      "clear",
-      "fresh",
-      "bright"
-    ],
+    "synonyms": [],
     "related": [
       "harmony",
       "balance",
@@ -6803,8 +6766,7 @@
       "refined",
       "sophisticated",
       "stylish",
-      "upscale",
-      "Opulence"
+      "upscale"
     ],
     "related": [
       "luxury",
@@ -7719,13 +7681,7 @@
       "anti"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "commercial",
-      "market",
-      "promotional",
-      "retail",
-      "advertising"
-    ],
+    "synonyms": [],
     "related": [
       "branding",
       "advertising",
@@ -8010,13 +7966,7 @@
       "vacant"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "totality",
-      "wholeness",
-      "realization",
-      "fulfillment",
-      "integration"
-    ],
+    "synonyms": [],
     "related": [
       "integrity",
       "cohesion",
@@ -10121,13 +10071,7 @@
   {
     "id": "crowned",
     "label": "crowned",
-    "synonyms": [
-      "royal",
-      "adorned",
-      "laurel",
-      "noble",
-      "decorated"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -10454,13 +10398,7 @@
   {
     "id": "curtained",
     "label": "Curtained",
-    "synonyms": [
-      "draped",
-      "veiled",
-      "screened",
-      "shrouded",
-      "masked"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -10657,8 +10595,7 @@
       "pessimism",
       "irony",
       "sarcasm",
-      "disillusionment",
-      "Irony"
+      "disillusionment"
     ],
     "related": [
       "minimalism",
@@ -10800,11 +10737,7 @@
       "pictorial"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "analytic",
-      "empirical",
-      "objective"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "functionality",
@@ -10994,13 +10927,7 @@
   {
     "id": "decorated",
     "label": "decorated",
-    "synonyms": [
-      "adorned",
-      "embellished",
-      "ornate",
-      "enhanced",
-      "fancy"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -11387,11 +11314,7 @@
       "ungrounded"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "bounded",
-      "enclosed",
-      "limited"
-    ],
+    "synonyms": [],
     "related": [
       "composition",
       "proportion",
@@ -11483,13 +11406,7 @@
       "method"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "chaos",
-      "disorder",
-      "randomness",
-      "confusion",
-      "entropy"
-    ],
+    "synonyms": [],
     "related": [
       "kaleidoscope",
       "juxtaposition",
@@ -12380,12 +12297,7 @@
       "user-centric"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "user",
-      "focused",
-      "central",
-      "targeted"
-    ],
+    "synonyms": [],
     "related": [
       "functional",
       "intuitive",
@@ -12588,13 +12500,7 @@
       "murals"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "graphic",
-      "visual",
-      "digital",
-      "pixel",
-      "media"
-    ],
+    "synonyms": [],
     "related": [
       "vector",
       "animation",
@@ -13670,13 +13576,7 @@
   {
     "id": "dislike",
     "label": "dislike",
-    "synonyms": [
-      "disdain",
-      "aversion",
-      "displeasure",
-      "repulsion",
-      "disfavor"
-    ],
+    "synonyms": [],
     "related": [
       "distrust",
       "academia",
@@ -14154,11 +14054,7 @@
       "concentrated"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "diffused",
-      "scattered",
-      "fragmented"
-    ],
+    "synonyms": [],
     "related": [
       "harmony",
       "texture",
@@ -16025,13 +15921,7 @@
       "childcare"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "care",
-      "support",
-      "tenderness",
-      "assistance",
-      "nurture"
-    ],
+    "synonyms": [],
     "related": [
       "comfort",
       "nurturing",
@@ -16311,11 +16201,7 @@
       "rational"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "affective",
-      "sentimental",
-      "expressive"
-    ],
+    "synonyms": [],
     "related": [
       "interaction",
       "narrative",
@@ -16712,13 +16598,7 @@
   {
     "id": "engrave",
     "label": "Engrave",
-    "synonyms": [
-      "carve",
-      "etch",
-      "imprint",
-      "stamp",
-      "mark"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -17524,11 +17404,7 @@
       "uncommon"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "casual",
-      "simple",
-      "familiar"
-    ],
+    "synonyms": [],
     "related": [
       "comfort",
       "wholesome",
@@ -17885,13 +17761,7 @@
   {
     "id": "excessive",
     "label": "excessive",
-    "synonyms": [
-      "exorbitant",
-      "extreme",
-      "exaggerated",
-      "lavish",
-      "surplus"
-    ],
+    "synonyms": [],
     "related": [
       "cluttered",
       "academia",
@@ -18362,13 +18232,7 @@
       "merchandise"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "encounters",
-      "impressions",
-      "sensations",
-      "recollections",
-      "moments"
-    ],
+    "synonyms": [],
     "related": [
       "immersive",
       "narrative",
@@ -20014,11 +19878,7 @@
       "variable"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "constant",
-      "steady",
-      "fixed"
-    ],
+    "synonyms": [],
     "related": [
       "perspective",
       "depth",
@@ -20113,13 +19973,7 @@
   {
     "id": "flat",
     "label": "flat",
-    "synonyms": [
-      "level",
-      "smooth",
-      "plain",
-      "simple",
-      "even"
-    ],
+    "synonyms": [],
     "related": [
       "naked",
       "plain",
@@ -20808,13 +20662,7 @@
   {
     "id": "fonts",
     "label": "Fonts",
-    "synonyms": [
-      "typeface",
-      "script",
-      "lettering",
-      "glyph",
-      "face"
-    ],
+    "synonyms": [],
     "related": [
       "editorial",
       "artistic",
@@ -20921,12 +20769,7 @@
   {
     "id": "foreground",
     "label": "foreground",
-    "synonyms": [
-      "foreground",
-      "front",
-      "surface",
-      "focus"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -21160,14 +21003,7 @@
       "unconfined"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "boundaries",
-      "constraints",
-      "parameters",
-      "limits",
-      "framework",
-      "guidelines"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "containment",
@@ -21315,11 +21151,7 @@
       "unison"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "disarray",
-      "discord",
-      "dissonance"
-    ],
+    "synonyms": [],
     "related": [
       "asymmetry",
       "contrast",
@@ -21421,13 +21253,7 @@
       "synchronized"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "shattered",
-      "broken",
-      "disjointed",
-      "scattered",
-      "divided"
-    ],
+    "synonyms": [],
     "related": [
       "collage",
       "disarray",
@@ -21736,13 +21562,7 @@
       "burnt"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "icy",
-      "misty",
-      "glacial",
-      "cerulean",
-      "frosty"
-    ],
+    "synonyms": [],
     "related": [
       "translucent",
       "serene",
@@ -22570,12 +22390,7 @@
       "rude"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "soft",
-      "gentle",
-      "calm",
-      "mild"
-    ],
+    "synonyms": [],
     "related": [
       "serenity",
       "minimalism",
@@ -24527,12 +24342,7 @@
   {
     "id": "hover",
     "label": "hover",
-    "synonyms": [
-      "float",
-      "suspend",
-      "levitate",
-      "drift"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -25785,11 +25595,7 @@
       "premeditated"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "spontaneous",
-      "unplanned",
-      "casual"
-    ],
+    "synonyms": [],
     "related": [
       "serendipity",
       "efficiency",
@@ -27072,11 +26878,7 @@
       "doctrinal"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "exploration",
-      "investigation",
-      "examination"
-    ],
+    "synonyms": [],
     "related": [
       "curiosity",
       "improvisation",
@@ -28723,13 +28525,7 @@
   {
     "id": "kaleidoscopic",
     "label": "kaleidoscopic",
-    "synonyms": [
-      "colorful",
-      "vibrant",
-      "dynamic",
-      "prismatic",
-      "multicolored"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -30851,13 +30647,7 @@
   {
     "id": "masked",
     "label": "masked",
-    "synonyms": [
-      "veiled",
-      "shrouded",
-      "concealed",
-      "hidden",
-      "cloaked"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -32058,8 +31848,7 @@
       "Clean",
       "moderns",
       "Sleek",
-      "Contemporary",
-      "Modernist"
+      "Contemporary"
     ],
     "related": [
       "minimalistic",
@@ -32620,11 +32409,7 @@
       "forgettable"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "ordinary",
-      "common",
-      "typical"
-    ],
+    "synonyms": [],
     "related": [
       "kitsch",
       "surrealism",
@@ -32708,13 +32493,7 @@
   {
     "id": "naked",
     "label": "naked",
-    "synonyms": [
-      "bare",
-      "exposed",
-      "stripped",
-      "unclothed",
-      "raw"
-    ],
+    "synonyms": [],
     "related": [
       "flat",
       "plain",
@@ -33222,8 +33001,7 @@
       "exalted",
       "dignified",
       "elegant",
-      "refined",
-      "Classical"
+      "refined"
     ],
     "related": [
       "regal",
@@ -33448,13 +33226,7 @@
       "counterculture"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "standards",
-      "rules",
-      "guidelines",
-      "criteria",
-      "conventions"
-    ],
+    "synonyms": [],
     "related": [
       "symmetry",
       "harmony",
@@ -34495,13 +34267,7 @@
       "veiled"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "exposed",
-      "uncovered",
-      "open",
-      "airy",
-      "light"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "transparency",
@@ -35114,13 +34880,7 @@
   {
     "id": "overlook",
     "label": "overlook",
-    "synonyms": [
-      "omit",
-      "ignore",
-      "exclude",
-      "neglect",
-      "miss"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -36658,13 +36418,7 @@
   {
     "id": "plunge",
     "label": "plunge",
-    "synonyms": [
-      "dive",
-      "drop",
-      "sink",
-      "fall",
-      "descend"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -37919,13 +37673,7 @@
       "solutions"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "issues",
-      "challenges",
-      "difficulties",
-      "obstacles",
-      "hurdles"
-    ],
+    "synonyms": [],
     "related": [
       "tension",
       "contrast",
@@ -37987,13 +37735,7 @@
       "user-centric"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "focused",
-      "centered",
-      "targeted",
-      "specialized",
-      "dedicated"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "functionality",
@@ -42125,13 +41867,7 @@
   {
     "id": "sealed",
     "label": "Sealed",
-    "synonyms": [
-      "closed",
-      "secured",
-      "fastened",
-      "locked",
-      "contained"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -43949,11 +43685,7 @@
       "murals"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "miniature",
-      "petite",
-      "compact"
-    ],
+    "synonyms": [],
     "related": [
       "intimacy",
       "detail",
@@ -46457,13 +46189,7 @@
       "dazzling"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "soft",
-      "dim",
-      "muted",
-      "gentle",
-      "calm"
-    ],
+    "synonyms": [],
     "related": [
       "ambient",
       "subtle",
@@ -46792,13 +46518,7 @@
       "screaming"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "soft",
-      "muted",
-      "pale",
-      "gentle",
-      "light"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "elegance",
@@ -47465,11 +47185,7 @@
   {
     "id": "tail",
     "label": "tail",
-    "synonyms": [
-      "appendage",
-      "extension",
-      "fluke"
-    ],
+    "synonyms": [],
     "related": [
       "under",
       "base",
@@ -48929,8 +48645,7 @@
       "voice",
       "vui",
       "speech",
-      "uis",
-      "Juicy"
+      "uis"
     ],
     "related": [
       "modern",
@@ -49570,13 +49285,7 @@
       "clatter"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "subdued",
-      "calm",
-      "serene",
-      "simple",
-      "soft"
-    ],
+    "synonyms": [],
     "related": [
       "zen",
       "harmony",
@@ -50181,13 +49890,7 @@
       "flicker"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "constant",
-      "steady",
-      "uniform",
-      "even",
-      "consistent"
-    ],
+    "synonyms": [],
     "related": [
       "luminosity",
       "radiance",
@@ -50897,8 +50600,7 @@
       "remote",
       "elusive",
       "untouchable",
-      "isolated",
-      "Mystical"
+      "isolated"
     ],
     "related": [
       "dreamlike",
@@ -51482,13 +51184,7 @@
       "dreary"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "vibrant",
-      "lively",
-      "bright",
-      "dynamic",
-      "radiant"
-    ],
+    "synonyms": [],
     "related": [
       "vibrancy",
       "juxtaposition",
@@ -52853,12 +52549,7 @@
       "uproarious"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "fragile",
-      "subdued",
-      "soft",
-      "silent"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "serenity",
@@ -52891,13 +52582,7 @@
   {
     "id": "wander",
     "label": "wander",
-    "synonyms": [
-      "roam",
-      "drift",
-      "meander",
-      "stray",
-      "explore"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -53313,11 +52998,7 @@
       "shouted"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "muted",
-      "soft",
-      "gentle"
-    ],
+    "synonyms": [],
     "related": [
       "translucence",
       "gradience",
@@ -54083,13 +53764,7 @@
   {
     "id": "attractive",
     "label": "attractive",
-    "synonyms": [
-      "alluring",
-      "charming",
-      "captivating",
-      "enticing",
-      "appealing"
-    ],
+    "synonyms": [],
     "related": [
       "accent",
       "alien",
@@ -54243,13 +53918,7 @@
   {
     "id": "barren",
     "label": "barren",
-    "synonyms": [
-      "empty",
-      "bare",
-      "desolate",
-      "bleak",
-      "sterile"
-    ],
+    "synonyms": [],
     "related": [
       "repelling",
       "alien",
@@ -54774,13 +54443,7 @@
   {
     "id": "blurry",
     "label": "blurry",
-    "synonyms": [
-      "fuzzy",
-      "hazy",
-      "dim",
-      "cloudy",
-      "soft"
-    ],
+    "synonyms": [],
     "related": [
       "muffled",
       "accent",
@@ -55037,13 +54700,7 @@
   {
     "id": "burnt",
     "label": "Burnt",
-    "synonyms": [
-      "charred",
-      "scorched",
-      "singed",
-      "toasted",
-      "seared"
-    ],
+    "synonyms": [],
     "related": [
       "accent",
       "alien",
@@ -55487,13 +55144,7 @@
   {
     "id": "concord",
     "label": "Concord",
-    "synonyms": [
-      "harmony",
-      "unity",
-      "balance",
-      "accord",
-      "consensus"
-    ],
+    "synonyms": [],
     "related": [
       "Harmony",
       "Unity",
@@ -55705,13 +55356,7 @@
   {
     "id": "discord",
     "label": "discord",
-    "synonyms": [
-      "conflict",
-      "disarray",
-      "disunity",
-      "disharmony",
-      "dissonance"
-    ],
+    "synonyms": [],
     "related": [
       "contradiction",
       "deconstructivism",
@@ -56296,13 +55941,7 @@
   {
     "id": "drained",
     "label": "drained",
-    "synonyms": [
-      "faded",
-      "washed",
-      "pale",
-      "muted",
-      "dull"
-    ],
+    "synonyms": [],
     "related": [
       "lethargic",
       "accent",
@@ -56813,13 +56452,7 @@
   {
     "id": "flashy",
     "label": "flashy",
-    "synonyms": [
-      "showy",
-      "vibrant",
-      "luminous",
-      "radiant",
-      "brilliant"
-    ],
+    "synonyms": [],
     "related": [
       "garish",
       "accent",
@@ -56983,8 +56616,7 @@
       "restaurant",
       "culinary",
       "dining",
-      "Foods",
-      "Culinary"
+      "Foods"
     ],
     "related": [
       "warm",
@@ -57041,13 +56673,7 @@
   {
     "id": "frost",
     "label": "frost",
-    "synonyms": [
-      "ice",
-      "chill",
-      "glaze",
-      "crystal",
-      "silver"
-    ],
+    "synonyms": [],
     "related": [
       "alien",
       "alluring",
@@ -57493,13 +57119,7 @@
   {
     "id": "greed",
     "label": "greed",
-    "synonyms": [
-      "avarice",
-      "covetousness",
-      "greediness",
-      "insatiable",
-      "selfishness"
-    ],
+    "synonyms": [],
     "related": [
       "profit",
       "wealth",
@@ -57960,13 +57580,7 @@
   {
     "id": "hunger",
     "label": "hunger",
-    "synonyms": [
-      "craving",
-      "desire",
-      "thirst",
-      "emptiness",
-      "need"
-    ],
+    "synonyms": [],
     "related": [
       "waste",
       "scarcity",
@@ -58292,12 +57906,7 @@
   {
     "id": "kaleidoscope",
     "label": "kaleidoscope",
-    "synonyms": [
-      "prism",
-      "spectrum",
-      "mosaic",
-      "variegate"
-    ],
+    "synonyms": [],
     "related": [
       "accent",
       "alien",
@@ -58726,13 +58335,7 @@
   {
     "id": "matt",
     "label": "matt",
-    "synonyms": [
-      "flat",
-      "dull",
-      "nonshine",
-      "muted",
-      "soft"
-    ],
+    "synonyms": [],
     "related": [
       "opaque",
       "accent",
@@ -58979,13 +58582,7 @@
   {
     "id": "muddy",
     "label": "muddy",
-    "synonyms": [
-      "dull",
-      "drab",
-      "murky",
-      "cloudy",
-      "dirty"
-    ],
+    "synonyms": [],
     "related": [
       "accent",
       "alien",
@@ -59722,13 +59319,7 @@
   {
     "id": "opaque",
     "label": "opaque",
-    "synonyms": [
-      "cloudy",
-      "dense",
-      "murky",
-      "solid",
-      "stuffy"
-    ],
+    "synonyms": [],
     "related": [
       "matt",
       "Solid",
@@ -62371,8 +61962,7 @@
       "electric",
       "glowing",
       "vibrants",
-      "Glowing",
-      "Electric"
+      "Glowing"
     ],
     "related": [
       "colorful",
@@ -62517,13 +62107,7 @@
   {
     "id": "wash",
     "label": "wash",
-    "synonyms": [
-      "tint",
-      "shade",
-      "hue",
-      "blend",
-      "flush"
-    ],
+    "synonyms": [],
     "related": [
       "drain",
       "accent",
@@ -62757,13 +62341,7 @@
   {
     "id": "weak",
     "label": "weak",
-    "synonyms": [
-      "faint",
-      "pale",
-      "dull",
-      "subtle",
-      "soft"
-    ],
+    "synonyms": [],
     "related": [
       "accent",
       "alien",
@@ -62982,11 +62560,7 @@
   {
     "id": "aero",
     "label": "Aero",
-    "synonyms": [
-      "aerodynamic",
-      "ethereal",
-      "sleek"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "arcade",
@@ -63224,13 +62798,7 @@
   {
     "id": "aqueous",
     "label": "Aqueous",
-    "synonyms": [
-      "liquid",
-      "fluid",
-      "watery",
-      "oceanic",
-      "streamlike"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "ascii",
@@ -63259,11 +62827,7 @@
   {
     "id": "arcade",
     "label": "Arcade",
-    "synonyms": [
-      "arcadia",
-      "amusement",
-      "gamer"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -63358,29 +62922,6 @@
       "fluid",
       "modern"
     ]
-  },
-  {
-    "id": "astronomical",
-    "label": "Astronomical",
-    "synonyms": [
-      "cosmic",
-      "celestial",
-      "universal",
-      "stellar",
-      "galactic"
-    ],
-    "related": [
-      "ethereal",
-      "mystical",
-      "space",
-      "night",
-      "twilight"
-    ],
-    "opposites": [
-      "Terrestrial",
-      "Grounded"
-    ],
-    "category": "Design Style"
   },
   {
     "id": "atmospheric",
@@ -63502,13 +63043,7 @@
   {
     "id": "bistro",
     "label": "Bistro",
-    "synonyms": [
-      "cafe",
-      "pub",
-      "bistro",
-      "brasserie",
-      "tavern"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -63851,11 +63386,7 @@
   {
     "id": "burdened",
     "label": "burdened",
-    "synonyms": [
-      "heavy",
-      "laden",
-      "weighted"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -64102,16 +63633,6 @@
       "thin",
       "streamlined"
     ]
-  },
-  {
-    "id": "classical",
-    "label": "Classical",
-    "synonyms": [
-      "neoclassical"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Design Style"
   },
   {
     "id": "coherent",
@@ -64551,11 +64072,7 @@
   {
     "id": "concrete",
     "label": "concrete",
-    "synonyms": [
-      "solid",
-      "tangible",
-      "physical"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -65439,12 +64956,7 @@
   {
     "id": "disposable",
     "label": "disposable",
-    "synonyms": [
-      "throwaway",
-      "temporary",
-      "transient",
-      "expendable"
-    ],
+    "synonyms": [],
     "related": [
       "Coarse",
       "Commodity",
@@ -65612,13 +65124,7 @@
   {
     "id": "distressed",
     "label": "Distressed",
-    "synonyms": [
-      "weathered",
-      "aged",
-      "worn",
-      "tattered",
-      "faded"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -65902,11 +65408,7 @@
   {
     "id": "essentialism",
     "label": "Essentialism",
-    "synonyms": [
-      "minimalism",
-      "purism",
-      "clarity"
-    ],
+    "synonyms": [],
     "related": [
       "functionality",
       "austerity",
@@ -65924,13 +65426,7 @@
   {
     "id": "excess",
     "label": "excess",
-    "synonyms": [
-      "surplus",
-      "overabundance",
-      "luxury",
-      "extravagance",
-      "glut"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -66127,13 +65623,7 @@
   {
     "id": "filtered",
     "label": "filtered",
-    "synonyms": [
-      "filtered",
-      "softened",
-      "muted",
-      "masked",
-      "veiled"
-    ],
+    "synonyms": [],
     "related": [
       "staged",
       "aero",
@@ -66861,30 +66351,6 @@
       "cleanliness",
       "classicism"
     ]
-  },
-  {
-    "id": "high-tech",
-    "label": "High-Tech",
-    "synonyms": [
-      "tech",
-      "smart"
-    ],
-    "related": [],
-    "opposites": [
-      "Rustic",
-      "Handmade"
-    ],
-    "category": "Design Style"
-  },
-  {
-    "id": "historic",
-    "label": "Historic",
-    "synonyms": [],
-    "related": [
-      "neoclassical"
-    ],
-    "opposites": [],
-    "category": "Design Style"
   },
   {
     "id": "homely",
@@ -68522,14 +67988,7 @@
   {
     "id": "miniature",
     "label": "Miniature",
-    "synonyms": [
-      "tiny",
-      "small",
-      "petite",
-      "diminutive",
-      "mini",
-      "compact"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -68738,11 +68197,7 @@
   {
     "id": "nautical",
     "label": "Nautical",
-    "synonyms": [
-      "maritime",
-      "naval",
-      "oceanic"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -68821,13 +68276,7 @@
   {
     "id": "neo-grotesque",
     "label": "Neo-Grotesque",
-    "synonyms": [
-      "grotesque",
-      "modern",
-      "minimal",
-      "neutral",
-      "geometric"
-    ],
+    "synonyms": [],
     "related": [
       "Brutalism",
       "Functionalism",
@@ -68840,21 +68289,6 @@
       "Retro",
       "Art-Deco",
       "Gothic"
-    ],
-    "category": "Design Style"
-  },
-  {
-    "id": "neoclassical",
-    "label": "Neoclassical",
-    "synonyms": [
-      "classical"
-    ],
-    "related": [
-      "historic"
-    ],
-    "opposites": [
-      "Modernist",
-      "Minimalist"
     ],
     "category": "Design Style"
   },
@@ -69361,13 +68795,7 @@
   {
     "id": "pictorial",
     "label": "Pictorial",
-    "synonyms": [
-      "illustrative",
-      "graphic",
-      "visual",
-      "depictive",
-      "representational"
-    ],
+    "synonyms": [],
     "related": [
       "imagery",
       "color",
@@ -69560,13 +68988,7 @@
   {
     "id": "rebel",
     "label": "rebel",
-    "synonyms": [
-      "insurgent",
-      "nonconformist",
-      "dissenter",
-      "iconoclast",
-      "maverick"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -69680,11 +69102,7 @@
   {
     "id": "retrofuturism",
     "label": "Retrofuturism",
-    "synonyms": [
-      "futurism",
-      "retro",
-      "nostalgia"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -70127,16 +69545,6 @@
       "minimalism",
       "abstraction"
     ]
-  },
-  {
-    "id": "smart",
-    "label": "Smart",
-    "synonyms": [
-      "high-tech"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Design Style"
   },
   {
     "id": "sprawled",
@@ -70688,11 +70096,7 @@
   {
     "id": "swiss",
     "label": "Swiss",
-    "synonyms": [
-      "minimal",
-      "clean",
-      "orderly"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "ascii",
@@ -70719,11 +70123,7 @@
   {
     "id": "symbolic",
     "label": "symbolic",
-    "synonyms": [
-      "representational",
-      "indicative",
-      "metaphoric"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -70885,16 +70285,6 @@
     ]
   },
   {
-    "id": "tech",
-    "label": "Tech",
-    "synonyms": [
-      "high-tech"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Design Style"
-  },
-  {
     "id": "technic",
     "label": "Technic",
     "synonyms": [
@@ -71048,21 +70438,6 @@
     "category": "Design Style"
   },
   {
-    "id": "techno-futurist",
-    "label": "Techno-futurist",
-    "synonyms": [
-      "techno-futurist"
-    ],
-    "related": [],
-    "opposites": [
-      "Art-Nouveau",
-      "Rustic",
-      "Retro",
-      "Organic"
-    ],
-    "category": "Design Style"
-  },
-  {
     "id": "technographic",
     "label": "Technographic",
     "synonyms": [
@@ -71156,13 +70531,7 @@
   {
     "id": "techwear",
     "label": "Techwear",
-    "synonyms": [
-      "futuristic",
-      "functional",
-      "urban",
-      "technical",
-      "modern"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -71790,13 +71159,7 @@
   {
     "id": "utopia",
     "label": "Utopia",
-    "synonyms": [
-      "paradise",
-      "dreamland",
-      "heaven",
-      "ideal",
-      "fantasy"
-    ],
+    "synonyms": [],
     "related": [
       "action",
       "aero",
@@ -72098,12 +71461,7 @@
   {
     "id": "3d-rendering",
     "label": "3D Rendering",
-    "synonyms": [
-      "rendering",
-      "visualization",
-      "modeling",
-      "simulation"
-    ],
+    "synonyms": [],
     "related": [
       "stylization"
     ],
@@ -72342,8 +71700,7 @@
       "stylized",
       "imaginative",
       "visual",
-      "artistics",
-      "Creative"
+      "artistics"
     ],
     "related": [
       "illustration",
@@ -72799,11 +72156,7 @@
   {
     "id": "blind",
     "label": "Blind",
-    "synonyms": [
-      "hidden",
-      "concealed",
-      "invisible"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -73191,13 +72544,7 @@
   {
     "id": "cast",
     "label": "cast",
-    "synonyms": [
-      "mold",
-      "form",
-      "shape",
-      "cast",
-      "create"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -74447,13 +73794,7 @@
   {
     "id": "disrupt",
     "label": "disrupt",
-    "synonyms": [
-      "interrupt",
-      "disturb",
-      "upend",
-      "displace",
-      "distort"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -75098,13 +74439,7 @@
   {
     "id": "erased",
     "label": "erased",
-    "synonyms": [
-      "removed",
-      "deleted",
-      "obliterated",
-      "vanished",
-      "wiped"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -76251,13 +75586,7 @@
   {
     "id": "frozen",
     "label": "frozen",
-    "synonyms": [
-      "chilled",
-      "frosted",
-      "glacial",
-      "icy",
-      "still"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -76370,8 +75699,7 @@
     "id": "generation",
     "label": "Generation",
     "synonyms": [
-      "generations",
-      "Generational"
+      "generations"
     ],
     "related": [
       "3d",
@@ -76426,13 +75754,7 @@
   {
     "id": "grading",
     "label": "Grading",
-    "synonyms": [
-      "scaling",
-      "toning",
-      "shading",
-      "tinting",
-      "layering"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "aerial",
@@ -76652,13 +75974,7 @@
   {
     "id": "highlight",
     "label": "Highlight",
-    "synonyms": [
-      "emphasis",
-      "accent",
-      "focus",
-      "spotlight",
-      "feature"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "aerial",
@@ -77737,13 +77053,7 @@
   {
     "id": "labeled",
     "label": "labeled",
-    "synonyms": [
-      "tagged",
-      "marked",
-      "identified",
-      "noted",
-      "signaled"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -77953,12 +77263,7 @@
   {
     "id": "macro",
     "label": "Macro",
-    "synonyms": [
-      "large",
-      "extensive",
-      "grand",
-      "massive"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "aerial",
@@ -78280,12 +77585,7 @@
   {
     "id": "mechanic",
     "label": "mechanic",
-    "synonyms": [
-      "mechanical",
-      "automated",
-      "industrial",
-      "systematic"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -79302,13 +78602,7 @@
   {
     "id": "outlining",
     "label": "Outlining",
-    "synonyms": [
-      "contour",
-      "outline",
-      "sketch",
-      "trace",
-      "define"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "aerial",
@@ -80435,13 +79729,7 @@
   {
     "id": "sculpt",
     "label": "Sculpt",
-    "synonyms": [
-      "carve",
-      "shape",
-      "form",
-      "model",
-      "craft"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "aerial",
@@ -81022,13 +80310,7 @@
   {
     "id": "splash",
     "label": "splash",
-    "synonyms": [
-      "splash",
-      "spatter",
-      "spray",
-      "flick",
-      "burst"
-    ],
+    "synonyms": [],
     "related": [
       "scrawl",
       "2d",
@@ -81110,13 +80392,7 @@
   {
     "id": "splat",
     "label": "splat",
-    "synonyms": [
-      "splash",
-      "spatter",
-      "scatter",
-      "mark",
-      "blot"
-    ],
+    "synonyms": [],
     "related": [
       "blurb",
       "2d",
@@ -81494,20 +80770,8 @@
   {
     "id": "stylization",
     "label": "Stylization",
-    "synonyms": [
-      "simplification",
-      "abstraction",
-      "interpretation",
-      "representation",
-      "emphasis"
-    ],
-    "related": [
-      "ornamentation",
-      "minimalism",
-      "expressionism",
-      "impressionism",
-      "decoration"
-    ],
+    "synonyms": [],
+    "related": [],
     "opposites": [
       "Realism",
       "Naturalism",
@@ -81602,13 +80866,7 @@
   {
     "id": "submerged",
     "label": "submerged",
-    "synonyms": [
-      "immersed",
-      "hidden",
-      "buried",
-      "concealed",
-      "drowned"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -81809,13 +81067,7 @@
   {
     "id": "synthesis",
     "label": "Synthesis",
-    "synonyms": [
-      "fusion",
-      "blend",
-      "integration",
-      "combination",
-      "unification"
-    ],
+    "synonyms": [],
     "related": [
       "Photography",
       "Collage",
@@ -81927,13 +81179,7 @@
   {
     "id": "tangle",
     "label": "tangle",
-    "synonyms": [
-      "entangle",
-      "knot",
-      "twist",
-      "mesh",
-      "snarl"
-    ],
+    "synonyms": [],
     "related": [
       "2d",
       "3d",
@@ -82014,13 +81260,7 @@
   {
     "id": "tangled",
     "label": "tangled",
-    "synonyms": [
-      "entangled",
-      "knotted",
-      "twisted",
-      "interwoven",
-      "entwined"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "animated",
@@ -82157,13 +81397,7 @@
   {
     "id": "typecraft",
     "label": "Typecraft",
-    "synonyms": [
-      "typography",
-      "lettering",
-      "fonts",
-      "print",
-      "script"
-    ],
+    "synonyms": [],
     "related": [
       "3d",
       "aerial",
@@ -82614,20 +81848,8 @@
   {
     "id": "visualization",
     "label": "Visualization",
-    "synonyms": [
-      "representation",
-      "depiction",
-      "illustration",
-      "rendering",
-      "image"
-    ],
-    "related": [
-      "infographic",
-      "diagram",
-      "chart",
-      "graph",
-      "layout"
-    ],
+    "synonyms": [],
+    "related": [],
     "category": "Design Technique",
     "opposites": [
       "obscurity",
@@ -83384,21 +82606,6 @@
     ]
   },
   {
-    "id": "alertness",
-    "label": "Alertness",
-    "synonyms": [
-      "watchfulness"
-    ],
-    "related": [
-      "pulsating"
-    ],
-    "opposites": [
-      "Drowsiness",
-      "Lethargy"
-    ],
-    "category": "Feeling / Emotion"
-  },
-  {
     "id": "alienation",
     "label": "alienation",
     "synonyms": [
@@ -83585,11 +82792,7 @@
   {
     "id": "analogous",
     "label": "Analogous",
-    "synonyms": [
-      "similar",
-      "comparable",
-      "corresponding"
-    ],
+    "synonyms": [],
     "related": [
       "calm",
       "cohesive",
@@ -84478,13 +83681,7 @@
   {
     "id": "blunt",
     "label": "blunt",
-    "synonyms": [
-      "blunt",
-      "dull",
-      "plain",
-      "raw",
-      "basic"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -85397,13 +84594,7 @@
   {
     "id": "captivity",
     "label": "captivity",
-    "synonyms": [
-      "detention",
-      "imprisonment",
-      "restriction",
-      "confinement",
-      "enslavement"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -87143,13 +86334,7 @@
   {
     "id": "darkness",
     "label": "darkness",
-    "synonyms": [
-      "gloom",
-      "shade",
-      "shadow",
-      "obscurity",
-      "night"
-    ],
+    "synonyms": [],
     "related": [
       "burden",
       "Absorption",
@@ -88612,13 +87797,7 @@
   {
     "id": "divergent",
     "label": "divergent",
-    "synonyms": [
-      "varied",
-      "distinct",
-      "diverse",
-      "unconventional",
-      "eccentric"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -88759,13 +87938,7 @@
   {
     "id": "drag",
     "label": "drag",
-    "synonyms": [
-      "weight",
-      "dragging",
-      "pull",
-      "tug",
-      "sink"
-    ],
+    "synonyms": [],
     "related": [
       "sink",
       "drown",
@@ -89274,13 +88447,7 @@
   {
     "id": "effortless",
     "label": "Effortless",
-    "synonyms": [
-      "simple",
-      "smooth",
-      "natural",
-      "clear",
-      "easy"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "aloof",
@@ -89547,13 +88714,7 @@
   {
     "id": "erupt",
     "label": "Erupt",
-    "synonyms": [
-      "burst",
-      "explode",
-      "surge",
-      "radiate",
-      "flood"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -90447,11 +89608,7 @@
   {
     "id": "feather",
     "label": "feather",
-    "synonyms": [
-      "plume",
-      "down",
-      "quill"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -90730,13 +89887,7 @@
   {
     "id": "foolish",
     "label": "foolish",
-    "synonyms": [
-      "naive",
-      "ridiculous",
-      "absurd",
-      "simple",
-      "childish"
-    ],
+    "synonyms": [],
     "related": [
       "vulgar",
       "impractical",
@@ -92679,13 +91830,7 @@
   {
     "id": "intimacy",
     "label": "Intimacy",
-    "synonyms": [
-      "closeness",
-      "familiarity",
-      "attachment",
-      "affection",
-      "connection"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "aloof",
@@ -93323,13 +92468,7 @@
   {
     "id": "lifeless",
     "label": "lifeless",
-    "synonyms": [
-      "bland",
-      "dull",
-      "flat",
-      "cold",
-      "empty"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accept",
@@ -94076,13 +93215,7 @@
   {
     "id": "misfortune",
     "label": "misfortune",
-    "synonyms": [
-      "adversity",
-      "calamity",
-      "distress",
-      "misery",
-      "setback"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -94542,13 +93675,7 @@
   {
     "id": "obedience",
     "label": "obedience",
-    "synonyms": [
-      "compliance",
-      "submission",
-      "conformity",
-      "loyalty",
-      "deference"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -94627,12 +93754,7 @@
   {
     "id": "obedient",
     "label": "obedient",
-    "synonyms": [
-      "submissive",
-      "compliant",
-      "docile",
-      "yielding"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accept",
@@ -95688,16 +94810,6 @@
     "opposites": [
       "Heavy"
     ]
-  },
-  {
-    "id": "pulsating",
-    "label": "Pulsating",
-    "synonyms": [],
-    "related": [
-      "alertness"
-    ],
-    "opposites": [],
-    "category": "Feeling / Emotion"
   },
   {
     "id": "racket",
@@ -96902,13 +96014,7 @@
   {
     "id": "restless",
     "label": "restless",
-    "synonyms": [
-      "uneasy",
-      "agitated",
-      "restive",
-      "fidgety",
-      "discontent"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accept",
@@ -97063,8 +96169,7 @@
       "classic",
       "nostalgia",
       "Analog",
-      "retros",
-      "Nostalgic"
+      "retros"
     ],
     "related": [
       "80s",
@@ -98751,11 +97856,7 @@
   {
     "id": "sink",
     "label": "sink",
-    "synonyms": [
-      "submerge",
-      "descend",
-      "plunge"
-    ],
+    "synonyms": [],
     "related": [
       "drown",
       "drag",
@@ -98892,13 +97993,7 @@
   {
     "id": "sloth",
     "label": "sloth",
-    "synonyms": [
-      "laziness",
-      "indolence",
-      "sluggishness",
-      "idleness",
-      "lethargy"
-    ],
+    "synonyms": [],
     "related": [
       "rest",
       "absent",
@@ -98997,13 +98092,7 @@
   {
     "id": "solemn",
     "label": "Solemn",
-    "synonyms": [
-      "grave",
-      "serious",
-      "stark",
-      "sober",
-      "weighty"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "monochrome",
@@ -99186,12 +98275,7 @@
   {
     "id": "staccato",
     "label": "staccato",
-    "synonyms": [
-      "sharp",
-      "jarring",
-      "punctuated",
-      "disjointed"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -99545,13 +98629,7 @@
   {
     "id": "storm",
     "label": "storm",
-    "synonyms": [
-      "tempest",
-      "gale",
-      "squall",
-      "turbulence",
-      "chaos"
-    ],
+    "synonyms": [],
     "related": [
       "frenzy",
       "turmoil",
@@ -100593,13 +99671,7 @@
   {
     "id": "thirst",
     "label": "thirst",
-    "synonyms": [
-      "hunger",
-      "craving",
-      "desire",
-      "longing",
-      "yearning"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -101794,13 +100866,7 @@
   {
     "id": "uproarious",
     "label": "uproarious",
-    "synonyms": [
-      "hilarious",
-      "boisterous",
-      "uproar",
-      "lively",
-      "raucous"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -102058,13 +101124,7 @@
   {
     "id": "valor",
     "label": "valor",
-    "synonyms": [
-      "courage",
-      "bravery",
-      "heroism",
-      "guts",
-      "spirit"
-    ],
+    "synonyms": [],
     "related": [
       "absent",
       "academia",
@@ -102451,21 +101511,6 @@
     ]
   },
   {
-    "id": "vigilance",
-    "label": "Vigilance",
-    "synonyms": [
-      "vigilance"
-    ],
-    "related": [],
-    "opposites": [
-      "Carefree",
-      "Complacency",
-      "Negligence",
-      "Relaxation"
-    ],
-    "category": "Feeling / Emotion"
-  },
-  {
     "id": "vintage",
     "label": "Vintage",
     "synonyms": [
@@ -102832,16 +101877,6 @@
       "serenity",
       "truce"
     ]
-  },
-  {
-    "id": "watchfulness",
-    "label": "Watchfulness",
-    "synonyms": [
-      "alertness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Feeling / Emotion"
   },
   {
     "id": "weakened",
@@ -103390,13 +102425,7 @@
   {
     "id": "aerodynamic",
     "label": "Aerodynamic",
-    "synonyms": [
-      "streamlined",
-      "sleek",
-      "smooth",
-      "efficient",
-      "lightweight"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aggregate",
@@ -104076,13 +103105,7 @@
   {
     "id": "axis",
     "label": "Axis",
-    "synonyms": [
-      "line",
-      "center",
-      "pivot",
-      "spine",
-      "shaft"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -104190,13 +103213,7 @@
   {
     "id": "basic",
     "label": "Basic",
-    "synonyms": [
-      "simple",
-      "fundamental",
-      "elementary",
-      "minimal",
-      "plain"
-    ],
+    "synonyms": [],
     "related": [
       "geometric",
       "structure",
@@ -104212,16 +103229,6 @@
       "cluttered",
       "eclectic"
     ]
-  },
-  {
-    "id": "bifurcation",
-    "label": "Bifurcation",
-    "synonyms": [
-      "branching"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "binding",
@@ -104565,32 +103572,6 @@
     ]
   },
   {
-    "id": "branch",
-    "label": "Branch",
-    "synonyms": [
-      "branching"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
-    "id": "branching",
-    "label": "Branching",
-    "synonyms": [
-      "diverging",
-      "branch",
-      "bifurcation"
-    ],
-    "related": [],
-    "opposites": [
-      "Linear",
-      "Direct",
-      "convergent"
-    ],
-    "category": "Form & Structure"
-  },
-  {
     "id": "broken",
     "label": "broken",
     "synonyms": [
@@ -104792,11 +103773,7 @@
   {
     "id": "circuitous",
     "label": "circuitous",
-    "synonyms": [
-      "meandering",
-      "twisting",
-      "winding"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -105266,16 +104243,6 @@
     ]
   },
   {
-    "id": "convergent",
-    "label": "Convergent",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "branching"
-    ],
-    "category": "Form & Structure"
-  },
-  {
     "id": "corner",
     "label": "corner",
     "synonyms": [
@@ -105615,13 +104582,7 @@
   {
     "id": "curvy",
     "label": "curvy",
-    "synonyms": [
-      "wavy",
-      "rounded",
-      "undulating",
-      "twisted",
-      "flowing"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -105696,13 +104657,7 @@
   {
     "id": "cylinder",
     "label": "Cylinder",
-    "synonyms": [
-      "tube",
-      "barrel",
-      "cylinder",
-      "drum",
-      "pillar"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -106173,25 +105128,9 @@
     ]
   },
   {
-    "id": "diverging",
-    "label": "Diverging",
-    "synonyms": [
-      "branching"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "dome",
     "label": "Dome",
-    "synonyms": [
-      "arch",
-      "vault",
-      "cupola",
-      "canopy",
-      "shelter"
-    ],
+    "synonyms": [],
     "related": [
       "structure",
       "curvature",
@@ -106207,16 +105146,6 @@
       "surface",
       "void"
     ]
-  },
-  {
-    "id": "dotted",
-    "label": "Dotted",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "ecommerce",
@@ -106770,13 +105699,7 @@
   {
     "id": "flexibility",
     "label": "Flexibility",
-    "synonyms": [
-      "adaptability",
-      "versatility",
-      "pliability",
-      "resilience",
-      "yielding"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -106944,13 +105867,7 @@
   {
     "id": "formless",
     "label": "Formless",
-    "synonyms": [
-      "amorphous",
-      "shapeless",
-      "fluid",
-      "indeterminate",
-      "vague"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "alignment",
@@ -107157,13 +106074,7 @@
   {
     "id": "fringe",
     "label": "fringe",
-    "synonyms": [
-      "border",
-      "edge",
-      "trim",
-      "tassel",
-      "rim"
-    ],
+    "synonyms": [],
     "related": [
       "spread",
       "leak",
@@ -107418,16 +106329,6 @@
       "certain",
       "high"
     ],
-    "category": "Form & Structure"
-  },
-  {
-    "id": "honeycombed",
-    "label": "Honeycombed",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Form & Structure"
   },
   {
@@ -107835,16 +106736,6 @@
       "even",
       "balanced"
     ]
-  },
-  {
-    "id": "laced",
-    "label": "Laced",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "lattice",
@@ -108655,13 +107546,7 @@
   {
     "id": "module",
     "label": "Module",
-    "synonyms": [
-      "unit",
-      "component",
-      "element",
-      "segment",
-      "block"
-    ],
+    "synonyms": [],
     "related": [
       "structure",
       "configuration",
@@ -109050,16 +107935,6 @@
     ]
   },
   {
-    "id": "patterned",
-    "label": "Patterned",
-    "synonyms": [],
-    "related": [
-      "perforated"
-    ],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "peak",
     "label": "Peak",
     "synonyms": [
@@ -109141,36 +108016,6 @@
       "dip",
       "drop"
     ]
-  },
-  {
-    "id": "perforated",
-    "label": "Perforated",
-    "synonyms": [
-      "pierced",
-      "punctured",
-      "dotted",
-      "honeycombed",
-      "laced"
-    ],
-    "related": [
-      "ventilated",
-      "patterned"
-    ],
-    "opposites": [
-      "Solid",
-      "Dense"
-    ],
-    "category": "Form & Structure"
-  },
-  {
-    "id": "pierced",
-    "label": "Pierced",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "pinnacle",
@@ -109457,16 +108302,6 @@
     ]
   },
   {
-    "id": "punctured",
-    "label": "Punctured",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "pyramid",
     "label": "Pyramid",
     "synonyms": [
@@ -109608,13 +108443,7 @@
   {
     "id": "rectangle",
     "label": "Rectangle",
-    "synonyms": [
-      "quad",
-      "box",
-      "shape",
-      "plane",
-      "form"
-    ],
+    "synonyms": [],
     "related": [
       "geometry",
       "symmetry",
@@ -109918,13 +108747,7 @@
   {
     "id": "rows",
     "label": "Rows",
-    "synonyms": [
-      "lines",
-      "stripes",
-      "bands",
-      "layers",
-      "tiers"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -110006,11 +108829,7 @@
   {
     "id": "sans",
     "label": "sans",
-    "synonyms": [
-      "without",
-      "lacking",
-      "minus"
-    ],
+    "synonyms": [],
     "related": [
       "squiggly",
       "accordion",
@@ -110446,13 +109265,7 @@
   {
     "id": "serpentine",
     "label": "serpentine",
-    "synonyms": [
-      "curvy",
-      "wavy",
-      "sinuous",
-      "twisted",
-      "undulating"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -110618,13 +109431,7 @@
   {
     "id": "slender",
     "label": "Slender",
-    "synonyms": [
-      "slim",
-      "thin",
-      "narrow",
-      "sleek",
-      "lean"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -110937,13 +109744,7 @@
   {
     "id": "spread",
     "label": "spread",
-    "synonyms": [
-      "distribute",
-      "extend",
-      "spreadout",
-      "scatter",
-      "diffuse"
-    ],
+    "synonyms": [],
     "related": [
       "leak",
       "fringe",
@@ -111198,12 +109999,7 @@
   {
     "id": "tabs",
     "label": "Tabs",
-    "synonyms": [
-      "panels",
-      "sections",
-      "labels",
-      "containers"
-    ],
+    "synonyms": [],
     "related": [
       "modular",
       "organized",
@@ -112019,25 +110815,9 @@
     ]
   },
   {
-    "id": "ventilated",
-    "label": "Ventilated",
-    "synonyms": [],
-    "related": [
-      "perforated"
-    ],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "vertex",
     "label": "Vertex",
-    "synonyms": [
-      "peak",
-      "summit",
-      "apex",
-      "tip",
-      "pinnacle"
-    ],
+    "synonyms": [],
     "related": [
       "accordion",
       "aerodynamic",
@@ -112760,24 +111540,6 @@
     "category": "Industry"
   },
   {
-    "id": "album",
-    "label": "Album",
-    "synonyms": [
-      "collection",
-      "compilation",
-      "book"
-    ],
-    "related": [
-      "visuals",
-      "imagery"
-    ],
-    "opposites": [
-      "Single",
-      "Live"
-    ],
-    "category": "Industry"
-  },
-  {
     "id": "analytics",
     "label": "Analytics",
     "synonyms": [
@@ -112863,13 +111625,7 @@
   {
     "id": "athlete",
     "label": "Athlete",
-    "synonyms": [
-      "competitor",
-      "contender",
-      "player",
-      "runner",
-      "participant"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "bakery",
@@ -112941,13 +111697,7 @@
   {
     "id": "bakery",
     "label": "Bakery",
-    "synonyms": [
-      "patisserie",
-      "bistro",
-      "pastry",
-      "confection",
-      "deli"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -113201,13 +111951,7 @@
   {
     "id": "beverage",
     "label": "Beverage",
-    "synonyms": [
-      "drink",
-      "liquid",
-      "refreshment",
-      "brew",
-      "elixir"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -113361,35 +112105,14 @@
   {
     "id": "boarding",
     "label": "Boarding",
-    "synonyms": [
-      "boarding",
-      "embarkation",
-      "loading"
-    ],
-    "related": [
-      "transport",
-      "logistics",
-      "industry",
-      "conveyance",
-      "access",
-      "platform"
-    ],
+    "synonyms": [],
+    "related": [],
     "opposites": [
       "Homecare",
       "Travel",
       "Residential",
       "Wilderness"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "book",
-    "label": "Book",
-    "synonyms": [
-      "album"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -113728,36 +112451,6 @@
     "category": "Industry"
   },
   {
-    "id": "coin",
-    "label": "Coin",
-    "synonyms": [
-      "cryptocurrency"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "collection",
-    "label": "Collection",
-    "synonyms": [
-      "album"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "compilation",
-    "label": "Compilation",
-    "synonyms": [
-      "album"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "consulting",
     "label": "Consulting",
     "synonyms": [
@@ -113837,25 +112530,9 @@
     "category": "Industry"
   },
   {
-    "id": "cookery",
-    "label": "Cookery",
-    "synonyms": [
-      "gastronomy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "cosmetics",
     "label": "Cosmetics",
-    "synonyms": [
-      "makeup",
-      "beauty",
-      "grooming",
-      "skincare",
-      "products"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -113933,77 +112610,6 @@
       "unadorned",
       "rough",
       "plain"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "courier",
-    "label": "Courier",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "crypto",
-    "label": "Crypto",
-    "synonyms": [
-      "cryptocurrency"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "cryptocurrency",
-    "label": "Cryptocurrency",
-    "synonyms": [
-      "coin",
-      "token",
-      "crypto"
-    ],
-    "related": [],
-    "opposites": [
-      "Traditional",
-      "Fiat"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "cuisine",
-    "label": "Cuisine",
-    "synonyms": [
-      "gastronomy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "culinary",
-    "label": "Culinary",
-    "synonyms": [
-      "gastronomy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "cybersecurity",
-    "label": "Cybersecurity",
-    "synonyms": [
-      "defense"
-    ],
-    "related": [
-      "encryption",
-      "firewall"
-    ],
-    "opposites": [
-      "Vulnerability",
-      "Exposure"
     ],
     "category": "Industry"
   },
@@ -114095,34 +112701,9 @@
     "category": "Industry"
   },
   {
-    "id": "defense",
-    "label": "Defense",
-    "synonyms": [
-      "cybersecurity"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "delivery",
-    "label": "Delivery",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "dentistry",
     "label": "Dentistry",
-    "synonyms": [
-      "odontology",
-      "dentistry",
-      "oral",
-      "dental"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -114618,13 +113199,7 @@
   {
     "id": "electronics",
     "label": "Electronics",
-    "synonyms": [
-      "circuitry",
-      "devices",
-      "gadgets",
-      "automation",
-      "technology"
-    ],
+    "synonyms": [],
     "related": [
       "innovation",
       "interface",
@@ -114638,16 +113213,6 @@
       "Hospitality",
       "Automotive"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "encryption",
-    "label": "Encryption",
-    "synonyms": [],
-    "related": [
-      "cybersecurity"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -114737,25 +113302,9 @@
     "category": "Industry"
   },
   {
-    "id": "envelope",
-    "label": "Envelope",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "eyewear",
     "label": "Eyewear",
-    "synonyms": [
-      "glasses",
-      "spectacles",
-      "lenses",
-      "shades",
-      "frames"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -114794,16 +113343,6 @@
       "Internal",
       "Bare"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "family",
-    "label": "Family",
-    "synonyms": [],
-    "related": [
-      "motherhood"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -114882,26 +113421,6 @@
       "simple",
       "basic"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "firewall",
-    "label": "Firewall",
-    "synonyms": [],
-    "related": [
-      "cybersecurity"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "flavor",
-    "label": "Flavor",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -114989,46 +113508,9 @@
     "category": "Industry"
   },
   {
-    "id": "gastronomy",
-    "label": "Gastronomy",
-    "synonyms": [
-      "cuisine",
-      "cookery",
-      "culinary"
-    ],
-    "related": [
-      "plating",
-      "presentation",
-      "flavor",
-      "serving",
-      "savor"
-    ],
-    "opposites": [
-      "Fast-food",
-      "Basic"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "graphic",
-    "label": "Graphic",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "gym",
     "label": "Gym",
-    "synonyms": [
-      "fitness",
-      "studio",
-      "center",
-      "club",
-      "facility"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -115437,16 +113919,6 @@
     "category": "Industry"
   },
   {
-    "id": "imagery",
-    "label": "Imagery",
-    "synonyms": [],
-    "related": [
-      "album"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "ingredients",
     "label": "Ingredients",
     "synonyms": [
@@ -115526,11 +113998,7 @@
   {
     "id": "interior",
     "label": "Interior",
-    "synonyms": [
-      "interior",
-      "inside",
-      "inner"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -115582,13 +114050,7 @@
   {
     "id": "jewelry",
     "label": "Jewelry",
-    "synonyms": [
-      "ornament",
-      "accessory",
-      "gemstone",
-      "trinket",
-      "bauble"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -115648,16 +114110,6 @@
       "Electronics",
       "Homeware"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "label",
-    "label": "Label",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -115737,16 +114189,6 @@
       "waste",
       "residential"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "mail",
-    "label": "Mail",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -116069,16 +114511,6 @@
     "category": "Industry"
   },
   {
-    "id": "maternity",
-    "label": "Maternity",
-    "synonyms": [
-      "motherhood"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "merchandise",
     "label": "Merchandise",
     "synonyms": [
@@ -116330,23 +114762,6 @@
     "category": "Industry"
   },
   {
-    "id": "motherhood",
-    "label": "Motherhood",
-    "synonyms": [
-      "maternity",
-      "parenthood"
-    ],
-    "related": [
-      "family",
-      "tenderness"
-    ],
-    "opposites": [
-      "Childless",
-      "Petcare"
-    ],
-    "category": "Industry"
-  },
-  {
     "id": "motorsport",
     "label": "Motorsport",
     "synonyms": [
@@ -116436,13 +114851,7 @@
   {
     "id": "murals",
     "label": "Murals",
-    "synonyms": [
-      "fresco",
-      "painting",
-      "canvas",
-      "graphic",
-      "illustration"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -116515,13 +114924,7 @@
   {
     "id": "museum",
     "label": "Museum",
-    "synonyms": [
-      "gallery",
-      "exhibit",
-      "archive",
-      "collection",
-      "institution"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -116597,16 +115000,6 @@
       "destruction",
       "dissonance"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "networking",
-    "label": "Networking",
-    "synonyms": [
-      "telecommunications"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -116688,25 +115081,9 @@
     "category": "Industry"
   },
   {
-    "id": "online",
-    "label": "Online",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "postal"
-    ],
-    "category": "Industry"
-  },
-  {
     "id": "orthodontics",
     "label": "Orthodontics",
-    "synonyms": [
-      "dentistry",
-      "braces",
-      "aligners",
-      "orthosis",
-      "occlusion"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -116743,26 +115120,6 @@
       "Dermatology",
       "Cardiology"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "parenthood",
-    "label": "Parenthood",
-    "synonyms": [
-      "motherhood"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "partnership",
-    "label": "Partnership",
-    "synonyms": [
-      "team-building"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -116933,58 +115290,9 @@
     "category": "Industry"
   },
   {
-    "id": "plating",
-    "label": "Plating",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "postal",
-    "label": "Postal",
-    "synonyms": [
-      "mail",
-      "postal",
-      "delivery",
-      "courier",
-      "shipping"
-    ],
-    "related": [
-      "graphic",
-      "envelope",
-      "label",
-      "stamp"
-    ],
-    "opposites": [
-      "Digital",
-      "Electronic",
-      "online"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "presentation",
-    "label": "Presentation",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "produce",
     "label": "Produce",
-    "synonyms": [
-      "create",
-      "generate",
-      "manufacture",
-      "develop",
-      "construct"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -117386,36 +115694,6 @@
     "category": "Industry"
   },
   {
-    "id": "savor",
-    "label": "Savor",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "serving",
-    "label": "Serving",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "shipping",
-    "label": "Shipping",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "skincare",
     "label": "Skincare",
     "synonyms": [
@@ -117582,25 +115860,9 @@
     "category": "Industry"
   },
   {
-    "id": "stamp",
-    "label": "Stamp",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "streetwear",
     "label": "Streetwear",
-    "synonyms": [
-      "casual",
-      "urban",
-      "fashion",
-      "gear",
-      "style"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -117754,93 +116016,9 @@
     "category": "Industry"
   },
   {
-    "id": "team-building",
-    "label": "Team-building",
-    "synonyms": [
-      "partnership"
-    ],
-    "related": [],
-    "opposites": [
-      "Solo",
-      "Individual"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "telecom",
-    "label": "Telecom",
-    "synonyms": [
-      "telecommunications"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "telecommunications",
-    "label": "Telecommunications",
-    "synonyms": [
-      "telecom",
-      "networking",
-      "transmission"
-    ],
-    "related": [],
-    "opposites": [
-      "Isolation",
-      "Silence"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "tenderness",
-    "label": "Tenderness",
-    "synonyms": [],
-    "related": [
-      "motherhood"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "token",
-    "label": "Token",
-    "synonyms": [
-      "cryptocurrency"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "transmission",
-    "label": "Transmission",
-    "synonyms": [
-      "telecommunications"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "visuals",
-    "label": "Visuals",
-    "synonyms": [],
-    "related": [
-      "album"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "watches",
     "label": "Watches",
-    "synonyms": [
-      "clocks",
-      "timepieces",
-      "chronometers",
-      "wristwatches",
-      "timekeepers"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -117914,11 +116092,7 @@
   {
     "id": "watchmaking",
     "label": "Watchmaking",
-    "synonyms": [
-      "horology",
-      "timepiece",
-      "craftsmanship"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -117990,13 +116164,7 @@
   {
     "id": "wearables",
     "label": "Wearables",
-    "synonyms": [
-      "gadgets",
-      "accessories",
-      "devices",
-      "gear",
-      "attire"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -118077,13 +116245,7 @@
   {
     "id": "wine",
     "label": "Wine",
-    "synonyms": [
-      "vino",
-      "claret",
-      "merlot",
-      "red",
-      "white"
-    ],
+    "synonyms": [],
     "related": [
       "advertising",
       "athlete",
@@ -118708,13 +116870,7 @@
   {
     "id": "animalism",
     "label": "Animalism",
-    "synonyms": [
-      "animalism",
-      "beastliness",
-      "brutality",
-      "primitivism",
-      "bestiality"
-    ],
+    "synonyms": [],
     "related": [
       "primal",
       "instinctive",
@@ -119002,13 +117158,7 @@
   {
     "id": "artifact",
     "label": "Artifact",
-    "synonyms": [
-      "object",
-      "item",
-      "relic",
-      "token",
-      "piece"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -119127,13 +117277,7 @@
   {
     "id": "astral",
     "label": "Astral",
-    "synonyms": [
-      "celestial",
-      "ethereal",
-      "heavenly",
-      "luminous",
-      "spiritual"
-    ],
+    "synonyms": [],
     "related": [
       "luminescence",
       "transcendence",
@@ -119276,13 +117420,7 @@
   {
     "id": "awake",
     "label": "Awake",
-    "synonyms": [
-      "alert",
-      "awake",
-      "aware",
-      "conscious",
-      "vigilant"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -119432,13 +117570,7 @@
   {
     "id": "beacon",
     "label": "Beacon",
-    "synonyms": [
-      "signal",
-      "guidance",
-      "lighthouse",
-      "pharos",
-      "light"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -119771,11 +117903,7 @@
   {
     "id": "blackout",
     "label": "Blackout",
-    "synonyms": [
-      "darkout",
-      "dimout",
-      "shutdown"
-    ],
+    "synonyms": [],
     "related": [
       "dusk",
       "absorption",
@@ -120310,13 +118438,7 @@
   {
     "id": "bubble",
     "label": "Bubble",
-    "synonyms": [
-      "sphere",
-      "globule",
-      "orb",
-      "blister",
-      "puff"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -120996,13 +119118,7 @@
   {
     "id": "companionship",
     "label": "Companionship",
-    "synonyms": [
-      "companionship",
-      "friendship",
-      "bonding",
-      "togetherness",
-      "unity"
-    ],
+    "synonyms": [],
     "related": [
       "unity",
       "harmony",
@@ -121679,13 +119795,7 @@
   {
     "id": "crystal",
     "label": "Crystal",
-    "synonyms": [
-      "gem",
-      "quartz",
-      "stone",
-      "glass",
-      "prism"
-    ],
+    "synonyms": [],
     "related": [
       "translucent",
       "faceted",
@@ -123218,12 +121328,7 @@
   {
     "id": "dusk",
     "label": "Dusk",
-    "synonyms": [
-      "twilight",
-      "evening",
-      "gloaming",
-      "dimmer"
-    ],
+    "synonyms": [],
     "related": [
       "blackout",
       "absorption",
@@ -123542,13 +121647,7 @@
   {
     "id": "emanation",
     "label": "Emanation",
-    "synonyms": [
-      "radiance",
-      "emission",
-      "exhalation",
-      "outpouring",
-      "effusion"
-    ],
+    "synonyms": [],
     "related": [
       "aura",
       "light",
@@ -123666,13 +121765,7 @@
   {
     "id": "emission",
     "label": "Emission",
-    "synonyms": [
-      "release",
-      "discharge",
-      "radiance",
-      "output",
-      "flux"
-    ],
+    "synonyms": [],
     "related": [
       "abstraction",
       "accumulation",
@@ -125186,11 +123279,7 @@
   {
     "id": "flotilla",
     "label": "Flotilla",
-    "synonyms": [
-      "fleet",
-      "group",
-      "gathering"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -125391,13 +123480,7 @@
   {
     "id": "folding",
     "label": "folding",
-    "synonyms": [
-      "bending",
-      "curving",
-      "wrapping",
-      "doubling",
-      "pleating"
-    ],
+    "synonyms": [],
     "related": [
       "confining",
       "closing",
@@ -125662,13 +123745,7 @@
   {
     "id": "fracture",
     "label": "Fracture",
-    "synonyms": [
-      "break",
-      "crack",
-      "split",
-      "shatter",
-      "fracture"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -125820,13 +123897,7 @@
   {
     "id": "freshness",
     "label": "Freshness",
-    "synonyms": [
-      "novelty",
-      "vitality",
-      "clarity",
-      "purity",
-      "innocence"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -125856,11 +123927,7 @@
   {
     "id": "fumble",
     "label": "fumble",
-    "synonyms": [
-      "blunder",
-      "misstep",
-      "error"
-    ],
+    "synonyms": [],
     "related": [
       "fluke",
       "absorption",
@@ -126001,12 +124068,7 @@
   {
     "id": "germination",
     "label": "Germination",
-    "synonyms": [
-      "sprouting",
-      "growth",
-      "emergence",
-      "development"
-    ],
+    "synonyms": [],
     "related": [
       "renewal",
       "nature",
@@ -126024,13 +124086,7 @@
   {
     "id": "glacial",
     "label": "Glacial",
-    "synonyms": [
-      "icy",
-      "frigid",
-      "frozen",
-      "chilly",
-      "glare"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -126190,13 +124246,7 @@
   {
     "id": "globe",
     "label": "Globe",
-    "synonyms": [
-      "sphere",
-      "orb",
-      "planet",
-      "ball",
-      "disk"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -127743,13 +125793,7 @@
   {
     "id": "melt",
     "label": "melt",
-    "synonyms": [
-      "liquefy",
-      "dissolve",
-      "blend",
-      "flow",
-      "fuse"
-    ],
+    "synonyms": [],
     "related": [
       "thaw",
       "absorption",
@@ -128043,13 +126087,7 @@
   {
     "id": "molten",
     "label": "Molten",
-    "synonyms": [
-      "liquid",
-      "melted",
-      "fluid",
-      "fused",
-      "cast"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -128585,13 +126623,7 @@
   {
     "id": "natura",
     "label": "Natura",
-    "synonyms": [
-      "nature",
-      "essence",
-      "organic",
-      "flora",
-      "fauna"
-    ],
+    "synonyms": [],
     "related": [
       "biophilic",
       "sustainability",
@@ -129629,13 +127661,7 @@
   {
     "id": "principle",
     "label": "Principle",
-    "synonyms": [
-      "rule",
-      "tenet",
-      "doctrine",
-      "maxim",
-      "law"
-    ],
+    "synonyms": [],
     "related": [
       "harmony",
       "balance",
@@ -129655,13 +127681,7 @@
   {
     "id": "protection",
     "label": "Protection",
-    "synonyms": [
-      "safeguard",
-      "shield",
-      "defense",
-      "security",
-      "barrier"
-    ],
+    "synonyms": [],
     "related": [
       "sanctuary",
       "enclosure",
@@ -129864,12 +127884,7 @@
   {
     "id": "reflectivity",
     "label": "Reflectivity",
-    "synonyms": [
-      "reflection",
-      "mirroring",
-      "gloss",
-      "shine"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -130590,12 +128605,7 @@
   {
     "id": "roots",
     "label": "Roots",
-    "synonyms": [
-      "base",
-      "foundation",
-      "source",
-      "origin"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -130709,13 +128719,7 @@
   {
     "id": "scream",
     "label": "scream",
-    "synonyms": [
-      "yell",
-      "cry",
-      "shout",
-      "howl",
-      "wail"
-    ],
+    "synonyms": [],
     "related": [
       "clamor",
       "buzz",
@@ -130879,13 +128883,7 @@
   {
     "id": "seed",
     "label": "Seed",
-    "synonyms": [
-      "grain",
-      "kernel",
-      "nut",
-      "pod",
-      "embryo"
-    ],
+    "synonyms": [],
     "related": [
       "growth",
       "nature",
@@ -130901,13 +128899,7 @@
   {
     "id": "segregated",
     "label": "segregated",
-    "synonyms": [
-      "isolated",
-      "separated",
-      "divided",
-      "partitioned",
-      "segmented"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -131020,13 +129012,7 @@
   {
     "id": "shell",
     "label": "shell",
-    "synonyms": [
-      "case",
-      "cover",
-      "hull",
-      "sheath",
-      "enclosure"
-    ],
+    "synonyms": [],
     "related": [
       "husk",
       "absorption",
@@ -131107,13 +129093,7 @@
   {
     "id": "shield",
     "label": "Shield",
-    "synonyms": [
-      "barrier",
-      "screen",
-      "defense",
-      "guard",
-      "protection"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -131985,13 +129965,7 @@
   {
     "id": "split",
     "label": "split",
-    "synonyms": [
-      "divide",
-      "sever",
-      "detach",
-      "fracture",
-      "cleave"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -132157,11 +130131,7 @@
   {
     "id": "steam",
     "label": "Steam",
-    "synonyms": [
-      "vapor",
-      "mist",
-      "fume"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -132448,13 +130418,7 @@
   {
     "id": "strata",
     "label": "Strata",
-    "synonyms": [
-      "layers",
-      "stratum",
-      "levels",
-      "sheets",
-      "facets"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -132721,12 +130685,7 @@
   {
     "id": "strip",
     "label": "strip",
-    "synonyms": [
-      "bare",
-      "remove",
-      "peel",
-      "expose"
-    ],
+    "synonyms": [],
     "related": [
       "uncover",
       "absorption",
@@ -132815,12 +130774,7 @@
   {
     "id": "summit",
     "label": "summit",
-    "synonyms": [
-      "peak",
-      "pinnacle",
-      "crest",
-      "summitry"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -133374,11 +131328,7 @@
   {
     "id": "thaw",
     "label": "thaw",
-    "synonyms": [
-      "melt",
-      "unfreeze",
-      "liquefy"
-    ],
+    "synonyms": [],
     "related": [
       "melt",
       "absorption",
@@ -133700,13 +131650,7 @@
   {
     "id": "turbulence",
     "label": "turbulence",
-    "synonyms": [
-      "chaos",
-      "disorder",
-      "upheaval",
-      "disturbance",
-      "flux"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -133778,13 +131722,7 @@
   {
     "id": "unbroken",
     "label": "unbroken",
-    "synonyms": [
-      "continuous",
-      "whole",
-      "intact",
-      "seamless",
-      "smooth"
-    ],
+    "synonyms": [],
     "related": [
       "absorption",
       "abstraction",
@@ -134075,13 +132013,7 @@
   {
     "id": "unravel",
     "label": "unravel",
-    "synonyms": [
-      "untangle",
-      "disentangle",
-      "reveal",
-      "unfold",
-      "clarify"
-    ],
+    "synonyms": [],
     "related": [
       "erode",
       "disassemble",
@@ -135051,13 +132983,7 @@
   {
     "id": "wilt",
     "label": "wilt",
-    "synonyms": [
-      "fade",
-      "wither",
-      "decline",
-      "diminish",
-      "droop"
-    ],
+    "synonyms": [],
     "related": [
       "shrivel",
       "absorption",
@@ -135841,12 +133767,7 @@
   {
     "id": "armored",
     "label": "armored",
-    "synonyms": [
-      "protected",
-      "fortified",
-      "shielded",
-      "encased"
-    ],
+    "synonyms": [],
     "related": [
       "fortitude",
       "shielded",
@@ -136140,16 +134061,6 @@
     ]
   },
   {
-    "id": "assumption",
-    "label": "Assumption",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "augmentation",
     "label": "Augmentation",
     "synonyms": [
@@ -136333,26 +134244,6 @@
       "disconnection",
       "separation"
     ]
-  },
-  {
-    "id": "beyond",
-    "label": "Beyond",
-    "synonyms": [
-      "transcend",
-      "surpass",
-      "exceed",
-      "overstep",
-      "outstrip"
-    ],
-    "related": [
-      "metaphysical"
-    ],
-    "opposites": [
-      "Within",
-      "Limit",
-      "within"
-    ],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "bounded",
@@ -137186,25 +135077,9 @@
     ]
   },
   {
-    "id": "conjecture",
-    "label": "Conjecture",
-    "synonyms": [],
-    "related": [
-      "hypothesis"
-    ],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "connect",
     "label": "connect",
-    "synonyms": [
-      "link",
-      "join",
-      "unite",
-      "bind",
-      "merge"
-    ],
+    "synonyms": [],
     "related": [
       "unite",
       "abandon",
@@ -137279,13 +135154,7 @@
   {
     "id": "connectedness",
     "label": "Connectedness",
-    "synonyms": [
-      "unity",
-      "linkage",
-      "coherence",
-      "interconnectedness",
-      "association"
-    ],
+    "synonyms": [],
     "related": [
       "absence",
       "absurdity",
@@ -138702,16 +136571,6 @@
     ]
   },
   {
-    "id": "derangement",
-    "label": "Derangement",
-    "synonyms": [
-      "madness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "diminution",
     "label": "Diminution",
     "synonyms": [
@@ -139228,13 +137087,7 @@
   {
     "id": "disjoint",
     "label": "disjoint",
-    "synonyms": [
-      "disconnected",
-      "separate",
-      "divided",
-      "isolated",
-      "detached"
-    ],
+    "synonyms": [],
     "related": [
       "abandon",
       "abandonment",
@@ -139445,13 +137298,7 @@
   {
     "id": "eclipse",
     "label": "Eclipse",
-    "synonyms": [
-      "occult",
-      "shade",
-      "cover",
-      "obscure",
-      "veil"
-    ],
+    "synonyms": [],
     "related": [
       "aftermath",
       "abandon",
@@ -139821,13 +137668,7 @@
   {
     "id": "endlessness",
     "label": "endlessness",
-    "synonyms": [
-      "infinity",
-      "eternity",
-      "boundlessness",
-      "perpetuity",
-      "continuity"
-    ],
+    "synonyms": [],
     "related": [
       "immortality",
       "perpetuity",
@@ -139957,13 +137798,7 @@
   {
     "id": "engage",
     "label": "engage",
-    "synonyms": [
-      "involve",
-      "connect",
-      "participate",
-      "interact",
-      "immerse"
-    ],
+    "synonyms": [],
     "related": [
       "confront",
       "immerse",
@@ -140176,16 +138011,6 @@
     ]
   },
   {
-    "id": "exceed",
-    "label": "Exceed",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "excellence",
     "label": "Excellence",
     "synonyms": [
@@ -140263,13 +138088,7 @@
   {
     "id": "exile",
     "label": "exile",
-    "synonyms": [
-      "banishment",
-      "exclusion",
-      "separation",
-      "ostracism",
-      "displacement"
-    ],
+    "synonyms": [],
     "related": [
       "abandon",
       "abandonment",
@@ -140460,13 +138279,7 @@
   {
     "id": "expressiveness",
     "label": "Expressiveness",
-    "synonyms": [
-      "expression",
-      "emphasis",
-      "impression",
-      "manifestation",
-      "communication"
-    ],
+    "synonyms": [],
     "related": [
       "absence",
       "absurdity",
@@ -140578,11 +138391,7 @@
   {
     "id": "facade",
     "label": "Facade",
-    "synonyms": [
-      "front",
-      "face",
-      "surface"
-    ],
+    "synonyms": [],
     "related": [
       "absence",
       "absurdity",
@@ -142301,27 +140110,6 @@
     ]
   },
   {
-    "id": "hypothesis",
-    "label": "Hypothesis",
-    "synonyms": [
-      "theory",
-      "proposal",
-      "assumption",
-      "premise",
-      "postulate"
-    ],
-    "related": [
-      "conjecture",
-      "speculative"
-    ],
-    "opposites": [
-      "Certainty",
-      "Conclusion",
-      "Fact"
-    ],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "identity",
     "label": "Identity",
     "synonyms": [
@@ -143095,16 +140883,6 @@
     ]
   },
   {
-    "id": "insanity",
-    "label": "Insanity",
-    "synonyms": [
-      "madness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "insight",
     "label": "Insight",
     "synonyms": [
@@ -143775,13 +141553,7 @@
   {
     "id": "limbo",
     "label": "Limbo",
-    "synonyms": [
-      "purgatory",
-      "void",
-      "interstice",
-      "suspension",
-      "stasis"
-    ],
+    "synonyms": [],
     "related": [
       "transience",
       "ephemerality",
@@ -143981,32 +141753,6 @@
       "subjectivity",
       "irrationality"
     ]
-  },
-  {
-    "id": "lunacy",
-    "label": "Lunacy",
-    "synonyms": [
-      "madness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
-    "id": "madness",
-    "label": "Madness",
-    "synonyms": [
-      "insanity",
-      "lunacy",
-      "derangement"
-    ],
-    "related": [],
-    "opposites": [
-      "Sanity",
-      "Rationality",
-      "sanity"
-    ],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "malice",
@@ -144219,16 +141965,6 @@
       "neglect",
       "disconnection"
     ]
-  },
-  {
-    "id": "metaphysical",
-    "label": "Metaphysical",
-    "synonyms": [],
-    "related": [
-      "beyond"
-    ],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "mobility",
@@ -144556,13 +142292,7 @@
   {
     "id": "mythos",
     "label": "Mythos",
-    "synonyms": [
-      "legend",
-      "tale",
-      "narrative",
-      "fable",
-      "story"
-    ],
+    "synonyms": [],
     "related": [
       "absence",
       "absurdity",
@@ -145422,26 +143152,6 @@
     ]
   },
   {
-    "id": "outstrip",
-    "label": "Outstrip",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
-    "id": "overstep",
-    "label": "Overstep",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "paradox",
     "label": "Paradox",
     "synonyms": [
@@ -146011,16 +143721,6 @@
     ]
   },
   {
-    "id": "postulate",
-    "label": "Postulate",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "potential",
     "label": "Potential",
     "synonyms": [
@@ -146050,16 +143750,6 @@
       "limitation",
       "failure"
     ]
-  },
-  {
-    "id": "premise",
-    "label": "Premise",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "presence",
@@ -146193,16 +143883,6 @@
       "regression",
       "decline"
     ]
-  },
-  {
-    "id": "proposal",
-    "label": "Proposal",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "purity",
@@ -146961,16 +144641,6 @@
     ]
   },
   {
-    "id": "sanity",
-    "label": "Sanity",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "madness"
-    ],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "scrap",
     "label": "scrap",
     "synonyms": [
@@ -147262,13 +144932,7 @@
   {
     "id": "shatter",
     "label": "shatter",
-    "synonyms": [
-      "break",
-      "fracture",
-      "crack",
-      "burst",
-      "splinter"
-    ],
+    "synonyms": [],
     "related": [
       "scrap",
       "glimpse",
@@ -147775,16 +145439,6 @@
     ]
   },
   {
-    "id": "speculative",
-    "label": "Speculative",
-    "synonyms": [],
-    "related": [
-      "hypothesis"
-    ],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "squalor",
     "label": "squalor",
     "synonyms": [
@@ -147872,13 +145526,7 @@
   {
     "id": "strength",
     "label": "strength",
-    "synonyms": [
-      "power",
-      "force",
-      "might",
-      "vigor",
-      "stamina"
-    ],
+    "synonyms": [],
     "related": [
       "solidity",
       "abandon",
@@ -148221,16 +145869,6 @@
     ]
   },
   {
-    "id": "surpass",
-    "label": "Surpass",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "suspension",
     "label": "Suspension",
     "synonyms": [
@@ -148505,16 +146143,6 @@
     ]
   },
   {
-    "id": "theory",
-    "label": "Theory",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "threshold",
     "label": "Threshold",
     "synonyms": [
@@ -148608,16 +146236,6 @@
       "transient",
       "fleeting"
     ]
-  },
-  {
-    "id": "transcend",
-    "label": "Transcend",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "transformation",
@@ -149034,13 +146652,7 @@
   {
     "id": "unveiling",
     "label": "Unveiling",
-    "synonyms": [
-      "reveal",
-      "disclose",
-      "expose",
-      "manifest",
-      "uncover"
-    ],
+    "synonyms": [],
     "related": [
       "Clarity",
       "Revelation",
@@ -149448,25 +147060,9 @@
     ]
   },
   {
-    "id": "within",
-    "label": "Within",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "beyond"
-    ],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "worthless",
     "label": "worthless",
-    "synonyms": [
-      "valueless",
-      "futile",
-      "empty",
-      "insignificant",
-      "trivial"
-    ],
+    "synonyms": [],
     "related": [
       "insipid",
       "abandon",
@@ -149632,13 +147228,7 @@
   {
     "id": "adaptation",
     "label": "Adaptation",
-    "synonyms": [
-      "adjustment",
-      "modification",
-      "alteration",
-      "conversion",
-      "transformation"
-    ],
+    "synonyms": [],
     "related": [
       "flexibility",
       "integration",
@@ -150573,26 +148163,6 @@
     ]
   },
   {
-    "id": "blues",
-    "label": "Blues",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
-    "id": "bohemian",
-    "label": "Bohemian",
-    "synonyms": [],
-    "related": [
-      "indie"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "bottom",
     "label": "bottom",
     "synonyms": [
@@ -151015,12 +148585,7 @@
   {
     "id": "clueless",
     "label": "clueless",
-    "synonyms": [
-      "ignorant",
-      "unaware",
-      "naive",
-      "oblivious"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adaptation",
@@ -151402,13 +148967,7 @@
   {
     "id": "companion",
     "label": "Companion",
-    "synonyms": [
-      "partner",
-      "associate",
-      "ally",
-      "friend",
-      "compadre"
-    ],
+    "synonyms": [],
     "related": [
       "community",
       "connection",
@@ -151697,13 +149256,7 @@
   {
     "id": "conscious",
     "label": "Conscious",
-    "synonyms": [
-      "aware",
-      "mindful",
-      "deliberate",
-      "intentional",
-      "cognizant"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adoption",
@@ -151899,8 +149452,7 @@
     "id": "consumerism",
     "label": "Consumerism",
     "synonyms": [
-      "consumerisms",
-      "Consumer"
+      "consumerisms"
     ],
     "related": [
       "Diversity",
@@ -152790,13 +150342,7 @@
   {
     "id": "digitization",
     "label": "Digitization",
-    "synonyms": [
-      "digital",
-      "conversion",
-      "encoding",
-      "transformation",
-      "automation"
-    ],
+    "synonyms": [],
     "related": [
       "interactivity",
       "interface",
@@ -153657,13 +151203,7 @@
   {
     "id": "embrace",
     "label": "embrace",
-    "synonyms": [
-      "hug",
-      "welcome",
-      "accept",
-      "include",
-      "support"
-    ],
+    "synonyms": [],
     "related": [
       "approval",
       "activity",
@@ -154089,13 +151629,7 @@
   {
     "id": "expire",
     "label": "expire",
-    "synonyms": [
-      "end",
-      "terminate",
-      "cease",
-      "expire",
-      "finish"
-    ],
+    "synonyms": [],
     "related": [
       "consume",
       "activity",
@@ -154496,16 +152030,6 @@
     ]
   },
   {
-    "id": "fashionable",
-    "label": "Fashionable",
-    "synonyms": [],
-    "related": [
-      "trendsetting"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "feminine",
     "label": "Feminine",
     "synonyms": [
@@ -154548,8 +152072,7 @@
       "investment",
       "Finances",
       "financed",
-      "financer",
-      "Banking"
+      "financer"
     ],
     "related": [
       "professional",
@@ -154992,16 +152515,6 @@
       "routine",
       "commitment"
     ]
-  },
-  {
-    "id": "funk",
-    "label": "Funk",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "futile",
@@ -155618,16 +153131,6 @@
       "casual",
       "relaxed"
     ]
-  },
-  {
-    "id": "groove",
-    "label": "Groove",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "harm",
@@ -156418,16 +153921,6 @@
     ]
   },
   {
-    "id": "improvisational",
-    "label": "Improvisational",
-    "synonyms": [],
-    "related": [
-      "jazz"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "inclusion",
     "label": "Inclusion",
     "synonyms": [
@@ -156516,21 +154009,6 @@
     "opposites": [
       "Premium"
     ]
-  },
-  {
-    "id": "indie",
-    "label": "Indie",
-    "synonyms": [],
-    "related": [
-      "bohemian",
-      "quirky"
-    ],
-    "opposites": [
-      "Mainstream",
-      "Commercial",
-      "popular"
-    ],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "individual",
@@ -157070,13 +154548,7 @@
   {
     "id": "invention",
     "label": "invention",
-    "synonyms": [
-      "creation",
-      "innovation",
-      "discovery",
-      "design",
-      "development"
-    ],
+    "synonyms": [],
     "related": [
       "techwear",
       "activity",
@@ -157247,25 +154719,6 @@
     ]
   },
   {
-    "id": "jazz",
-    "label": "Jazz",
-    "synonyms": [
-      "swing",
-      "blues",
-      "funk",
-      "groove"
-    ],
-    "related": [
-      "improvisational",
-      "rhythmic"
-    ],
-    "opposites": [
-      "Classical",
-      "Pop"
-    ],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "knowledge",
     "label": "Knowledge",
     "synonyms": [
@@ -157373,13 +154826,7 @@
   {
     "id": "language",
     "label": "Language",
-    "synonyms": [
-      "tongue",
-      "speech",
-      "lexicon",
-      "dialect",
-      "lingo"
-    ],
+    "synonyms": [],
     "related": [
       "symbolism",
       "narrative",
@@ -157495,16 +154942,6 @@
       "engaged",
       "driven"
     ]
-  },
-  {
-    "id": "leading",
-    "label": "Leading",
-    "synonyms": [
-      "trendsetting"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "leisure",
@@ -157881,11 +155318,7 @@
   {
     "id": "manual",
     "label": "manual",
-    "synonyms": [
-      "handbook",
-      "guide",
-      "reference"
-    ],
+    "synonyms": [],
     "related": [
       "pedestrian",
       "Craft",
@@ -158146,13 +155579,7 @@
   {
     "id": "mindless",
     "label": "mindless",
-    "synonyms": [
-      "unthinking",
-      "automatic",
-      "thoughtless",
-      "mindless",
-      "simplistic"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adaptation",
@@ -158250,16 +155677,6 @@
     ]
   },
   {
-    "id": "modish",
-    "label": "Modish",
-    "synonyms": [],
-    "related": [
-      "trendsetting"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "monoculture",
     "label": "monoculture",
     "synonyms": [
@@ -158344,13 +155761,7 @@
   {
     "id": "monopoly",
     "label": "monopoly",
-    "synonyms": [
-      "control",
-      "dominion",
-      "ownership",
-      "supremacy",
-      "hegemony"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adaptation",
@@ -158807,16 +156218,6 @@
     ]
   },
   {
-    "id": "outdated",
-    "label": "Outdated",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "trendsetting"
-    ],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "pain",
     "label": "pain",
     "synonyms": [
@@ -159055,13 +156456,7 @@
   {
     "id": "pause",
     "label": "Pause",
-    "synonyms": [
-      "break",
-      "halt",
-      "stop",
-      "suspend",
-      "interruption"
-    ],
+    "synonyms": [],
     "related": [
       "reflection",
       "rest",
@@ -159207,16 +156602,6 @@
     ]
   },
   {
-    "id": "pioneering",
-    "label": "Pioneering",
-    "synonyms": [
-      "trendsetting"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "planning",
     "label": "Planning",
     "synonyms": [
@@ -159327,16 +156712,6 @@
       "nature",
       "wholeness"
     ]
-  },
-  {
-    "id": "popular",
-    "label": "Popular",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "indie"
-    ],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "posthuman",
@@ -159849,25 +157224,9 @@
     ]
   },
   {
-    "id": "quirky",
-    "label": "Quirky",
-    "synonyms": [],
-    "related": [
-      "indie"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "readiness",
     "label": "Readiness",
-    "synonyms": [
-      "prepared",
-      "primed",
-      "eager",
-      "set",
-      "available"
-    ],
+    "synonyms": [],
     "related": [
       "engagement",
       "inclusivity",
@@ -160381,13 +157740,7 @@
   {
     "id": "resistance",
     "label": "resistance",
-    "synonyms": [
-      "opposition",
-      "defiance",
-      "struggle",
-      "barrier",
-      "blockage"
-    ],
+    "synonyms": [],
     "related": [
       "fixation",
       "activity",
@@ -160603,25 +157956,9 @@
     ]
   },
   {
-    "id": "rhythmic",
-    "label": "Rhythmic",
-    "synonyms": [],
-    "related": [
-      "jazz"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "rush",
     "label": "rush",
-    "synonyms": [
-      "hurry",
-      "speed",
-      "flurry",
-      "dash",
-      "scurry"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adaptation",
@@ -161830,13 +159167,7 @@
   {
     "id": "stress",
     "label": "stress",
-    "synonyms": [
-      "tension",
-      "strain",
-      "pressure",
-      "anxiety",
-      "distress"
-    ],
+    "synonyms": [],
     "related": [
       "grind",
       "demand",
@@ -162039,11 +159370,7 @@
   {
     "id": "survival",
     "label": "Survival",
-    "synonyms": [
-      "endurance",
-      "persistence",
-      "continuance"
-    ],
+    "synonyms": [],
     "related": [
       "adaptation",
       "perseverance",
@@ -162111,16 +159438,6 @@
     "opposites": [
       "Premium"
     ]
-  },
-  {
-    "id": "swing",
-    "label": "Swing",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "synergy",
@@ -162244,8 +159561,7 @@
       "Technologic",
       "Technological",
       "technologiful",
-      "technologys",
-      "Biotechnology"
+      "technologys"
     ],
     "related": [
       "Consumerism",
@@ -162513,24 +159829,6 @@
       "obsolete",
       "timeless"
     ]
-  },
-  {
-    "id": "trendsetting",
-    "label": "Trendsetting",
-    "synonyms": [
-      "pioneering",
-      "leading"
-    ],
-    "related": [
-      "modish",
-      "fashionable"
-    ],
-    "opposites": [
-      "Following",
-      "Imitation",
-      "outdated"
-    ],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "trustworthy",
@@ -162802,11 +160100,7 @@
   {
     "id": "unmark",
     "label": "unmark",
-    "synonyms": [
-      "erase",
-      "remove",
-      "delete"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adaptation",
@@ -163016,11 +160310,7 @@
   {
     "id": "user-centric",
     "label": "User-Centric",
-    "synonyms": [
-      "userfocused",
-      "usertested",
-      "userfriendly"
-    ],
+    "synonyms": [],
     "related": [
       "activity",
       "adaptation",
@@ -163137,13 +160427,7 @@
   {
     "id": "virtualization",
     "label": "Virtualization",
-    "synonyms": [
-      "simulation",
-      "imitation",
-      "replication",
-      "emulation",
-      "duplication"
-    ],
+    "synonyms": [],
     "related": [
       "cyberspace",
       "interactivity",
@@ -163634,13 +160918,7 @@
   {
     "id": "absorbent",
     "label": "absorbent",
-    "synonyms": [
-      "porous",
-      "sorbent",
-      "spongy",
-      "fuzzy",
-      "soft"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -164236,8 +161514,7 @@
     "id": "clear",
     "label": "Clear",
     "synonyms": [
-      "clears",
-      "Nuclear"
+      "clears"
     ],
     "related": [
       "acoustic",
@@ -164268,13 +161545,7 @@
   {
     "id": "cloudy",
     "label": "cloudy",
-    "synonyms": [
-      "hazy",
-      "misty",
-      "overcast",
-      "blurred",
-      "dull"
-    ],
+    "synonyms": [],
     "related": [
       "absorbent",
       "acoustic",
@@ -164418,13 +161689,7 @@
   {
     "id": "craggy",
     "label": "Craggy",
-    "synonyms": [
-      "rugged",
-      "jagged",
-      "rough",
-      "rocky",
-      "bumpy"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -164480,21 +161745,6 @@
       "even",
       "polished"
     ]
-  },
-  {
-    "id": "creamy",
-    "label": "Creamy",
-    "synonyms": [
-      "velvety",
-      "creamy",
-      "silky"
-    ],
-    "related": [],
-    "opposites": [
-      "Rough",
-      "Grainy"
-    ],
-    "category": "Texture & Materiality"
   },
   {
     "id": "crisp",
@@ -165125,13 +162375,7 @@
   {
     "id": "flatness",
     "label": "Flatness",
-    "synonyms": [
-      "smooth",
-      "level",
-      "plain",
-      "even",
-      "uniform"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -165311,13 +162555,7 @@
   {
     "id": "foliage",
     "label": "Foliage",
-    "synonyms": [
-      "leaves",
-      "greens",
-      "vegetation",
-      "planting",
-      "canopy"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -165960,13 +163198,7 @@
   {
     "id": "hard",
     "label": "Hard",
-    "synonyms": [
-      "solid",
-      "rigid",
-      "tough",
-      "sturdy",
-      "dense"
-    ],
+    "synonyms": [],
     "related": [
       "texture",
       "materiality",
@@ -167048,12 +164280,7 @@
   {
     "id": "pillow",
     "label": "Pillow",
-    "synonyms": [
-      "cushion",
-      "pad",
-      "rest",
-      "support"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -167898,13 +165125,7 @@
   {
     "id": "rusty",
     "label": "rusty",
-    "synonyms": [
-      "corroded",
-      "weathered",
-      "oxidized",
-      "aged",
-      "rusted"
-    ],
+    "synonyms": [],
     "related": [
       "absorbent",
       "acoustic",
@@ -168072,13 +165293,7 @@
   {
     "id": "scratched",
     "label": "Scratched",
-    "synonyms": [
-      "etched",
-      "scuffed",
-      "marked",
-      "grooved",
-      "abraded"
-    ],
+    "synonyms": [],
     "related": [
       "absorbent",
       "acoustic",
@@ -168287,13 +165502,7 @@
   {
     "id": "shiny",
     "label": "shiny",
-    "synonyms": [
-      "glossy",
-      "luminous",
-      "gleaming",
-      "radiant",
-      "polished"
-    ],
+    "synonyms": [],
     "related": [
       "reflectivity",
       "absorbent",
@@ -168483,16 +165692,6 @@
     ]
   },
   {
-    "id": "silky",
-    "label": "Silky",
-    "synonyms": [
-      "creamy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Texture & Materiality"
-  },
-  {
     "id": "simulated",
     "label": "Simulated",
     "synonyms": [
@@ -168642,13 +165841,7 @@
   {
     "id": "smoky",
     "label": "Smoky",
-    "synonyms": [
-      "hazy",
-      "misty",
-      "cloudy",
-      "blurred",
-      "veiled"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -168731,13 +165924,7 @@
   {
     "id": "smoothness",
     "label": "Smoothness",
-    "synonyms": [
-      "sleek",
-      "soft",
-      "silky",
-      "glossy",
-      "flat"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -169450,13 +166637,7 @@
   {
     "id": "thick",
     "label": "thick",
-    "synonyms": [
-      "dense",
-      "broad",
-      "heavy",
-      "solid",
-      "substantial"
-    ],
+    "synonyms": [],
     "related": [
       "weighty",
       "absorbent",
@@ -170016,16 +167197,6 @@
     ]
   },
   {
-    "id": "velvety",
-    "label": "Velvety",
-    "synonyms": [
-      "creamy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Texture & Materiality"
-  },
-  {
     "id": "viscous",
     "label": "Viscous",
     "synonyms": [
@@ -170289,13 +167460,7 @@
   {
     "id": "wire",
     "label": "Wire",
-    "synonyms": [
-      "wire",
-      "strand",
-      "cable",
-      "thread",
-      "line"
-    ],
+    "synonyms": [],
     "related": [
       "acoustic",
       "baked",
@@ -170966,16 +168131,6 @@
     ]
   },
   {
-    "id": "beachy",
-    "label": "Beachy",
-    "synonyms": [
-      "coastal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "biographical",
     "label": "Biographical",
     "synonyms": [
@@ -171594,21 +168749,6 @@
     ]
   },
   {
-    "id": "coastal",
-    "label": "Coastal",
-    "synonyms": [
-      "beachy"
-    ],
-    "related": [
-      "tropical"
-    ],
-    "opposites": [
-      "Urban",
-      "Industrial"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "coded",
     "label": "Coded",
     "synonyms": [
@@ -171896,13 +169036,7 @@
   {
     "id": "desolate",
     "label": "Desolate",
-    "synonyms": [
-      "bleak",
-      "barren",
-      "forlorn",
-      "dreary",
-      "empty"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "monochrome",
@@ -172037,13 +169171,7 @@
   {
     "id": "downcast",
     "label": "downcast",
-    "synonyms": [
-      "dejected",
-      "sorrowful",
-      "melancholy",
-      "gloomy",
-      "dismal"
-    ],
+    "synonyms": [],
     "related": [
       "agitated",
       "ai",
@@ -174032,23 +171160,6 @@
     ]
   },
   {
-    "id": "investigative",
-    "label": "Investigative",
-    "synonyms": [
-      "investigative"
-    ],
-    "related": [],
-    "opposites": [
-      "Obvious",
-      "Transparent",
-      "Known",
-      "Casual",
-      "unobservant",
-      "uninquisitive"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "irreverent",
     "label": "Irreverent",
     "synonyms": [
@@ -174138,17 +171249,6 @@
       "conventional",
       "formal",
       "sincere"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
-    "id": "laid-back",
-    "label": "Laid-back",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "Tense",
-      "Anxious"
     ],
     "category": "Vibe / Mood"
   },
@@ -175327,13 +172427,7 @@
   {
     "id": "ponderous",
     "label": "Ponderous",
-    "synonyms": [
-      "heavy",
-      "weighty",
-      "slow",
-      "ponderous",
-      "bulky"
-    ],
+    "synonyms": [],
     "related": [
       "ai",
       "ambient",
@@ -175439,12 +172533,7 @@
   {
     "id": "prelude",
     "label": "Prelude",
-    "synonyms": [
-      "intro",
-      "opening",
-      "prologue",
-      "foreword"
-    ],
+    "synonyms": [],
     "related": [
       "anticipation",
       "ambiance",
@@ -176049,13 +173138,7 @@
   {
     "id": "shouting",
     "label": "shouting",
-    "synonyms": [
-      "yelling",
-      "screaming",
-      "calling",
-      "hollering",
-      "blaring"
-    ],
+    "synonyms": [],
     "related": [
       "blaring",
       "agitated",
@@ -176131,13 +173214,7 @@
   {
     "id": "silent",
     "label": "Silent",
-    "synonyms": [
-      "quiet",
-      "calm",
-      "still",
-      "hushed",
-      "mute"
-    ],
+    "synonyms": [],
     "related": [
       "minimalism",
       "serenity",
@@ -177057,16 +174134,6 @@
     ]
   },
   {
-    "id": "tropical",
-    "label": "Tropical",
-    "synonyms": [],
-    "related": [
-      "coastal"
-    ],
-    "opposites": [],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "unhinged",
     "label": "unhinged",
     "synonyms": [
@@ -177146,26 +174213,6 @@
       "ordinary",
       "familiar"
     ]
-  },
-  {
-    "id": "uninquisitive",
-    "label": "Uninquisitive",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "investigative"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
-    "id": "unobservant",
-    "label": "Unobservant",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "investigative"
-    ],
-    "category": "Vibe / Mood"
   },
   {
     "id": "urban",
@@ -177269,12 +174316,7 @@
   {
     "id": "vanguard",
     "label": "Vanguard",
-    "synonyms": [
-      "forefront",
-      "pioneering",
-      "innovative",
-      "trailblazer"
-    ],
+    "synonyms": [],
     "related": [
       "ai",
       "ambient",

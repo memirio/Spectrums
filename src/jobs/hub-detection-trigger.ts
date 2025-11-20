@@ -66,13 +66,26 @@ export async function triggerHubDetectionForImages(
   }
 
   // Debounce: schedule to run after delay
+  // Use unref() so the timeout doesn't keep the process alive (allows script to exit)
   console.log(`[hub-detection-trigger] Scheduling incremental hub detection for ${pendingImageIds.length} image(s) in ${HUB_DETECTION_DEBOUNCE_MS / 1000}s`)
   hubDetectionTimeout = setTimeout(() => {
     hubDetectionTimeout = null
     const idsToProcess = [...pendingImageIds]
     pendingImageIds = []
-    runHubDetectionForImagesAsync(idsToProcess, topN, thresholdMultiplier)
+    // Fire and forget - don't await, run in background
+    // Use setImmediate to ensure it runs in next tick and doesn't block
+    setImmediate(() => {
+      runHubDetectionForImagesAsync(idsToProcess, topN, thresholdMultiplier).catch((err) => {
+        console.error(`[hub-detection-trigger] Background hub detection error: ${err.message}`)
+      })
+    })
   }, HUB_DETECTION_DEBOUNCE_MS)
+  
+  // Unref the timeout so it doesn't keep the process alive
+  // This allows scripts to exit even if hub detection is scheduled
+  if (hubDetectionTimeout && typeof hubDetectionTimeout.unref === 'function') {
+    hubDetectionTimeout.unref()
+  }
 }
 
 /**
@@ -145,6 +158,11 @@ export async function triggerHubDetection(options: {
       triggerHubDetection({ force: false, clearExisting, topN, thresholdMultiplier })
     }, remainingMs)
     
+    // Unref so it doesn't keep process alive
+    if (hubDetectionTimeout && typeof hubDetectionTimeout.unref === 'function') {
+      hubDetectionTimeout.unref()
+    }
+    
     return
   }
 
@@ -167,6 +185,11 @@ export async function triggerHubDetection(options: {
     hubDetectionTimeout = null
     runHubDetectionAsync(clearExisting, topN, thresholdMultiplier)
   }, HUB_DETECTION_DEBOUNCE_MS)
+  
+  // Unref so it doesn't keep process alive (allows scripts to exit)
+  if (hubDetectionTimeout && typeof hubDetectionTimeout.unref === 'function') {
+    hubDetectionTimeout.unref()
+  }
 }
 
 /**

@@ -22,7 +22,9 @@ interface Site {
 
 interface ConceptSuggestion {
   id: string
-  label: string
+  label: string // The concept label to use for search
+  displayText?: string // What to display in the UI (synonym or label)
+  isSynonym?: boolean // Whether this is a synonym suggestion
   synonyms: string[]
 }
 
@@ -159,25 +161,40 @@ export default function Gallery() {
   }
 
   const handleSuggestionSelect = (suggestion: ConceptSuggestion) => {
-    // Use the concept label (not ID) for search
+    // Use the concept label for search (even if displayText is a synonym)
+    // This ensures synonyms map to their parent concept
     addConcept(suggestion.label)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (conceptSuggestions.length > 0) {
       if (e.key === 'Enter') {
-        // Enter should trigger exact search (add exact input value), not select suggestion
         e.preventDefault()
-        if (inputValue.trim()) {
+        // If a suggestion is highlighted, select it; otherwise add exact input value
+        if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < conceptSuggestions.length) {
+          handleSuggestionSelect(conceptSuggestions[selectedSuggestionIndex])
+        } else if (inputValue.trim()) {
           addConcept(inputValue.trim())
           setShowSuggestions(false)
           setConceptSuggestions([])
           setSelectedSuggestionIndex(-1)
         }
       } else if (e.key === 'Tab') {
-        // Tab to select suggestion
+        // Tab to select first suggestion
         e.preventDefault()
-        handleSuggestionSelect(conceptSuggestions[0])
+        if (conceptSuggestions.length > 0) {
+          handleSuggestionSelect(conceptSuggestions[0])
+        }
+      } else if (e.key === 'ArrowDown') {
+        // Arrow down to navigate suggestions
+        e.preventDefault()
+        setSelectedSuggestionIndex(prev => 
+          prev < conceptSuggestions.length - 1 ? prev + 1 : prev
+        )
+      } else if (e.key === 'ArrowUp') {
+        // Arrow up to navigate suggestions
+        e.preventDefault()
+        setSelectedSuggestionIndex(prev => prev > 0 ? prev - 1 : -1)
       } else if (e.key === ',' && inputValue.trim()) {
         e.preventDefault()
         addConcept(inputValue.trim().replace(',', ''))
@@ -362,17 +379,20 @@ export default function Gallery() {
                 
                 {/* Autocomplete suggestions dropdown */}
                 {showSuggestions && conceptSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                    <button
-                      onClick={() => handleSuggestionSelect(conceptSuggestions[0])}
-                      className={`w-full px-3 py-2 text-left text-sm transition-colors ${
-                        selectedSuggestionIndex === 0
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {conceptSuggestions[0].label}
-                    </button>
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                    {conceptSuggestions.map((suggestion, index) => (
+                      <button
+                        key={`${suggestion.id}-${index}`}
+                        onClick={() => handleSuggestionSelect(suggestion)}
+                        className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                          selectedSuggestionIndex === index
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {suggestion.displayText || suggestion.label}
+                      </button>
+                    ))}
                   </div>
                 )}
                 

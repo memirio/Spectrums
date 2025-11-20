@@ -97,6 +97,7 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
   console.log(`[tag-new-concepts] Embedded ${conceptEmbeddings.size} new concept(s)`)
 
   // Get all active images with embeddings
+  // Use a simpler query to avoid Prisma type issues
   const sites = await prisma.site.findMany({
     where: {
       imageUrl: { not: null },
@@ -104,7 +105,6 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
     include: {
       images: {
         where: {
-          url: { not: null as any },
           embedding: { isNot: null },
         },
         include: {
@@ -113,6 +113,11 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
       },
     },
   })
+  
+  // Filter out images without URLs in JavaScript (simpler than Prisma query)
+  for (const site of sites) {
+    site.images = site.images.filter((img: any) => img.url != null)
+  }
 
   const images: Array<{ id: string; embedding: { vector: any } }> = []
   for (const site of sites) {

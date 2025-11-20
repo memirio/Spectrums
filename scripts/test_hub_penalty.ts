@@ -79,11 +79,11 @@ async function main() {
     
     if (hubScore !== null && hubScore > 0.05) {
       // Base penalty from margin: how much higher this hub is compared to query averages
-      const marginPenaltyFactor = 5.0 // Reduced from 6.0
+      const marginPenaltyFactor = 4.8 // Reduced from 5.0
       const marginPenalty = Math.max(0, avgCosineSimilarityMargin * marginPenaltyFactor)
       
       // Frequency penalty: more frequently appearing hubs get heavier penalty
-      const frequencyPenaltyFactor = 0.10 // Reduced from 0.12
+      const frequencyPenaltyFactor = 0.09 // Reduced from 0.10
       
       // Reduce frequency penalty when margin is negative (performing below average)
       // If margin is negative, reduce frequency penalty by 50% (multiply by 0.5)
@@ -112,10 +112,10 @@ async function main() {
       ...item,
       hubPenaltyMultiplier,
       adjustedBaseScore,
-      marginPenalty: hubScore !== null && hubScore > 0.05 ? Math.max(0, avgCosineSimilarityMargin * 5.0) : 0,
-      frequencyPenalty: hubScore !== null && hubScore > 0.05 ? hubScore * 0.10 * (avgCosineSimilarityMargin < 0 ? 0.5 : 1.0) : 0,
-      absolutePenalty: hubScore !== null && hubScore > 0.05 ? (Math.max(0, avgCosineSimilarityMargin * 5.0) + hubScore * 0.10 * (avgCosineSimilarityMargin < 0 ? 0.5 : 1.0)) : 0,
-      penaltyPercentage: hubScore !== null && hubScore > 0.05 && item.baseScore > 0 ? Math.min((Math.max(0, avgCosineSimilarityMargin * 5.0) + hubScore * 0.10 * (avgCosineSimilarityMargin < 0 ? 0.5 : 1.0)) / item.baseScore, 0.2) : 0,
+      marginPenalty: hubScore !== null && hubScore > 0.05 ? Math.max(0, avgCosineSimilarityMargin * 4.8) : 0,
+      frequencyPenalty: hubScore !== null && hubScore > 0.05 ? hubScore * 0.09 * (avgCosineSimilarityMargin < 0 ? 0.5 : 1.0) : 0,
+      absolutePenalty: hubScore !== null && hubScore > 0.05 ? (Math.max(0, avgCosineSimilarityMargin * 4.8) + hubScore * 0.09 * (avgCosineSimilarityMargin < 0 ? 0.5 : 1.0)) : 0,
+      penaltyPercentage: hubScore !== null && hubScore > 0.05 && item.baseScore > 0 ? Math.min((Math.max(0, avgCosineSimilarityMargin * 4.8) + hubScore * 0.09 * (avgCosineSimilarityMargin < 0 ? 0.5 : 1.0)) / item.baseScore, 0.2) : 0,
       finalScore,
     }
   })

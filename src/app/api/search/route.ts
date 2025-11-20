@@ -95,36 +95,57 @@ export async function GET(request: NextRequest) {
   try {
     console.log(`[search] Request received: ${request.url}`)
     const { searchParams } = new URL(request.url)
-    const q = searchParams.get('q') || ''
+    const rawQuery = searchParams.get('q') || ''
+    // Normalize query to lowercase for case-insensitive search
+    const q = rawQuery.trim().toLowerCase()
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
-    if (!q.trim()) return NextResponse.json({ images: [] })
+    if (!q) return NextResponse.json({ images: [] })
     
-    console.log(`[search] Processing query: "${q.trim()}"`)
+    console.log(`[search] Processing query: "${q}" (original: "${rawQuery.trim()}")`)
 
     if (zeroShot) {
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
       // 1. Compute query embedding (with expansion for abstract terms)
-      const isAbstract = isAbstractQuery(q.trim())
+      // Query is already normalized to lowercase
+      
+      // Count words in query
+      const wordCount = q.trim().split(/\s+/).filter(w => w.length > 0).length
+      const useExpansion = wordCount <= 2 // Only use expansion for queries with 2 words or less
+      
+      let isAbstract = false
+      if (useExpansion) {
+        // Only check if abstract if query is 2 words or less
+        isAbstract = isAbstractQuery(q)
+      } else {
+        // For queries with more than 2 words, skip expansion
+        console.log(`[search] Query has ${wordCount} words (>2), skipping expansion and using exact query`)
+        isAbstract = false
+      }
+      
       const usePooling = searchParams.get('pooling') || 'softmax' // 'max' or 'softmax', default 'softmax'
       const poolingTemp = parseFloat(searchParams.get('pooling_temp') || '0.05')
       
-      console.log(`[search] Query "${q.trim()}" isAbstract: ${isAbstract}, pooling: ${usePooling}`)
+      console.log(`[search] Query "${q}" wordCount: ${wordCount}, useExpansion: ${useExpansion}, isAbstract: ${isAbstract}, pooling: ${usePooling}`)
       
       let queryVec: number[] | null = null
       let expansionEmbeddings: number[][] | null = null
-      const isExpanded = isAbstract
+      const isExpanded = isAbstract && useExpansion
       
-      if (isAbstract) {
+      if (isExpanded) {
         // Use max/softmax pooling for expansions (OR semantics)
         console.log(`[search] Using expansion embeddings with ${usePooling} pooling`)
-        expansionEmbeddings = await getExpansionEmbeddings(q.trim())
+        expansionEmbeddings = await getExpansionEmbeddings(q)
         // For backward compatibility, also compute averaged embedding (used in debug mode)
-        queryVec = await expandAndEmbedQuery(q.trim())
+        queryVec = await expandAndEmbedQuery(q)
       } else {
-        // Direct embedding for concrete queries
-        console.log(`[search] Using direct embedding for concrete term`)
-        const [vec] = await embedTextBatch([q.trim()])
+        // Direct embedding for concrete queries or queries with >2 words
+        if (!useExpansion) {
+          console.log(`[search] Using direct embedding for multi-word query (${wordCount} words)`)
+        } else {
+          console.log(`[search] Using direct embedding for concrete term`)
+        }
+        const [vec] = await embedTextBatch([q])
         queryVec = vec
       }
       const dim = queryVec.length
@@ -246,8 +267,8 @@ export async function GET(request: NextRequest) {
       const remaining = ranked.slice(TOP_K_FOR_RERANK)
       
       // 1. Find relevant concepts (string match only - simpler and more precise)
-      const queryLower = q.trim().toLowerCase()
-      const queryTokens = queryLower.split(/[\s,]+/).filter(Boolean)
+      // Query is already normalized to lowercase
+      const queryTokens = q.split(/[\s,]+/).filter(Boolean)
       const allConcepts = await prisma.concept.findMany()
       
       const relevantConceptIds = new Set<string>()
@@ -255,8 +276,8 @@ export async function GET(request: NextRequest) {
         const conceptLower = concept.label.toLowerCase()
         const conceptIdLower = concept.id.toLowerCase()
         
-        // Exact match
-        if (conceptLower === queryLower || conceptIdLower === queryLower) {
+        // Exact match (query is already lowercase)
+        if (conceptLower === q || conceptIdLower === q) {
           relevantConceptIds.add(concept.id)
         }
         // Token match (only if token is substantial, not single letters)
@@ -388,15 +409,15 @@ export async function GET(request: NextRequest) {
           // Goal: Drop hubs by as many positions as they gained from being hubs
           if (hubScore > 0.05) {
             // Base penalty from margin: how much higher this hub is compared to query averages
-            // Lighter penalty to reduce hub advantage without over-penalizing
-            const marginPenaltyFactor = 5.0 // Reduced from 6.0
+            // Lightened penalty to reduce hub advantage without over-penalizing
+            const marginPenaltyFactor = 4.8 // Reduced from 5.0
             const marginPenalty = Math.max(0, avgCosineSimilarityMargin * marginPenaltyFactor)
             
             // Frequency penalty: more frequently appearing hubs get heavier penalty
-            // Lighter penalty to reduce frequency advantage
-            // For hubScore = 0.5 (appears in 50% of queries), frequency penalty = 0.5 * 0.10 = 0.05
-            // For hubScore = 0.98 (appears in 98% of queries), frequency penalty = 0.98 * 0.10 = 0.098
-            const frequencyPenaltyFactor = 0.10 // Reduced from 0.12
+            // Lightened penalty to reduce frequency advantage
+            // For hubScore = 0.5 (appears in 50% of queries), frequency penalty = 0.5 * 0.09 = 0.045
+            // For hubScore = 0.98 (appears in 98% of queries), frequency penalty = 0.98 * 0.09 = 0.088
+            const frequencyPenaltyFactor = 0.09 // Reduced from 0.10
             
             // Reduce frequency penalty when margin is negative (performing below average)
             // If margin is negative, reduce frequency penalty by 50% (multiply by 0.5)
@@ -508,7 +529,7 @@ export async function GET(request: NextRequest) {
         const normalizedHubScore = hubScore !== null ? Math.min(hubScore, 1.0) : undefined // Already 0-1, but ensure cap
         
         return {
-          query: q.trim(),
+          query: q,
           queryEmbedding: queryVec,
           imageId: item.imageId,
           position,
@@ -566,6 +587,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fallback to old concept-expansion logic (if zeroShot is false)
+    // Query is already normalized to lowercase
     const rawTokens = q.split(/[,+\s]+/).map(t => t.trim()).filter(Boolean)
     if (rawTokens.length === 0) return NextResponse.json({ images: [] })
 

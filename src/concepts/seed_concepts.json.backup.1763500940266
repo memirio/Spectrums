@@ -1583,8 +1583,7 @@
       "agronomy",
       "cultivation",
       "husbandry",
-      "tillage",
-      "Harvest"
+      "tillage"
     ],
     "related": [
       "sustainability",
@@ -4043,13 +4042,7 @@
   {
     "id": "basis",
     "label": "basis",
-    "synonyms": [
-      "foundation",
-      "basis",
-      "ground",
-      "core",
-      "root"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -4776,13 +4769,7 @@
       "limitation"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "limitless",
-      "infinite",
-      "unbounded",
-      "expansive",
-      "vast"
-    ],
+    "synonyms": [],
     "related": [
       "wanderlust",
       "journey",
@@ -5865,13 +5852,7 @@
       "formality"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "informal",
-      "disorder",
-      "random",
-      "spontaneous",
-      "unstructured"
-    ],
+    "synonyms": [],
     "related": [
       "eclectic",
       "spontaneity",
@@ -6161,13 +6142,7 @@
       "solutions"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "obstacles",
-      "difficulties",
-      "tests",
-      "trials",
-      "barriers"
-    ],
+    "synonyms": [],
     "related": [
       "tension",
       "contrast",
@@ -6377,13 +6352,7 @@
   {
     "id": "cherish",
     "label": "cherish",
-    "synonyms": [
-      "treasure",
-      "value",
-      "honor",
-      "esteem",
-      "venerate"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -6511,13 +6480,7 @@
       "heated"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "cool",
-      "sharp",
-      "clear",
-      "fresh",
-      "bright"
-    ],
+    "synonyms": [],
     "related": [
       "harmony",
       "balance",
@@ -6803,8 +6766,7 @@
       "refined",
       "sophisticated",
       "stylish",
-      "upscale",
-      "Opulence"
+      "upscale"
     ],
     "related": [
       "luxury",
@@ -7719,13 +7681,7 @@
       "anti"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "commercial",
-      "market",
-      "promotional",
-      "retail",
-      "advertising"
-    ],
+    "synonyms": [],
     "related": [
       "branding",
       "advertising",
@@ -8010,13 +7966,7 @@
       "vacant"
     ],
     "category": "Aesthetic / Formal",
-    "synonyms": [
-      "totality",
-      "wholeness",
-      "realization",
-      "fulfillment",
-      "integration"
-    ],
+    "synonyms": [],
     "related": [
       "integrity",
       "cohesion",
@@ -10121,13 +10071,7 @@
   {
     "id": "crowned",
     "label": "crowned",
-    "synonyms": [
-      "royal",
-      "adorned",
-      "laurel",
-      "noble",
-      "decorated"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -10454,13 +10398,7 @@
   {
     "id": "curtained",
     "label": "Curtained",
-    "synonyms": [
-      "draped",
-      "veiled",
-      "screened",
-      "shrouded",
-      "masked"
-    ],
+    "synonyms": [],
     "related": [
       "academia",
       "accessible",
@@ -10657,8 +10595,7 @@
       "pessimism",
       "irony",
       "sarcasm",
-      "disillusionment",
-      "Irony"
+      "disillusionment"
     ],
     "related": [
       "minimalism",
@@ -32058,8 +31995,7 @@
       "Clean",
       "moderns",
       "Sleek",
-      "Contemporary",
-      "Modernist"
+      "Contemporary"
     ],
     "related": [
       "minimalistic",
@@ -33222,8 +33158,7 @@
       "exalted",
       "dignified",
       "elegant",
-      "refined",
-      "Classical"
+      "refined"
     ],
     "related": [
       "regal",
@@ -48929,8 +48864,7 @@
       "voice",
       "vui",
       "speech",
-      "uis",
-      "Juicy"
+      "uis"
     ],
     "related": [
       "modern",
@@ -50897,8 +50831,7 @@
       "remote",
       "elusive",
       "untouchable",
-      "isolated",
-      "Mystical"
+      "isolated"
     ],
     "related": [
       "dreamlike",
@@ -56983,8 +56916,7 @@
       "restaurant",
       "culinary",
       "dining",
-      "Foods",
-      "Culinary"
+      "Foods"
     ],
     "related": [
       "warm",
@@ -62371,8 +62303,7 @@
       "electric",
       "glowing",
       "vibrants",
-      "Glowing",
-      "Electric"
+      "Glowing"
     ],
     "related": [
       "colorful",
@@ -63360,29 +63291,6 @@
     ]
   },
   {
-    "id": "astronomical",
-    "label": "Astronomical",
-    "synonyms": [
-      "cosmic",
-      "celestial",
-      "universal",
-      "stellar",
-      "galactic"
-    ],
-    "related": [
-      "ethereal",
-      "mystical",
-      "space",
-      "night",
-      "twilight"
-    ],
-    "opposites": [
-      "Terrestrial",
-      "Grounded"
-    ],
-    "category": "Design Style"
-  },
-  {
     "id": "atmospheric",
     "label": "Atmospheric",
     "synonyms": [
@@ -64102,16 +64010,6 @@
       "thin",
       "streamlined"
     ]
-  },
-  {
-    "id": "classical",
-    "label": "Classical",
-    "synonyms": [
-      "neoclassical"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Design Style"
   },
   {
     "id": "coherent",
@@ -66863,30 +66761,6 @@
     ]
   },
   {
-    "id": "high-tech",
-    "label": "High-Tech",
-    "synonyms": [
-      "tech",
-      "smart"
-    ],
-    "related": [],
-    "opposites": [
-      "Rustic",
-      "Handmade"
-    ],
-    "category": "Design Style"
-  },
-  {
-    "id": "historic",
-    "label": "Historic",
-    "synonyms": [],
-    "related": [
-      "neoclassical"
-    ],
-    "opposites": [],
-    "category": "Design Style"
-  },
-  {
     "id": "homely",
     "label": "Homely",
     "synonyms": [
@@ -68844,21 +68718,6 @@
     "category": "Design Style"
   },
   {
-    "id": "neoclassical",
-    "label": "Neoclassical",
-    "synonyms": [
-      "classical"
-    ],
-    "related": [
-      "historic"
-    ],
-    "opposites": [
-      "Modernist",
-      "Minimalist"
-    ],
-    "category": "Design Style"
-  },
-  {
     "id": "neumorphic",
     "label": "Neumorphic",
     "synonyms": [
@@ -70129,16 +69988,6 @@
     ]
   },
   {
-    "id": "smart",
-    "label": "Smart",
-    "synonyms": [
-      "high-tech"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Design Style"
-  },
-  {
     "id": "sprawled",
     "label": "sprawled",
     "synonyms": [
@@ -70885,16 +70734,6 @@
     ]
   },
   {
-    "id": "tech",
-    "label": "Tech",
-    "synonyms": [
-      "high-tech"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Design Style"
-  },
-  {
     "id": "technic",
     "label": "Technic",
     "synonyms": [
@@ -71044,21 +70883,6 @@
       "natural",
       "simple",
       "traditional"
-    ],
-    "category": "Design Style"
-  },
-  {
-    "id": "techno-futurist",
-    "label": "Techno-futurist",
-    "synonyms": [
-      "techno-futurist"
-    ],
-    "related": [],
-    "opposites": [
-      "Art-Nouveau",
-      "Rustic",
-      "Retro",
-      "Organic"
     ],
     "category": "Design Style"
   },
@@ -72342,8 +72166,7 @@
       "stylized",
       "imaginative",
       "visual",
-      "artistics",
-      "Creative"
+      "artistics"
     ],
     "related": [
       "illustration",
@@ -76370,8 +76193,7 @@
     "id": "generation",
     "label": "Generation",
     "synonyms": [
-      "generations",
-      "Generational"
+      "generations"
     ],
     "related": [
       "3d",
@@ -83382,21 +83204,6 @@
       "weight",
       "solid"
     ]
-  },
-  {
-    "id": "alertness",
-    "label": "Alertness",
-    "synonyms": [
-      "watchfulness"
-    ],
-    "related": [
-      "pulsating"
-    ],
-    "opposites": [
-      "Drowsiness",
-      "Lethargy"
-    ],
-    "category": "Feeling / Emotion"
   },
   {
     "id": "alienation",
@@ -95690,16 +95497,6 @@
     ]
   },
   {
-    "id": "pulsating",
-    "label": "Pulsating",
-    "synonyms": [],
-    "related": [
-      "alertness"
-    ],
-    "opposites": [],
-    "category": "Feeling / Emotion"
-  },
-  {
     "id": "racket",
     "label": "racket",
     "synonyms": [
@@ -97063,8 +96860,7 @@
       "classic",
       "nostalgia",
       "Analog",
-      "retros",
-      "Nostalgic"
+      "retros"
     ],
     "related": [
       "80s",
@@ -102451,21 +102247,6 @@
     ]
   },
   {
-    "id": "vigilance",
-    "label": "Vigilance",
-    "synonyms": [
-      "vigilance"
-    ],
-    "related": [],
-    "opposites": [
-      "Carefree",
-      "Complacency",
-      "Negligence",
-      "Relaxation"
-    ],
-    "category": "Feeling / Emotion"
-  },
-  {
     "id": "vintage",
     "label": "Vintage",
     "synonyms": [
@@ -102832,16 +102613,6 @@
       "serenity",
       "truce"
     ]
-  },
-  {
-    "id": "watchfulness",
-    "label": "Watchfulness",
-    "synonyms": [
-      "alertness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Feeling / Emotion"
   },
   {
     "id": "weakened",
@@ -104214,16 +103985,6 @@
     ]
   },
   {
-    "id": "bifurcation",
-    "label": "Bifurcation",
-    "synonyms": [
-      "branching"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "binding",
     "label": "binding",
     "synonyms": [
@@ -104563,32 +104324,6 @@
       "airy",
       "light"
     ]
-  },
-  {
-    "id": "branch",
-    "label": "Branch",
-    "synonyms": [
-      "branching"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
-    "id": "branching",
-    "label": "Branching",
-    "synonyms": [
-      "diverging",
-      "branch",
-      "bifurcation"
-    ],
-    "related": [],
-    "opposites": [
-      "Linear",
-      "Direct",
-      "convergent"
-    ],
-    "category": "Form & Structure"
   },
   {
     "id": "broken",
@@ -105264,16 +104999,6 @@
       "chaos",
       "disorder"
     ]
-  },
-  {
-    "id": "convergent",
-    "label": "Convergent",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "branching"
-    ],
-    "category": "Form & Structure"
   },
   {
     "id": "corner",
@@ -106173,16 +105898,6 @@
     ]
   },
   {
-    "id": "diverging",
-    "label": "Diverging",
-    "synonyms": [
-      "branching"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "dome",
     "label": "Dome",
     "synonyms": [
@@ -106207,16 +105922,6 @@
       "surface",
       "void"
     ]
-  },
-  {
-    "id": "dotted",
-    "label": "Dotted",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "ecommerce",
@@ -107421,16 +107126,6 @@
     "category": "Form & Structure"
   },
   {
-    "id": "honeycombed",
-    "label": "Honeycombed",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "imposing",
     "label": "Imposing",
     "synonyms": [
@@ -107835,16 +107530,6 @@
       "even",
       "balanced"
     ]
-  },
-  {
-    "id": "laced",
-    "label": "Laced",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "lattice",
@@ -109050,16 +108735,6 @@
     ]
   },
   {
-    "id": "patterned",
-    "label": "Patterned",
-    "synonyms": [],
-    "related": [
-      "perforated"
-    ],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "peak",
     "label": "Peak",
     "synonyms": [
@@ -109141,36 +108816,6 @@
       "dip",
       "drop"
     ]
-  },
-  {
-    "id": "perforated",
-    "label": "Perforated",
-    "synonyms": [
-      "pierced",
-      "punctured",
-      "dotted",
-      "honeycombed",
-      "laced"
-    ],
-    "related": [
-      "ventilated",
-      "patterned"
-    ],
-    "opposites": [
-      "Solid",
-      "Dense"
-    ],
-    "category": "Form & Structure"
-  },
-  {
-    "id": "pierced",
-    "label": "Pierced",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "pinnacle",
@@ -109455,16 +109100,6 @@
       "excess",
       "clutter"
     ]
-  },
-  {
-    "id": "punctured",
-    "label": "Punctured",
-    "synonyms": [
-      "perforated"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Form & Structure"
   },
   {
     "id": "pyramid",
@@ -112019,16 +111654,6 @@
     ]
   },
   {
-    "id": "ventilated",
-    "label": "Ventilated",
-    "synonyms": [],
-    "related": [
-      "perforated"
-    ],
-    "opposites": [],
-    "category": "Form & Structure"
-  },
-  {
     "id": "vertex",
     "label": "Vertex",
     "synonyms": [
@@ -112760,24 +112385,6 @@
     "category": "Industry"
   },
   {
-    "id": "album",
-    "label": "Album",
-    "synonyms": [
-      "collection",
-      "compilation",
-      "book"
-    ],
-    "related": [
-      "visuals",
-      "imagery"
-    ],
-    "opposites": [
-      "Single",
-      "Live"
-    ],
-    "category": "Industry"
-  },
-  {
     "id": "analytics",
     "label": "Analytics",
     "synonyms": [
@@ -113383,16 +112990,6 @@
     "category": "Industry"
   },
   {
-    "id": "book",
-    "label": "Book",
-    "synonyms": [
-      "album"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "boutique",
     "label": "Boutique",
     "synonyms": [
@@ -113728,36 +113325,6 @@
     "category": "Industry"
   },
   {
-    "id": "coin",
-    "label": "Coin",
-    "synonyms": [
-      "cryptocurrency"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "collection",
-    "label": "Collection",
-    "synonyms": [
-      "album"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "compilation",
-    "label": "Compilation",
-    "synonyms": [
-      "album"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "consulting",
     "label": "Consulting",
     "synonyms": [
@@ -113834,16 +113401,6 @@
       "anarchy",
       "randomness"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "cookery",
-    "label": "Cookery",
-    "synonyms": [
-      "gastronomy"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -113937,77 +113494,6 @@
     "category": "Industry"
   },
   {
-    "id": "courier",
-    "label": "Courier",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "crypto",
-    "label": "Crypto",
-    "synonyms": [
-      "cryptocurrency"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "cryptocurrency",
-    "label": "Cryptocurrency",
-    "synonyms": [
-      "coin",
-      "token",
-      "crypto"
-    ],
-    "related": [],
-    "opposites": [
-      "Traditional",
-      "Fiat"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "cuisine",
-    "label": "Cuisine",
-    "synonyms": [
-      "gastronomy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "culinary",
-    "label": "Culinary",
-    "synonyms": [
-      "gastronomy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "cybersecurity",
-    "label": "Cybersecurity",
-    "synonyms": [
-      "defense"
-    ],
-    "related": [
-      "encryption",
-      "firewall"
-    ],
-    "opposites": [
-      "Vulnerability",
-      "Exposure"
-    ],
-    "category": "Industry"
-  },
-  {
     "id": "deeptech",
     "label": "DeepTech",
     "synonyms": [
@@ -114092,26 +113578,6 @@
       "dull",
       "ordinary"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "defense",
-    "label": "Defense",
-    "synonyms": [
-      "cybersecurity"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "delivery",
-    "label": "Delivery",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -114641,16 +114107,6 @@
     "category": "Industry"
   },
   {
-    "id": "encryption",
-    "label": "Encryption",
-    "synonyms": [],
-    "related": [
-      "cybersecurity"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "engineering",
     "label": "Engineering",
     "synonyms": [
@@ -114737,16 +114193,6 @@
     "category": "Industry"
   },
   {
-    "id": "envelope",
-    "label": "Envelope",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "eyewear",
     "label": "Eyewear",
     "synonyms": [
@@ -114794,16 +114240,6 @@
       "Internal",
       "Bare"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "family",
-    "label": "Family",
-    "synonyms": [],
-    "related": [
-      "motherhood"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -114882,26 +114318,6 @@
       "simple",
       "basic"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "firewall",
-    "label": "Firewall",
-    "synonyms": [],
-    "related": [
-      "cybersecurity"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "flavor",
-    "label": "Flavor",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -114986,37 +114402,6 @@
       "fragile",
       "disorder"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "gastronomy",
-    "label": "Gastronomy",
-    "synonyms": [
-      "cuisine",
-      "cookery",
-      "culinary"
-    ],
-    "related": [
-      "plating",
-      "presentation",
-      "flavor",
-      "serving",
-      "savor"
-    ],
-    "opposites": [
-      "Fast-food",
-      "Basic"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "graphic",
-    "label": "Graphic",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -115437,16 +114822,6 @@
     "category": "Industry"
   },
   {
-    "id": "imagery",
-    "label": "Imagery",
-    "synonyms": [],
-    "related": [
-      "album"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "ingredients",
     "label": "Ingredients",
     "synonyms": [
@@ -115651,16 +115026,6 @@
     "category": "Industry"
   },
   {
-    "id": "label",
-    "label": "Label",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "logistics",
     "label": "Logistics",
     "synonyms": [
@@ -115737,16 +115102,6 @@
       "waste",
       "residential"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "mail",
-    "label": "Mail",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -116069,16 +115424,6 @@
     "category": "Industry"
   },
   {
-    "id": "maternity",
-    "label": "Maternity",
-    "synonyms": [
-      "motherhood"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "merchandise",
     "label": "Merchandise",
     "synonyms": [
@@ -116326,23 +115671,6 @@
       "unmoving",
       "rigid",
       "settled"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "motherhood",
-    "label": "Motherhood",
-    "synonyms": [
-      "maternity",
-      "parenthood"
-    ],
-    "related": [
-      "family",
-      "tenderness"
-    ],
-    "opposites": [
-      "Childless",
-      "Petcare"
     ],
     "category": "Industry"
   },
@@ -116600,16 +115928,6 @@
     "category": "Industry"
   },
   {
-    "id": "networking",
-    "label": "Networking",
-    "synonyms": [
-      "telecommunications"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "non-profit",
     "label": "Non-profit",
     "synonyms": [
@@ -116688,16 +116006,6 @@
     "category": "Industry"
   },
   {
-    "id": "online",
-    "label": "Online",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "postal"
-    ],
-    "category": "Industry"
-  },
-  {
     "id": "orthodontics",
     "label": "Orthodontics",
     "synonyms": [
@@ -116743,26 +116051,6 @@
       "Dermatology",
       "Cardiology"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "parenthood",
-    "label": "Parenthood",
-    "synonyms": [
-      "motherhood"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "partnership",
-    "label": "Partnership",
-    "synonyms": [
-      "team-building"
-    ],
-    "related": [],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -116930,49 +116218,6 @@
       "common",
       "basic"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "plating",
-    "label": "Plating",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "postal",
-    "label": "Postal",
-    "synonyms": [
-      "mail",
-      "postal",
-      "delivery",
-      "courier",
-      "shipping"
-    ],
-    "related": [
-      "graphic",
-      "envelope",
-      "label",
-      "stamp"
-    ],
-    "opposites": [
-      "Digital",
-      "Electronic",
-      "online"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "presentation",
-    "label": "Presentation",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -117386,36 +116631,6 @@
     "category": "Industry"
   },
   {
-    "id": "savor",
-    "label": "Savor",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "serving",
-    "label": "Serving",
-    "synonyms": [],
-    "related": [
-      "gastronomy"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "shipping",
-    "label": "Shipping",
-    "synonyms": [
-      "postal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "skincare",
     "label": "Skincare",
     "synonyms": [
@@ -117582,16 +116797,6 @@
     "category": "Industry"
   },
   {
-    "id": "stamp",
-    "label": "Stamp",
-    "synonyms": [],
-    "related": [
-      "postal"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
     "id": "streetwear",
     "label": "Streetwear",
     "synonyms": [
@@ -117751,84 +116956,6 @@
       "block",
       "hinder"
     ],
-    "category": "Industry"
-  },
-  {
-    "id": "team-building",
-    "label": "Team-building",
-    "synonyms": [
-      "partnership"
-    ],
-    "related": [],
-    "opposites": [
-      "Solo",
-      "Individual"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "telecom",
-    "label": "Telecom",
-    "synonyms": [
-      "telecommunications"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "telecommunications",
-    "label": "Telecommunications",
-    "synonyms": [
-      "telecom",
-      "networking",
-      "transmission"
-    ],
-    "related": [],
-    "opposites": [
-      "Isolation",
-      "Silence"
-    ],
-    "category": "Industry"
-  },
-  {
-    "id": "tenderness",
-    "label": "Tenderness",
-    "synonyms": [],
-    "related": [
-      "motherhood"
-    ],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "token",
-    "label": "Token",
-    "synonyms": [
-      "cryptocurrency"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "transmission",
-    "label": "Transmission",
-    "synonyms": [
-      "telecommunications"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Industry"
-  },
-  {
-    "id": "visuals",
-    "label": "Visuals",
-    "synonyms": [],
-    "related": [
-      "album"
-    ],
-    "opposites": [],
     "category": "Industry"
   },
   {
@@ -136140,16 +135267,6 @@
     ]
   },
   {
-    "id": "assumption",
-    "label": "Assumption",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "augmentation",
     "label": "Augmentation",
     "synonyms": [
@@ -136333,26 +135450,6 @@
       "disconnection",
       "separation"
     ]
-  },
-  {
-    "id": "beyond",
-    "label": "Beyond",
-    "synonyms": [
-      "transcend",
-      "surpass",
-      "exceed",
-      "overstep",
-      "outstrip"
-    ],
-    "related": [
-      "metaphysical"
-    ],
-    "opposites": [
-      "Within",
-      "Limit",
-      "within"
-    ],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "bounded",
@@ -137184,16 +136281,6 @@
       "harmony",
       "gentle"
     ]
-  },
-  {
-    "id": "conjecture",
-    "label": "Conjecture",
-    "synonyms": [],
-    "related": [
-      "hypothesis"
-    ],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "connect",
@@ -138702,16 +137789,6 @@
     ]
   },
   {
-    "id": "derangement",
-    "label": "Derangement",
-    "synonyms": [
-      "madness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "diminution",
     "label": "Diminution",
     "synonyms": [
@@ -140174,16 +139251,6 @@
       "dismissal",
       "disregard"
     ]
-  },
-  {
-    "id": "exceed",
-    "label": "Exceed",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "excellence",
@@ -142301,27 +141368,6 @@
     ]
   },
   {
-    "id": "hypothesis",
-    "label": "Hypothesis",
-    "synonyms": [
-      "theory",
-      "proposal",
-      "assumption",
-      "premise",
-      "postulate"
-    ],
-    "related": [
-      "conjecture",
-      "speculative"
-    ],
-    "opposites": [
-      "Certainty",
-      "Conclusion",
-      "Fact"
-    ],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "identity",
     "label": "Identity",
     "synonyms": [
@@ -143093,16 +142139,6 @@
       "wickedness",
       "vice"
     ]
-  },
-  {
-    "id": "insanity",
-    "label": "Insanity",
-    "synonyms": [
-      "madness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "insight",
@@ -143983,32 +143019,6 @@
     ]
   },
   {
-    "id": "lunacy",
-    "label": "Lunacy",
-    "synonyms": [
-      "madness"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
-    "id": "madness",
-    "label": "Madness",
-    "synonyms": [
-      "insanity",
-      "lunacy",
-      "derangement"
-    ],
-    "related": [],
-    "opposites": [
-      "Sanity",
-      "Rationality",
-      "sanity"
-    ],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "malice",
     "label": "malice",
     "synonyms": [
@@ -144219,16 +143229,6 @@
       "neglect",
       "disconnection"
     ]
-  },
-  {
-    "id": "metaphysical",
-    "label": "Metaphysical",
-    "synonyms": [],
-    "related": [
-      "beyond"
-    ],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "mobility",
@@ -145422,26 +144422,6 @@
     ]
   },
   {
-    "id": "outstrip",
-    "label": "Outstrip",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
-    "id": "overstep",
-    "label": "Overstep",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "paradox",
     "label": "Paradox",
     "synonyms": [
@@ -146011,16 +144991,6 @@
     ]
   },
   {
-    "id": "postulate",
-    "label": "Postulate",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "potential",
     "label": "Potential",
     "synonyms": [
@@ -146050,16 +145020,6 @@
       "limitation",
       "failure"
     ]
-  },
-  {
-    "id": "premise",
-    "label": "Premise",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "presence",
@@ -146193,16 +145153,6 @@
       "regression",
       "decline"
     ]
-  },
-  {
-    "id": "proposal",
-    "label": "Proposal",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "purity",
@@ -146959,16 +145909,6 @@
       "vulnerability",
       "hostility"
     ]
-  },
-  {
-    "id": "sanity",
-    "label": "Sanity",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "madness"
-    ],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "scrap",
@@ -147775,16 +146715,6 @@
     ]
   },
   {
-    "id": "speculative",
-    "label": "Speculative",
-    "synonyms": [],
-    "related": [
-      "hypothesis"
-    ],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "squalor",
     "label": "squalor",
     "synonyms": [
@@ -148221,16 +147151,6 @@
     ]
   },
   {
-    "id": "surpass",
-    "label": "Surpass",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "suspension",
     "label": "Suspension",
     "synonyms": [
@@ -148505,16 +147425,6 @@
     ]
   },
   {
-    "id": "theory",
-    "label": "Theory",
-    "synonyms": [
-      "hypothesis"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
-  },
-  {
     "id": "threshold",
     "label": "Threshold",
     "synonyms": [
@@ -148608,16 +147518,6 @@
       "transient",
       "fleeting"
     ]
-  },
-  {
-    "id": "transcend",
-    "label": "Transcend",
-    "synonyms": [
-      "beyond"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "transformation",
@@ -149446,16 +148346,6 @@
       "detachment",
       "incompleteness"
     ]
-  },
-  {
-    "id": "within",
-    "label": "Within",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "beyond"
-    ],
-    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "worthless",
@@ -150571,26 +149461,6 @@
     "opposites": [
       "Premium"
     ]
-  },
-  {
-    "id": "blues",
-    "label": "Blues",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
-    "id": "bohemian",
-    "label": "Bohemian",
-    "synonyms": [],
-    "related": [
-      "indie"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "bottom",
@@ -151899,8 +150769,7 @@
     "id": "consumerism",
     "label": "Consumerism",
     "synonyms": [
-      "consumerisms",
-      "Consumer"
+      "consumerisms"
     ],
     "related": [
       "Diversity",
@@ -154496,16 +153365,6 @@
     ]
   },
   {
-    "id": "fashionable",
-    "label": "Fashionable",
-    "synonyms": [],
-    "related": [
-      "trendsetting"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "feminine",
     "label": "Feminine",
     "synonyms": [
@@ -154548,8 +153407,7 @@
       "investment",
       "Finances",
       "financed",
-      "financer",
-      "Banking"
+      "financer"
     ],
     "related": [
       "professional",
@@ -154992,16 +153850,6 @@
       "routine",
       "commitment"
     ]
-  },
-  {
-    "id": "funk",
-    "label": "Funk",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "futile",
@@ -155618,16 +154466,6 @@
       "casual",
       "relaxed"
     ]
-  },
-  {
-    "id": "groove",
-    "label": "Groove",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "harm",
@@ -156418,16 +155256,6 @@
     ]
   },
   {
-    "id": "improvisational",
-    "label": "Improvisational",
-    "synonyms": [],
-    "related": [
-      "jazz"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "inclusion",
     "label": "Inclusion",
     "synonyms": [
@@ -156516,21 +155344,6 @@
     "opposites": [
       "Premium"
     ]
-  },
-  {
-    "id": "indie",
-    "label": "Indie",
-    "synonyms": [],
-    "related": [
-      "bohemian",
-      "quirky"
-    ],
-    "opposites": [
-      "Mainstream",
-      "Commercial",
-      "popular"
-    ],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "individual",
@@ -157247,25 +156060,6 @@
     ]
   },
   {
-    "id": "jazz",
-    "label": "Jazz",
-    "synonyms": [
-      "swing",
-      "blues",
-      "funk",
-      "groove"
-    ],
-    "related": [
-      "improvisational",
-      "rhythmic"
-    ],
-    "opposites": [
-      "Classical",
-      "Pop"
-    ],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "knowledge",
     "label": "Knowledge",
     "synonyms": [
@@ -157495,16 +156289,6 @@
       "engaged",
       "driven"
     ]
-  },
-  {
-    "id": "leading",
-    "label": "Leading",
-    "synonyms": [
-      "trendsetting"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "leisure",
@@ -158250,16 +157034,6 @@
     ]
   },
   {
-    "id": "modish",
-    "label": "Modish",
-    "synonyms": [],
-    "related": [
-      "trendsetting"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "monoculture",
     "label": "monoculture",
     "synonyms": [
@@ -158807,16 +157581,6 @@
     ]
   },
   {
-    "id": "outdated",
-    "label": "Outdated",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "trendsetting"
-    ],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "pain",
     "label": "pain",
     "synonyms": [
@@ -159207,16 +157971,6 @@
     ]
   },
   {
-    "id": "pioneering",
-    "label": "Pioneering",
-    "synonyms": [
-      "trendsetting"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "planning",
     "label": "Planning",
     "synonyms": [
@@ -159327,16 +158081,6 @@
       "nature",
       "wholeness"
     ]
-  },
-  {
-    "id": "popular",
-    "label": "Popular",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "indie"
-    ],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "posthuman",
@@ -159847,16 +158591,6 @@
       "anonymity",
       "obscurity"
     ]
-  },
-  {
-    "id": "quirky",
-    "label": "Quirky",
-    "synonyms": [],
-    "related": [
-      "indie"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "readiness",
@@ -160601,16 +159335,6 @@
     "opposites": [
       "Youth"
     ]
-  },
-  {
-    "id": "rhythmic",
-    "label": "Rhythmic",
-    "synonyms": [],
-    "related": [
-      "jazz"
-    ],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "rush",
@@ -162113,16 +160837,6 @@
     ]
   },
   {
-    "id": "swing",
-    "label": "Swing",
-    "synonyms": [
-      "jazz"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Social / Cultural Concepts"
-  },
-  {
     "id": "synergy",
     "label": "Synergy",
     "synonyms": [
@@ -162244,8 +160958,7 @@
       "Technologic",
       "Technological",
       "technologiful",
-      "technologys",
-      "Biotechnology"
+      "technologys"
     ],
     "related": [
       "Consumerism",
@@ -162513,24 +161226,6 @@
       "obsolete",
       "timeless"
     ]
-  },
-  {
-    "id": "trendsetting",
-    "label": "Trendsetting",
-    "synonyms": [
-      "pioneering",
-      "leading"
-    ],
-    "related": [
-      "modish",
-      "fashionable"
-    ],
-    "opposites": [
-      "Following",
-      "Imitation",
-      "outdated"
-    ],
-    "category": "Social / Cultural Concepts"
   },
   {
     "id": "trustworthy",
@@ -164236,8 +162931,7 @@
     "id": "clear",
     "label": "Clear",
     "synonyms": [
-      "clears",
-      "Nuclear"
+      "clears"
     ],
     "related": [
       "acoustic",
@@ -164480,21 +163174,6 @@
       "even",
       "polished"
     ]
-  },
-  {
-    "id": "creamy",
-    "label": "Creamy",
-    "synonyms": [
-      "velvety",
-      "creamy",
-      "silky"
-    ],
-    "related": [],
-    "opposites": [
-      "Rough",
-      "Grainy"
-    ],
-    "category": "Texture & Materiality"
   },
   {
     "id": "crisp",
@@ -168483,16 +167162,6 @@
     ]
   },
   {
-    "id": "silky",
-    "label": "Silky",
-    "synonyms": [
-      "creamy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Texture & Materiality"
-  },
-  {
     "id": "simulated",
     "label": "Simulated",
     "synonyms": [
@@ -170016,16 +168685,6 @@
     ]
   },
   {
-    "id": "velvety",
-    "label": "Velvety",
-    "synonyms": [
-      "creamy"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Texture & Materiality"
-  },
-  {
     "id": "viscous",
     "label": "Viscous",
     "synonyms": [
@@ -170966,16 +169625,6 @@
     ]
   },
   {
-    "id": "beachy",
-    "label": "Beachy",
-    "synonyms": [
-      "coastal"
-    ],
-    "related": [],
-    "opposites": [],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "biographical",
     "label": "Biographical",
     "synonyms": [
@@ -171592,21 +170241,6 @@
       "warm",
       "casual"
     ]
-  },
-  {
-    "id": "coastal",
-    "label": "Coastal",
-    "synonyms": [
-      "beachy"
-    ],
-    "related": [
-      "tropical"
-    ],
-    "opposites": [
-      "Urban",
-      "Industrial"
-    ],
-    "category": "Vibe / Mood"
   },
   {
     "id": "coded",
@@ -174032,23 +172666,6 @@
     ]
   },
   {
-    "id": "investigative",
-    "label": "Investigative",
-    "synonyms": [
-      "investigative"
-    ],
-    "related": [],
-    "opposites": [
-      "Obvious",
-      "Transparent",
-      "Known",
-      "Casual",
-      "unobservant",
-      "uninquisitive"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "irreverent",
     "label": "Irreverent",
     "synonyms": [
@@ -174138,17 +172755,6 @@
       "conventional",
       "formal",
       "sincere"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
-    "id": "laid-back",
-    "label": "Laid-back",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "Tense",
-      "Anxious"
     ],
     "category": "Vibe / Mood"
   },
@@ -177057,16 +175663,6 @@
     ]
   },
   {
-    "id": "tropical",
-    "label": "Tropical",
-    "synonyms": [],
-    "related": [
-      "coastal"
-    ],
-    "opposites": [],
-    "category": "Vibe / Mood"
-  },
-  {
     "id": "unhinged",
     "label": "unhinged",
     "synonyms": [
@@ -177146,26 +175742,6 @@
       "ordinary",
       "familiar"
     ]
-  },
-  {
-    "id": "uninquisitive",
-    "label": "Uninquisitive",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "investigative"
-    ],
-    "category": "Vibe / Mood"
-  },
-  {
-    "id": "unobservant",
-    "label": "Unobservant",
-    "synonyms": [],
-    "related": [],
-    "opposites": [
-      "investigative"
-    ],
-    "category": "Vibe / Mood"
   },
   {
     "id": "urban",

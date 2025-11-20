@@ -1,0 +1,1146 @@
+══════════════════════════════════════════════════════════════════════
+🔧 Fill Missing Synonyms and Related Terms
+══════════════════════════════════════════════════════════════════════
+
+📚 Loaded 4003 concepts
+
+💾 Creating backup: /Users/victor/Documents/GitHub/Looma/src/concepts/seed_concepts.json.backup.1763500109858
+
+📊 Found:
+   Missing synonyms: 280
+   Missing related: 3
+   Missing either: 280
+
+📂 Resuming from checkpoint: 10 concepts already processed
+
+⏭️  Skipping 1/280: "basis" (already processed)
+⏭️  Skipping 2/280: "boundless-exploration" (already processed)
+⏭️  Skipping 3/280: "casual-chaos" (already processed)
+⏭️  Skipping 4/280: "Challenges" (already processed)
+⏭️  Skipping 5/280: "cherish" (already processed)
+⏭️  Skipping 6/280: "chilled-contrast" (already processed)
+⏭️  Skipping 7/280: "commercial-aesthetics" (already processed)
+⏭️  Skipping 8/280: "complete-manifestation" (already processed)
+⏭️  Skipping 9/280: "crowned" (already processed)
+⏭️  Skipping 10/280: "Curtained" (already processed)
+📝 Processing 11/280: "Data-driven"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: analytic, empirical, objective
+
+📝 Processing 12/280: "decorated"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: adorned, embellished, ornate...
+
+📝 Processing 13/280: "defined-space"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: bounded, enclosed, limited
+
+📝 Processing 14/280: "deliberate-chaos"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: chaos, disorder, randomness...
+
+📝 Processing 15/280: "Developer-centric"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: user, focused, central...
+
+📝 Processing 16/280: "Digital Art"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: graphic, visual, digital...
+
+📝 Processing 17/280: "dislike"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: disdain, aversion, displeasure...
+
+📝 Processing 18/280: "dispersed-tone"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: diffused, scattered, fragmented
+
+📝 Processing 19/280: "Elderly-care"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: care, support, tenderness...
+
+📝 Processing 20/280: "emotional-design"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: affective, sentimental, expressive
+   💾 Checkpoint saved
+
+📝 Processing 21/280: "Engrave"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: carve, etch, imprint...
+
+📝 Processing 22/280: "everyday-eats"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: casual, simple, familiar
+
+📝 Processing 23/280: "excessive"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: exorbitant, extreme, exaggerated...
+
+📝 Processing 24/280: "Experiences"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: encounters, impressions, sensations...
+
+📝 Processing 25/280: "fixed-horizon"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: constant, steady, fixed
+
+📝 Processing 26/280: "flat"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: level, smooth, plain...
+
+📝 Processing 27/280: "Fonts"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: typeface, script, lettering...
+
+📝 Processing 28/280: "foreground"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: foreground, front, surface...
+
+📝 Processing 29/280: "formulated-limits"
+   Missing: synonyms 
+   ✅ Added 6 synonyms: boundaries, constraints, parameters...
+
+📝 Processing 30/280: "fractured-harmony"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: disarray, discord, dissonance
+   💾 Checkpoint saved
+
+📝 Processing 31/280: "fragmented-visions"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: shattered, broken, disjointed...
+
+📝 Processing 32/280: "frosted-blue"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: icy, misty, glacial...
+
+📝 Processing 33/280: "gentle-expression"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: soft, gentle, calm...
+
+📝 Processing 34/280: "hover"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: float, suspend, levitate...
+
+📝 Processing 35/280: "impromptu-display"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: spontaneous, unplanned, casual
+
+📝 Processing 36/280: "informal-inquiry"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: exploration, investigation, examination
+
+📝 Processing 37/280: "kaleidoscopic"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: colorful, vibrant, dynamic...
+
+📝 Processing 38/280: "masked"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: veiled, shrouded, concealed...
+
+📝 Processing 39/280: "mundane-spectacle"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: ordinary, common, typical
+
+📝 Processing 40/280: "naked"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: bare, exposed, stripped...
+   💾 Checkpoint saved
+
+📝 Processing 41/280: "norms"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: standards, rules, guidelines...
+
+📝 Processing 42/280: "open-crowns"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: exposed, uncovered, open...
+
+📝 Processing 43/280: "overlook"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: omit, ignore, exclude...
+
+📝 Processing 44/280: "plunge"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: dive, drop, sink...
+
+📝 Processing 45/280: "Problems"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: issues, challenges, difficulties...
+
+📝 Processing 46/280: "Product-centric"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: focused, centered, targeted...
+
+📝 Processing 47/280: "Sealed"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: closed, secured, fastened...
+
+📝 Processing 48/280: "Small-scale Art"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: miniature, petite, compact
+
+📝 Processing 49/280: "subdued-illumination"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: soft, dim, muted...
+
+📝 Processing 50/280: "subtle-hues"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: soft, muted, pale...
+   💾 Checkpoint saved
+
+📝 Processing 51/280: "tail"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: appendage, extension, fluke
+
+📝 Processing 52/280: "understated-tranquility"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: subdued, calm, serene...
+
+📝 Processing 53/280: "uniform-brightness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: constant, steady, uniform...
+
+📝 Processing 54/280: "uplifting-contrast"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: vibrant, lively, bright...
+
+📝 Processing 55/280: "vulnerable-silence"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: fragile, subdued, soft...
+
+📝 Processing 56/280: "wander"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: roam, drift, meander...
+
+📝 Processing 57/280: "whispered-shades"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: muted, soft, gentle
+
+📝 Processing 58/280: "attractive"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: alluring, charming, captivating...
+
+📝 Processing 59/280: "barren"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: empty, bare, desolate...
+
+📝 Processing 60/280: "blurry"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: fuzzy, hazy, dim...
+   💾 Checkpoint saved
+
+📝 Processing 61/280: "Burnt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: charred, scorched, singed...
+
+📝 Processing 62/280: "Concord"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: harmony, unity, balance...
+
+📝 Processing 63/280: "discord"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: conflict, disarray, disunity...
+
+📝 Processing 64/280: "drained"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: faded, washed, pale...
+
+📝 Processing 65/280: "flashy"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: showy, vibrant, luminous...
+
+📝 Processing 66/280: "frost"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: ice, chill, glaze...
+
+📝 Processing 67/280: "greed"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: avarice, covetousness, greediness...
+
+📝 Processing 68/280: "hunger"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: craving, desire, thirst...
+
+📝 Processing 69/280: "kaleidoscope"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: prism, spectrum, mosaic...
+
+📝 Processing 70/280: "matt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: flat, dull, nonshine...
+   💾 Checkpoint saved
+
+📝 Processing 71/280: "muddy"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: dull, drab, murky...
+
+📝 Processing 72/280: "opaque"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: cloudy, dense, murky...
+
+📝 Processing 73/280: "wash"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: tint, shade, hue...
+
+📝 Processing 74/280: "weak"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: faint, pale, dull...
+
+📝 Processing 75/280: "Aero"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: aerodynamic, ethereal, sleek
+
+📝 Processing 76/280: "Aqueous"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: liquid, fluid, watery...
+
+📝 Processing 77/280: "Arcade"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: arcadia, amusement, gamer
+
+📝 Processing 78/280: "Bistro"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: cafe, pub, bistro...
+
+📝 Processing 79/280: "burdened"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: heavy, laden, weighted
+
+📝 Processing 80/280: "concrete"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: solid, tangible, physical
+   💾 Checkpoint saved
+
+📝 Processing 81/280: "disposable"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: throwaway, temporary, transient...
+
+📝 Processing 82/280: "Distressed"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: weathered, aged, worn...
+
+📝 Processing 83/280: "Essentialism"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: minimalism, purism, clarity
+
+📝 Processing 84/280: "excess"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: surplus, overabundance, luxury...
+
+📝 Processing 85/280: "filtered"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: filtered, softened, muted...
+
+📝 Processing 86/280: "Miniature"
+   Missing: synonyms 
+   ✅ Added 6 synonyms: tiny, small, petite...
+
+📝 Processing 87/280: "Nautical"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: maritime, naval, oceanic
+
+📝 Processing 88/280: "Neo-Grotesque"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: grotesque, modern, minimal...
+
+📝 Processing 89/280: "Pictorial"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: illustrative, graphic, visual...
+
+📝 Processing 90/280: "rebel"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: insurgent, nonconformist, dissenter...
+   💾 Checkpoint saved
+
+📝 Processing 91/280: "Retrofuturism"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: futurism, retro, nostalgia
+
+📝 Processing 92/280: "Swiss"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: minimal, clean, orderly
+
+📝 Processing 93/280: "symbolic"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: representational, indicative, metaphoric
+
+📝 Processing 94/280: "Techwear"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: futuristic, functional, urban...
+
+📝 Processing 95/280: "Utopia"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: paradise, dreamland, heaven...
+
+📝 Processing 96/280: "3D Rendering"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: rendering, visualization, modeling...
+
+📝 Processing 97/280: "Blind"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: hidden, concealed, invisible
+
+📝 Processing 98/280: "cast"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: mold, form, shape...
+
+📝 Processing 99/280: "disrupt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: interrupt, disturb, upend...
+
+📝 Processing 100/280: "erased"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: removed, deleted, obliterated...
+   💾 Checkpoint saved
+
+📝 Processing 101/280: "frozen"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: chilled, frosted, glacial...
+
+📝 Processing 102/280: "Grading"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: scaling, toning, shading...
+
+📝 Processing 103/280: "Highlight"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: emphasis, accent, focus...
+
+📝 Processing 104/280: "labeled"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: tagged, marked, identified...
+
+📝 Processing 105/280: "Macro"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: large, extensive, grand...
+
+📝 Processing 106/280: "mechanic"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: mechanical, automated, industrial...
+
+📝 Processing 107/280: "Outlining"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: contour, outline, sketch...
+
+📝 Processing 108/280: "Sculpt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: carve, shape, form...
+
+📝 Processing 109/280: "splash"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: splash, spatter, spray...
+
+📝 Processing 110/280: "splat"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: splash, spatter, scatter...
+   💾 Checkpoint saved
+
+📝 Processing 111/280: "Stylization"
+   Missing: synonyms related
+   ✅ Added 5 synonyms: simplification, abstraction, interpretation...
+   ✅ Added 5 related: ornamentation, minimalism, expressionism...
+
+📝 Processing 112/280: "submerged"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: immersed, hidden, buried...
+
+📝 Processing 113/280: "Synthesis"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: fusion, blend, integration...
+
+📝 Processing 114/280: "tangle"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: entangle, knot, twist...
+
+📝 Processing 115/280: "tangled"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: entangled, knotted, twisted...
+
+📝 Processing 116/280: "Typecraft"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: typography, lettering, fonts...
+
+📝 Processing 117/280: "Visualization"
+   Missing: synonyms related
+   ✅ Added 5 synonyms: representation, depiction, illustration...
+   ✅ Added 5 related: infographic, diagram, chart...
+
+📝 Processing 118/280: "Analogous"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: similar, comparable, corresponding
+
+📝 Processing 119/280: "blunt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: blunt, dull, plain...
+
+📝 Processing 120/280: "captivity"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: detention, imprisonment, restriction...
+   💾 Checkpoint saved
+
+📝 Processing 121/280: "darkness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: gloom, shade, shadow...
+
+📝 Processing 122/280: "divergent"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: varied, distinct, diverse...
+
+📝 Processing 123/280: "drag"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: weight, dragging, pull...
+
+📝 Processing 124/280: "Effortless"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: simple, smooth, natural...
+
+📝 Processing 125/280: "Erupt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: burst, explode, surge...
+
+📝 Processing 126/280: "feather"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: plume, down, quill
+
+📝 Processing 127/280: "foolish"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: naive, ridiculous, absurd...
+
+📝 Processing 128/280: "Intimacy"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: closeness, familiarity, attachment...
+
+📝 Processing 129/280: "lifeless"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: bland, dull, flat...
+
+📝 Processing 130/280: "misfortune"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: adversity, calamity, distress...
+   💾 Checkpoint saved
+
+📝 Processing 131/280: "obedience"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: compliance, submission, conformity...
+
+📝 Processing 132/280: "obedient"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: submissive, compliant, docile...
+
+📝 Processing 133/280: "restless"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: uneasy, agitated, restive...
+
+📝 Processing 134/280: "sink"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: submerge, descend, plunge
+
+📝 Processing 135/280: "sloth"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: laziness, indolence, sluggishness...
+
+📝 Processing 136/280: "Solemn"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: grave, serious, stark...
+
+📝 Processing 137/280: "staccato"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: sharp, jarring, punctuated...
+
+📝 Processing 138/280: "storm"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: tempest, gale, squall...
+
+📝 Processing 139/280: "thirst"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: hunger, craving, desire...
+
+📝 Processing 140/280: "uproarious"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: hilarious, boisterous, uproar...
+   💾 Checkpoint saved
+
+📝 Processing 141/280: "valor"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: courage, bravery, heroism...
+
+📝 Processing 142/280: "Aerodynamic"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: streamlined, sleek, smooth...
+
+📝 Processing 143/280: "Axis"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: line, center, pivot...
+
+📝 Processing 144/280: "Basic"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: simple, fundamental, elementary...
+
+📝 Processing 145/280: "circuitous"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: meandering, twisting, winding
+
+📝 Processing 146/280: "curvy"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: wavy, rounded, undulating...
+
+📝 Processing 147/280: "Cylinder"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: tube, barrel, cylinder...
+
+📝 Processing 148/280: "Dome"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: arch, vault, cupola...
+
+📝 Processing 149/280: "Flexibility"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: adaptability, versatility, pliability...
+
+📝 Processing 150/280: "Formless"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: amorphous, shapeless, fluid...
+   💾 Checkpoint saved
+
+📝 Processing 151/280: "fringe"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: border, edge, trim...
+
+📝 Processing 152/280: "Module"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: unit, component, element...
+
+📝 Processing 153/280: "Rectangle"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: quad, box, shape...
+
+📝 Processing 154/280: "Rows"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: lines, stripes, bands...
+
+📝 Processing 155/280: "sans"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: without, lacking, minus
+
+📝 Processing 156/280: "serpentine"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: curvy, wavy, sinuous...
+
+📝 Processing 157/280: "Slender"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: slim, thin, narrow...
+
+📝 Processing 158/280: "spread"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: distribute, extend, spreadout...
+
+📝 Processing 159/280: "Tabs"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: panels, sections, labels...
+
+📝 Processing 160/280: "Vertex"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: peak, summit, apex...
+   💾 Checkpoint saved
+
+📝 Processing 161/280: "Athlete"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: competitor, contender, player...
+
+📝 Processing 162/280: "Bakery"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: patisserie, bistro, pastry...
+
+📝 Processing 163/280: "Beverage"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: drink, liquid, refreshment...
+
+📝 Processing 164/280: "Boarding"
+   Missing: synonyms related
+   ✅ Added 3 synonyms: boarding, embarkation, loading
+   ✅ Added 6 related: transport, logistics, industry...
+
+📝 Processing 165/280: "Cosmetics"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: makeup, beauty, grooming...
+
+📝 Processing 166/280: "Dentistry"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: odontology, dentistry, oral...
+
+📝 Processing 167/280: "Electronics"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: circuitry, devices, gadgets...
+
+📝 Processing 168/280: "Eyewear"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: glasses, spectacles, lenses...
+
+📝 Processing 169/280: "Gym"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: fitness, studio, center...
+
+📝 Processing 170/280: "Interior"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: interior, inside, inner
+   💾 Checkpoint saved
+
+📝 Processing 171/280: "Jewelry"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: ornament, accessory, gemstone...
+
+📝 Processing 172/280: "Murals"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: fresco, painting, canvas...
+
+📝 Processing 173/280: "Museum"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: gallery, exhibit, archive...
+
+📝 Processing 174/280: "Orthodontics"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: dentistry, braces, aligners...
+
+📝 Processing 175/280: "Produce"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: create, generate, manufacture...
+
+📝 Processing 176/280: "Streetwear"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: casual, urban, fashion...
+
+📝 Processing 177/280: "Watches"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: clocks, timepieces, chronometers...
+
+📝 Processing 178/280: "Watchmaking"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: horology, timepiece, craftsmanship
+
+📝 Processing 179/280: "Wearables"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: gadgets, accessories, devices...
+
+📝 Processing 180/280: "Wine"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: vino, claret, merlot...
+   💾 Checkpoint saved
+
+📝 Processing 181/280: "Animalism"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: animalism, beastliness, brutality...
+
+📝 Processing 182/280: "Artifact"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: object, item, relic...
+
+📝 Processing 183/280: "Astral"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: celestial, ethereal, heavenly...
+
+📝 Processing 184/280: "Awake"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: alert, awake, aware...
+
+📝 Processing 185/280: "Beacon"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: signal, guidance, lighthouse...
+
+📝 Processing 186/280: "Blackout"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: darkout, dimout, shutdown
+
+📝 Processing 187/280: "Bubble"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: sphere, globule, orb...
+
+📝 Processing 188/280: "Companionship"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: companionship, friendship, bonding...
+
+📝 Processing 189/280: "Crystal"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: gem, quartz, stone...
+
+📝 Processing 190/280: "Dusk"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: twilight, evening, gloaming...
+   💾 Checkpoint saved
+
+📝 Processing 191/280: "Emanation"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: radiance, emission, exhalation...
+
+📝 Processing 192/280: "Emission"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: release, discharge, radiance...
+
+📝 Processing 193/280: "Flotilla"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: fleet, group, gathering
+
+📝 Processing 194/280: "folding"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: bending, curving, wrapping...
+
+📝 Processing 195/280: "Fracture"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: break, crack, split...
+
+📝 Processing 196/280: "Freshness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: novelty, vitality, clarity...
+
+📝 Processing 197/280: "fumble"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: blunder, misstep, error
+
+📝 Processing 198/280: "Germination"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: sprouting, growth, emergence...
+
+📝 Processing 199/280: "Glacial"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: icy, frigid, frozen...
+
+📝 Processing 200/280: "Globe"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: sphere, orb, planet...
+   💾 Checkpoint saved
+
+📝 Processing 201/280: "melt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: liquefy, dissolve, blend...
+
+📝 Processing 202/280: "Molten"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: liquid, melted, fluid...
+
+📝 Processing 203/280: "Natura"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: nature, essence, organic...
+
+📝 Processing 204/280: "Principle"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: rule, tenet, doctrine...
+
+📝 Processing 205/280: "Protection"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: safeguard, shield, defense...
+
+📝 Processing 206/280: "Reflectivity"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: reflection, mirroring, gloss...
+
+📝 Processing 207/280: "Roots"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: base, foundation, source...
+
+📝 Processing 208/280: "scream"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: yell, cry, shout...
+
+📝 Processing 209/280: "Seed"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: grain, kernel, nut...
+
+📝 Processing 210/280: "segregated"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: isolated, separated, divided...
+   💾 Checkpoint saved
+
+📝 Processing 211/280: "shell"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: case, cover, hull...
+
+📝 Processing 212/280: "Shield"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: barrier, screen, defense...
+
+📝 Processing 213/280: "split"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: divide, sever, detach...
+
+📝 Processing 214/280: "Steam"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: vapor, mist, fume
+
+📝 Processing 215/280: "Strata"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: layers, stratum, levels...
+
+📝 Processing 216/280: "strip"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: bare, remove, peel...
+
+📝 Processing 217/280: "summit"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: peak, pinnacle, crest...
+
+📝 Processing 218/280: "thaw"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: melt, unfreeze, liquefy
+
+📝 Processing 219/280: "turbulence"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: chaos, disorder, upheaval...
+
+📝 Processing 220/280: "unbroken"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: continuous, whole, intact...
+   💾 Checkpoint saved
+
+📝 Processing 221/280: "unravel"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: untangle, disentangle, reveal...
+
+📝 Processing 222/280: "wilt"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: fade, wither, decline...
+
+📝 Processing 223/280: "armored"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: protected, fortified, shielded...
+
+📝 Processing 224/280: "connect"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: link, join, unite...
+
+📝 Processing 225/280: "Connectedness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: unity, linkage, coherence...
+
+📝 Processing 226/280: "disjoint"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: disconnected, separate, divided...
+
+📝 Processing 227/280: "Eclipse"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: occult, shade, cover...
+
+📝 Processing 228/280: "endlessness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: infinity, eternity, boundlessness...
+
+📝 Processing 229/280: "engage"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: involve, connect, participate...
+
+📝 Processing 230/280: "exile"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: banishment, exclusion, separation...
+   💾 Checkpoint saved
+
+📝 Processing 231/280: "Expressiveness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: expression, emphasis, impression...
+
+📝 Processing 232/280: "Facade"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: front, face, surface
+
+📝 Processing 233/280: "Limbo"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: purgatory, void, interstice...
+
+📝 Processing 234/280: "Mythos"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: legend, tale, narrative...
+
+📝 Processing 235/280: "shatter"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: break, fracture, crack...
+
+📝 Processing 236/280: "strength"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: power, force, might...
+
+📝 Processing 237/280: "Unveiling"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: reveal, disclose, expose...
+
+📝 Processing 238/280: "worthless"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: valueless, futile, empty...
+
+📝 Processing 239/280: "Adaptation"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: adjustment, modification, alteration...
+
+📝 Processing 240/280: "clueless"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: ignorant, unaware, naive...
+   💾 Checkpoint saved
+
+📝 Processing 241/280: "Companion"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: partner, associate, ally...
+
+📝 Processing 242/280: "Conscious"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: aware, mindful, deliberate...
+
+📝 Processing 243/280: "Digitization"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: digital, conversion, encoding...
+
+📝 Processing 244/280: "embrace"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: hug, welcome, accept...
+
+📝 Processing 245/280: "expire"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: end, terminate, cease...
+
+📝 Processing 246/280: "invention"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: creation, innovation, discovery...
+
+📝 Processing 247/280: "Language"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: tongue, speech, lexicon...
+
+📝 Processing 248/280: "manual"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: handbook, guide, reference
+
+📝 Processing 249/280: "mindless"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: unthinking, automatic, thoughtless...
+
+📝 Processing 250/280: "monopoly"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: control, dominion, ownership...
+   💾 Checkpoint saved
+
+📝 Processing 251/280: "Pause"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: break, halt, stop...
+
+📝 Processing 252/280: "Readiness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: prepared, primed, eager...
+
+📝 Processing 253/280: "resistance"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: opposition, defiance, struggle...
+
+📝 Processing 254/280: "rush"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: hurry, speed, flurry...
+
+📝 Processing 255/280: "stress"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: tension, strain, pressure...
+
+📝 Processing 256/280: "Survival"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: endurance, persistence, continuance
+
+📝 Processing 257/280: "unmark"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: erase, remove, delete
+
+📝 Processing 258/280: "User-Centric"
+   Missing: synonyms 
+   ✅ Added 3 synonyms: userfocused, usertested, userfriendly
+
+📝 Processing 259/280: "Virtualization"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: simulation, imitation, replication...
+
+📝 Processing 260/280: "absorbent"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: porous, sorbent, spongy...
+   💾 Checkpoint saved
+
+📝 Processing 261/280: "cloudy"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: hazy, misty, overcast...
+
+📝 Processing 262/280: "Craggy"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: rugged, jagged, rough...
+
+📝 Processing 263/280: "Flatness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: smooth, level, plain...
+
+📝 Processing 264/280: "Foliage"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: leaves, greens, vegetation...
+
+📝 Processing 265/280: "Hard"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: solid, rigid, tough...
+
+📝 Processing 266/280: "Pillow"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: cushion, pad, rest...
+
+📝 Processing 267/280: "rusty"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: corroded, weathered, oxidized...
+
+📝 Processing 268/280: "Scratched"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: etched, scuffed, marked...
+
+📝 Processing 269/280: "shiny"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: glossy, luminous, gleaming...
+
+📝 Processing 270/280: "Smoky"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: hazy, misty, cloudy...
+   💾 Checkpoint saved
+
+📝 Processing 271/280: "Smoothness"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: sleek, soft, silky...
+
+📝 Processing 272/280: "thick"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: dense, broad, heavy...
+
+📝 Processing 273/280: "Wire"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: wire, strand, cable...
+
+📝 Processing 274/280: "Desolate"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: bleak, barren, forlorn...
+
+📝 Processing 275/280: "downcast"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: dejected, sorrowful, melancholy...
+
+📝 Processing 276/280: "Ponderous"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: heavy, weighty, slow...
+
+📝 Processing 277/280: "Prelude"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: intro, opening, prologue...
+
+📝 Processing 278/280: "shouting"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: yelling, screaming, calling...
+
+📝 Processing 279/280: "Silent"
+   Missing: synonyms 
+   ✅ Added 5 synonyms: quiet, calm, still...
+
+📝 Processing 280/280: "Vanguard"
+   Missing: synonyms 
+   ✅ Added 4 synonyms: forefront, pioneering, innovative...
+   💾 Checkpoint saved
+
+💾 Saving updated concepts...
+
+══════════════════════════════════════════════════════════════════════
+📊 Summary
+══════════════════════════════════════════════════════════════════════
+✅ Concepts updated: 270
+❌ Concepts failed: 0
+💾 Backup saved to: /Users/victor/Documents/GitHub/Looma/src/concepts/seed_concepts.json.backup.1763500109858
+📄 Updated file: /Users/victor/Documents/GitHub/Looma/src/concepts/seed_concepts.json
+
+══════════════════════════════════════════════════════════════════════

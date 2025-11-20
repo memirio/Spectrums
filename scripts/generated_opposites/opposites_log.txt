@@ -1,0 +1,2249 @@
+══════════════════════════════════════════════════════════════════════
+🔄 Generating Missing Opposites
+══════════════════════════════════════════════════════════════════════
+
+📚 Loaded 4118 concepts
+
+📊 Found 717 concepts missing opposites
+
+💾 Creating backup: /Users/victor/Documents/GitHub/Looma/src/concepts/seed_concepts.json.backup.1763498028448
+
+📝 Processing 1/717: "Academia"
+   ✅ Added 5 opposites: chaos, informal, spontaneity...
+
+📝 Processing 2/717: "Art"
+   ✅ Added 5 opposites: chaos, disorder, banality...
+
+📝 Processing 3/717: "Art"
+   ✅ Added 5 opposites: chaos, disorder, brutality...
+
+📝 Processing 4/717: "Asymmetry"
+   ✅ Added 5 opposites: symmetry, uniformity, balance...
+
+📝 Processing 5/717: "Caps"
+   ✅ Added 3 opposites: hats, bare, minimal
+
+📝 Processing 6/717: "Caps"
+   ✅ Added 3 opposites: bare, flat, minimal
+
+📝 Processing 7/717: "Accent"
+   ✅ Added 5 opposites: base, neutral, subdued...
+
+📝 Processing 8/717: "Amber"
+   ✅ Added 5 opposites: cyan, violet, indigo...
+
+📝 Processing 9/717: "Binary"
+   ✅ Added 3 opposites: Monochrome, Complex, Fluid
+
+📝 Processing 10/717: "Chromatic"
+   ✅ Added 3 opposites: Achromatic, Monochrome, Neutral
+   💾 Saved progress
+
+📝 Processing 11/717: "Colorful"
+   ✅ Added 5 opposites: Dull, Muted, Monochrome...
+
+📝 Processing 12/717: "Colorless"
+   ✅ Added 3 opposites: vivid, colorful, saturated
+
+📝 Processing 13/717: "Action"
+   ✅ Added 3 opposites: stillness, passivity, rest
+
+📝 Processing 14/717: "Aqueous"
+   ✅ Added 5 opposites: solid, dry, stark...
+
+📝 Processing 15/717: "ASCII"
+   ✅ Added 3 opposites: vector, fluid, modern
+
+📝 Processing 16/717: "Atmospheric"
+   ✅ Added 3 opposites: sterile, bland, minimal
+
+📝 Processing 17/717: "Baroque"
+   ✅ Added 5 opposites: minimalism, simplicity, cleanliness...
+
+📝 Processing 18/717: "Bauhaus"
+   ✅ Added 3 opposites: eclectic, chaotic, ornate
+
+📝 Processing 19/717: "Biophilic"
+   ✅ Added 5 opposites: detached, sterile, artificial...
+
+📝 Processing 20/717: "Botanical"
+   ✅ Added 5 opposites: Industrial, Synthetic, Urban...
+   💾 Saved progress
+
+📝 Processing 21/717: "Brutalism"
+   ✅ Added 5 opposites: elegant, ornate, refined...
+
+📝 Processing 22/717: "Candid"
+   ✅ Added 3 opposites: staged, contrived, artificial
+
+📝 Processing 23/717: "Cartoon"
+   ✅ Added 5 opposites: realism, seriousness, minimalism...
+
+📝 Processing 24/717: "Chunky"
+   ✅ Added 5 opposites: Sleek, Minimal, Refined...
+
+📝 Processing 25/717: "Comic"
+   ✅ Added 3 opposites: serious, sophisticated, minimal
+
+📝 Processing 26/717: "Computational"
+   ✅ Added 5 opposites: Organic, Intuitive, Spontaneous...
+
+📝 Processing 27/717: "Conceptual"
+   ✅ Added 3 opposites: literal, practical, traditional
+
+📝 Processing 28/717: "Cybernetic"
+   ✅ Added 5 opposites: organic, natural, primitive...
+
+📝 Processing 29/717: "Darkmode"
+   ✅ Added 5 opposites: Lightmode, Bright, Vibrant...
+
+📝 Processing 30/717: "Deco"
+   ✅ Added 3 opposites: minimalism, simplicity, brutalism
+   💾 Saved progress
+
+📝 Processing 31/717: "Deconstructed"
+   ✅ Added 5 opposites: Constructed, Complete, Defined...
+
+📝 Processing 32/717: "Deconstructivist"
+   ✅ Added 3 opposites: classicism, symmetry, order
+
+📝 Processing 33/717: "Diorama"
+   ✅ Added 5 opposites: dispersal, disorder, detached...
+
+📝 Processing 34/717: "Doodle"
+   ✅ Added 3 opposites: precise, structured, formal
+
+📝 Processing 35/717: "Essentialism"
+   ✅ Added 3 opposites: cluttered, complex, excessive
+
+📝 Processing 36/717: "Experiential"
+   ✅ Added 5 opposites: detached, disembodied, static...
+
+📝 Processing 37/717: "Folk"
+   ✅ Added 5 opposites: modern, minimal, industrial...
+
+📝 Processing 38/717: "Functionalism"
+   ✅ Added 5 opposites: chaos, ornate, excessive...
+
+📝 Processing 39/717: "Functionalist"
+   ✅ Added 3 opposites: eclectic, chaotic, ornate
+
+📝 Processing 40/717: "Gamified"
+   ✅ Added 5 opposites: serious, mundane, static...
+   💾 Saved progress
+
+📝 Processing 41/717: "Glitch"
+   ✅ Added 5 opposites: clarity, perfection, order...
+
+📝 Processing 42/717: "Gourmet"
+   ✅ Added 3 opposites: crude, basic, mundane
+
+📝 Processing 43/717: "Groovy"
+   ✅ Added 5 opposites: stale, mundane, rigid...
+
+📝 Processing 44/717: "Grunge"
+   ✅ Added 3 opposites: elegant, cleanliness, classicism
+
+📝 Processing 45/717: "Homely"
+   ✅ Added 5 opposites: sterile, minimal, impersonal...
+
+📝 Processing 46/717: "HUD"
+   ✅ Added 3 opposites: chaos, disorder, simplicity
+
+📝 Processing 47/717: "Humanist"
+   ✅ Added 5 opposites: Brutal, Cold, Detached...
+
+📝 Processing 48/717: "Impressionist"
+   ✅ Added 5 opposites: realism, clarity, precision...
+
+📝 Processing 49/717: "Informative"
+   ✅ Added 5 opposites: ambiguous, vague, confusing...
+
+📝 Processing 50/717: "Japandi"
+   ✅ Added 3 opposites: eclectic, cluttered, chaotic
+   💾 Saved progress
+
+📝 Processing 51/717: "Kitsch"
+   ✅ Added 5 opposites: elegant, minimal, refined...
+
+📝 Processing 52/717: "Maximalism"
+   ✅ Added 5 opposites: Minimalism, Simplicity, Subtlety...
+
+📝 Processing 53/717: "Memphis"
+   ✅ Added 3 opposites: minimalism, classicism, monochrome
+
+📝 Processing 54/717: "Minimalism"
+   ✅ Added 3 opposites: excessive, cluttered, complex
+
+📝 Processing 55/717: "Naturalistic"
+   ✅ Added 5 opposites: Synthetic, Artificial, Abstract...
+
+📝 Processing 56/717: "noir"
+   ✅ Added 3 opposites: vibrant, bright, minimal
+
+📝 Processing 57/717: "Nordic"
+   ✅ Added 3 opposites: eclectic, chaotic, ornate
+
+📝 Processing 58/717: "Nouveau"
+   ✅ Added 3 opposites: archaic, classic, brutal
+
+📝 Processing 59/717: "Object"
+   ✅ Added 3 opposites: void, absence, negation
+
+📝 Processing 60/717: "Performative"
+   ✅ Added 5 opposites: subdued, minimal, static...
+   💾 Saved progress
+
+📝 Processing 61/717: "poly"
+   ✅ Added 3 opposites: mono, simple, uniform
+
+📝 Processing 62/717: "Postmodernism"
+   ✅ Added 3 opposites: modernism, classicism, minimalism
+
+📝 Processing 63/717: "Pure"
+   ✅ Added 3 opposites: Cluttered, Complex, Brutal
+
+📝 Processing 64/717: "Relatable"
+   ✅ Added 5 opposites: alien, distant, unfamiliar...
+
+📝 Processing 65/717: "romantic"
+   ✅ Added 5 opposites: brutal, clinical, cold...
+
+📝 Processing 66/717: "shade"
+   ✅ Added 3 opposites: light, brightness, exposure
+
+📝 Processing 67/717: "Skeuomorphism"
+   ✅ Added 3 opposites: flat, minimalism, abstraction
+
+📝 Processing 68/717: "Street"
+   ✅ Added 3 opposites: sanctuary, enclosure, interior
+
+📝 Processing 69/717: "Structural"
+   ✅ Added 3 opposites: Organic, Fluid, Chaotic
+
+📝 Processing 70/717: "Surrealism"
+   ✅ Added 5 opposites: realism, clarity, simplicity...
+   💾 Saved progress
+
+📝 Processing 71/717: "Swiss"
+   ✅ Added 3 opposites: chaotic, excessive, brutal
+
+📝 Processing 72/717: "Technic"
+   ✅ Added 5 opposites: Organic, Natural, Fluid...
+
+📝 Processing 73/717: "Techno"
+   ✅ Added 5 opposites: organic, traditional, minimalist...
+
+📝 Processing 74/717: "Zen"
+   ✅ Added 5 opposites: chaos, noise, disorder...
+
+📝 Processing 75/717: "3D"
+   ✅ Added 5 opposites: 2D, flat, linear...
+
+📝 Processing 76/717: "3D Rendering"
+   ✅ Added 5 opposites: 2D, flat, static...
+
+📝 Processing 77/717: "Aerial"
+   ✅ Added 3 opposites: Grounded, Submerged, Concealed
+
+📝 Processing 78/717: "Art"
+   ✅ Added 3 opposites: chaos, disorder, brutality
+
+📝 Processing 79/717: "Art"
+   ✅ Added 5 opposites: chaos, function, utility...
+
+📝 Processing 80/717: "Artistic"
+   ✅ Added 3 opposites: mechanical, functional, mundane
+   💾 Saved progress
+
+📝 Processing 81/717: "Blank"
+   ✅ Added 5 opposites: Filled, Detailed, Defined...
+
+📝 Processing 82/717: "Blur"
+   ✅ Added 3 opposites: Sharp, Clear, Defined
+
+📝 Processing 83/717: "Vector Graphics"
+   ✅ Added 3 opposites: Raster, Bitmap, Pixel
+
+📝 Processing 84/717: "Visualization"
+   ✅ Added 5 opposites: Obscurity, Ambiguity, Disorder...
+
+📝 Processing 85/717: "VR"
+   ✅ Added 3 opposites: tangible, static, realistic
+
+📝 Processing 86/717: "Academia"
+   ✅ Added 5 opposites: chaos, anarchy, disorder...
+
+📝 Processing 87/717: "Aloof"
+   ✅ Added 3 opposites: affection, engaged, approachable
+
+📝 Processing 88/717: "Analogous"
+   ✅ Added 5 opposites: dissimilar, contrasting, divergent...
+
+📝 Processing 89/717: "Anger"
+   ✅ Added 3 opposites: calm, joy, serenity
+
+📝 Processing 90/717: "Anticipation"
+   ✅ Added 5 opposites: disappointment, indifference, apathy...
+   💾 Saved progress
+
+📝 Processing 91/717: "Anxiety"
+   ✅ Added 3 opposites: calm, serenity, contentment
+
+📝 Processing 92/717: "Apprehension"
+   ✅ Added 5 opposites: confidence, assurance, calmness...
+
+📝 Processing 93/717: "Solemn"
+   ✅ Added 5 opposites: Joyful, Playful, Lighthearted...
+
+📝 Processing 94/717: "Accordion"
+   ✅ Added 3 opposites: flat, open, static
+
+📝 Processing 95/717: "Alignment"
+   ✅ Added 3 opposites: disorder, dispersal, detachment
+
+📝 Processing 96/717: "Amorphous"
+   ✅ Added 5 opposites: defined, structured, rigid...
+
+📝 Processing 97/717: "Anatomy"
+   ✅ Added 5 opposites: Chaos, Disorder, Fragmentation...
+
+📝 Processing 98/717: "Anchored"
+   ✅ Added 5 opposites: Detached, Dispersal, Fluidity...
+
+📝 Processing 99/717: "Arch"
+   ✅ Added 5 opposites: Flat, Linear, Plane...
+
+📝 Processing 100/717: "Architecture"
+   ✅ Added 5 opposites: chaos, disorder, deconstruction...
+   💾 Saved progress
+
+📝 Processing 101/717: "Array"
+   ✅ Added 5 opposites: Dispersal, Disorder, Cluttered...
+
+📝 Processing 102/717: "Assembly"
+   ✅ Added 5 opposites: Dispersal, Detachment, Disorder...
+
+📝 Processing 103/717: "Axial"
+   ✅ Added 5 opposites: Radial, Dispersed, Asymmetry...
+
+📝 Processing 104/717: "Basic"
+   ✅ Added 5 opposites: Complex, Excessive, Decorated...
+
+📝 Processing 105/717: "Blob"
+   ✅ Added 3 opposites: Edge, Point, Line
+
+📝 Processing 106/717: "Block"
+   ✅ Added 3 opposites: Fluid, Open, Void
+
+📝 Processing 107/717: "Boundless"
+   ✅ Added 3 opposites: bounded, limited, finite
+
+📝 Processing 108/717: "Canvas"
+   ✅ Added 5 opposites: void, absence, emptiness...
+
+📝 Processing 109/717: "Centralized"
+   ✅ Added 5 opposites: Distributed, Decentralized, Scattered...
+
+📝 Processing 110/717: "Centric"
+   ✅ Added 3 opposites: Peripheral, Marginal, Fringe
+   💾 Saved progress
+
+📝 Processing 111/717: "Circle"
+   ✅ Added 3 opposites: Square, Line, Angle
+
+📝 Processing 112/717: "Circular"
+   ✅ Added 3 opposites: Angular, Linear, Straight
+
+📝 Processing 113/717: "Clustered"
+   ✅ Added 5 opposites: dispersal, detached, scattered...
+
+📝 Processing 114/717: "Coil"
+   ✅ Added 5 opposites: Straight, Flat, Linear...
+
+📝 Processing 115/717: "Columnar"
+   ✅ Added 5 opposites: Fluid, Organic, Irregular...
+
+📝 Processing 116/717: "Constellation"
+   ✅ Added 5 opposites: Disorder, Dispersal, Cluttered...
+
+📝 Processing 117/717: "Containment"
+   ✅ Added 5 opposites: dispersal, expansion, release...
+
+📝 Processing 118/717: "Contour"
+   ✅ Added 3 opposites: Flat, Chaos, Disorder
+
+📝 Processing 119/717: "Corridor"
+   ✅ Added 3 opposites: open, expanse, void
+
+📝 Processing 120/717: "Curve"
+   ✅ Added 3 opposites: Edge, Line, Angle
+   💾 Saved progress
+
+📝 Processing 121/717: "Curvilinear"
+   ✅ Added 5 opposites: Linear, Straight, Flat...
+
+📝 Processing 122/717: "Cylindrical"
+   ✅ Added 5 opposites: Flat, Angular, Irregular...
+
+📝 Processing 123/717: "Dashboard"
+   ✅ Added 5 opposites: chaos, disorder, dispersal...
+
+📝 Processing 124/717: "Diagonal"
+   ✅ Added 3 opposites: Horizontal, Vertical, Straight
+
+📝 Processing 125/717: "Dispersed"
+   ✅ Added 3 opposites: clustered, centered, contained
+
+📝 Processing 126/717: "Distributed"
+   ✅ Added 3 opposites: Centralized, Consolidated, Contained
+
+📝 Processing 127/717: "Dome"
+   ✅ Added 5 opposites: Flat, Plane, Level...
+
+📝 Processing 128/717: "Ecommerce"
+   ✅ Added 3 opposites: physical, local, tangible
+
+📝 Processing 129/717: "Enclosure"
+   ✅ Added 5 opposites: Openness, Exposure, Dispersal...
+
+📝 Processing 130/717: "Ergonomic"
+   ✅ Added 5 opposites: awkwardness, clumsy, disorder...
+   💾 Saved progress
+
+📝 Processing 131/717: "Field"
+   ✅ Added 5 opposites: Void, Chaos, Dispersal...
+
+📝 Processing 132/717: "Float"
+   ✅ Added 5 opposites: Sink, Ground, Anchor...
+
+📝 Processing 133/717: "Flowchart"
+   ✅ Added 5 opposites: chaos, disorder, randomness...
+
+📝 Processing 134/717: "Formless"
+   ✅ Added 3 opposites: defined, structured, shaped
+
+📝 Processing 135/717: "Fragmentation"
+   ✅ Added 5 opposites: unity, wholeness, cohesion...
+
+📝 Processing 136/717: "Frame"
+   ✅ Added 3 opposites: Void, Chaos, Fluid
+
+📝 Processing 137/717: "Framing"
+   ✅ Added 3 opposites: disorder, dispersal, detached
+
+📝 Processing 138/717: "Grouping"
+   ✅ Added 3 opposites: dispersal, detachment, disorder
+
+📝 Processing 139/717: "Hierarchy"
+   ✅ Added 5 opposites: Chaos, Disorder, Anarchy...
+
+📝 Processing 140/717: "Imposing"
+   ✅ Added 5 opposites: subtle, modest, humble...
+   💾 Saved progress
+
+📝 Processing 141/717: "Interrupted"
+   ✅ Added 5 opposites: Complete, Continuous, Cohesive...
+
+📝 Processing 142/717: "Intersect"
+   ✅ Added 3 opposites: detach, disperse, disorder
+
+📝 Processing 143/717: "Interwoven"
+   ✅ Added 5 opposites: Detached, Dispersal, Separation...
+
+📝 Processing 144/717: "Jagged"
+   ✅ Added 5 opposites: smooth, uniform, linear...
+
+📝 Processing 145/717: "Lattice"
+   ✅ Added 5 opposites: Chaos, Disorder, Randomness...
+
+📝 Processing 146/717: "Layers"
+   ✅ Added 3 opposites: flat, simple, single
+
+📝 Processing 147/717: "Line"
+   ✅ Added 5 opposites: Curve, Chaos, Volume...
+
+📝 Processing 148/717: "Mass"
+   ✅ Added 5 opposites: Void, Lightness, Simplicity...
+
+📝 Processing 149/717: "Matrix"
+   ✅ Added 5 opposites: chaos, disorder, simplicity...
+
+📝 Processing 150/717: "Modular"
+   ✅ Added 5 opposites: Integral, Unified, Fixed...
+   💾 Saved progress
+
+📝 Processing 151/717: "Module"
+   ✅ Added 3 opposites: Chaos, Disorder, Fragment
+
+📝 Processing 152/717: "Monolithic"
+   ✅ Added 5 opposites: Fragmented, Diverse, Varied...
+
+📝 Processing 153/717: "Nodes"
+   ✅ Added 3 opposites: Chaos, Dispersal, Isolation
+
+📝 Processing 154/717: "Octagonal"
+   ✅ Added 5 opposites: Circular, Linear, Irregular...
+
+📝 Processing 155/717: "Pathway"
+   ✅ Added 3 opposites: obstruction, dispersal, disorder
+
+📝 Processing 156/717: "Pinnacle"
+   ✅ Added 3 opposites: base, decline, descent
+
+📝 Processing 157/717: "Polygon"
+   ✅ Added 3 opposites: Curve, Fluid, Chaos
+
+📝 Processing 158/717: "Polyhedron"
+   ✅ Added 3 opposites: Line, Surface, Void
+
+📝 Processing 159/717: "Proportion"
+   ✅ Added 5 opposites: chaos, disorder, asymmetry...
+
+📝 Processing 160/717: "Pyramid"
+   ✅ Added 5 opposites: Sphere, Flat, Void...
+   💾 Saved progress
+
+📝 Processing 161/717: "Radial"
+   ✅ Added 3 opposites: Linear, Flat, Static
+
+📝 Processing 162/717: "Rectangle"
+   ✅ Added 5 opposites: Circle, Curve, Sphere...
+
+📝 Processing 163/717: "Rectangular"
+   ✅ Added 3 opposites: Curvilinear, Organic, Fluid
+
+📝 Processing 164/717: "Rectilinear"
+   ✅ Added 3 opposites: curvature, asymmetry, chaos
+
+📝 Processing 165/717: "Repetition"
+   ✅ Added 5 opposites: Variation, Disorder, Diversity...
+
+📝 Processing 166/717: "Rhythm"
+   ✅ Added 3 opposites: chaos, stasis, silence
+
+📝 Processing 167/717: "Scaffold"
+   ✅ Added 5 opposites: collapse, disassemble, dismantle...
+
+📝 Processing 168/717: "Scale"
+   ✅ Added 3 opposites: Minimize, Reduce, Diminish
+
+📝 Processing 169/717: "Scatter"
+   ✅ Added 5 opposites: Cluster, Gather, Consolidate...
+
+📝 Processing 170/717: "Shape"
+   ✅ Added 3 opposites: void, chaos, flat
+   💾 Saved progress
+
+📝 Processing 171/717: "Sidebar"
+   ✅ Added 3 opposites: Main, Center, Focus
+
+📝 Processing 172/717: "Silhouette"
+   ✅ Added 3 opposites: definition, clarity, detail
+
+📝 Processing 173/717: "Sphere"
+   ✅ Added 3 opposites: Cube, Plane, Line
+
+📝 Processing 174/717: "Spherical"
+   ✅ Added 5 opposites: Angular, Flat, Linear...
+
+📝 Processing 175/717: "Spiral"
+   ✅ Added 5 opposites: straight, flat, linear...
+
+📝 Processing 176/717: "Stack"
+   ✅ Added 5 opposites: Scatter, Disperse, Dissolve...
+
+📝 Processing 177/717: "Statuary"
+   ✅ Added 5 opposites: fluid, dynamic, transient...
+
+📝 Processing 178/717: "Streamline"
+   ✅ Added 3 opposites: cluttered, complex, awkwardness
+
+📝 Processing 179/717: "Tabs"
+   ✅ Added 5 opposites: Carousel, Dispersal, Cluttered...
+
+📝 Processing 180/717: "Tiered"
+   ✅ Added 3 opposites: flat, uniform, single
+   💾 Saved progress
+
+📝 Processing 181/717: "Topography"
+   ✅ Added 5 opposites: Flat, Uniform, Smooth...
+
+📝 Processing 182/717: "Tubular"
+   ✅ Added 5 opposites: Flat, Solid, Angular...
+
+📝 Processing 183/717: "Tunnel"
+   ✅ Added 5 opposites: Openness, Surface, Exposure...
+
+📝 Processing 184/717: "Undefined"
+   ✅ Added 3 opposites: defined, structured, ordered
+
+📝 Processing 185/717: "Undulation"
+   ✅ Added 3 opposites: Flat, Static, Rigid
+
+📝 Processing 186/717: "Uniform"
+   ✅ Added 5 opposites: Diverse, Varied, Chaotic...
+
+📝 Processing 187/717: "Verticality"
+   ✅ Added 5 opposites: Horizontality, Flatness, Groundedness...
+
+📝 Processing 188/717: "Volume"
+   ✅ Added 3 opposites: Flat, Sparse, Minimal
+
+📝 Processing 189/717: "E-commerce"
+   ✅ Added 3 opposites: physical, local, tangible
+
+📝 Processing 190/717: "Absorption"
+   ✅ Added 5 opposites: Dispersion, Detachment, Rejection...
+   💾 Saved progress
+
+📝 Processing 191/717: "Abstraction"
+   ✅ Added 5 opposites: concrete, literal, specific...
+
+📝 Processing 192/717: "Abyss"
+   ✅ Added 3 opposites: summit, clarity, light
+
+📝 Processing 193/717: "Accumulation"
+   ✅ Added 5 opposites: Dispersal, Detachment, Reduction...
+
+📝 Processing 194/717: "Archetype"
+   ✅ Added 5 opposites: anomaly, chaos, individuality...
+
+📝 Processing 195/717: "Arid"
+   ✅ Added 5 opposites: Lush, Wet, Green...
+
+📝 Processing 196/717: "Arrangement"
+   ✅ Added 3 opposites: disorder, dispersal, cluttered
+
+📝 Processing 197/717: "Assemblage"
+   ✅ Added 5 opposites: Dispersal, Detachment, Disorder...
+
+📝 Processing 198/717: "Astral"
+   ✅ Added 5 opposites: Terrestrial, Material, Concrete...
+
+📝 Processing 199/717: "Atmosphere"
+   ✅ Added 3 opposites: Void, Chaos, Desolation
+
+📝 Processing 200/717: "Aura"
+   ✅ Added 5 opposites: Void, Clarity, Chaos...
+   💾 Saved progress
+
+📝 Processing 201/717: "Aurora"
+   ✅ Added 3 opposites: Dusk, Void, Obscurity
+
+📝 Processing 202/717: "Being"
+   ✅ Added 5 opposites: Nonbeing, Void, Absence...
+
+📝 Processing 203/717: "Bloom"
+   ✅ Added 5 opposites: Wither, Fade, Decay...
+
+📝 Processing 204/717: "Bond"
+   ✅ Added 3 opposites: Detach, Disperse, Disengage
+
+📝 Processing 205/717: "Burst"
+   ✅ Added 5 opposites: Contain, Still, Calm...
+
+📝 Processing 206/717: "Celestial"
+   ✅ Added 5 opposites: Terrestrial, Earthly, Mundane...
+
+📝 Processing 207/717: "Chronos"
+   ✅ Added 5 opposites: Aion, Eternity, Timelessness...
+
+📝 Processing 208/717: "Chthonic"
+   ✅ Added 3 opposites: Celestial, Ethereal, Transcendent
+
+📝 Processing 209/717: "Circuit"
+   ✅ Added 5 opposites: Chaos, Disorder, Fluidity...
+
+📝 Processing 210/717: "Cloud"
+   ✅ Added 3 opposites: Ground, Solid, Static
+   💾 Saved progress
+
+📝 Processing 211/717: "Conduit"
+   ✅ Added 3 opposites: blockage, disconnection, obstruction
+
+📝 Processing 212/717: "Construct"
+   ✅ Added 5 opposites: Dissolve, Erase, Destroy...
+
+📝 Processing 213/717: "Core"
+   ✅ Added 3 opposites: Surface, Periphery, Margin
+
+📝 Processing 214/717: "Cosmos"
+   ✅ Added 5 opposites: Chaos, Void, Nihility...
+
+📝 Processing 215/717: "Cottagecore"
+   ✅ Added 3 opposites: urban, industrial, synthetic
+
+📝 Processing 216/717: "Crystalline"
+   ✅ Added 5 opposites: Opaque, Amorphous, Dull...
+
+📝 Processing 217/717: "Cultivation"
+   ✅ Added 5 opposites: destruction, neglect, disorder...
+
+📝 Processing 218/717: "Cycle"
+   ✅ Added 3 opposites: End, Static, Singularity
+
+📝 Processing 219/717: "Dawn"
+   ✅ Added 5 opposites: Dusk, Night, Twilight...
+
+📝 Processing 220/717: "Decay"
+   ✅ Added 3 opposites: Growth, Renewal, Flourish
+   💾 Saved progress
+
+📝 Processing 221/717: "Delicacy"
+   ✅ Added 5 opposites: Brutality, Crudeness, Clumsiness...
+
+📝 Processing 222/717: "Diffusion"
+   ✅ Added 3 opposites: Concentration, Containment, Isolation
+
+📝 Processing 223/717: "Disruption"
+   ✅ Added 3 opposites: order, stability, continuity
+
+📝 Processing 224/717: "Distinctness"
+   ✅ Added 3 opposites: ambiguity, uniformity, blurriness
+
+📝 Processing 225/717: "Domain"
+   ✅ Added 3 opposites: Chaos, Void, Disorder
+
+📝 Processing 226/717: "Drift"
+   ✅ Added 5 opposites: Anchor, Stability, Focus...
+
+📝 Processing 227/717: "Echo"
+   ✅ Added 3 opposites: Silence, Absence, Void
+
+📝 Processing 228/717: "Element"
+   ✅ Added 3 opposites: Void, Chaos, Absence
+
+📝 Processing 229/717: "Elevation"
+   ✅ Added 5 opposites: descent, decline, depression...
+
+📝 Processing 230/717: "Ember"
+   ✅ Added 3 opposites: Frost, Void, Light
+   💾 Saved progress
+
+📝 Processing 231/717: "Emotion"
+   ✅ Added 5 opposites: logic, detachment, indifference...
+
+📝 Processing 232/717: "Energy"
+   ✅ Added 5 opposites: stagnation, inertia, stillness...
+
+📝 Processing 233/717: "Envelop"
+   ✅ Added 3 opposites: Expose, Reveal, Uncover
+
+📝 Processing 234/717: "Environment"
+   ✅ Added 5 opposites: Artificial, Urban, Synthetic...
+
+📝 Processing 235/717: "Ephemeral"
+   ✅ Added 3 opposites: endless, permanent, eternal
+
+📝 Processing 236/717: "Equilibrium"
+   ✅ Added 5 opposites: chaos, imbalance, disorder...
+
+📝 Processing 237/717: "Evolution"
+   ✅ Added 5 opposites: Stagnation, Regression, Decay...
+
+📝 Processing 238/717: "Evolve"
+   ✅ Added 5 opposites: Descend, Stagnate, Regress...
+
+📝 Processing 239/717: "Expanse"
+   ✅ Added 5 opposites: Contraction, Confinement, Limitation...
+
+📝 Processing 240/717: "Expansion"
+   ✅ Added 5 opposites: Contraction, Reduction, Diminution...
+   💾 Saved progress
+
+📝 Processing 241/717: "Expression"
+   ✅ Added 3 opposites: Silence, Void, Stagnation
+
+📝 Processing 242/717: "Fantasy"
+   ✅ Added 3 opposites: reality, normalcy, ordinariness
+
+📝 Processing 243/717: "Flare"
+   ✅ Added 5 opposites: dull, subdued, dim...
+
+📝 Processing 244/717: "Flex"
+   ✅ Added 3 opposites: Rigid, Static, Fixed
+
+📝 Processing 245/717: "Flora"
+   ✅ Added 3 opposites: Fauna, Urban, Synthetic
+
+📝 Processing 246/717: "Flourish"
+   ✅ Added 5 opposites: wither, decline, stagnate...
+
+📝 Processing 247/717: "Force"
+   ✅ Added 3 opposites: Rest, Stillness, Calm
+
+📝 Processing 248/717: "Formation"
+   ✅ Added 5 opposites: Dispersal, Disorder, Detachment...
+
+📝 Processing 249/717: "Foundation"
+   ✅ Added 3 opposites: chaos, disorder, fragment
+
+📝 Processing 250/717: "Framework"
+   ✅ Added 5 opposites: Chaos, Disorder, Fluidity...
+   💾 Saved progress
+
+📝 Processing 251/717: "Freeze"
+   ✅ Added 5 opposites: Melt, Flow, Thaw...
+
+📝 Processing 252/717: "Freshness"
+   ✅ Added 5 opposites: staleness, decay, dirtiness...
+
+📝 Processing 253/717: "Genesis"
+   ✅ Added 3 opposites: Destruction, End, Void
+
+📝 Processing 254/717: "Geology"
+   ✅ Added 5 opposites: metaphysics, abstract, ethereal...
+
+📝 Processing 255/717: "Germination"
+   ✅ Added 3 opposites: Destruction, Decay, Dissolution
+
+📝 Processing 256/717: "Gravity"
+   ✅ Added 3 opposites: levity, lightness, ascension
+
+📝 Processing 257/717: "Grounding"
+   ✅ Added 5 opposites: detached, disembodied, disorder...
+
+📝 Processing 258/717: "Growth"
+   ✅ Added 5 opposites: Decay, Stagnation, Decline...
+
+📝 Processing 259/717: "Handwritten"
+   ✅ Added 5 opposites: Digital, Typed, Printed...
+
+📝 Processing 260/717: "Haze"
+   ✅ Added 5 opposites: clarity, brightness, transparency...
+   💾 Saved progress
+
+📝 Processing 261/717: "Horizon"
+   ✅ Added 5 opposites: Depth, Ground, Base...
+
+📝 Processing 262/717: "Ideal"
+   ✅ Added 5 opposites: flawed, imperfect, subpar...
+
+📝 Processing 263/717: "Instinct"
+   ✅ Added 3 opposites: reason, calculation, analysis
+
+📝 Processing 264/717: "Interconnection"
+   ✅ Added 3 opposites: detachment, dispersal, isolation
+
+📝 Processing 265/717: "Interlock"
+   ✅ Added 3 opposites: detach, disperse, separate
+
+📝 Processing 266/717: "Life"
+   ✅ Added 3 opposites: Death, Void, Stillness
+
+📝 Processing 267/717: "Liquid"
+   ✅ Added 3 opposites: Solid, Rigid, Fixed
+
+📝 Processing 268/717: "Lumen"
+   ✅ Added 3 opposites: Shade, Obscurity, Dimness
+
+📝 Processing 269/717: "Luminance"
+   ✅ Added 3 opposites: Obscurity, Dimness, Shadow
+
+📝 Processing 270/717: "Luminescence"
+   ✅ Added 3 opposites: Obscurity, Dullness, Dimness
+   💾 Saved progress
+
+📝 Processing 271/717: "Lunar"
+   ✅ Added 3 opposites: Solar, Terrestrial, Day
+
+📝 Processing 272/717: "Manifestation"
+   ✅ Added 3 opposites: Negation, Suppression, Rejection
+
+📝 Processing 273/717: "Melody"
+   ✅ Added 3 opposites: cacophony, silence, disorder
+
+📝 Processing 274/717: "Micro"
+   ✅ Added 5 opposites: Macro, Vast, Expansive...
+
+📝 Processing 275/717: "Mineral"
+   ✅ Added 5 opposites: Organic, Fluid, Abstract...
+
+📝 Processing 276/717: "Mist"
+   ✅ Added 5 opposites: clarity, brightness, transparency...
+
+📝 Processing 277/717: "Molecular"
+   ✅ Added 5 opposites: Abstract, Chaos, Random...
+
+📝 Processing 278/717: "Momentum"
+   ✅ Added 3 opposites: stasis, inertia, stillness
+
+📝 Processing 279/717: "Morph"
+   ✅ Added 5 opposites: Static, Fixed, Rigid...
+
+📝 Processing 280/717: "Movement"
+   ✅ Added 3 opposites: Stasis, Stillness, Calm
+   💾 Saved progress
+
+📝 Processing 281/717: "Mystic"
+   ✅ Added 5 opposites: mundane, literal, concrete...
+
+📝 Processing 282/717: "Nebula"
+   ✅ Added 3 opposites: void, clarity, order
+
+📝 Processing 283/717: "Network"
+   ✅ Added 3 opposites: Isolation, Dispersal, Separation
+
+📝 Processing 284/717: "Nexus"
+   ✅ Added 5 opposites: dispersal, detached, disorder...
+
+📝 Processing 285/717: "Nourish"
+   ✅ Added 5 opposites: deplete, neglect, waste...
+
+📝 Processing 286/717: "Observation"
+   ✅ Added 5 opposites: Neglect, Invisibility, Disregard...
+
+📝 Processing 287/717: "Openness"
+   ✅ Added 5 opposites: Closure, Seclusion, Confinement...
+
+📝 Processing 288/717: "Orbit"
+   ✅ Added 3 opposites: Chaos, Stillness, Dispersal
+
+📝 Processing 289/717: "Pattern"
+   ✅ Added 5 opposites: Chaos, Disorder, Randomness...
+
+📝 Processing 290/717: "Penetration"
+   ✅ Added 5 opposites: Detachment, Withdrawal, Exclusion...
+   💾 Saved progress
+
+📝 Processing 291/717: "Planetary"
+   ✅ Added 5 opposites: Terrestrial, Local, Grounded...
+
+📝 Processing 292/717: "Portal"
+   ✅ Added 3 opposites: Barrier, Closure, Limit
+
+📝 Processing 293/717: "Primal"
+   ✅ Added 5 opposites: refined, synthetic, artificial...
+
+📝 Processing 294/717: "Principle"
+   ✅ Added 5 opposites: chaos, anarchy, disorder...
+
+📝 Processing 295/717: "Protection"
+   ✅ Added 5 opposites: exposure, vulnerability, neglect...
+
+📝 Processing 296/717: "Psyche"
+   ✅ Added 3 opposites: body, matter, form
+
+📝 Processing 297/717: "Pulse"
+   ✅ Added 3 opposites: Silence, Stasis, Stillness
+
+📝 Processing 298/717: "Radiance"
+   ✅ Added 5 opposites: Dull, Dim, Obscurity...
+
+📝 Processing 299/717: "Refraction"
+   ✅ Added 3 opposites: Reflection, Absorption, Convergence
+
+📝 Processing 300/717: "Remnant"
+   ✅ Added 3 opposites: Whole, Unity, Presence
+   💾 Saved progress
+
+📝 Processing 301/717: "Renewal"
+   ✅ Added 5 opposites: Decay, Stagnation, Deterioration...
+
+📝 Processing 302/717: "Resonance"
+   ✅ Added 5 opposites: cacophony, disorder, dispersal...
+
+📝 Processing 303/717: "Restraint"
+   ✅ Added 3 opposites: excess, freedom, chaos
+
+📝 Processing 304/717: "Revelation"
+   ✅ Added 5 opposites: obscurity, ignorance, concealment...
+
+📝 Processing 305/717: "Ripple"
+   ✅ Added 3 opposites: Stagnation, Stillness, Flatness
+
+📝 Processing 306/717: "Rupture"
+   ✅ Added 3 opposites: unity, wholeness, continuity
+
+📝 Processing 307/717: "Script"
+   ✅ Added 5 opposites: Chaos, Fluid, Improv...
+
+📝 Processing 308/717: "Sculptural"
+   ✅ Added 3 opposites: flat, void, dispersed
+
+📝 Processing 309/717: "Seasons"
+   ✅ Added 5 opposites: Timeless, Static, Eternal...
+
+📝 Processing 310/717: "Shaping"
+   ✅ Added 5 opposites: disorder, destruction, dissolution...
+   💾 Saved progress
+
+📝 Processing 311/717: "Shelter"
+   ✅ Added 3 opposites: exposure, vulnerability, abandonment
+
+📝 Processing 312/717: "Shimmer"
+   ✅ Added 5 opposites: Dull, Matte, Flat...
+
+📝 Processing 313/717: "Signal"
+   ✅ Added 5 opposites: Noise, Silence, Obscurity...
+
+📝 Processing 314/717: "Silence"
+   ✅ Added 3 opposites: cacophony, noise, sound
+
+📝 Processing 315/717: "Sky"
+   ✅ Added 5 opposites: Ground, Earth, Void...
+
+📝 Processing 316/717: "Skyward"
+   ✅ Added 3 opposites: Grounded, Subterranean, Earthbound
+
+📝 Processing 317/717: "Solar"
+   ✅ Added 5 opposites: Lunar, Night, Shade...
+
+📝 Processing 318/717: "Spark"
+   ✅ Added 3 opposites: dull, stagnant, static
+
+📝 Processing 319/717: "Speed"
+   ✅ Added 3 opposites: slowness, stasis, stillness
+
+📝 Processing 320/717: "Spirit"
+   ✅ Added 5 opposites: matter, physical, tangible...
+   💾 Saved progress
+
+📝 Processing 321/717: "Stillness"
+   ✅ Added 3 opposites: movement, chaos, noise
+
+📝 Processing 322/717: "Stratum"
+   ✅ Added 3 opposites: Base, Surface, Void
+
+📝 Processing 323/717: "Streak"
+   ✅ Added 3 opposites: fade, still, static
+
+📝 Processing 324/717: "Stream"
+   ✅ Added 5 opposites: Stagnation, Static, Stillness...
+
+📝 Processing 325/717: "Substance"
+   ✅ Added 5 opposites: Void, Illusion, Ephemera...
+
+📝 Processing 326/717: "Swirl"
+   ✅ Added 3 opposites: Center, Straight, Static
+
+📝 Processing 327/717: "Symbiosis"
+   ✅ Added 3 opposites: detachment, disorder, dominance
+
+📝 Processing 328/717: "Terrestrial"
+   ✅ Added 5 opposites: Celestial, Ethereal, Astral...
+
+📝 Processing 329/717: "Trace"
+   ✅ Added 3 opposites: Erase, Obscure, Conceal
+
+📝 Processing 330/717: "Trajectory"
+   ✅ Added 5 opposites: Stasis, Stillness, Inertia...
+   💾 Saved progress
+
+📝 Processing 331/717: "Transcendence"
+   ✅ Added 3 opposites: base, mundane, ordinary
+
+📝 Processing 332/717: "Transient"
+   ✅ Added 5 opposites: Permanent, Static, Enduring...
+
+📝 Processing 333/717: "Transparency"
+   ✅ Added 3 opposites: obscurity, opacity, clutter
+
+📝 Processing 334/717: "Unfolding"
+   ✅ Added 5 opposites: Folding, Concealing, Compressing...
+
+📝 Processing 335/717: "Units"
+   ✅ Added 5 opposites: Chaos, Disorder, Fragmentation...
+
+📝 Processing 336/717: "Vanishing"
+   ✅ Added 3 opposites: emerging, manifesting, appearing
+
+📝 Processing 337/717: "Velocity"
+   ✅ Added 5 opposites: stasis, stillness, slowness...
+
+📝 Processing 338/717: "Verdant"
+   ✅ Added 5 opposites: barren, sterile, desolate...
+
+📝 Processing 339/717: "Vibrancy"
+   ✅ Added 5 opposites: dull, drab, bleak...
+
+📝 Processing 340/717: "Vigor"
+   ✅ Added 5 opposites: lethargy, inertia, stagnation...
+   💾 Saved progress
+
+📝 Processing 341/717: "Virtual"
+   ✅ Added 3 opposites: Tangible, Physical, Concrete
+
+📝 Processing 342/717: "Vista"
+   ✅ Added 3 opposites: Obscurity, Confinement, Narrowness
+
+📝 Processing 343/717: "Vitality"
+   ✅ Added 5 opposites: stagnation, decay, fatigue...
+
+📝 Processing 344/717: "Void"
+   ✅ Added 3 opposites: Form, Presence, Substance
+
+📝 Processing 345/717: "Vortex"
+   ✅ Added 5 opposites: calm, stillness, dispersal...
+
+📝 Processing 346/717: "Voyage"
+   ✅ Added 5 opposites: Stasis, Stillness, Inertia...
+
+📝 Processing 347/717: "Weave"
+   ✅ Added 3 opposites: Detach, Disperse, Unravel
+
+📝 Processing 348/717: "Wild"
+   ✅ Added 5 opposites: Tame, Controlled, Orderly...
+
+📝 Processing 349/717: "Wilderness"
+   ✅ Added 5 opposites: urban, civilization, order...
+
+📝 Processing 350/717: "Wind"
+   ✅ Added 3 opposites: calm, stillness, stagnation
+   💾 Saved progress
+
+📝 Processing 351/717: "World"
+   ✅ Added 3 opposites: Void, Chaos, Isolation
+
+📝 Processing 352/717: "Absence"
+   ✅ Added 5 opposites: Presence, Existence, Completeness...
+
+📝 Processing 353/717: "Absurdity"
+   ✅ Added 3 opposites: clarity, order, meaning
+
+📝 Processing 354/717: "Abundance"
+   ✅ Added 5 opposites: Scarcity, Deficiency, Lack...
+
+📝 Processing 355/717: "Analysis"
+   ✅ Added 5 opposites: Chaos, Intuition, Simplicity...
+
+📝 Processing 356/717: "Archival"
+   ✅ Added 3 opposites: ephemeral, transient, fleeting
+
+📝 Processing 357/717: "Artifice"
+   ✅ Added 5 opposites: authentic, genuine, natural...
+
+📝 Processing 358/717: "Ascension"
+   ✅ Added 5 opposites: Descent, Decline, Fall...
+
+📝 Processing 359/717: "Ascent"
+   ✅ Added 3 opposites: Descent, Decline, Fall
+
+📝 Processing 360/717: "Assertion"
+   ✅ Added 5 opposites: Doubt, Negation, Disapproval...
+   💾 Saved progress
+
+📝 Processing 361/717: "Augmentation"
+   ✅ Added 3 opposites: Reduction, Diminution, Simplification
+
+📝 Processing 362/717: "Autonomy"
+   ✅ Added 3 opposites: subjugation, dependence, conformity
+
+📝 Processing 363/717: "Barrier"
+   ✅ Added 5 opposites: Access, Openness, Connection...
+
+📝 Processing 364/717: "Becoming"
+   ✅ Added 3 opposites: Being, Stasis, Static
+
+📝 Processing 365/717: "Beginning"
+   ✅ Added 3 opposites: End, Closure, Finality
+
+📝 Processing 366/717: "Belonging"
+   ✅ Added 5 opposites: isolation, detachment, alienation...
+
+📝 Processing 367/717: "Catalog"
+   ✅ Added 3 opposites: Chaos, Disorder, Randomness
+
+📝 Processing 368/717: "Categorization"
+   ✅ Added 3 opposites: disorder, dispersal, chaos
+
+📝 Processing 369/717: "Celebration"
+   ✅ Added 5 opposites: mourning, disapproval, despair...
+
+📝 Processing 370/717: "Challenge"
+   ✅ Added 3 opposites: comfort, ease, simplicity
+   💾 Saved progress
+
+📝 Processing 371/717: "Coexistence"
+   ✅ Added 3 opposites: detachment, conflict, isolation
+
+📝 Processing 372/717: "Cohesion"
+   ✅ Added 3 opposites: disorder, detachment, dispersal
+
+📝 Processing 373/717: "Collaboration"
+   ✅ Added 3 opposites: Isolation, Detachment, Disunity
+
+📝 Processing 374/717: "Collective"
+   ✅ Added 3 opposites: Individual, Solitary, Singular
+
+📝 Processing 375/717: "Complexity"
+   ✅ Added 3 opposites: simplicity, clarity, order
+
+📝 Processing 376/717: "Confinement"
+   ✅ Added 5 opposites: Liberation, Expansion, Freedom...
+
+📝 Processing 377/717: "Connectedness"
+   ✅ Added 3 opposites: detachment, disconnection, isolation
+
+📝 Processing 378/717: "Conscience"
+   ✅ Added 5 opposites: disapproval, detached, disorder...
+
+📝 Processing 379/717: "Continuity"
+   ✅ Added 3 opposites: disorder, dispersal, detachment
+
+📝 Processing 380/717: "Continuum"
+   ✅ Added 5 opposites: Fragment, Discontinuity, Isolation...
+   💾 Saved progress
+
+📝 Processing 381/717: "Convergence"
+   ✅ Added 5 opposites: Divergence, Dispersal, Separation...
+
+📝 Processing 382/717: "Craft"
+   ✅ Added 5 opposites: Chaos, Neglect, Disorder...
+
+📝 Processing 383/717: "Creation"
+   ✅ Added 5 opposites: Destruction, Negation, Erasure...
+
+📝 Processing 384/717: "Dawn"
+   ✅ Added 5 opposites: Dusk, Night, Twilight...
+
+📝 Processing 385/717: "Deconstruction"
+   ✅ Added 5 opposites: Construction, Unity, Completion...
+
+📝 Processing 386/717: "Discipline"
+   ✅ Added 5 opposites: chaos, indulgence, negligence...
+
+📝 Processing 387/717: "Disconnect"
+   ✅ Added 3 opposites: Connection, Unity, Harmony
+
+📝 Processing 388/717: "Discovery"
+   ✅ Added 5 opposites: stagnation, ignorance, conformity...
+
+📝 Processing 389/717: "Distortion"
+   ✅ Added 3 opposites: clarity, order, definition
+
+📝 Processing 390/717: "Divergence"
+   ✅ Added 3 opposites: convergence, unity, consistency
+   💾 Saved progress
+
+📝 Processing 391/717: "Duality"
+   ✅ Added 3 opposites: unity, singularity, wholeness
+
+📝 Processing 392/717: "Dwelling"
+   ✅ Added 3 opposites: detachment, dispersal, dislocation
+
+📝 Processing 393/717: "Embodiment"
+   ✅ Added 3 opposites: disembodied, detached, abstract
+
+📝 Processing 394/717: "Emergence"
+   ✅ Added 3 opposites: stagnation, uniformity, disintegration
+
+📝 Processing 395/717: "Empathy"
+   ✅ Added 5 opposites: apathy, indifference, disconnection...
+
+📝 Processing 396/717: "Empowerment"
+   ✅ Added 5 opposites: subjugation, disempowerment, oppression...
+
+📝 Processing 397/717: "Endurance"
+   ✅ Added 3 opposites: Fragility, Transience, Instability
+
+📝 Processing 398/717: "Enduring"
+   ✅ Added 3 opposites: ephemeral, transient, fleeting
+
+📝 Processing 399/717: "Escape"
+   ✅ Added 5 opposites: Confinement, Attachment, Inclusion...
+
+📝 Processing 400/717: "Evaluation"
+   ✅ Added 3 opposites: Neglect, Dismissal, Disregard
+   💾 Saved progress
+
+📝 Processing 401/717: "Exposure"
+   ✅ Added 3 opposites: Concealment, Obscurity, Seclusion
+
+📝 Processing 402/717: "Expressiveness"
+   ✅ Added 5 opposites: Apathy, Indifference, Detachment...
+
+📝 Processing 403/717: "Fantasy"
+   ✅ Added 3 opposites: Reality, Fact, Truth
+
+📝 Processing 404/717: "Flux"
+   ✅ Added 5 opposites: stasis, order, structure...
+
+📝 Processing 405/717: "Fragility"
+   ✅ Added 3 opposites: strength, stability, robustness
+
+📝 Processing 406/717: "Fragment"
+   ✅ Added 3 opposites: Whole, Unity, Continuity
+
+📝 Processing 407/717: "Fulfillment"
+   ✅ Added 5 opposites: emptiness, discontent, failure...
+
+📝 Processing 408/717: "Future"
+   ✅ Added 5 opposites: Past, Stagnation, Obsolescence...
+
+📝 Processing 409/717: "Humanity"
+   ✅ Added 3 opposites: inhumanity, indifference, apathy
+
+📝 Processing 410/717: "Identity"
+   ✅ Added 5 opposites: anonymity, disconnection, emptiness...
+   💾 Saved progress
+
+📝 Processing 411/717: "Idyll"
+   ✅ Added 5 opposites: chaos, disorder, dystopia...
+
+📝 Processing 412/717: "Illumination"
+   ✅ Added 3 opposites: darkness, obscurity, shadow
+
+📝 Processing 413/717: "Illusion"
+   ✅ Added 5 opposites: reality, truth, clarity...
+
+📝 Processing 414/717: "Imagination"
+   ✅ Added 3 opposites: reality, concreteness, literal
+
+📝 Processing 415/717: "Immensity"
+   ✅ Added 3 opposites: minutiae, insignificance, triviality
+
+📝 Processing 416/717: "Impact"
+   ✅ Added 3 opposites: void, absence, neglect
+
+📝 Processing 417/717: "Imperfection"
+   ✅ Added 3 opposites: perfection, completeness, flawlessness
+
+📝 Processing 418/717: "Impermanence"
+   ✅ Added 3 opposites: permanence, stability, constancy
+
+📝 Processing 419/717: "Infinity"
+   ✅ Added 3 opposites: Finite, Bounded, Limited
+
+📝 Processing 420/717: "Innocence"
+   ✅ Added 5 opposites: corruption, depravity, malice...
+   💾 Saved progress
+
+📝 Processing 421/717: "Insight"
+   ✅ Added 5 opposites: ignorance, confusion, obscurity...
+
+📝 Processing 422/717: "Integration"
+   ✅ Added 3 opposites: detachment, disorder, dispersal
+
+📝 Processing 423/717: "Interconnectedness"
+   ✅ Added 3 opposites: detached, dispersal, disorder
+
+📝 Processing 424/717: "Interdependence"
+   ✅ Added 3 opposites: detachment, independence, isolation
+
+📝 Processing 425/717: "Interplay"
+   ✅ Added 5 opposites: isolation, detachment, disconnection...
+
+📝 Processing 426/717: "Intertwined"
+   ✅ Added 3 opposites: detached, dispersal, separation
+
+📝 Processing 427/717: "Journey"
+   ✅ Added 3 opposites: Stasis, Completion, Finality
+
+📝 Processing 428/717: "Juxtaposition"
+   ✅ Added 3 opposites: unity, harmony, consistency
+
+📝 Processing 429/717: "Layering"
+   ✅ Added 5 opposites: Detachment, Simplicity, Flatness...
+
+📝 Processing 430/717: "Legacy"
+   ✅ Added 5 opposites: ephemerality, transience, novelty...
+   💾 Saved progress
+
+📝 Processing 431/717: "Limbo"
+   ✅ Added 3 opposites: certainty, completion, clarity
+
+📝 Processing 432/717: "Liminality"
+   ✅ Added 5 opposites: stability, certainty, finality...
+
+📝 Processing 433/717: "Linkage"
+   ✅ Added 3 opposites: detachment, dispersal, disconnection
+
+📝 Processing 434/717: "Logic"
+   ✅ Added 5 opposites: chaos, emotion, intuition...
+
+📝 Processing 435/717: "Mastery"
+   ✅ Added 5 opposites: Chaos, Ignorance, Failure...
+
+📝 Processing 436/717: "Measure"
+   ✅ Added 5 opposites: Chaos, Ambiguity, Fluidity...
+
+📝 Processing 437/717: "Mechanism"
+   ✅ Added 5 opposites: Chaos, Fluidity, Organic...
+
+📝 Processing 438/717: "Memory"
+   ✅ Added 3 opposites: forgetting, neglect, disconnection
+
+📝 Processing 439/717: "Moment"
+   ✅ Added 3 opposites: eternity, continuity, stagnation
+
+📝 Processing 440/717: "Mortality"
+   ✅ Added 3 opposites: Eternity, Infinity, Immortality
+   💾 Saved progress
+
+📝 Processing 441/717: "Mythos"
+   ✅ Added 3 opposites: reality, truth, fact
+
+📝 Processing 442/717: "Nature"
+   ✅ Added 3 opposites: artifice, urban, synthetic
+
+📝 Processing 443/717: "Nullity"
+   ✅ Added 3 opposites: Existence, Substance, Presence
+
+📝 Processing 444/717: "Nurture"
+   ✅ Added 3 opposites: neglect, abandon, disregard
+
+📝 Processing 445/717: "Optimization"
+   ✅ Added 3 opposites: chaos, disorder, inefficiency
+
+📝 Processing 446/717: "Order"
+   ✅ Added 3 opposites: disorder, chaos, randomness
+
+📝 Processing 447/717: "Origin"
+   ✅ Added 3 opposites: End, Void, Absence
+
+📝 Processing 448/717: "Passage"
+   ✅ Added 3 opposites: Stasis, Closure, Stillness
+
+📝 Processing 449/717: "Perception"
+   ✅ Added 3 opposites: reality, ignorance, illusion
+
+📝 Processing 450/717: "Persistence"
+   ✅ Added 3 opposites: transience, instability, ephemerality
+   💾 Saved progress
+
+📝 Processing 451/717: "Plurality"
+   ✅ Added 3 opposites: Singularity, Uniformity, Simplicity
+
+📝 Processing 452/717: "Possibility"
+   ✅ Added 3 opposites: limitation, certainty, finality
+
+📝 Processing 453/717: "Potential"
+   ✅ Added 3 opposites: stagnation, limitation, failure
+
+📝 Processing 454/717: "Presence"
+   ✅ Added 5 opposites: Absence, Disembodied, Detachment...
+
+📝 Processing 455/717: "Preservation"
+   ✅ Added 5 opposites: destruction, neglect, deterioration...
+
+📝 Processing 456/717: "Preserve"
+   ✅ Added 5 opposites: destroy, discard, dissolve...
+
+📝 Processing 457/717: "Progress"
+   ✅ Added 3 opposites: stagnation, regression, decline
+
+📝 Processing 458/717: "Purity"
+   ✅ Added 5 opposites: corruption, impurity, chaos...
+
+📝 Processing 459/717: "Purpose"
+   ✅ Added 5 opposites: chaos, emptiness, disorder...
+
+📝 Processing 460/717: "Pursuit"
+   ✅ Added 3 opposites: stagnation, rest, abandon
+   💾 Saved progress
+
+📝 Processing 461/717: "Quest"
+   ✅ Added 5 opposites: Stagnation, Completion, Apathy...
+
+📝 Processing 462/717: "Realm"
+   ✅ Added 5 opposites: Chaos, Void, Disorder...
+
+📝 Processing 463/717: "Rebellion"
+   ✅ Added 5 opposites: Conformity, Compliance, Harmony...
+
+📝 Processing 464/717: "Rebirth"
+   ✅ Added 3 opposites: death, stagnation, destruction
+
+📝 Processing 465/717: "Redefinition"
+   ✅ Added 3 opposites: definition, stagnation, conformity
+
+📝 Processing 466/717: "Reflection"
+   ✅ Added 3 opposites: Projection, Action, Engagement
+
+📝 Processing 467/717: "Remembrance"
+   ✅ Added 3 opposites: Oblivion, Neglect, Forgetfulness
+
+📝 Processing 468/717: "Resilience"
+   ✅ Added 5 opposites: fragility, vulnerability, instability...
+
+📝 Processing 469/717: "Ritual"
+   ✅ Added 3 opposites: spontaneity, chaos, freedom
+
+📝 Processing 470/717: "Sanctuary"
+   ✅ Added 5 opposites: chaos, exposure, disorder...
+   💾 Saved progress
+
+📝 Processing 471/717: "Selection"
+   ✅ Added 5 opposites: Dispersal, Disorder, Detachment...
+
+📝 Processing 472/717: "Significance"
+   ✅ Added 5 opposites: insignificance, triviality, emptiness...
+
+📝 Processing 473/717: "Singularity"
+   ✅ Added 5 opposites: Multiplicity, Diversity, Dispersal...
+
+📝 Processing 474/717: "Solitude"
+   ✅ Added 3 opposites: community, connection, engagement
+
+📝 Processing 475/717: "Source"
+   ✅ Added 5 opposites: Void, End, Absence...
+
+📝 Processing 476/717: "Subjectivity"
+   ✅ Added 5 opposites: Objectivity, Universality, Clarity...
+
+📝 Processing 477/717: "Suspension"
+   ✅ Added 3 opposites: completion, action, resolution
+
+📝 Processing 478/717: "Sustenance"
+   ✅ Added 3 opposites: deprivation, neglect, abandonment
+
+📝 Processing 479/717: "Synchronicitic"
+   ✅ Added 5 opposites: chaos, disorder, randomness...
+
+📝 Processing 480/717: "Synchronicitical"
+   ✅ Added 5 opposites: chaos, disorder, randomness...
+   💾 Saved progress
+
+📝 Processing 481/717: "Systems"
+   ✅ Added 3 opposites: Chaos, Disorder, Fragmentation
+
+📝 Processing 482/717: "Tangibility"
+   ✅ Added 5 opposites: intangible, abstract, ethereal...
+
+📝 Processing 483/717: "Threshold"
+   ✅ Added 3 opposites: Limit, Boundary, End
+
+📝 Processing 484/717: "Time"
+   ✅ Added 3 opposites: Eternity, Stasis, Timelessness
+
+📝 Processing 485/717: "Timelessness"
+   ✅ Added 3 opposites: ephemeral, transient, fleeting
+
+📝 Processing 486/717: "Transformation"
+   ✅ Added 3 opposites: Stagnation, Uniformity, Constancy
+
+📝 Processing 487/717: "Transience"
+   ✅ Added 3 opposites: permanence, stability, constancy
+
+📝 Processing 488/717: "Truth"
+   ✅ Added 5 opposites: falsehood, deception, illusion...
+
+📝 Processing 489/717: "Understanding"
+   ✅ Added 5 opposites: confusion, ignorance, misunderstanding...
+
+📝 Processing 490/717: "Unseen"
+   ✅ Added 3 opposites: apparent, visible, exposed
+   💾 Saved progress
+
+📝 Processing 491/717: "Value"
+   ✅ Added 3 opposites: worthlessness, insignificance, neglect
+
+📝 Processing 492/717: "Vastness"
+   ✅ Added 5 opposites: Confinement, Limitation, Narrowness...
+
+📝 Processing 493/717: "Vision"
+   ✅ Added 5 opposites: blindness, ignorance, darkness...
+
+📝 Processing 494/717: "Vulnerability"
+   ✅ Added 3 opposites: strength, fortitude, resilience
+
+📝 Processing 495/717: "Wholeness"
+   ✅ Added 5 opposites: fragmentation, disorder, dispersal...
+
+📝 Processing 496/717: "Yearning"
+   ✅ Added 3 opposites: satisfaction, contentment, fulfillment
+
+📝 Processing 497/717: "Access"
+   ✅ Added 5 opposites: exclusion, obstruction, denial...
+
+📝 Processing 498/717: "Activity"
+   ✅ Added 5 opposites: Stagnation, Inactivity, Passivity...
+
+📝 Processing 499/717: "Adoption"
+   ✅ Added 5 opposites: Detachment, Rejection, Isolation...
+
+📝 Processing 500/717: "Advancement"
+   ✅ Added 5 opposites: decline, stagnation, regression...
+   💾 Saved progress
+
+📝 Processing 501/717: "Affluence"
+   ✅ Added 6 opposites: poverty, scarcity, deprivation...
+
+📝 Processing 502/717: "Agency"
+   ✅ Added 5 opposites: passivity, subordination, detachment...
+
+📝 Processing 503/717: "Algorithm"
+   ✅ Added 5 opposites: Chaos, Intuition, Subjectivity...
+
+📝 Processing 504/717: "Ambition"
+   ✅ Added 5 opposites: apathy, indifference, complacency...
+
+📝 Processing 505/717: "Artistry"
+   ✅ Added 5 opposites: banality, uniformity, mediocrity...
+
+📝 Processing 506/717: "Attention"
+   ✅ Added 5 opposites: distraction, neglect, indifference...
+
+📝 Processing 507/717: "Authenticity"
+   ✅ Added 6 opposites: artifice, deception, falsity...
+
+📝 Processing 508/717: "Authority"
+   ✅ Added 5 opposites: anarchy, chaos, freedom...
+
+📝 Processing 509/717: "Automotive"
+   ✅ Added 5 opposites: static, natural, organic...
+
+📝 Processing 510/717: "Branding"
+   ✅ Added 5 opposites: anonymity, disorder, simplicity...
+   💾 Saved progress
+
+📝 Processing 511/717: "Camp"
+   ✅ Added 5 opposites: formal, serious, sober...
+
+📝 Processing 512/717: "Celebrity"
+   ✅ Added 5 opposites: anonymity, obscurity, humility...
+
+📝 Processing 513/717: "Childhood"
+   ✅ Added 5 opposites: adulthood, maturity, responsibility...
+
+📝 Processing 514/717: "Coding"
+   ✅ Added 5 opposites: chaos, art, spontaneity...
+
+📝 Processing 515/717: "Conscious"
+   ✅ Added 5 opposites: Unconscious, Ignorant, Oblivious...
+
+📝 Processing 516/717: "Consumerism"
+   ✅ Added 5 opposites: minimalism, simplicity, sustainability...
+
+📝 Processing 517/717: "Craft"
+   ✅ Added 5 opposites: Chaos, Neglect, Disorder...
+
+📝 Processing 518/717: "Craftsmanship"
+   ✅ Added 5 opposites: sloppiness, chaos, disarray...
+
+📝 Processing 519/717: "Creativity"
+   ✅ Added 5 opposites: uniformity, conformity, rigidity...
+
+📝 Processing 520/717: "Decentralization"
+   ✅ Added 3 opposites: centrality, dominance, command
+   💾 Saved progress
+
+📝 Processing 521/717: "Digitalization"
+   ✅ Added 5 opposites: analogue, traditional, manual...
+
+📝 Processing 522/717: "Diversity"
+   ✅ Added 3 opposites: Uniformity, Homogeneity, Conformity
+
+📝 Processing 523/717: "Economy"
+   ✅ Added 5 opposites: chaos, excess, disorder...
+
+📝 Processing 524/717: "Education"
+   ✅ Added 5 opposites: ignorance, chaos, disorder...
+
+📝 Processing 525/717: "Efficiency"
+   ✅ Added 3 opposites: disorder, cluttered, excessive
+
+📝 Processing 526/717: "Exclusivity"
+   ✅ Added 5 opposites: accessibility, inclusivity, openness...
+
+📝 Processing 527/717: "Experience"
+   ✅ Added 5 opposites: detachment, disconnection, disengagement...
+
+📝 Processing 528/717: "Expertise"
+   ✅ Added 5 opposites: ignorance, naivety, inexperience...
+
+📝 Processing 529/717: "Feminine"
+   ✅ Added 5 opposites: Masculine, Aggressive, Brutal...
+
+📝 Processing 530/717: "Finance"
+   ✅ Added 5 opposites: chaos, disorder, poverty...
+   💾 Saved progress
+
+📝 Processing 531/717: "Focused"
+   ✅ Added 5 opposites: distracted, disorder, dispersal...
+
+📝 Processing 532/717: "Gender"
+   ✅ Added 3 opposites: Sex, Identity, Role
+
+📝 Processing 533/717: "Glamour"
+   ✅ Added 5 opposites: mundane, drab, simple...
+
+📝 Processing 534/717: "Global"
+   ✅ Added 5 opposites: Local, Individual, Private...
+
+📝 Processing 535/717: "Globalization"
+   ✅ Added 5 opposites: Isolation, Localism, Fragmentation...
+
+📝 Processing 536/717: "Government"
+   ✅ Added 5 opposites: anarchy, chaos, liberty...
+
+📝 Processing 537/717: "Healthcare"
+   ✅ Added 3 opposites: neglect, disorder, abandon
+
+📝 Processing 538/717: "Hospitality"
+   ✅ Added 5 opposites: hostility, indifference, alienation...
+
+📝 Processing 539/717: "Inclusivity"
+   ✅ Added 5 opposites: exclusivity, isolation, segregation...
+
+📝 Processing 540/717: "Industry"
+   ✅ Added 5 opposites: art, chaos, nature...
+   💾 Saved progress
+
+📝 Processing 541/717: "Innovate"
+   ✅ Added 5 opposites: stagnate, conform, replicate...
+
+📝 Processing 542/717: "Intelligence"
+   ✅ Added 5 opposites: ignorance, stupidity, naivety...
+
+📝 Processing 543/717: "Intentional"
+   ✅ Added 5 opposites: arbitrary, disorder, detached...
+
+📝 Processing 544/717: "Leisure"
+   ✅ Added 3 opposites: work, duty, obligation
+
+📝 Processing 545/717: "Lifestyle"
+   ✅ Added 5 opposites: rigidity, conformity, uniformity...
+
+📝 Processing 546/717: "Memorial"
+   ✅ Added 5 opposites: celebration, disregard, forgetfulness...
+
+📝 Processing 547/717: "Nonconformity"
+   ✅ Added 3 opposites: conformity, uniformity, tradition
+
+📝 Processing 548/717: "Nurturing"
+   ✅ Added 5 opposites: neglect, abandon, disregard...
+
+📝 Processing 549/717: "Planning"
+   ✅ Added 5 opposites: chaos, spontaneity, improvisation...
+
+📝 Processing 550/717: "Power"
+   ✅ Added 5 opposites: submissiveness, weakness, vulnerability...
+   💾 Saved progress
+
+📝 Processing 551/717: "Prestige"
+   ✅ Added 5 opposites: base, crude, disorder...
+
+📝 Processing 552/717: "Privilege"
+   ✅ Added 5 opposites: deprivation, disadvantage, marginalization...
+
+📝 Processing 553/717: "Productivity"
+   ✅ Added 5 opposites: disorder, inefficiency, procrastination...
+
+📝 Processing 554/717: "Prosperity"
+   ✅ Added 5 opposites: poverty, decline, failure...
+
+📝 Processing 555/717: "Regulation"
+   ✅ Added 5 opposites: Chaos, Freedom, Anarchy...
+
+📝 Processing 556/717: "Reinvention"
+   ✅ Added 5 opposites: stagnation, conformity, tradition...
+
+📝 Processing 557/717: "Relevance"
+   ✅ Added 3 opposites: arbitrary, disorder, distraction
+
+📝 Processing 558/717: "Reliable"
+   ✅ Added 5 opposites: unreliable, inconsistent, erratic...
+
+📝 Processing 559/717: "Responsive"
+   ✅ Added 5 opposites: static, fixed, rigid...
+
+📝 Processing 560/717: "Spectacle"
+   ✅ Added 3 opposites: subtle, mundane, minimal
+   💾 Saved progress
+
+📝 Processing 561/717: "Stewardship"
+   ✅ Added 5 opposites: neglect, abandon, disregard...
+
+📝 Processing 562/717: "Story"
+   ✅ Added 3 opposites: silence, void, absence
+
+📝 Processing 563/717: "Top"
+   ✅ Added 3 opposites: Base, Bottom, Lower
+
+📝 Processing 564/717: "Trend"
+   ✅ Added 3 opposites: static, obsolete, timeless
+
+📝 Processing 565/717: "Trustworthy"
+   ✅ Added 5 opposites: distrust, deceit, dishonest...
+
+📝 Processing 566/717: "Youth"
+   ✅ Added 3 opposites: aged, stale, obsolete
+
+📝 Processing 567/717: "Acoustic"
+   ✅ Added 5 opposites: Silent, Visual, Mechanical...
+
+📝 Processing 568/717: "Baked"
+   ✅ Added 5 opposites: Raw, Cold, Uncooked...
+
+📝 Processing 569/717: "Braided"
+   ✅ Added 3 opposites: Smooth, Flat, Linear
+
+📝 Processing 570/717: "Brittle"
+   ✅ Added 5 opposites: Flexible, Ductile, Resilient...
+   💾 Saved progress
+
+📝 Processing 571/717: "Brushed"
+   ✅ Added 5 opposites: Smooth, Polished, Flat...
+
+📝 Processing 572/717: "Brushwork"
+   ✅ Added 5 opposites: smooth, flat, clean...
+
+📝 Processing 573/717: "Ceramic"
+   ✅ Added 3 opposites: Metal, Glass, Plastic
+
+📝 Processing 574/717: "Chipped"
+   ✅ Added 5 opposites: Smooth, Polished, Refined...
+
+📝 Processing 575/717: "Clear"
+   ✅ Added 5 opposites: Opaque, Cloudy, Muddy...
+
+📝 Processing 576/717: "Coarse"
+   ✅ Added 5 opposites: Smooth, Refined, Polished...
+
+📝 Processing 577/717: "Cracked"
+   ✅ Added 5 opposites: Smooth, Whole, Intact...
+
+📝 Processing 578/717: "Crisp"
+   ✅ Added 5 opposites: Blurry, Soft, Dull...
+
+📝 Processing 579/717: "Diffused"
+   ✅ Added 5 opposites: Focused, Sharp, Defined...
+
+📝 Processing 580/717: "Distorted"
+   ✅ Added 5 opposites: Clear, Defined, Smooth...
+   💾 Saved progress
+
+📝 Processing 581/717: "Dot"
+   ✅ Added 3 opposites: Line, Surface, Plane
+
+📝 Processing 582/717: "Dust"
+   ✅ Added 5 opposites: clean, smooth, polished...
+
+📝 Processing 583/717: "Emissive"
+   ✅ Added 3 opposites: Opaque, Subdued, Muted
+
+📝 Processing 584/717: "Empty"
+   ✅ Added 5 opposites: Full, Rich, Dense...
+
+📝 Processing 585/717: "Engineered"
+   ✅ Added 5 opposites: Organic, Natural, Raw...
+
+📝 Processing 586/717: "Fabric"
+   ✅ Added 3 opposites: Rigid, Solid, Hard
+
+📝 Processing 587/717: "Faceted"
+   ✅ Added 3 opposites: Smooth, Flat, Uniform
+
+📝 Processing 588/717: "Fine"
+   ✅ Added 5 opposites: Crude, Rough, Coarse...
+
+📝 Processing 589/717: "Flaky"
+   ✅ Added 5 opposites: Solid, Smooth, Dense...
+
+📝 Processing 590/717: "Flatness"
+   ✅ Added 5 opposites: Volume, Depth, Relief...
+   💾 Saved progress
+
+📝 Processing 591/717: "Flesh"
+   ✅ Added 5 opposites: Metal, Glass, Stone...
+
+📝 Processing 592/717: "Glassy"
+   ✅ Added 5 opposites: Matte, Rough, Opaque...
+
+📝 Processing 593/717: "Glazed"
+   ✅ Added 5 opposites: Matte, Rough, Raw...
+
+📝 Processing 594/717: "Grained"
+   ✅ Added 5 opposites: Smooth, Flat, Polished...
+
+📝 Processing 595/717: "Granular"
+   ✅ Added 5 opposites: Smooth, Flat, Uniform...
+
+📝 Processing 596/717: "Graphite"
+   ✅ Added 5 opposites: smooth, glossy, light...
+
+📝 Processing 597/717: "Hazy"
+   ✅ Added 5 opposites: Clear, Sharp, Defined...
+
+📝 Processing 598/717: "Luminescent"
+   ✅ Added 5 opposites: Opaque, Dull, Matte...
+
+📝 Processing 599/717: "Lustrous"
+   ✅ Added 5 opposites: Dull, Matte, Rough...
+
+📝 Processing 600/717: "Marble"
+   ✅ Added 5 opposites: rough, soft, matte...
+   💾 Saved progress
+
+📝 Processing 601/717: "Painterly"
+   ✅ Added 5 opposites: Graphic, Flat, Sleek...
+
+📝 Processing 602/717: "Paneled"
+   ✅ Added 5 opposites: Smooth, Flat, Plain...
+
+📝 Processing 603/717: "Panelled"
+   ✅ Added 3 opposites: Smooth, Flat, Plain
+
+📝 Processing 604/717: "Paper"
+   ✅ Added 5 opposites: metal, glass, stone...
+
+📝 Processing 605/717: "Particle"
+   ✅ Added 3 opposites: Mass, Whole, Unity
+
+📝 Processing 606/717: "Particulate"
+   ✅ Added 5 opposites: Smooth, Uniform, Monolithic...
+
+📝 Processing 607/717: "Pixel"
+   ✅ Added 5 opposites: Vector, Fluid, Organic...
+
+📝 Processing 608/717: "Pixelated"
+   ✅ Added 5 opposites: Smooth, Fluid, Continuous...
+
+📝 Processing 609/717: "Planar"
+   ✅ Added 5 opposites: Textured, Dimensional, Curved...
+
+📝 Processing 610/717: "Plastic"
+   ✅ Added 5 opposites: Organic, Natural, Textile...
+   💾 Saved progress
+
+📝 Processing 611/717: "Plush"
+   ✅ Added 5 opposites: Rough, Harsh, Stiff...
+
+📝 Processing 612/717: "Powder"
+   ✅ Added 5 opposites: solid, smooth, dense...
+
+📝 Processing 613/717: "Pulp"
+   ✅ Added 5 opposites: smooth, refined, polished...
+
+📝 Processing 614/717: "Relief"
+   ✅ Added 5 opposites: flat, smooth, plain...
+
+📝 Processing 615/717: "Rocky"
+   ✅ Added 5 opposites: smooth, soft, fluid...
+
+📝 Processing 616/717: "Rugged"
+   ✅ Added 5 opposites: smooth, refined, polished...
+
+📝 Processing 617/717: "Sharp"
+   ✅ Added 5 opposites: Blunt, Soft, Smooth...
+
+📝 Processing 618/717: "Sheen"
+   ✅ Added 5 opposites: dull, matte, flat...
+
+📝 Processing 619/717: "Sheer"
+   ✅ Added 5 opposites: Opaque, Dense, Heavy...
+
+📝 Processing 620/717: "Silk"
+   ✅ Added 5 opposites: coarse, rough, stiff...
+   💾 Saved progress
+
+📝 Processing 621/717: "Skeletal"
+   ✅ Added 5 opposites: Lush, Solid, Full...
+
+📝 Processing 622/717: "Slick"
+   ✅ Added 5 opposites: Rough, Coarse, Textured...
+
+📝 Processing 623/717: "Smoothness"
+   ✅ Added 5 opposites: Roughness, Coarseness, Jaggedness...
+
+📝 Processing 624/717: "Speckled"
+   ✅ Added 3 opposites: Smooth, Uniform, Plain
+
+📝 Processing 625/717: "Sticker"
+   ✅ Added 6 opposites: bare, plain, smooth...
+
+📝 Processing 626/717: "Stone"
+   ✅ Added 5 opposites: fluid, soft, light...
+
+📝 Processing 627/717: "Subsurface"
+   ✅ Added 5 opposites: Surface, Visible, Exposed...
+
+📝 Processing 628/717: "Textural"
+   ✅ Added 5 opposites: Smooth, Flat, Plain...
+
+📝 Processing 629/717: "Translucent"
+   ✅ Added 3 opposites: opaque, solid, dense
+
+📝 Processing 630/717: "Vapor"
+   ✅ Added 3 opposites: solid, dense, sturdy
+   💾 Saved progress
+
+📝 Processing 631/717: "Vapour"
+   ✅ Added 3 opposites: solid, dense, stiff
+
+📝 Processing 632/717: "Velvet"
+   ✅ Added 5 opposites: Rough, Coarse, Harsh...
+
+📝 Processing 633/717: "Wood"
+   ✅ Added 5 opposites: Metal, Glass, Plastic...
+
+📝 Processing 634/717: "Worn"
+   ✅ Added 5 opposites: Pristine, New, Fresh...
+
+📝 Processing 635/717: "Woven"
+   ✅ Added 5 opposites: Smooth, Flat, Rigid...
+
+📝 Processing 636/717: "AI"
+   ✅ Added 5 opposites: organic, human, chaotic...
+
+📝 Processing 637/717: "Ambient"
+   ✅ Added 5 opposites: harsh, chaotic, jarring...
+
+📝 Processing 638/717: "Analytical"
+   ✅ Added 5 opposites: Intuitive, Emotional, Imprecise...
+
+📝 Processing 639/717: "Artisanal"
+   ✅ Added 5 opposites: mass-produced, generic, industrial...
+
+📝 Processing 640/717: "Biographical"
+   ✅ Added 3 opposites: abstract, fictional, imaginative
+   💾 Saved progress
+
+📝 Processing 641/717: "Bleed"
+   ✅ Added 5 opposites: Contain, Heal, Solidify...
+
+📝 Processing 642/717: "Calculated"
+   ✅ Added 5 opposites: Spontaneous, Chaotic, Random...
+
+📝 Processing 643/717: "Cerebral"
+   ✅ Added 5 opposites: instinctive, impulsive, chaotic...
+
+📝 Processing 644/717: "Chic"
+   ✅ Added 3 opposites: clumsy, awkwardness, crude
+
+📝 Processing 645/717: "Chill"
+   ✅ Added 5 opposites: Active, Aggressive, Chaotic...
+
+📝 Processing 646/717: "Cinematic"
+   ✅ Added 5 opposites: documentary, minimal, static...
+
+📝 Processing 647/717: "Clinical"
+   ✅ Added 5 opposites: Organic, Chaotic, Intuitive...
+
+📝 Processing 648/717: "Coded"
+   ✅ Added 5 opposites: Organic, Fluid, Natural...
+
+📝 Processing 649/717: "Cosmic"
+   ✅ Added 5 opposites: mundane, terrestrial, ordinary...
+
+📝 Processing 650/717: "Curated"
+   ✅ Added 3 opposites: Arbitrary, Disorder, Cluttered
+   💾 Saved progress
+
+📝 Processing 651/717: "Desolate"
+   ✅ Added 5 opposites: Vibrant, Lively, Thriving...
+
+📝 Processing 652/717: "Disruptive"
+   ✅ Added 5 opposites: traditional, stable, harmonious...
+
+📝 Processing 653/717: "Dreamlike"
+   ✅ Added 5 opposites: literal, concrete, mundane...
+
+📝 Processing 654/717: "Driven"
+   ✅ Added 5 opposites: Passive, Indifferent, Apathetic...
+
+📝 Processing 655/717: "Elevated"
+   ✅ Added 6 opposites: base, down, low...
+
+📝 Processing 656/717: "Enchanted"
+   ✅ Added 5 opposites: mundane, ordinary, drab...
+
+📝 Processing 657/717: "Enchanting"
+   ✅ Added 5 opposites: mundane, dreary, bland...
+
+📝 Processing 658/717: "Enigmatic"
+   ✅ Added 5 opposites: obvious, clear, simple...
+
+📝 Processing 659/717: "Epic"
+   ✅ Added 5 opposites: mundane, ordinary, insignificant...
+
+📝 Processing 660/717: "Ethereal"
+   ✅ Added 5 opposites: mundane, tangible, earthy...
+   💾 Saved progress
+
+📝 Processing 661/717: "Evening"
+   ✅ Added 5 opposites: Morning, Day, Brightness...
+
+📝 Processing 662/717: "Evocative"
+   ✅ Added 5 opposites: mundane, bland, uninspired...
+
+📝 Processing 663/717: "Exploratory"
+   ✅ Added 5 opposites: static, fixed, routine...
+
+📝 Processing 664/717: "Fanciful"
+   ✅ Added 6 opposites: mundane, practical, simple...
+
+📝 Processing 665/717: "Festive"
+   ✅ Added 5 opposites: dreary, mundane, somber...
+
+📝 Processing 666/717: "fi"
+   ✅ Added 3 opposites: dull, static, mundane
+
+📝 Processing 667/717: "Forward"
+   ✅ Added 5 opposites: Backward, Static, Stagnant...
+
+📝 Processing 668/717: "Frontier"
+   ✅ Added 5 opposites: settled, familiar, conventional...
+
+📝 Processing 669/717: "Glitch"
+   ✅ Added 3 opposites: clarity, order, perfection
+
+📝 Processing 670/717: "Gloom"
+   ✅ Added 5 opposites: Joy, Brightness, Clarity...
+   💾 Saved progress
+
+📝 Processing 671/717: "Grandeur"
+   ✅ Added 5 opposites: mundanity, simplicity, insignificance...
+
+📝 Processing 672/717: "Grounded"
+   ✅ Added 3 opposites: detached, disorder, eccentric
+
+📝 Processing 673/717: "Haunting"
+   ✅ Added 5 opposites: joyful, bright, serene...
+
+📝 Processing 674/717: "Immediate"
+   ✅ Added 3 opposites: Delayed, Prolonged, Gradual
+
+📝 Processing 675/717: "Immersive"
+   ✅ Added 3 opposites: detached, disembodied, distracted
+
+📝 Processing 676/717: "Industrial"
+   ✅ Added 5 opposites: organic, natural, soft...
+
+📝 Processing 677/717: "Infinite"
+   ✅ Added 3 opposites: finite, limited, bounded
+
+📝 Processing 678/717: "Innovative"
+   ✅ Added 5 opposites: archaic, traditional, stagnant...
+
+📝 Processing 679/717: "Intimate"
+   ✅ Added 5 opposites: Detached, Distant, Public...
+
+📝 Processing 680/717: "Inventive"
+   ✅ Added 5 opposites: mundane, stagnant, predictable...
+   💾 Saved progress
+
+📝 Processing 681/717: "Literary"
+   ✅ Added 5 opposites: brutal, chaos, crude...
+
+📝 Processing 682/717: "Luxe"
+   ✅ Added 5 opposites: crude, base, disorder...
+
+📝 Processing 683/717: "Majestic"
+   ✅ Added 5 opposites: mundane, ordinary, insignificant...
+
+📝 Processing 684/717: "Methodical"
+   ✅ Added 5 opposites: Chaotic, Spontaneous, Impromptu...
+
+📝 Processing 685/717: "Mysterious"
+   ✅ Added 3 opposites: clear, obvious, familiar
+
+📝 Processing 686/717: "Mythic"
+   ✅ Added 3 opposites: mundane, ordinary, common
+
+📝 Processing 687/717: "New"
+   ✅ Added 6 opposites: Old, Stale, Outdated...
+
+📝 Processing 688/717: "Nomadic"
+   ✅ Added 5 opposites: settled, static, anchored...
+
+📝 Processing 689/717: "Ominous"
+   ✅ Added 5 opposites: Cheerful, Inviting, Bright...
+
+📝 Processing 690/717: "Optimism"
+   ✅ Added 5 opposites: pessimism, despair, gloom...
+   💾 Saved progress
+
+📝 Processing 691/717: "Optimistic"
+   ✅ Added 5 opposites: pessimistic, bleak, gloomy...
+
+📝 Processing 692/717: "Parallax"
+   ✅ Added 3 opposites: flat, static, uniform
+
+📝 Processing 693/717: "Pastoral"
+   ✅ Added 5 opposites: urban, chaotic, harsh...
+
+📝 Processing 694/717: "Perceptive"
+   ✅ Added 5 opposites: oblivious, ignorant, unaware...
+
+📝 Processing 695/717: "Performative"
+   ✅ Added 5 opposites: subdued, authentic, genuine...
+
+📝 Processing 696/717: "Poetic"
+   ✅ Added 3 opposites: brutal, cluttered, disorder
+
+📝 Processing 697/717: "Ponderous"
+   ✅ Added 5 opposites: light, dynamic, playful...
+
+📝 Processing 698/717: "Prelude"
+   ✅ Added 5 opposites: Coda, Finale, Conclusion...
+
+📝 Processing 699/717: "Pristine"
+   ✅ Added 5 opposites: cluttered, crude, disorder...
+
+📝 Processing 700/717: "Profound"
+   ✅ Added 3 opposites: shallow, superficial, trivial
+   💾 Saved progress
+
+📝 Processing 701/717: "Provocative"
+   ✅ Added 5 opposites: subdued, reserved, mundane...
+
+📝 Processing 702/717: "Punchy"
+   ✅ Added 5 opposites: subdued, muted, soft...
+
+📝 Processing 703/717: "Romantic"
+   ✅ Added 5 opposites: brutal, disorder, detached...
+
+📝 Processing 704/717: "Scientific"
+   ✅ Added 5 opposites: artistic, chaotic, intuitive...
+
+📝 Processing 705/717: "Silent"
+   ✅ Added 3 opposites: cacophony, noise, clamor
+
+📝 Processing 706/717: "Somber"
+   ✅ Added 5 opposites: Joyful, Vibrant, Lively...
+
+📝 Processing 707/717: "Soulful"
+   ✅ Added 5 opposites: mechanical, sterile, bland...
+
+📝 Processing 708/717: "Strategic"
+   ✅ Added 5 opposites: spontaneous, chaotic, impulsive...
+
+📝 Processing 709/717: "Studious"
+   ✅ Added 5 opposites: carefree, chaotic, distracted...
+
+📝 Processing 710/717: "Sublime"
+   ✅ Added 3 opposites: mundane, banal, trivial
+   💾 Saved progress
+
+📝 Processing 711/717: "Timeless"
+   ✅ Added 5 opposites: ephemeral, transient, temporary...
+
+📝 Processing 712/717: "Tranquility"
+   ✅ Added 5 opposites: cacophony, chaos, disorder...
+
+📝 Processing 713/717: "Urban"
+   ✅ Added 5 opposites: Rural, Natural, Remote...
+
+📝 Processing 714/717: "Utilitarian"
+   ✅ Added 5 opposites: ornate, extravagant, chaotic...
+
+📝 Processing 715/717: "Utopian"
+   ✅ Added 5 opposites: dystopian, chaotic, bleak...
+
+📝 Processing 716/717: "Weightless"
+   ✅ Added 5 opposites: heavy, burdened, anchored...
+
+📝 Processing 717/717: "Wholesome"
+   ✅ Added 5 opposites: brutal, disorder, cluttered...
+
+🔄 Syncing opposites to concept-opposites.ts...
+[syncOppositesFromSeed] Syncing concept-opposites.ts from seed_concepts.json...
+[syncOppositesFromSeed] Loaded 4118 concepts from seed file
+[syncOppositesFromSeed] Found 4118 concepts with opposites (18845 total pairs)
+[syncOppositesFromSeed] Added 9149 bidirectional links
+[syncOppositesFromSeed] ✅ Synced concept-opposites.ts with 4118 concepts and 18845 opposite pairs
+  ✅ Successfully synced opposites
+
+══════════════════════════════════════════════════════════════════════
+📊 Summary
+══════════════════════════════════════════════════════════════════════
+✅ Concepts updated: 717
+❌ Concepts failed: 0
+💾 Backup saved to: /Users/victor/Documents/GitHub/Looma/src/concepts/seed_concepts.json.backup.1763498028448
+📄 Updated file: /Users/victor/Documents/GitHub/Looma/src/concepts/seed_concepts.json
+
+══════════════════════════════════════════════════════════════════════

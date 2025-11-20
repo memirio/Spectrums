@@ -39,25 +39,30 @@ export async function generateOppositeConceptsForNewTag(
   const prompt = `Generate 2-4 NEW conceptually opposite concept labels for "${concept.label}"${categoryContext}.
 
 CRITICAL REQUIREMENTS - STRICTLY ENFORCED:
-1. SINGLE WORDS ONLY - NO EXCEPTIONS. Every opposite must be a single word.
-2. NO compound phrases, NO hyphenated words, NO multi-word terms
-3. Use simple, common words that people actually search for (e.g., "stupid", "dumb", "chaotic", "messy", "dull", "bland")
-4. Generate BRAND NEW concept labels that don't exist yet
-5. Focus on true conceptual opposites - what contradicts "${concept.label}"?
-6. Make them specific to design/visual/aesthetic contexts
-7. Prefer common, searchable words over obscure terms
+1. **90% Binary Rule**: If concept A lists B as opposite, then B MUST list A as opposite (90% certainty)
+   - Example: If "dark" lists "light" as opposite, then "light" MUST list "dark" as opposite
+   - This must be true 90% of the time (mutually exclusive, contradictory)
+2. **Verification Test**: For EACH opposite you generate, verify: "Would this opposite concept naturally list '${concept.label}' as its opposite?" (90% certainty)
+   - Only include opposites that pass this test
+3. SINGLE WORDS ONLY - NO EXCEPTIONS. Every opposite must be a single word.
+4. NO compound phrases, NO hyphenated words, NO multi-word terms
+5. Use simple, common words that people actually search for (e.g., "stupid", "dumb", "chaotic", "messy", "dull", "bland")
+6. Generate BRAND NEW concept labels that don't exist yet
+7. Focus on true conceptual opposites - what contradicts "${concept.label}"?
+8. Make them specific to design/visual/aesthetic contexts
+9. Prefer common, searchable words over obscure terms
 
-Examples of GOOD opposite concept generation (simple, single words):
-- "Academia" → ["stupid", "dumb", "ignorant", "uneducated"]
-- "Minimal" → ["cluttered", "busy", "messy", "chaotic"]
-- "Static" → ["dynamic", "animated", "moving", "active"]
-- "Luxury" → ["cheap", "poor", "basic", "simple"]
-- "Geometric" → ["organic", "fluid", "curved", "natural"]
-- "Clean" → ["dirty", "messy", "chaotic", "disordered"]
-- "Professional" → ["casual", "informal", "relaxed", "playful"]
-- "Modern" → ["old", "vintage", "retro", "traditional"]
-- "Warm" → ["cold", "cool", "icy", "frozen"]
-- "Bright" → ["dark", "dim", "dull", "shadowy"]
+Examples of GOOD opposite concept generation (simple, single words, 90% binary):
+- "Academia" → ["ignorant", "uneducated", "unlearned"] (ignorant/uneducated would list "academia" as opposite)
+- "Minimal" → ["cluttered", "busy", "messy", "chaotic"] (cluttered/busy would list "minimal" as opposite)
+- "Static" → ["dynamic", "animated", "moving", "active"] (dynamic/animated would list "static" as opposite)
+- "Luxury" → ["basic", "simple", "modest"] (basic/simple would list "luxury" as opposite)
+- "Geometric" → ["organic", "fluid", "curved", "natural"] (organic/fluid would list "geometric" as opposite)
+- "Clean" → ["messy", "chaotic", "disordered"] (messy/chaotic would list "clean" as opposite)
+- "Professional" → ["casual", "informal", "relaxed", "playful"] (casual/informal would list "professional" as opposite)
+- "Modern" → ["old", "vintage", "retro", "traditional"] (old/vintage would list "modern" as opposite)
+- "Warm" → ["cold", "cool", "icy", "frozen"] (cold/cool would list "warm" as opposite)
+- "Bright" → ["dark", "dim", "dull", "shadowy"] (dark/dim would list "bright" as opposite)
 
 Examples of BAD (STRICTLY FORBIDDEN):
 - "Spontaneous Expression" ❌ (compound phrase - REJECT)
@@ -71,6 +76,7 @@ VALIDATION RULES:
 - If you generate a multi-word phrase, split it and use only the most meaningful single word
 - If you generate a hyphenated word, use only the first part
 - If you're unsure, choose the simpler, more common word
+- Verify each opposite passes the 90% binary test before including it
 
 Return a JSON object with an "opposites" array containing ONLY single-word strings.
 Format: {"opposites": ["word1", "word2", "word3"]}`
@@ -224,28 +230,33 @@ export async function generateOppositesForConceptWithSynonyms(
   const prompt = `Generate 4-8 conceptually opposite concept labels for "${concept.label}"${categoryContext}.${synonymsContext}
 
 CRITICAL REQUIREMENTS - STRICTLY ENFORCED:
-1. SINGLE WORDS ONLY - NO EXCEPTIONS. Every opposite must be a single word.
-2. NO compound phrases, NO hyphenated words, NO multi-word terms
-3. Use simple, common words that people actually search for (e.g., "stupid", "dumb", "chaotic", "messy", "dull", "bland")
-4. Focus on true conceptual opposites - what contradicts "${concept.label}"?
-5. Make them specific to design/visual/aesthetic contexts
-6. Prefer common, searchable words over obscure terms
-${allowExistingConcepts ? '7. You can suggest existing concepts OR new concepts - both are acceptable' : '7. Generate BRAND NEW concept labels that don\'t exist yet'}
+1. **90% Binary Rule**: If concept A lists B as opposite, then B MUST list A as opposite (90% certainty)
+   - Example: If "dark" lists "light" as opposite, then "light" MUST list "dark" as opposite
+   - This must be true 90% of the time (mutually exclusive, contradictory)
+2. **Verification Test**: For EACH opposite you generate, verify: "Would this opposite concept naturally list '${concept.label}' as its opposite?" (90% certainty)
+   - Only include opposites that pass this test
+3. SINGLE WORDS ONLY - NO EXCEPTIONS. Every opposite must be a single word.
+4. NO compound phrases, NO hyphenated words, NO multi-word terms
+5. Use simple, common words that people actually search for (e.g., "stupid", "dumb", "chaotic", "messy", "dull", "bland")
+6. Focus on true conceptual opposites - what contradicts "${concept.label}"?
+7. Make them specific to design/visual/aesthetic contexts
+8. Prefer common, searchable words over obscure terms
+${allowExistingConcepts ? '9. You can suggest existing concepts OR new concepts - both are acceptable' : '9. Generate BRAND NEW concept labels that don\'t exist yet'}
 
-Examples of GOOD opposite concept generation (simple, single words):
-- "Academia" → ["stupid", "dumb", "ignorant", "uneducated"]
-- "Minimal" → ["cluttered", "busy", "messy", "chaotic"]
-- "Static" → ["dynamic", "animated", "moving", "active"]
-- "Luxury" → ["cheap", "poor", "basic", "simple"]
-- "Geometric" → ["organic", "fluid", "curved", "natural"]
-- "Clean" → ["dirty", "messy", "chaotic", "disordered"]
-- "Professional" → ["casual", "informal", "relaxed", "playful"]
-- "Modern" → ["old", "vintage", "retro", "traditional"]
-- "Warm" → ["cold", "cool", "icy", "frozen"]
-- "Bright" → ["dark", "dim", "dull", "shadowy"]
-- "Abstraction" → ["concrete", "literal", "realistic", "tangible"]
-- "Abundance" → ["scarcity", "lack", "deficiency", "poverty"]
-- "Accent" → ["plain", "neutral", "bland", "unadorned"]
+Examples of GOOD opposite concept generation (simple, single words, 90% binary):
+- "Academia" → ["ignorant", "uneducated", "unlearned"] (ignorant/uneducated would list "academia" as opposite)
+- "Minimal" → ["cluttered", "busy", "messy", "chaotic"] (cluttered/busy would list "minimal" as opposite)
+- "Static" → ["dynamic", "animated", "moving", "active"] (dynamic/animated would list "static" as opposite)
+- "Luxury" → ["basic", "simple", "modest"] (basic/simple would list "luxury" as opposite)
+- "Geometric" → ["organic", "fluid", "curved", "natural"] (organic/fluid would list "geometric" as opposite)
+- "Clean" → ["messy", "chaotic", "disordered"] (messy/chaotic would list "clean" as opposite)
+- "Professional" → ["casual", "informal", "relaxed", "playful"] (casual/informal would list "professional" as opposite)
+- "Modern" → ["old", "vintage", "retro", "traditional"] (old/vintage would list "modern" as opposite)
+- "Warm" → ["cold", "cool", "icy", "frozen"] (cold/cool would list "warm" as opposite)
+- "Bright" → ["dark", "dim", "dull", "shadowy"] (dark/dim would list "bright" as opposite)
+- "Abstraction" → ["concrete", "literal", "realistic", "tangible"] (concrete/literal would list "abstraction" as opposite)
+- "Abundance" → ["scarcity", "lack", "deficiency", "poverty"] (scarcity/lack would list "abundance" as opposite)
+- "Accent" → ["plain", "neutral", "bland", "unadorned"] (plain/neutral would list "accent" as opposite)
 
 Examples of BAD (STRICTLY FORBIDDEN):
 - "Spontaneous Expression" ❌ (compound phrase - REJECT)
@@ -257,6 +268,7 @@ VALIDATION RULES:
 - If you generate a multi-word phrase, split it and use only the most meaningful single word
 - If you generate a hyphenated word, use only the first part
 - If you're unsure, choose the simpler, more common word
+- Verify each opposite passes the 90% binary test before including it
 
 Return a JSON object with an "opposites" array containing ONLY single-word strings.
 Format: {"opposites": ["word1", "word2", "word3"]}`

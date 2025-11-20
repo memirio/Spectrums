@@ -67,8 +67,8 @@ async function main() {
       
       // Calculate penalty
       if (stats.hubScore !== null && stats.hubScore > 0.05) {
-        const marginPenaltyFactor = 5.0
-        const frequencyPenaltyFactor = 0.10
+        const marginPenaltyFactor = 4.8
+        const frequencyPenaltyFactor = 0.09
         const avgCosineSimilarityMargin = stats.hubAvgCosineSimilarityMargin ?? 0
         
         const marginPenalty = Math.max(0, avgCosineSimilarityMargin * marginPenaltyFactor)

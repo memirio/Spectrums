@@ -1,0 +1,27 @@
+🚀 Starting sync and re-tagging process...
+
+📋 Step 1: Syncing opposites from seed_concepts.json to concept-opposites.ts...
+[syncOppositesFromSeed] Syncing concept-opposites.ts from seed_concepts.json...
+[syncOppositesFromSeed] Loaded 4118 concepts from seed file
+[syncOppositesFromSeed] Found 3401 concepts with opposites (15824 total pairs)
+[syncOppositesFromSeed] Added 6583 bidirectional links
+[syncOppositesFromSeed] ✅ Synced concept-opposites.ts with 3401 concepts and 15824 opposite pairs
+✅ Opposites synced!
+
+📚 Loading all concepts from database...
+✅ Loaded 4078 concepts (1486 from DB)
+   Found 2510 concepts with synonyms
+
+🖼️  Loading all images...
+✅ Found 208 images to re-tag
+
+🏷️  Re-tagging all images...
+   Progress: 50/208 (24.0%)
+   Progress: 100/208 (48.1%)
+   Progress: 150/208 (72.1%)
+   Progress: 200/208 (96.2%)
+
+✅ Re-tagging complete!
+   Processed: 208
+   Errors: 0
+   Success rate: 100.0%

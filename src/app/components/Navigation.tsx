@@ -7,15 +7,15 @@ export default function Navigation() {
   const pathname = usePathname()
 
   const navItems = [
-    { href: '/webbdesign', label: 'Webbdesign' },
-    { href: '/typography', label: 'Typography' },
-    { href: '/appdesign', label: 'App Design' },
+    { href: '/webb', label: 'Webb' },
+    { href: '/fonts', label: 'Fonts' },
+    { href: '/apps', label: 'Apps' },
   ]
 
   return (
     <nav className="flex items-center justify-center gap-6">
       {navItems.map((item) => {
-        const isActive = pathname === item.href || (item.href === '/webbdesign' && pathname === '/')
+        const isActive = pathname === item.href || (item.href === '/webb' && pathname === '/')
         return (
           <Link
             key={item.href}
