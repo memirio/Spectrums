@@ -118,46 +118,148 @@ export async function GET(request: NextRequest) {
     const q = searchParams.get('q') || ''
     const limit = 3 // Show up to 3 suggestions
     
-    if (!q.trim()) {
+    const qTrimmed = q.trim()
+    // Early exit for empty or very short queries
+    if (!qTrimmed || qTrimmed.length < 1) {
       return NextResponse.json({ concepts: [] })
     }
     
-    // Fetch all concepts
-    const concepts = await prisma.concept.findMany({
+    const qLower = qTrimmed.toLowerCase()
+    const qUpper = qTrimmed.toUpperCase()
+    const qTitle = qTrimmed.charAt(0).toUpperCase() + qTrimmed.slice(1).toLowerCase()
+    const queryConceptId = labelToConceptId(qTrimmed)
+    
+    // OPTIMIZATION: Use database-level filtering instead of loading all concepts
+    // Filter concepts where label starts with the query (case-insensitive for SQLite)
+    // SQLite doesn't support mode: 'insensitive', so we check multiple case variations
+    const labelStartsWithQuery = await prisma.concept.findMany({
+      where: {
+        OR: [
+          { label: { startsWith: qLower } },
+          { label: { startsWith: qUpper } },
+          { label: { startsWith: qTitle } },
+          { label: { startsWith: qTrimmed } }, // Original case
+        ],
+      },
+      take: 50, // Limit initial results for performance
       orderBy: { label: 'asc' },
     })
     
-    const qLower = q.toLowerCase().trim()
-    const queryConceptId = labelToConceptId(q)
+    // Also fetch concepts where the ID starts with the query
+    const idStartsWithQuery = await prisma.concept.findMany({
+      where: {
+        OR: [
+          { id: { startsWith: qLower } },
+          { id: { startsWith: qUpper } },
+          { id: { startsWith: qTitle } },
+          { id: { startsWith: qTrimmed } }, // Original case
+        ],
+        // Exclude concepts already found by label
+        NOT: {
+          id: {
+            in: labelStartsWithQuery.map(c => c.id),
+          },
+        },
+      },
+      take: 50,
+      orderBy: { label: 'asc' },
+    })
     
-    // Find if the query itself matches a concept (to check for opposites)
-    let queryConcept: any = null
-    for (const concept of concepts) {
-      const label = concept.label.toLowerCase()
-      const id = concept.id.toLowerCase()
-      const synonyms = (concept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+    // Combine and deduplicate
+    const conceptMap = new Map<string, any>()
+    for (const concept of [...labelStartsWithQuery, ...idStartsWithQuery]) {
+      conceptMap.set(concept.id, concept)
+    }
+    
+    // If we have very few results, also search for concepts that contain the query
+    // This helps with cases like "3d" matching "3D Rendering"
+    if (conceptMap.size < 5 && qLower.length >= 2) {
+      const containsMatches = await prisma.concept.findMany({
+        where: {
+          OR: [
+            { label: { contains: qLower } },
+            { label: { contains: qUpper } },
+            { id: { contains: qLower } },
+            { id: { contains: qUpper } },
+          ],
+          NOT: {
+            id: {
+              in: Array.from(conceptMap.keys()),
+            },
+          },
+        },
+        take: 20, // Limit to prevent performance issues
+        orderBy: { label: 'asc' },
+      })
       
-      if (label === qLower || id === qLower || id === queryConceptId || synonyms.includes(qLower)) {
-        queryConcept = concept
-        break
+      for (const concept of containsMatches) {
+        conceptMap.set(concept.id, concept)
       }
     }
+    
+    const concepts = Array.from(conceptMap.values())
+    
+    // Find if the query itself matches a concept (to check for opposites)
+    // Check exact matches first (most likely to be the query concept)
+    let queryConcept: any = null
+    const exactMatch = await prisma.concept.findFirst({
+      where: {
+        OR: [
+          { label: { equals: qLower } },
+          { label: { equals: qUpper } },
+          { label: { equals: qTitle } },
+          { label: { equals: qTrimmed } },
+          { id: { equals: qLower } },
+          { id: { equals: qUpper } },
+          { id: { equals: queryConceptId } },
+        ],
+      },
+    })
+    
+    if (exactMatch) {
+      queryConcept = exactMatch
+      // Add to concepts if not already there
+      if (!conceptMap.has(exactMatch.id)) {
+        concepts.push(exactMatch)
+        conceptMap.set(exactMatch.id, exactMatch)
+      }
+    } else {
+      // Fallback: check loaded concepts for synonym matches
+      for (const concept of concepts) {
+        const label = concept.label.toLowerCase()
+        const id = concept.id.toLowerCase()
+        const synonyms = (concept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+        
+        if (label === qLower || id === qLower || id === queryConceptId || synonyms.includes(qLower)) {
+          queryConcept = concept
+          break
+        }
+      }
+    }
+    
+    // OPTIMIZATION: For synonym matching, we check the already-loaded concepts
+    // Since synonyms are stored in JSON arrays, database-level filtering is complex
+    // We'll check synonyms of the concepts we've already loaded (which should cover most cases)
+    // If needed, we could add a separate synonym search, but it's expensive
+    
+    // Use the concepts we've already loaded
+    const allConcepts = concepts
     
     // Build suggestions array with both concepts and their synonyms
     const suggestions: Array<{
       id: string
       label: string
-      displayText: string // What to show in the UI (could be synonym or label)
+      displayText: string
       isSynonym: boolean
-      parentConceptLabel: string // The actual concept label to use for search
-      matchScore: number // Score for this specific match
+      parentConceptLabel: string
+      matchScore: number
     }> = []
     
     // Track which concepts we've already added (by concept ID) to avoid duplicates
     const addedConceptIds = new Set<string>()
     
-    // Process all concepts and their synonyms
-    for (const concept of concepts) {
+    // OPTIMIZATION: Process concepts with early exits and optimized scoring
+    for (const concept of allConcepts) {
       // Skip if this concept is an opposite of the query concept
       if (queryConcept && areOpposites(queryConcept.id, concept.id)) {
         continue
@@ -177,69 +279,91 @@ export async function GET(request: NextRequest) {
       const synonymsLower = synonyms.map(s => String(s).toLowerCase())
       
       let bestScore = 0
-      let matched = false
       
-      // Check if query matches label - only exact or starts-with matches (no substring matches)
-      const labelExact = label === qLower
-      const labelStartsWith = label.startsWith(qLower) || qLower.startsWith(label)
-      
-      if (labelExact || labelStartsWith || matchesConcept(q, concept)) {
-        const score = calculateScore(q, concept)
-        bestScore = Math.max(bestScore, score)
-        matched = true
-      }
-      
-      // Check if query matches any synonym - only exact or starts-with matches
-      for (let i = 0; i < synonyms.length; i++) {
-        const syn = synonymsLower[i]
-        // Only exact or starts-with matches
-        const isExactMatch = syn === qLower
-        const isStartsWithMatch = syn.startsWith(qLower) || qLower.startsWith(syn)
-        
-        if (isExactMatch || isStartsWithMatch) {
-          // Calculate score for this synonym match - only exact or starts-with
-          let synScore = 0
-          if (syn === qLower) synScore = 750
-          else if (syn.startsWith(qLower)) synScore = 550
-          else if (qLower.startsWith(syn)) synScore = 450
-          else {
-            // Only very close fuzzy match (1 character difference) for typos
-            const synDist = levenshteinDistance(qLower, syn)
-            if (synDist === 1 && Math.min(qLower.length, syn.length) >= 3) {
-              synScore = 150 // Low score for typo corrections
+      // Fast path: Check label matches first (most common case)
+      if (label === qLower) {
+        bestScore = 1000
+      } else if (label.startsWith(qLower)) {
+        bestScore = 800
+      } else if (qLower.startsWith(label)) {
+        bestScore = 600
+      } else {
+        // Check ID matches
+        const id = concept.id.toLowerCase()
+        if (id === qLower) {
+          bestScore = 900
+        } else if (id.startsWith(qLower)) {
+          bestScore = 700
+        } else if (qLower.startsWith(id)) {
+          bestScore = 500
+        } else {
+          // Check synonyms - only exact or starts-with matches
+          for (const syn of synonymsLower) {
+            if (syn === qLower) {
+              bestScore = Math.max(bestScore, 750)
+              break // Exact match, no need to check more
+            } else if (syn.startsWith(qLower)) {
+              bestScore = Math.max(bestScore, 550)
+            } else if (qLower.startsWith(syn)) {
+              bestScore = Math.max(bestScore, 450)
             }
           }
-          bestScore = Math.max(bestScore, synScore)
-          matched = true
+          
+          // Only do expensive Levenshtein for close matches if we don't have a good score yet
+          if (bestScore < 200 && qLower.length >= 3) {
+            const labelDist = levenshteinDistance(qLower, label)
+            if (labelDist === 1) {
+              bestScore = Math.max(bestScore, 200)
+            } else {
+              // Check synonyms for typo corrections
+              for (const syn of synonymsLower) {
+                const synDist = levenshteinDistance(qLower, syn)
+                if (synDist === 1 && syn.length >= 3) {
+                  bestScore = Math.max(bestScore, 150)
+                  break // Found a close match, no need to check more
+                }
+              }
+            }
+          }
         }
       }
       
-      // Only add the concept once, using the concept label (not the synonym)
-      if (matched && bestScore > 0) {
+      // Only add the concept if it has a meaningful score
+      if (bestScore > 0) {
         suggestions.push({
           id: concept.id,
           label: concept.label,
-          displayText: concept.label, // Always show concept label, not synonym
+          displayText: concept.label,
           isSynonym: false,
           parentConceptLabel: concept.label,
           matchScore: bestScore,
         })
         addedConceptIds.add(concept.id)
+        
+        // Early exit: if we have enough high-scoring results, we can stop
+        // (but continue to check for exact matches which might have higher scores)
+        if (suggestions.length >= limit * 2 && bestScore >= 800) {
+          break
+        }
       }
     }
     
     // Sort suggestions by match score (already deduplicated by concept ID)
+    // OPTIMIZATION: Use conceptMap for O(1) lookup instead of O(n) find()
     const uniqueSuggestions = suggestions
       .filter(s => s.matchScore > 0) // Only include suggestions with a meaningful score
       .sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, limit)
-      .map(suggestion => ({
-        id: suggestion.id,
-        label: suggestion.label, // Use concept label for search
-        displayText: suggestion.displayText, // Always the concept label
-        isSynonym: false, // Always false since we only show concept labels
-        synonyms: (concepts.find(c => c.id === suggestion.id)?.synonyms as unknown as string[] || []),
-      }))
+      .map(suggestion => {
+        const concept = conceptMap.get(suggestion.id)
+        return {
+          id: suggestion.id,
+          label: suggestion.label, // Use concept label for search
+          displayText: suggestion.displayText, // Always the concept label
+          isSynonym: false, // Always false since we only show concept labels
+          synonyms: (concept?.synonyms as unknown as string[] || []),
+        }
+      })
     
     return NextResponse.json({ concepts: uniqueSuggestions })
   } catch (e: any) {

@@ -56,7 +56,8 @@ export default function Gallery() {
 
   // Fetch concept suggestions when input changes
   useEffect(() => {
-    if (!inputValue.trim()) {
+    const trimmed = inputValue.trim()
+    if (!trimmed || trimmed.length < 1) {
       setConceptSuggestions([])
       setSelectedSuggestionIndex(-1)
       return
@@ -65,7 +66,9 @@ export default function Gallery() {
     const controller = new AbortController()
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/concepts?q=${encodeURIComponent(inputValue.trim())}`)
+        const response = await fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`, {
+          signal: controller.signal,
+        })
         if (!response.ok) {
           setConceptSuggestions([])
           return
@@ -73,11 +76,14 @@ export default function Gallery() {
         const data = await response.json()
         setConceptSuggestions(Array.isArray(data.concepts) ? data.concepts : [])
         setSelectedSuggestionIndex(-1)
-      } catch (error) {
-        console.error('Error fetching concept suggestions:', error)
+      } catch (error: any) {
+        // Ignore abort errors (cancelled requests)
+        if (error.name !== 'AbortError') {
+          console.error('Error fetching concept suggestions:', error)
+        }
         setConceptSuggestions([])
       }
-    }, 200) // Debounce for 200ms
+    }, 250) // Debounce for 250ms (slightly increased to reduce API calls)
 
     return () => {
       controller.abort()
