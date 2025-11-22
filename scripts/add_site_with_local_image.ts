@@ -142,7 +142,77 @@ async function processImage(filePath: string, site: any, category: string = 'web
     // - Trigger hub detection (debounced)
     const newlyCreatedConceptIds = await tagImage(image.id)
     
-    console.log(`   ✅ Tagging pipeline completed`)
+    // Verify that tags were actually created (don't fail silently)
+    const tagCount = await prisma.imageTag.count({
+      where: { imageId: image.id }
+    })
+    
+    if (tagCount === 0) {
+      console.warn(`   ⚠️  WARNING: Tagging completed but no tags were created for image ${image.id}`)
+      console.warn(`   🔄 Attempting fallback tagging...`)
+      
+      // Fallback: Use simple tagging approach if full pipeline didn't create tags
+      const { TAG_CONFIG } = await import('../src/lib/tagging-config')
+      const concepts = await prisma.concept.findMany()
+      
+      function cosineSimilarity(a: number[], b: number[]): number {
+        if (a.length !== b.length) return 0
+        let s = 0
+        for (let i = 0; i < a.length; i++) s += a[i] * b[i]
+        return s
+      }
+      
+      const scored = concepts.map(c => ({
+        id: c.id,
+        score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || [])
+      }))
+      scored.sort((a, b) => b.score - a.score)
+      
+      const chosen: typeof scored = []
+      const maxScore = scored.length > 0 ? scored[0].score : 0
+      for (const s of scored) {
+        if (s.score < TAG_CONFIG.MIN_SCORE) break
+        if (s.score < maxScore * 0.48) break
+        if (chosen.length === 0) {
+          chosen.push(s)
+          continue
+        }
+        const prev = chosen[chosen.length - 1].score
+        if (s.score >= prev * (1 - TAG_CONFIG.MIN_SCORE_DROP_PCT)) {
+          chosen.push(s)
+        } else {
+          break
+        }
+        if (chosen.length >= TAG_CONFIG.MAX_K) break
+      }
+      
+      if (chosen.length < TAG_CONFIG.FALLBACK_K) {
+        const fallback = scored.slice(0, TAG_CONFIG.FALLBACK_K)
+        const keep = new Set(chosen.map(c => c.id))
+        for (const f of fallback) {
+          if (!keep.has(f.id)) {
+            chosen.push(f)
+            keep.add(f.id)
+          }
+        }
+      }
+      
+      // Create tags
+      for (const s of chosen) {
+        await prisma.imageTag.upsert({
+          where: { imageId_conceptId: { imageId: image.id, conceptId: s.id } },
+          update: { score: s.score },
+          create: { imageId: image.id, conceptId: s.id, score: s.score },
+        })
+      }
+      
+      const finalTagCount = await prisma.imageTag.count({
+        where: { imageId: image.id }
+      })
+      console.log(`   ✅ Fallback tagging created ${finalTagCount} tags`)
+    } else {
+      console.log(`   ✅ Tagging pipeline completed (${tagCount} tags created)`)
+    }
     
     if (newlyCreatedConceptIds.length > 0) {
       console.log(`   🆕 Generated ${newlyCreatedConceptIds.length} new concept(s): ${newlyCreatedConceptIds.join(', ')}`)
@@ -162,7 +232,47 @@ async function processImage(filePath: string, site: any, category: string = 'web
     }
   } catch (tagError: any) {
     console.error(`   ❌ Tagging pipeline failed: ${tagError.message}`)
-    throw tagError
+    console.error(`   🔄 Attempting fallback tagging as last resort...`)
+    
+    // Last resort: Try simple tagging even if full pipeline failed
+    try {
+      const { TAG_CONFIG } = await import('../src/lib/tagging-config')
+      const concepts = await prisma.concept.findMany()
+      
+      function cosineSimilarity(a: number[], b: number[]): number {
+        if (a.length !== b.length) return 0
+        let s = 0
+        for (let i = 0; i < a.length; i++) s += a[i] * b[i]
+        return s
+      }
+      
+      const scored = concepts.map(c => ({
+        id: c.id,
+        score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || [])
+      }))
+      scored.sort((a, b) => b.score - a.score)
+      
+      const chosen = scored.slice(0, Math.max(TAG_CONFIG.FALLBACK_K, 10))
+      
+      for (const s of chosen) {
+        if (s.score >= TAG_CONFIG.MIN_SCORE) {
+          await prisma.imageTag.upsert({
+            where: { imageId_conceptId: { imageId: image.id, conceptId: s.id } },
+            update: { score: s.score },
+            create: { imageId: image.id, conceptId: s.id, score: s.score },
+          })
+        }
+      }
+      
+      const fallbackTagCount = await prisma.imageTag.count({
+        where: { imageId: image.id }
+      })
+      console.log(`   ✅ Fallback tagging created ${fallbackTagCount} tags (recovered from error)`)
+    } catch (fallbackError: any) {
+      console.error(`   ❌ Fallback tagging also failed: ${fallbackError.message}`)
+      // Don't throw - log error but continue (image is still uploaded, just without tags)
+      // This ensures the upload doesn't fail completely if tagging has issues
+    }
   }
   
   // Update site.imageUrl
