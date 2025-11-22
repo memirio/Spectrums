@@ -98,11 +98,12 @@ export async function GET(request: NextRequest) {
     const rawQuery = searchParams.get('q') || ''
     // Normalize query to lowercase for case-insensitive search
     const q = rawQuery.trim().toLowerCase()
+    const category = searchParams.get('category') || null // Get category filter: 'website', 'packaging', 'all', or null
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
     if (!q) return NextResponse.json({ images: [] })
     
-    console.log(`[search] Processing query: "${q}" (original: "${rawQuery.trim()}")`)
+    console.log(`[search] Processing query: "${q}" (original: "${rawQuery.trim()}"), category: ${category || 'all'}`)
 
     if (zeroShot) {
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
@@ -135,7 +136,8 @@ export async function GET(request: NextRequest) {
       if (isExpanded) {
         // Use max/softmax pooling for expansions (OR semantics)
         console.log(`[search] Using expansion embeddings with ${usePooling} pooling`)
-        expansionEmbeddings = await getExpansionEmbeddings(q)
+        // Pass category to getExpansionEmbeddings for category-specific expansions
+        expansionEmbeddings = await getExpansionEmbeddings(q, category && category !== 'all' ? category : null)
         // For backward compatibility, also compute averaged embedding (used in debug mode)
         queryVec = await expandAndEmbedQuery(q)
       } else {
@@ -150,13 +152,19 @@ export async function GET(request: NextRequest) {
       }
       const dim = queryVec.length
       
-      // 2. Retrieve all images with embeddings
+      // 2. Retrieve images with embeddings (filter by category if specified)
       console.log(`[search] Loading images with embeddings...`)
+      const whereClause: any = { embedding: { isNot: null } }
+      // Filter by category if specified and not 'all'
+      if (category && category !== 'all') {
+        whereClause.category = category
+        console.log(`[search] Filtering by category: ${category}`)
+      }
       const images = await (prisma.image.findMany as any)({
-        where: { embedding: { isNot: null } },
+        where: whereClause,
         include: { embedding: true, site: true },
       })
-      console.log(`[search] Loaded ${images.length} images`)
+      console.log(`[search] Loaded ${images.length} images${category && category !== 'all' ? ` (category: ${category})` : ''}`)
       
       if (debug) {
         // Debug mode: pure CLIP cosine ranking only

@@ -62,26 +62,28 @@ model SiteTag {
 }
 
 // -----------------------------
-// Automatic tagging extensions
+// Unified Asset Model (formerly Image)
 // -----------------------------
+// This is a unified table for all searchable assets (websites, packaging, apps, etc.)
+// All assets share the same embedding space and tagging system.
+// To add a new category, simply use category = 'new-category' when creating assets.
 
-// NOTE: Keeping the existing Image model if defined elsewhere.
-// If no Image model exists yet, this minimal definition ensures
-// relations compile; you can extend it later without breaking references.
 model Image {
   id        String   @id @default(cuid())
-  siteId    String
-  url       String
+  siteId    String?  // Optional: for website images linked to sites
+  sourceUrl String?  // Optional: for packaging/other assets without a site (e.g., direct image URL)
+  category  String   @default("website") // "website", "packaging", "app", "fonts", "graphic-design", "branding", etc. (flexible string, not enum)
+  url       String   // The actual image/asset URL
   width     Int?
   height    Int?
   bytes     Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  site      Site?    @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   // Relations for tagging system
-  embedding ImageEmbedding?
-  tags      ImageTag[]
+  embedding ImageEmbedding? // One-to-one: CLIP embedding for this asset (same model/dimensionality for all categories)
+  tags      ImageTag[]      // Many-to-many: concept tags applied to this asset
 
   // Hub detection stats (computed by detect_hub_images.ts)
   hubCount                    Int?    // Number of queries where image appears in top N
@@ -93,14 +95,18 @@ model Image {
   interactions UserInteraction[]
 
   @@unique([siteId, url], name: "siteId_url")
+  @@index([category]) // Index for fast filtering by category
   @@map("images")
 }
 
+// Unified CLIP embedding table for all asset categories
+// Same model, same dimensionality for websites, packaging, apps, etc.
+// All assets go through the same embedding + tagging + reranker pipeline.
 model ImageEmbedding {
   id          String   @id @default(cuid())
-  imageId     String   @unique
-  model       String
-  vector      Json // store as normalized float array
+  imageId     String   @unique // FK to Image (the unified asset)
+  model       String   // CLIP model identifier (e.g., "openai/clip-vit-base-patch32")
+  vector      Json     // Store as normalized float array (same dimensionality for all categories)
   contentHash String?  @unique // SHA-256 of canonical PNG (nullable for migration)
   createdAt   DateTime @default(now())
   image       Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
@@ -138,12 +144,13 @@ model QueryExpansion {
   term       String
   expansion  String
   source     String // 'groq' | 'curated' (previously 'gemini')
+  category   String  @default("global") // Category ('global' for website/default, 'packaging', etc.) for category-specific expansions
   model      String? // 'llama-3.3-70b-versatile', etc.
   createdAt  DateTime @default(now())
   lastUsedAt DateTime @default(now())
 
-  @@id([term, expansion, source])
-  @@index([term, source])
+  @@id([term, expansion, source, category])
+  @@index([term, source, category])
   @@map("query_expansions")
 }
 

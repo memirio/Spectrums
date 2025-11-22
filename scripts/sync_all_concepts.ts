@@ -18,6 +18,8 @@ type Concept = {
   related?: string[]
   opposites?: string[]
   category?: string
+  applicableCategories?: string[] // e.g. ["website", "packaging"]
+  embeddingStrategy?: string // e.g. "generic", "website_style", "packaging_style"
 }
 
 async function main() {
@@ -71,6 +73,10 @@ async function main() {
         concept.related || []
       )
       
+      // Set defaults for category metadata
+      const applicableCategories = concept.applicableCategories || ['website']
+      const embeddingStrategy = concept.embeddingStrategy || 'website_style'
+      
       // Upsert concept with all data
       await prisma.concept.upsert({
         where: { id: concept.id },
@@ -82,6 +88,8 @@ async function main() {
           opposites: concept.opposites || [],
           weight: 1.0,
           embedding: embedding,
+          applicableCategories: applicableCategories,
+          embeddingStrategy: embeddingStrategy,
         },
         create: {
           id: concept.id,
@@ -92,6 +100,8 @@ async function main() {
           opposites: concept.opposites || [],
           weight: 1.0,
           embedding: embedding,
+          applicableCategories: applicableCategories,
+          embeddingStrategy: embeddingStrategy,
         }
       })
       

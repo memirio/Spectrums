@@ -144,7 +144,7 @@ async function loadAllImagesWithEmbeddings(): Promise<ImageWithEmbedding[]> {
 function getTopNImagesWithScores(
   queryEmbedding: number[],
   images: ImageWithEmbedding[],
-  topN: number = 20
+  topN: number = 40
 ): Array<{ imageId: string; score: number }> {
   // Compute similarities
   const scored = images.map(img => ({

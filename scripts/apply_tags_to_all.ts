@@ -10,11 +10,14 @@ function cos(a: number[], b: number[]): number {
   return s
 }
 
-const MIN_SCORE = 0.184
-const MAX_K = 200
-const MIN_SCORE_DROP_PCT = 0.4
-const ALPHA_OF_MAX = 0.48
-const MIN_TAGS_PER_IMAGE = 8
+// Use TAG_CONFIG values to match the actual tagging system
+import { TAG_CONFIG } from '../src/lib/tagging-config'
+
+const MIN_SCORE = TAG_CONFIG.MIN_SCORE // 0.20
+const MAX_K = TAG_CONFIG.MAX_K // 700 (was 200 - this was the problem!)
+const MIN_SCORE_DROP_PCT = TAG_CONFIG.MIN_SCORE_DROP_PCT // 0.30 (was 0.4)
+const ALPHA_OF_MAX = 0.48 // Keep this for backward compatibility
+const MIN_TAGS_PER_IMAGE = TAG_CONFIG.FALLBACK_K // 6 (was 8, but use FALLBACK_K from config)
 
 async function main() {
   console.log('🏷️  Applying tags to ALL images (no Gemini calls)...\n')

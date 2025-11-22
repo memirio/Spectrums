@@ -19,8 +19,118 @@ import { embedTextBatch, meanVec, l2norm } from './embeddings'
 import { prisma } from './prisma'
 import curatedExpansionsData from './query-expansions.json'
 
-// Load curated expansions from JSON file
+// Load curated expansions from JSON file (used for website and general queries)
 const CURATED_EXPANSIONS = curatedExpansionsData as Record<string, string[]>
+
+// Packaging-specific curated expansions
+// These are tailored for packaging design contexts (product labels, boxes, containers, etc.)
+const PACKAGING_CURATED_EXPANSIONS: Record<string, string[]> = {
+  "love": [
+    "soft pink and red color palette on product labels",
+    "warm romantic colors on packaging boxes",
+    "gentle pastel tones on product containers",
+    "affectionate design with heart motifs on labels",
+    "romantic color scheme on gift packaging"
+  ],
+  "fun": [
+    "bright colorful product labels with playful graphics",
+    "vibrant packaging boxes with bold patterns",
+    "cheerful colorful containers with energetic designs",
+    "playful typography on product labels",
+    "joyful colorful packaging with rounded shapes"
+  ],
+  "cozy": [
+    "warm brown and orange tones on product packaging",
+    "comfortable earthy colors on boxes and labels",
+    "inviting warm color palette on containers",
+    "soft warm lighting effects on packaging design",
+    "comfortable homey aesthetic on product labels"
+  ],
+  "serious": [
+    "minimalist professional product labels",
+    "formal corporate packaging design",
+    "authoritative monochrome product containers",
+    "sober professional color scheme on boxes",
+    "structured clean packaging with minimal colors"
+  ],
+  "calm": [
+    "peaceful muted colors on product labels",
+    "tranquil soft color palette on packaging",
+    "gentle serene tones on containers",
+    "relaxing peaceful packaging design",
+    "meditative zen aesthetic on product boxes"
+  ],
+  "chaotic": [
+    "busy cluttered product label design",
+    "vibrant overwhelming packaging graphics",
+    "energetic disorganized container layout",
+    "intense busy packaging composition",
+    "overwhelming visual noise on product labels"
+  ],
+  "happy": [
+    "bright cheerful colors on product packaging",
+    "joyful vibrant product labels",
+    "sunny optimistic packaging design",
+    "positive uplifting color palette on boxes",
+    "cheerful bright containers with playful elements"
+  ],
+  "sad": [
+    "melancholic muted tones on product labels",
+    "gloomy desaturated packaging colors",
+    "dark somber product container design",
+    "mournful quiet packaging aesthetic",
+    "emotional downtrodden color scheme on boxes"
+  ],
+  "energetic": [
+    "dynamic bold colors on product labels",
+    "vibrant powerful packaging design",
+    "fast-paced energetic container graphics",
+    "intense active packaging composition",
+    "high-energy bold product packaging"
+  ],
+  "peaceful": [
+    "tranquil calm packaging design",
+    "gentle soft colors on product labels",
+    "quiet serene product containers",
+    "harmonious balanced packaging layout",
+    "meditative peaceful product boxes"
+  ],
+  "minimal": [
+    "clean simple product label design",
+    "minimalist packaging with ample white space",
+    "simple geometric shapes on containers",
+    "uncluttered product packaging layout",
+    "sparse clean design on product boxes"
+  ],
+  "luxury": [
+    "premium elegant product packaging",
+    "sophisticated high-end container design",
+    "refined luxurious product labels",
+    "exclusive premium packaging materials",
+    "elegant sophisticated product boxes"
+  ],
+  "organic": [
+    "natural earthy tones on product labels",
+    "organic green packaging design",
+    "sustainable eco-friendly container aesthetics",
+    "natural textures on product packaging",
+    "earth-friendly packaging with natural colors"
+  ],
+  "modern": [
+    "contemporary sleek product packaging",
+    "cutting-edge modern container design",
+    "futuristic innovative product labels",
+    "current trendy packaging aesthetics",
+    "sleek contemporary product boxes"
+  ],
+  "vintage": [
+    "retro nostalgic product packaging",
+    "classic vintage container design",
+    "antique-inspired product labels",
+    "old-fashioned packaging aesthetics",
+    "nostalgic retro product boxes"
+  ]
+}
 
 // Initialize Groq client for query expansion (OpenAI-compatible)
 let groqClient: OpenAI | null = null
@@ -62,24 +172,51 @@ export function isAbstractQuery(query: string): boolean {
 
 /**
  * Get expansions from database (Groq-generated)
+ * @param term Query term to expand
+ * @param category Optional category filter ('website', 'packaging', etc.)
  */
-async function getGroqExpansionsFromDb(term: string): Promise<string[]> {
+async function getGroqExpansionsFromDb(term: string, category?: string | null): Promise<string[]> {
   try {
     if (!prisma) {
       console.error(`[query-expansion] Prisma client is not available`)
       return []
     }
-    const expansions = await prisma.queryExpansion.findMany({
-      where: {
-        term: term.toLowerCase().trim(),
-        source: 'groq'
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+    const normalizedTerm = term.toLowerCase().trim()
+    // Normalize category: null or 'website' means global (stored as 'global')
+    const normalizedCategory = category && category !== 'website' ? category : 'global'
     
-    return expansions.map(e => e.expansion)
+    // Use raw query to avoid Prisma type issues with category field
+    try {
+      if (!prisma || typeof (prisma as any).$queryRawUnsafe !== 'function') {
+        console.warn(`[query-expansion] Prisma $queryRawUnsafe not available`)
+        return []
+      }
+      
+      const expansions = await (prisma.$queryRawUnsafe as any)(
+        `SELECT "expansion" FROM "query_expansions" WHERE "term" = ? AND "source" = ? AND "category" = ? ORDER BY "createdAt" DESC`,
+        normalizedTerm,
+        'groq',
+        normalizedCategory
+      )
+      
+      if (!Array.isArray(expansions)) {
+        console.warn(`[query-expansion] Unexpected result type from query:`, typeof expansions)
+        return []
+      }
+      
+      return expansions.map((e: any) => {
+        if (typeof e === 'string') return e
+        if (e && typeof e === 'object' && 'expansion' in e) return e.expansion
+        return String(e || '')
+      }).filter(Boolean)
+    } catch (rawError: any) {
+      // Fallback: return empty array if query fails
+      console.warn(`[query-expansion] Error fetching from DB (raw query):`, rawError.message)
+      if (rawError.stack) {
+        console.warn(`[query-expansion] Error stack:`, rawError.stack)
+      }
+      return []
+    }
   } catch (error: any) {
     console.error(`[query-expansion] Error fetching from DB for "${term}":`, error.message)
     if (error.stack) {
@@ -91,72 +228,86 @@ async function getGroqExpansionsFromDb(term: string): Promise<string[]> {
 
 /**
  * Insert Groq-generated expansions into database
+ * @param term Query term to expand
+ * @param expansions Array of expansion strings
+ * @param category Optional category ('website', 'packaging', etc.) - null for global/website
+ * @param model Model identifier (default: 'groq')
  */
-async function insertGroqExpansions(term: string, expansions: string[], model: string = 'groq'): Promise<void> {
+async function insertGroqExpansions(term: string, expansions: string[], category?: string | null, model: string = 'groq'): Promise<void> {
   const normalizedTerm = term.toLowerCase().trim()
+  // Normalize category: null or 'website' means global/website (stored as 'global')
+  const normalizedCategory = category && category !== 'website' ? category : 'global'
   
-  console.log(`[query-expansion] insertGroqExpansions: term="${normalizedTerm}", expansions=${expansions.length}`)
+  console.log(`[query-expansion] insertGroqExpansions: term="${normalizedTerm}", category="${normalizedCategory || 'global'}", expansions=${expansions.length}`)
   
+  // Caching is best-effort - don't block if it fails
   try {
-    // Insert each expansion (using upsert to handle duplicates)
+    if (!prisma) {
+      console.warn(`[query-expansion] Prisma client not available, skipping cache`)
+      return
+    }
+    
+    // Insert each expansion (using create with error handling for duplicates)
     for (let i = 0; i < expansions.length; i++) {
       const expansion = expansions[i].trim()
-      console.log(`[query-expansion] Inserting expansion ${i + 1}/${expansions.length}: "${expansion.substring(0, 50)}..."`)
+      if (!expansion) continue // Skip empty expansions
       
       try {
-        await prisma.queryExpansion.upsert({
-          where: {
-            term_expansion_source: {
-              term: normalizedTerm,
-              expansion: expansion,
-              source: 'groq'
-            }
-          },
-          update: {
-            lastUsedAt: new Date()
-          },
-          create: {
-            term: normalizedTerm,
-            expansion: expansion,
-            source: 'groq',
-            model,
-            createdAt: new Date(),
-            lastUsedAt: new Date()
-          }
-        })
-        console.log(`[query-expansion] Successfully inserted expansion ${i + 1}`)
+        // Use raw SQL to insert (avoids Prisma type issues with category field)
+        // Use INSERT OR IGNORE to handle duplicates gracefully
+        const now = new Date().toISOString()
+        await (prisma.$executeRawUnsafe as any)(
+          `INSERT OR IGNORE INTO "query_expansions" ("term", "expansion", "source", "category", "model", "createdAt", "lastUsedAt") VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          normalizedTerm,
+          expansion,
+          'groq',
+          normalizedCategory,
+          model || 'groq',
+          now,
+          now
+        )
       } catch (insertError: any) {
-        console.error(`[query-expansion] Error inserting expansion ${i + 1}:`, insertError.message)
-        console.error(`[query-expansion] Error details:`, insertError)
-        // Continue with next expansion
+        // Log but don't throw - caching is best-effort
+        // P2002 is unique constraint - that's fine, expansion already exists
+        if (insertError.code !== 'P2002' && !insertError.message?.includes('UNIQUE constraint')) {
+          console.warn(`[query-expansion] Error inserting expansion "${expansion.substring(0, 30)}...":`, insertError.message)
+        }
       }
     }
-    console.log(`[query-expansion] Completed inserting ${expansions.length} expansions`)
+    console.log(`[query-expansion] Completed caching ${expansions.length} expansions for category "${normalizedCategory || 'global'}"`)
   } catch (error: any) {
-    console.error(`[query-expansion] Fatal error inserting expansions for "${term}":`, error.message)
-    console.error(`[query-expansion] Error stack:`, error.stack)
-    // Don't throw - caching is best-effort
+    // Fatal error - log but don't throw (caching is best-effort)
+    console.warn(`[query-expansion] Error caching expansions for "${term}" (category: "${normalizedCategory || 'global'}"):`, error.message)
+    // Don't throw - we want search to continue even if caching fails
   }
 }
 
 /**
  * Update lastUsedAt for a term (for telemetry)
+ * @param term Query term
+ * @param source 'curated' | 'groq'
+ * @param category Optional category - null for global/website
  */
-async function updateLastUsedAt(term: string, source: 'curated' | 'groq'): Promise<void> {
+async function updateLastUsedAt(term: string, source: 'curated' | 'groq', category?: string | null): Promise<void> {
   const normalizedTerm = term.toLowerCase().trim()
+  // Normalize category: null or 'website' means global/website (stored as 'global')
+  const normalizedCategory = category && category !== 'website' ? category : 'global'
   
   try {
     if (source === 'groq') {
-      // Update all Groq expansions for this term
-      await prisma.queryExpansion.updateMany({
-        where: {
-          term: normalizedTerm,
-          source: 'groq'
-        },
-        data: {
-          lastUsedAt: new Date()
-        }
-      })
+      // Update Groq expansions for this term and category using raw SQL
+      try {
+        await (prisma.$executeRawUnsafe as any)(
+          `UPDATE "query_expansions" SET "lastUsedAt" = ? WHERE "term" = ? AND "source" = ? AND "category" = ?`,
+          new Date().toISOString(),
+          normalizedTerm,
+          'groq',
+          normalizedCategory
+        )
+      } catch (updateError: any) {
+        // Silently fail - telemetry is best-effort
+        console.warn(`[query-expansion] Error updating lastUsedAt:`, updateError.message)
+      }
     }
     // Curated expansions don't need tracking (they're in JSON)
   } catch (error: any) {
@@ -166,13 +317,22 @@ async function updateLastUsedAt(term: string, source: 'curated' | 'groq'): Promi
 
 /**
  * Generate expansions using Groq API
+ * @param query Query term to expand
+ * @param category Optional category for category-specific expansions
  */
-async function generateWithGroq(query: string): Promise<{ expansions: string[], model: string }> {
+async function generateWithGroq(query: string, category?: string | null): Promise<{ expansions: string[], model: string }> {
   try {
-    console.log(`[query-expansion] generateWithGroq called for "${query}"`)
+    console.log(`[query-expansion] generateWithGroq called for "${query}"${category ? `, category: "${category}"` : ''}`)
     const client = getGroqClient()
     
-    const prompt = `Expand the abstract query "${query}" into 4-6 visual descriptions that CLIP can match against design images. Focus on general visual patterns, colors, and design elements - not overly specific scenarios.
+    // Build category-specific context for the prompt
+    const categoryContext = category 
+      ? `\n\nCONTEXT: This expansion is for ${category} designs. Focus on visual patterns relevant to ${category} (e.g., ${category === 'packaging' ? 'product labels, boxes, containers' : category === 'website' ? 'web pages, interfaces, layouts' : 'designs in this category'}).`
+      // Note: This is an optional optimization. For new categories not explicitly handled,
+      // the system uses generic context ("designs in this category"), which works fine.
+      : ''
+    
+    const prompt = `Expand the abstract query "${query}" into 4-6 visual descriptions that CLIP can match against design images. Focus on general visual patterns, colors, and design elements - not overly specific scenarios.${categoryContext}
 
 CRITICAL: Write descriptions that are:
 - Concrete enough for CLIP to understand (specific colors, shapes, patterns)
@@ -303,57 +463,99 @@ Format: ["description1", "description2", "description3", "description4"]`
  * Get expansions for a query term (hybrid: curated + database + Groq)
  * 
  * Flow:
- * 1. Check curated JSON first
+ * 1. Check curated JSON first (category-aware if available)
  * 2. Check database for Groq expansions
  * 3. If not found, call Groq and cache in DB
  * 4. Merge curated + Groq expansions
  * 5. Update lastUsedAt for telemetry
+ * 
+ * @param query Query term to expand
+ * @param category Optional category ('website', 'packaging', etc.) for category-specific expansions
  */
-export async function expandAbstractQuery(query: string): Promise<string[]> {
-  const normalized = query.trim().toLowerCase()
-  
-  console.log(`[query-expansion] Expanding "${query}" (normalized: "${normalized}")`)
-  
-  // 1. Get curated expansions
-  const curated = CURATED_EXPANSIONS[normalized] || []
-  console.log(`[query-expansion] Curated expansions: ${curated.length}`)
-  
-  // 2. Get Groq expansions from database
-  let groqFromDb = await getGroqExpansionsFromDb(normalized)
-  console.log(`[query-expansion] Groq from DB: ${groqFromDb.length}`)
-  
-  // 3. If no Groq expansions in DB, generate and cache them
-  if (groqFromDb.length === 0) {
-    console.log(`[query-expansion] No cached Groq expansions, generating...`)
-    const { expansions: generated, model: usedModel } = await generateWithGroq(query)
-    console.log(`[query-expansion] Generated ${generated.length} expansions from Groq`)
-    if (generated.length > 0) {
-      console.log(`[query-expansion] Caching ${generated.length} expansions in DB...`)
-      await insertGroqExpansions(normalized, generated, usedModel)
-      groqFromDb = generated
-      console.log(`[query-expansion] Successfully cached expansions`)
-    } else {
-      console.log(`[query-expansion] No expansions generated, skipping cache`)
+export async function expandAbstractQuery(query: string, category?: string | null): Promise<string[]> {
+  try {
+    if (!query || typeof query !== 'string') {
+      console.warn(`[query-expansion] Invalid query:`, query)
+      return [query || '']
     }
-  } else {
-    // Update lastUsedAt for telemetry
-    console.log(`[query-expansion] Using cached expansions, updating lastUsedAt...`)
-    await updateLastUsedAt(normalized, 'groq')
+    
+    const normalized = query.trim().toLowerCase()
+    if (!normalized) {
+      return [query]
+    }
+    
+    console.log(`[query-expansion] Expanding "${query}" (normalized: "${normalized}")${category ? `, category: "${category}"` : ''}`)
+    
+    // 1. Get curated expansions (category-specific for packaging, global for website/others)
+    let curated: string[] = []
+    try {
+      if (category === 'packaging') {
+        // Use packaging-specific curated expansions
+        curated = PACKAGING_CURATED_EXPANSIONS[normalized] || []
+        console.log(`[query-expansion] Packaging-specific curated expansions: ${curated.length}`)
+      } else {
+        // Use global curated expansions (for website and other categories)
+        curated = CURATED_EXPANSIONS[normalized] || []
+        console.log(`[query-expansion] Global curated expansions: ${curated.length}`)
+      }
+    } catch (curatedError: any) {
+      console.warn(`[query-expansion] Error getting curated expansions:`, curatedError.message)
+      curated = []
+    }
+    
+    // 2. Get Groq expansions from database
+    let groqFromDb: string[] = []
+    try {
+      groqFromDb = await getGroqExpansionsFromDb(normalized, category)
+      console.log(`[query-expansion] Groq from DB: ${groqFromDb.length}`)
+    } catch (dbError: any) {
+      console.warn(`[query-expansion] Error fetching from DB:`, dbError.message)
+      groqFromDb = []
+    }
+    
+    // 3. If no Groq expansions in DB, generate and cache them
+    if (groqFromDb.length === 0) {
+      console.log(`[query-expansion] No cached Groq expansions, generating...`)
+      try {
+        const { expansions: generated, model: usedModel } = await generateWithGroq(query, category)
+        console.log(`[query-expansion] Generated ${generated.length} expansions from Groq`)
+        if (generated.length > 0) {
+          groqFromDb = generated // Use generated expansions immediately
+          // Cache asynchronously (don't block on cache errors)
+          // Pass category to cache function so expansions are stored with category
+          insertGroqExpansions(normalized, generated, category, usedModel).catch((cacheError) => {
+            console.warn(`[query-expansion] Cache failed (non-blocking):`, cacheError.message)
+          })
+        } else {
+          console.log(`[query-expansion] No expansions generated, skipping cache`)
+        }
+      } catch (genError: any) {
+        console.warn(`[query-expansion] Error generating expansions:`, genError.message)
+        // Continue with empty groqFromDb - will fall back to curated or original query
+        groqFromDb = []
+      }
+    } else {
+      // Update lastUsedAt for telemetry (non-blocking)
+      // Pass category so we update the correct cached expansions
+      updateLastUsedAt(normalized, 'groq', category).catch((err) => {
+        // Silently fail - telemetry is best-effort
+      })
+    }
+    
+    // 4. Merge curated + Groq expansions
+    const allExpansions = [...curated, ...groqFromDb]
+    console.log(`[query-expansion] Total expansions: ${allExpansions.length} (${curated.length} curated + ${groqFromDb.length} Groq)`)
+    
+    // Fallback to original query if no expansions found
+    const result = allExpansions.length > 0 ? allExpansions : [query]
+    console.log(`[query-expansion] Returning ${result.length} expansions`)
+    return result
+  } catch (error: any) {
+    console.error(`[query-expansion] Fatal error in expandAbstractQuery:`, error)
+    console.error(`[query-expansion] Error stack:`, error?.stack)
+    // Always return at least the original query
+    return [query || '']
   }
-  
-  // 4. Merge curated + Groq expansions
-  const allExpansions = [...curated, ...groqFromDb]
-  console.log(`[query-expansion] Total expansions: ${allExpansions.length} (${curated.length} curated + ${groqFromDb.length} Groq)`)
-  
-  // 5. Update lastUsedAt for curated (if used)
-  if (curated.length > 0) {
-    // Curated expansions don't need DB tracking, but we could log usage
-  }
-  
-  // Fallback to original query if no expansions found
-  const result = allExpansions.length > 0 ? allExpansions : [query]
-  console.log(`[query-expansion] Returning ${result.length} expansions`)
-  return result
 }
 
 /**
@@ -385,10 +587,12 @@ export function poolSoftmax(scores: number[], temperature: number = 0.05): numbe
 /**
  * Get expansion embeddings (not averaged - for max/softmax pooling)
  * Returns array of L2-normalized embedding vectors, one per expansion
+ * @param query Query term to expand
+ * @param category Optional category for category-specific expansions
  */
-export async function getExpansionEmbeddings(query: string): Promise<number[][]> {
-  console.log(`[query-expansion] getExpansionEmbeddings called for "${query}"`)
-  const expansions = await expandAbstractQuery(query)
+export async function getExpansionEmbeddings(query: string, category?: string | null): Promise<number[][]> {
+  console.log(`[query-expansion] getExpansionEmbeddings called for "${query}"${category ? `, category: "${category}"` : ''}`)
+  const expansions = await expandAbstractQuery(query, category)
   console.log(`[query-expansion] Got ${expansions.length} expansions, embedding...`)
   
   // Embed all expansions

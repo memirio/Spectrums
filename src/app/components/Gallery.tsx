@@ -18,6 +18,7 @@ interface Site {
   author: string | null
   tags: Tag[]
   imageId?: string // For interaction tracking
+  category?: string // Category label for UI grouping (e.g., "website", "packaging")
 }
 
 interface ConceptSuggestion {
@@ -28,7 +29,11 @@ interface ConceptSuggestion {
   synonyms: string[]
 }
 
-export default function Gallery() {
+interface GalleryProps {
+  category?: string // Optional category filter (e.g., 'packaging', 'website', 'app')
+}
+
+export default function Gallery({ category }: GalleryProps = {} as GalleryProps) {
   const [sites, setSites] = useState<Site[]>([])
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -52,7 +57,7 @@ export default function Gallery() {
       controller.abort()
       clearTimeout(timer)
     }
-  }, [selectedConcepts])
+  }, [selectedConcepts, category])
 
   // Fetch concept suggestions when input changes
   useEffect(() => {
@@ -99,8 +104,11 @@ export default function Gallery() {
       const query = selectedConcepts.join(' ')
       
       if (query.trim()) {
-        // Zero-shot search: rank ALL images by cosine similarity (no hard cutoff)
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`)
+        // Zero-shot search: rank images by cosine similarity
+        // Pass category parameter: "website", "packaging", or "all" (or omit for "all")
+        const categoryParam = category || 'all'
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}`
+        const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('Failed response fetching search', response.status)
           setSites([])
@@ -121,25 +129,38 @@ export default function Gallery() {
           }
         }
         
-        // Map sites to their corresponding images
+        // Map sites to their corresponding images and include category info
         const sitesWithImageIds = (data.sites || []).map((site: Site) => {
           const image = imageMap.get(site.id)
+          // Get category from site object (already includes category from search API)
+          // or fallback to image data, or default to 'website'
+          const siteCategory = (site as any).category || image?.category || 'website'
           return {
             ...site,
             imageId: image?.imageId || undefined,
+            category: siteCategory, // Include category for UI labeling (only shown in combined view)
           }
         })
         setSites(sitesWithImageIds)
       } else {
-        // No search query: show all sites
-        const response = await fetch('/api/sites')
-        if (!response.ok) {
-          console.error('Failed response fetching sites', response.status)
+        // No search query: show all sites (optionally filtered by category)
+        const sitesUrl = category 
+          ? `/api/sites?category=${encodeURIComponent(category)}`
+          : '/api/sites'
+        try {
+          const response = await fetch(sitesUrl)
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}))
+            console.error('Failed response fetching sites', response.status, errorData)
+            setSites([])
+            return
+          }
+          const data = await response.json()
+          setSites(Array.isArray(data.sites) ? data.sites : [])
+        } catch (error) {
+          console.error('Error fetching sites:', error)
           setSites([])
-          return
         }
-        const data = await response.json()
-        setSites(Array.isArray(data.sites) ? data.sites : [])
       }
     } catch (error) {
       console.error('Error fetching sites:', error)
@@ -322,15 +343,22 @@ export default function Gallery() {
   const getDisplayName = (site: Site) => {
     const brand = site.author?.trim() || ''
     const title = site.title?.trim() || ''
-    try {
-      const u = new URL(site.url)
-      // Prefer suffix from title when it starts with the brand
-      if (brand && title && title.toLowerCase().startsWith(brand.toLowerCase())) {
+    
+    // If title exists, prefer it (especially for packaging items where title is the label)
+    if (title) {
+      // If there's a brand and title starts with brand, format as "brand - suffix"
+      if (brand && title.toLowerCase().startsWith(brand.toLowerCase())) {
         let suffix = title.slice(brand.length).trim()
         suffix = suffix.replace(/^[-–—:\s]+/, '').trim()
         if (suffix.length > 0) return `${brand} - ${suffix}`
       }
-      // Else derive from path
+      // Otherwise, just use the title as-is
+      return title
+    }
+    
+    // Fallback to URL-based derivation if no title
+    try {
+      const u = new URL(site.url)
       const rawPath = u.pathname.replace(/\/+$/, '').replace(/^\/+/, '')
       if (!brand) {
         // If no brand provided, use hostname as brand
@@ -346,12 +374,8 @@ export default function Gallery() {
       const suffix = toTitleCase(firstSeg)
       return suffix ? `${brand} - ${suffix}` : brand
     } catch {
-      // Fallbacks
-      if (brand && title && title.toLowerCase().startsWith(brand.toLowerCase())) {
-        const suffix = title.slice(brand.length).trim().replace(/^[-–—:\s]+/, '').trim()
-        return suffix ? `${brand} - ${suffix}` : brand
-      }
-      return brand || title || 'Untitled'
+      // Final fallback
+      return brand || 'Untitled'
     }
   }
 
@@ -515,6 +539,19 @@ export default function Gallery() {
                            ) : (
                              <div className="h-full bg-gray-200 flex items-center justify-center">
                                <span className="text-gray-400">No image</span>
+                             </div>
+                           )}
+                           {/* Category label - only show in combined view (category = "all" or undefined) */}
+                           {(!category || category === 'all') && site.category && site.category !== 'website' && (
+                             <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                               {site.category === 'packaging' ? 'Packaging' : 
+                                site.category === 'app' ? 'App' :
+                                site.category === 'fonts' ? 'Fonts' :
+                                site.category === 'graphic-design' ? 'Graphic Design' :
+                                site.category === 'branding' ? 'Branding' :
+                                // Fallback: show category string as-is for new categories
+                                // To add a display name for a new category, add it above
+                                site.category}
                              </div>
                            )}
                          </div>

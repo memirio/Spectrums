@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { clearSearchResultCache } from '@/lib/search-cache'
 import { prisma } from '@/lib/prisma'
 import leven from 'leven'
 import natural from 'natural'
@@ -125,11 +126,31 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const concepts = searchParams.get('concepts')
+    const category = searchParams.get('category') // Optional category filter
     
     // Return all sites if no concepts specified (null or empty string)
     if (!concepts || !concepts.trim()) {
+      // Build where clause for sites based on category
+      let whereClause: any = {}
+      
+      // If category is specified, filter sites that have images with that category
+      if (category) {
+        // Use raw SQL query as workaround for Prisma schema sync issue
+        const sitesWithCategoryImages = await (prisma.$queryRawUnsafe as any)(
+          `SELECT DISTINCT "siteId" FROM "images" WHERE "category" = ? AND "siteId" IS NOT NULL`,
+          category
+        )
+        const siteIds = (sitesWithCategoryImages as any[]).map((row: any) => row.siteId).filter(Boolean)
+        if (siteIds.length === 0) {
+          // No sites with images in this category
+          return NextResponse.json({ sites: [] })
+        }
+        whereClause.id = { in: siteIds }
+      }
+      
       // Return all sites if no concepts specified
       const sites = await prisma.site.findMany({
+        where: whereClause,
         include: {
           tags: {
             include: {
@@ -143,13 +164,26 @@ export async function GET(request: NextRequest) {
       })
 
       // Fetch first images for these sites as a fallback when site.imageUrl is null
-      const siteIds = sites.map(s => s.id)
-      const images = siteIds.length
-        ? await (prisma.image as any).findMany({
-            where: { siteId: { in: siteIds } },
-            orderBy: { id: 'desc' }
-          })
-        : []
+      const fetchedSiteIds = sites.map(s => s.id)
+      let images: any[] = []
+      if (fetchedSiteIds.length > 0) {
+        if (category) {
+          // Use raw SQL query as workaround for Prisma schema sync issue
+          const placeholders = fetchedSiteIds.map(() => '?').join(',')
+          images = await (prisma.$queryRawUnsafe as any)(
+            `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) AND "category" = ? ORDER BY "id" DESC`,
+            ...fetchedSiteIds,
+            category
+          )
+        } else {
+          // Use raw SQL query to avoid Prisma schema sync issues
+          const placeholders = fetchedSiteIds.map(() => '?').join(',')
+          images = await (prisma.$queryRawUnsafe as any)(
+            `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) ORDER BY "id" DESC`,
+            ...fetchedSiteIds
+          )
+        }
+      }
       const firstImageBySite = new Map<string, string>()
       for (const img of images as any[]) {
         if (!firstImageBySite.has(img.siteId)) firstImageBySite.set(img.siteId, img.url)
@@ -239,17 +273,34 @@ export async function GET(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('Error fetching sites:', error)
+    console.error('Error stack:', error.stack)
     return NextResponse.json(
-      { error: 'Failed to fetch sites', detail: String(error?.message || error) },
+      { error: 'Failed to fetch sites', details: error.message },
       { status: 500 }
     )
   }
 }
 
+/**
+ * Unified Asset Ingestion Pipeline
+ * 
+ * This is the SINGLE pipeline for all asset categories (websites, packaging, apps, etc.).
+ * All assets go through the same process:
+ * 1. Image fetch / normalization / content hash
+ * 2. CLIP image embedding generation (same model/dimensionality for all)
+ * 3. Tagging with concepts
+ * 4. Storing in ImageEmbedding + ImageTag
+ * 
+ * To add a new category, simply pass category = 'new-category' in the request body.
+ * No separate pipeline needed - this one handles everything.
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, description, url, imageUrl, author, tags } = body
+    const { title, description, url, imageUrl, author, tags, category } = body
+    // Default to "website" for backward compatibility
+    // This is the "category knob" - one pipeline, different categories
+    const imageCategory = category || 'website'
 
     // If no imageUrl provided, try to generate one via the screenshot-service
     let finalImageUrl: string | null = imageUrl ?? null
@@ -435,6 +486,7 @@ export async function POST(request: NextRequest) {
               width,
               height,
               bytes,
+              category: imageCategory, // Update category if changed
             },
             create: {
               siteId: site.id,
@@ -442,6 +494,7 @@ export async function POST(request: NextRequest) {
               width,
               height,
               bytes,
+              category: imageCategory, // Set category when creating
             },
           })
           
@@ -554,6 +607,16 @@ export async function POST(request: NextRequest) {
           } catch (hubError) {
             // Non-fatal: hub detection is a background optimization
             console.warn(`[sites] Failed to trigger hub detection:`, (hubError as Error)?.message)
+          }
+          
+          // STEP 4: Clear search result cache (new image may affect search results)
+          // Query embedding cache is kept (embeddings don't change when new images are added)
+          try {
+            clearSearchResultCache()
+            console.log(`[sites] ✅ Cleared search result cache (new image added)`)
+          } catch (cacheError) {
+            // Non-fatal: cache clearing is an optimization
+            console.warn(`[sites] Failed to clear search cache:`, (cacheError as Error)?.message)
           }
         }
       } catch (e) {

@@ -2,11 +2,22 @@
 /**
  * Add Site with Local Image
  * 
- * Creates a new site entry and processes its image through the full pipeline
+ * Creates a new site entry and processes its image through the unified pipeline
  * (including concept generation, tagging, and hub detection trigger).
  * 
+ * This uses the SAME pipeline for all categories - just set category = 'packaging' (or any category).
+ * The pipeline:
+ * 1. Fetches/normalizes image
+ * 2. Generates CLIP embedding (same model/dimensionality for all categories)
+ * 3. Tags with concepts
+ * 4. Stores in ImageEmbedding + ImageTag
+ * 
  * Usage:
- *   tsx scripts/add_site_with_local_image.ts <url> <title> <image-path>
+ *   tsx scripts/add_site_with_local_image.ts <url> <title> <image-path> [category]
+ * 
+ * Examples:
+ *   tsx scripts/add_site_with_local_image.ts "https://example.com" "Example" "/path/to/image.png"
+ *   tsx scripts/add_site_with_local_image.ts "https://example.com" "Example" "/path/to/image.png" "packaging"
  */
 
 import 'dotenv/config'
@@ -16,8 +27,9 @@ import { uploadImageToMinIO } from './upload_to_minio'
 import sharp from 'sharp'
 import fs from 'fs'
 
-async function processImage(filePath: string, site: any): Promise<void> {
+async function processImage(filePath: string, site: any, category: string = 'website'): Promise<void> {
   console.log(`\n📸 Processing image: ${filePath}`)
+  console.log(`   📦 Category: ${category}`)
   
   // Read image file
   const buf = fs.readFileSync(filePath)
@@ -37,13 +49,16 @@ async function processImage(filePath: string, site: any): Promise<void> {
   const imageUrl = await uploadImageToMinIO(filePath, contentHash)
   console.log(`   ✅ Uploaded: ${imageUrl}`)
   
-  // Create Image record
+  // Create Image record (unified asset table - same for all categories)
+  // This is the SAME pipeline for websites, packaging, apps, etc.
+  // Just set category = 'packaging' (or any category) - no separate pipeline needed!
   const image = await (prisma.image as any).upsert({
     where: { siteId_url: { siteId: site.id, url: imageUrl } },
     update: {
       width,
       height,
       bytes,
+      category: category, // Update category if changed
     },
     create: {
       siteId: site.id,
@@ -51,6 +66,7 @@ async function processImage(filePath: string, site: any): Promise<void> {
       width,
       height,
       bytes,
+      category: category, // Set category (defaults to "website")
     },
   })
   
@@ -171,7 +187,8 @@ async function main() {
     process.exit(1)
   }
   
-  const [url, title, imagePath] = args
+  const [url, title, imagePath, category] = args
+  const imageCategory = category || 'website' // Default to 'website' if not provided
   
   if (!fs.existsSync(imagePath)) {
     console.error(`❌ Image file not found: ${imagePath}`)
@@ -192,7 +209,7 @@ async function main() {
       console.log(`   URL: ${existing.url}`)
       console.log(`   Updating image for existing site...`)
       
-      await processImage(imagePath, existing)
+      await processImage(imagePath, existing, imageCategory)
       return
     }
     
@@ -200,6 +217,7 @@ async function main() {
     console.log(`\n📝 Creating new site...`)
     console.log(`   Title: ${title}`)
     console.log(`   URL: ${normalizedUrl}`)
+    console.log(`   Category: ${imageCategory}`)
     
     const site = await prisma.site.create({
       data: {
@@ -213,8 +231,8 @@ async function main() {
     
     console.log(`   ✅ Site created (ID: ${site.id})`)
     
-    // Process the image through the full pipeline
-    await processImage(imagePath, site)
+    // Process the image through the unified pipeline (same for all categories)
+    await processImage(imagePath, site, imageCategory)
     
     console.log('\n✅ Done!')
     console.log('\n💡 The pipeline has:')

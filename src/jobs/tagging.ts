@@ -8,8 +8,14 @@ function cosineSimilarity(a: number[], b: number[]) {
 }
 
 export async function tagImage(imageId: string): Promise<string[]> {
-  const image = await prisma.image.findUnique({ where: { id: imageId } });
+  const image = await prisma.image.findUnique({ 
+    where: { id: imageId },
+    select: { id: true, url: true, category: true }
+  });
   if (!image) return [];
+  
+  // Get image category for concept metadata
+  const imageCategory = (image as any).category || 'website';
 
   // Fetch image buffer
   const res = await fetch(image.url);
@@ -90,7 +96,7 @@ export async function tagImage(imageId: string): Promise<string[]> {
 
   // STEP 1: Analyze image and CREATE new abstract concepts (at least one per category)
   // Use Gemini to generate concepts directly from the image (no similarity matching)
-  const newlyCreatedConcepts = await createNewConceptsFromImage(image.id, buf);
+  const newlyCreatedConcepts = await createNewConceptsFromImage(image.id, buf, imageCategory);
   
   // STEP 2: Tag the image using pre-computed concept embeddings (fast hybrid approach)
   const { TAG_CONFIG } = await import('@/lib/tagging-config');
@@ -195,7 +201,7 @@ export async function tagImage(imageId: string): Promise<string[]> {
  * 
  * This function ONLY generates concepts - it does NOT apply tags to the image
  */
-export async function createNewConceptsFromImage(imageId: string, imageBuffer: Buffer): Promise<string[]> {
+export async function createNewConceptsFromImage(imageId: string, imageBuffer: Buffer, imageCategory: string = 'website'): Promise<string[]> {
   const { generateAbstractConceptsFromImage } = await import('@/lib/gemini');
   const fs = await import('fs/promises');
   const path = await import('path');
@@ -550,13 +556,37 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         }
       }
       
+      // Map image category to applicableCategories
+      // Normalize category names: webbdesign -> website, app design -> app, etc.
+      const categoryMap: Record<string, string> = {
+        'website': 'website',
+        'webbdesign': 'website',
+        'app': 'app',
+        'app design': 'app',
+        'fonts': 'fonts',
+        'graphic design': 'graphic-design',
+        'packaging': 'packaging',
+        'branding': 'branding',
+      };
+      const normalizedCategory = categoryMap[imageCategory.toLowerCase()] || 'website';
+      const applicableCategories = [normalizedCategory];
+      // Set embedding strategy based on category
+      // Note: This is generic - any category gets `${category}_style` (except 'fonts' which uses 'generic')
+      // New categories automatically get their own style (e.g., 'billboards' → 'billboards_style')
+      const embeddingStrategy = normalizedCategory === 'website' ? 'website_style' : 
+                                normalizedCategory === 'packaging' ? 'packaging_style' : 
+                                normalizedCategory === 'fonts' ? 'generic' :
+                                `${normalizedCategory}_style`; // Generic fallback works for any new category
+      
       newConcepts.push({
         id: conceptId,
         label: conceptLabel,
         synonyms: validSynonyms,
         related: validRelated,
         opposites: opposites || [], // Add opposites to concept (ensure it's always an array)
-        category: category.label
+        category: category.label,
+        applicableCategories: applicableCategories,
+        embeddingStrategy: embeddingStrategy,
       });
       
       console.log(`[tagImage] Processing concept: "${conceptLabel}" (category: ${category.label})`);
@@ -814,6 +844,10 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         }
       }
       
+      // Set defaults for category metadata
+      const applicableCategories = (newConcept as any).applicableCategories || ['website'];
+      const embeddingStrategy = (newConcept as any).embeddingStrategy || 'website_style';
+      
       await prisma.concept.upsert({
         where: { id: newConcept.id },
         update: {
@@ -824,6 +858,8 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
           opposites: oppositeIds.length > 0 ? oppositeIds : undefined,
           weight: 1.0,
           embedding: emb,
+          applicableCategories: applicableCategories,
+          embeddingStrategy: embeddingStrategy,
         },
         create: {
           id: newConcept.id,
@@ -834,6 +870,8 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
           opposites: oppositeIds.length > 0 ? oppositeIds : undefined,
           weight: 1.0,
           embedding: emb,
+          applicableCategories: applicableCategories,
+          embeddingStrategy: embeddingStrategy,
         }
       });
       
