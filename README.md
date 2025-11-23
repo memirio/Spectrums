@@ -5,14 +5,16 @@ Looma is a web application that lets users discover great website designs by sea
 ## Features
 
 - **Zero-shot semantic search**: Search with any text query, ranked by CLIP image-text similarity
-- **Abstract query expansion**: Automatically expands abstract queries (e.g., "euphoric", "serene") into concrete visual descriptions for better CLIP matching
+- **Category-aware search**: Filter by category (website, packaging, brand) or search across all categories
+- **Abstract query expansion**: Automatically expands abstract queries (e.g., "euphoric", "serene") into concrete visual descriptions for better CLIP matching, with category-specific expansions
 - **Concept-based boosting**: 94+ seeded design concepts provide subtle ranking improvements
 - **Learned reranker (in development)**: Small MLP model that learns from user interactions to improve search relevance (requires ~1000+ interactions to train)
 - **Multi-concept stacking**: Combine multiple terms like "playful gradient 3d"
 - **Automatic tagging**: New screenshots are embedded & auto-tagged on ingest
 - **Screenshot service**: Automated website screenshot capture with cookie banner removal
-- **Interactive gallery**: Responsive grid with beautiful UI and concept chips
+- **Interactive gallery**: Responsive grid with beautiful UI and concept chips, with category tags
 - **Submission form**: Easy site submission with automatic screenshot generation
+- **Hub detection**: Automatically detects and penalizes "hub" images that appear too frequently in search results
 
 ## Tech Stack
 
@@ -280,7 +282,38 @@ curl -X POST "http://localhost:3000/api/sites" \
   }'
 ```
 
-### Method 3: Bulk Add Sites
+### Method 3: Add Site with Local Image File
+
+If you have a local image file (screenshot, design mockup, etc.) that you want to use instead of generating a screenshot:
+
+```bash
+# Add a site with a local image file
+npx tsx scripts/add_site_with_local_image.ts <url> <image-path> [title] [category]
+
+# Examples
+npx tsx scripts/add_site_with_local_image.ts https://example.com ./screenshots/example.png "Example Site"
+npx tsx scripts/add_site_with_local_image.ts https://example.com ./screenshots/example.png "Example Site" packaging
+npx tsx scripts/add_site_with_local_image.ts https://example.com ./screenshots/brand.png "Brand Identity" brand
+```
+
+**What it does:**
+1. Creates or updates the site record
+2. Uploads the local image to MinIO (or uses existing URL if already uploaded)
+3. Processes the image (canonicalization, content hash)
+4. Generates CLIP embedding
+5. Auto-tags the image with matching concepts
+6. Triggers hub detection (incremental, debounced)
+
+**Supported image formats:**
+- PNG, JPEG, WebP, AVIF, GIF
+- Any format supported by Sharp
+
+**Category parameter:**
+- Default: `website`
+- Options: `website`, `packaging`, `brand`, or any custom category string
+- The category is stored in the `Image` record and used for filtering in search
+
+### Method 4: Bulk Add Sites
 
 Create a script or use the API to add multiple sites:
 
@@ -323,24 +356,34 @@ For abstract queries (emotional, mood-based, or abstract visual concepts), the s
 3. **Embedding**: Each expansion is embedded with CLIP, then averaged and normalized to create the query vector
 4. **Matching**: Images are ranked by cosine similarity to this expanded query embedding
 
+**Category-Aware Expansions:**
+- **Website category**: Uses global curated expansions and generic Groq expansions
+- **Packaging category**: Uses packaging-specific curated expansions (e.g., "love" → "soft pink and red color palette on product labels")
+- **Brand category**: Uses brand-specific curated expansions (e.g., "love" → "warm romantic color palette in brand identity")
+- **"All" category**: When searching across all categories, the system generates and caches expansions for all categories (website, packaging, brand) in parallel
+
 **Storage Strategy:**
 - **Curated expansions**: Hand-crafted expansions stored in `src/lib/query-expansions.json` (versioned, reviewable)
-- **Groq-generated expansions**: LLM-generated expansions cached in SQLite `QueryExpansion` table (efficient, analyzable)
-- **Hybrid lookup**: System checks curated JSON first, then database cache, then generates new expansions if needed
+- **Groq-generated expansions**: LLM-generated expansions cached in SQLite `QueryExpansion` table with category field (efficient, analyzable, category-aware)
+- **Hybrid lookup**: System checks curated JSON first (category-specific if available), then database cache (filtered by category), then generates new expansions if needed
+- **Category field**: Expansions are stored with a `category` field (`global` for website/default, `packaging`, `brand`, etc.) to enable category-specific caching
 
 **Example expansions:**
-- **"euphoric"** → "bright and pastel color palette with soft gradients", "rounded shapes with shimmering effects", "vibrant splashes of color on neutral backgrounds"
-- **"serene"** → "soft blue and pale green color palette", "gentle natural textures with muted colors", "calming atmospheric effects with light gradients"
-- **"bold"** → "thick black lines and geometric shapes", "bold sans-serif fonts in dark colors", "high contrast color schemes with deep shadows"
+- **"euphoric"** (website) → "bright and pastel color palette with soft gradients", "rounded shapes with shimmering effects", "vibrant splashes of color on neutral backgrounds"
+- **"serene"** (website) → "soft blue and pale green color palette", "gentle natural textures with muted colors", "calming atmospheric effects with light gradients"
+- **"bold"** (website) → "thick black lines and geometric shapes", "bold sans-serif fonts in dark colors", "high contrast color schemes with deep shadows"
+- **"love"** (packaging) → "soft pink and red color palette on product labels", "warm romantic colors on packaging boxes"
+- **"love"** (brand) → "warm romantic color palette in brand identity", "affectionate design with heart motifs in logos"
 
 **Configuration:**
 - Requires `GROQ_API_KEY` environment variable
 - Uses Groq API (OpenAI-compatible) with `llama-3.3-70b-versatile` model
 - Automatically tries multiple models if one is blocked
-- Expansions are cached in database to avoid repeated LLM calls
+- Expansions are cached in database per category to avoid repeated LLM calls
+- When searching "all" category, expansions are generated for all categories in parallel (non-blocking)
 
 **Adding curated expansions:**
-Edit `src/lib/query-expansions.json` to add hand-crafted expansions for common abstract terms. These take precedence over LLM-generated expansions.
+Edit `src/lib/query-expansions.json` to add hand-crafted expansions for common abstract terms. These take precedence over LLM-generated expansions. For category-specific expansions, add them to the appropriate category section in `src/lib/query-expansion.ts`.
 
 ---
 
@@ -372,6 +415,12 @@ npx tsx scripts/sync_and_retag_all.ts
 ```bash
 # Add a new site (production pipeline)
 npx tsx scripts/add_site.ts <url> [title]
+
+# Add a site with a local image file
+npx tsx scripts/add_site_with_local_image.ts <url> <image-path> [title] [category]
+
+# Update an existing site's image
+npx tsx scripts/update_site_image.ts <url> <image-path>
 
 # Check how many sites are in the database
 npx tsx scripts/check_sites.ts
@@ -429,6 +478,12 @@ npx tsx scripts/detect_hub_images.ts --clear
 
 # Custom threshold (stricter = 2.0x, more lenient = 1.2x)
 npx tsx scripts/detect_hub_images.ts --clear --threshold-multiplier=2.0
+
+# Run hub detection for a specific image
+npx tsx scripts/run_hub_detection_for_image.ts <imageId>
+
+# Check hub score for a specific image (calculates without saving to DB)
+npx tsx scripts/check_hub_score_for_image.ts <imageId>
 
 # Test penalty effects
 npx tsx scripts/test_hub_penalty.ts --query="dark" --top-n=20
@@ -620,7 +675,7 @@ All application data is stored in a **single SQLite database** (via Prisma):
 - **ImageTags** — Auto-tagging relationships (image ↔ concept with similarity scores)
   - Images are tagged only with directly matched concepts (no synonym expansion)
 - **UserInteractions** — User interaction data for learned reranker training (queries, clicks, saves, dwell time, query embeddings, tag features)
-- **QueryExpansion** — Cached LLM-generated query expansions (Groq) for abstract terms
+- **QueryExpansion** — Cached LLM-generated query expansions (Groq) for abstract terms, with category field for category-specific expansions
 
 **Stored Separately (Not in Database):**
 - **Screenshot files** — Stored in MinIO (S3-compatible object storage)
@@ -835,6 +890,9 @@ Looma/
 │   ├── test_hub_penalty.ts         # Test hub penalty effects
 │   ├── check_negative_margins.ts   # Check hubs with negative margins
 │   ├── check_image_counts.ts       # Check image and hub statistics
+│   ├── run_hub_detection_for_image.ts  # Run hub detection for a specific image
+│   ├── check_hub_score_for_image.ts    # Check hub score for a specific image (without saving)
+│   ├── add_brand_items.ts          # Bulk upload brand items
 │   └── ...                          # More utility scripts
 ├── docs/
 │   ├── SEARCH_LOGIC.md                # Complete search ranking algorithm documentation
