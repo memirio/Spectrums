@@ -541,31 +541,33 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                                <span className="text-gray-400">No image</span>
                              </div>
                            )}
-                           {/* Category label - only show in combined view (category = "all" or undefined) */}
-                           {(!category || category === 'all') && site.category && site.category !== 'website' && (
-                             <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                               {site.category === 'packaging' ? 'Packaging' : 
-                                site.category === 'app' ? 'App' :
-                                site.category === 'fonts' ? 'Fonts' :
-                                site.category === 'graphic-design' ? 'Graphic Design' :
-                                site.category === 'branding' ? 'Branding' :
-                                // Fallback: show category string as-is for new categories
-                                // To add a display name for a new category, add it above
-                                site.category}
-                             </div>
-                           )}
                          </div>
                        </a>
                       <div className="py-2">
-                        <a
-                          href={site.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-black no-underline text-xs focus:outline-none hover:underline"
-                          onClick={() => handleSiteClick(site)}
-                        >
-                          {getDisplayName(site)}
-                        </a>
+                        <div className="flex items-center justify-between gap-2">
+                          <a
+                            href={site.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-black no-underline text-xs focus:outline-none hover:underline flex-1 min-w-0"
+                            onClick={() => handleSiteClick(site)}
+                          >
+                            {getDisplayName(site)}
+                          </a>
+                          {site.category && (
+                            <span className="bg-[#f0eeea] text-gray-700 text-xs font-medium whitespace-nowrap px-2 py-0.5 rounded">
+                              {site.category === 'packaging' ? 'Packaging' : 
+                               site.category === 'app' ? 'App' :
+                               site.category === 'fonts' ? 'Fonts' :
+                               site.category === 'graphic-design' ? 'Graphic Design' :
+                               site.category === 'branding' ? 'Branding' :
+                               site.category === 'brand' ? 'Brand' :
+                               site.category === 'website' ? 'Website' :
+                               // Fallback: show category string as-is for new categories
+                               toTitleCase(site.category)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                      </div>
             ))}

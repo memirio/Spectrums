@@ -185,8 +185,12 @@ export async function GET(request: NextRequest) {
         }
       }
       const firstImageBySite = new Map<string, string>()
+      const categoryBySite = new Map<string, string>()
       for (const img of images as any[]) {
-        if (!firstImageBySite.has(img.siteId)) firstImageBySite.set(img.siteId, img.url)
+        if (!firstImageBySite.has(img.siteId)) {
+          firstImageBySite.set(img.siteId, img.url)
+          categoryBySite.set(img.siteId, (img.category || 'website'))
+        }
       }
 
       return NextResponse.json({
@@ -194,7 +198,8 @@ export async function GET(request: NextRequest) {
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
           imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
-          tags: site.tags.map((st: any) => st.tag)
+          tags: site.tags.map((st: any) => st.tag),
+          category: categoryBySite.get(site.id) || 'website', // Include category from image
         }))
       })
     }
@@ -260,15 +265,20 @@ export async function GET(request: NextRequest) {
       ? await (prisma.image as any).findMany({ where: { siteId: { in: fIds } }, orderBy: { id: 'desc' } })
       : []
     const firstImageBySite = new Map<string, string>()
+    const categoryBySite = new Map<string, string>()
     for (const img of fImages as any[]) {
-      if (!firstImageBySite.has(img.siteId)) firstImageBySite.set(img.siteId, img.url)
+      if (!firstImageBySite.has(img.siteId)) {
+        firstImageBySite.set(img.siteId, img.url)
+        categoryBySite.set(img.siteId, (img.category || 'website'))
+      }
     }
 
     return NextResponse.json({
       sites: filteredSites.map(site => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
-        tags: site.tags.map((st: any) => st.tag)
+        tags: site.tags.map((st: any) => st.tag),
+        category: categoryBySite.get(site.id) || 'website', // Include category from image
       }))
     })
   } catch (error: any) {

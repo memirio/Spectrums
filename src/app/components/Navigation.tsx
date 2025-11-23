@@ -6,13 +6,14 @@ import { usePathname } from 'next/navigation'
 export default function Navigation() {
   const pathname = usePathname()
 
-  const navItems = [
-    { href: '/all', label: 'All' },
-    { href: '/webb', label: 'Webb' },
-    { href: '/fonts', label: 'Fonts' },
-    { href: '/apps', label: 'Apps' },
-    { href: '/packaging', label: 'Packaging' },
-  ]
+const navItems = [
+  { href: '/all', label: 'All' },
+  { href: '/webb', label: 'Webb' },
+  { href: '/fonts', label: 'Fonts' },
+  { href: '/apps', label: 'Apps' },
+  { href: '/packaging', label: 'Packaging' },
+  { href: '/brand', label: 'Brand' },
+]
 
   return (
     <nav className="flex items-center justify-center gap-6">

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { embedTextBatch } from '@/lib/embeddings'
 import { prisma } from '@/lib/prisma'
 import { hasOppositeTags } from '@/lib/concept-opposites'
-import { isAbstractQuery, expandAndEmbedQuery, getExpansionEmbeddings, poolMax, poolSoftmax } from '@/lib/query-expansion'
+import { isAbstractQuery, expandAbstractQuery, expandAndEmbedQuery, getExpansionEmbeddings, poolMax, poolSoftmax } from '@/lib/query-expansion'
 import { logSearchImpressions, type SearchImpression } from '@/lib/interaction-logger'
 
 function cosine(a: number[], b: number[]): number {
@@ -136,7 +136,24 @@ export async function GET(request: NextRequest) {
       if (isExpanded) {
         // Use max/softmax pooling for expansions (OR semantics)
         console.log(`[search] Using expansion embeddings with ${usePooling} pooling`)
+        // When category is 'all', generate expansions for all categories
+        if (category === 'all') {
+          console.log(`[search] Category is 'all' - generating expansions for all categories`)
+          // Generate expansions for all categories in parallel (non-blocking)
+          const allCategories = ['website', 'packaging', 'brand']
+          Promise.all(
+            allCategories.map(cat => 
+              expandAbstractQuery(q, cat).catch(err => {
+                console.warn(`[search] Failed to generate expansions for category "${cat}":`, err.message)
+                return []
+              })
+            )
+          ).catch(err => {
+            console.warn(`[search] Error generating multi-category expansions:`, err.message)
+          })
+        }
         // Pass category to getExpansionEmbeddings for category-specific expansions
+        // For 'all', use null (global) for the actual search, but expansions are generated above
         expansionEmbeddings = await getExpansionEmbeddings(q, category && category !== 'all' ? category : null)
         // For backward compatibility, also compute averaged embedding (used in debug mode)
         queryVec = await expandAndEmbedQuery(q)
@@ -256,6 +273,7 @@ export async function GET(request: NextRequest) {
             imageUrl: (img as any).url,
             author: img.site.author,
             tags: [],
+            category: (img as any).category || 'website', // Include category from image
           },
         } as any)
       }

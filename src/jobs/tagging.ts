@@ -110,19 +110,23 @@ export async function tagImage(imageId: string): Promise<string[]> {
     return s
   }
   
-  const scored = concepts
+  // Score all concepts (don't filter by MIN_SCORE yet - we need unfiltered list for fallback)
+  const allScored = concepts
     .filter(c => c.embedding && Array.isArray(c.embedding))
     .map(c => ({ 
       conceptId: c.id, 
       score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || []) 
     }))
-    .filter(s => s.score >= TAG_CONFIG.MIN_SCORE)
     .sort((a, b) => b.score - a.score)
   
+  // Filter to only scores above MIN_SCORE for main tagging logic
+  const scored = allScored.filter(s => s.score >= TAG_CONFIG.MIN_SCORE)
+  
   // Apply pragmatic tagging logic
-  const chosen: typeof scored = []
+  const chosen: typeof allScored = []
   const MIN_TAGS_PER_IMAGE = 8
-  let prevScore = scored.length > 0 ? scored[0].score : 0
+  const maxScore = scored.length > 0 ? scored[0].score : (allScored.length > 0 ? allScored[0].score : 0)
+  let prevScore = maxScore
   
   for (let i = 0; i < scored.length && chosen.length < TAG_CONFIG.MAX_K; i++) {
     const current = scored[i]
@@ -133,8 +137,18 @@ export async function tagImage(imageId: string): Promise<string[]> {
       continue
     }
     
-    const dropPct = (prevScore - current.score) / prevScore
-    if (dropPct > TAG_CONFIG.MIN_SCORE_DROP_PCT) {
+    // Check drop from previous score (consecutive drop)
+    const consecutiveDropPct = (prevScore - current.score) / prevScore
+    // Check drop from maximum score (total drop from top)
+    const totalDropPct = (maxScore - current.score) / maxScore
+    
+    // Stop if either:
+    // 1. Consecutive drop > 30% (significant gap between consecutive tags)
+    // 2. Total drop from max > 8% (we're getting far from the top score)
+    // Lowered to 8% to prevent hitting MAX_K when scores are tightly clustered
+    // Also add safety: stop if we're close to MAX_K (560+) and total drop > 3%
+    const isNearMaxK = chosen.length > 560 // 80% of MAX_K (700)
+    if (consecutiveDropPct > TAG_CONFIG.MIN_SCORE_DROP_PCT || totalDropPct > 0.08 || (isNearMaxK && totalDropPct > 0.03)) {
       if (chosen.length < MIN_TAGS_PER_IMAGE) {
         chosen.push(current)
         prevScore = current.score
@@ -147,9 +161,9 @@ export async function tagImage(imageId: string): Promise<string[]> {
     }
   }
   
-  // Fallback: ensure minimum tags
+  // Fallback: ensure minimum tags (use allScored if scored is empty or insufficient)
   if (chosen.length < MIN_TAGS_PER_IMAGE) {
-    const fallback = scored.slice(0, MIN_TAGS_PER_IMAGE)
+    const fallback = (scored.length >= MIN_TAGS_PER_IMAGE ? scored : allScored).slice(0, MIN_TAGS_PER_IMAGE)
     const keep = new Set(chosen.map(c => c.conceptId))
     for (const f of fallback) {
       if (!keep.has(f.conceptId)) {
@@ -567,6 +581,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         'graphic design': 'graphic-design',
         'packaging': 'packaging',
         'branding': 'branding',
+        'brand': 'brand',
       };
       const normalizedCategory = categoryMap[imageCategory.toLowerCase()] || 'website';
       const applicableCategories = [normalizedCategory];
@@ -575,6 +590,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       // New categories automatically get their own style (e.g., 'billboards' → 'billboards_style')
       const embeddingStrategy = normalizedCategory === 'website' ? 'website_style' : 
                                 normalizedCategory === 'packaging' ? 'packaging_style' : 
+                                normalizedCategory === 'brand' ? 'brand_style' :
                                 normalizedCategory === 'fonts' ? 'generic' :
                                 `${normalizedCategory}_style`; // Generic fallback works for any new category
       

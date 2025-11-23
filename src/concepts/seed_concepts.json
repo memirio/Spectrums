@@ -37,7 +37,8 @@
       "overflow",
       "teem",
       "swarm",
-      "plentiful"
+      "plentiful",
+      "Multiplicity"
     ],
     "related": [
       "abundance",
@@ -26176,7 +26177,8 @@
       "joyful",
       "lively",
       "vibrant",
-      "whimsical"
+      "whimsical",
+      "Funky"
     ],
     "related": [
       "colorful",
@@ -31038,7 +31040,8 @@
       "embracing",
       "welcoming",
       "diverse",
-      "holistic"
+      "holistic",
+      "Accessibility"
     ],
     "related": [
       "unity",
@@ -45622,7 +45625,8 @@
       "amusement",
       "diversion",
       "recreation",
-      "engagement"
+      "engagement",
+      "Recreation"
     ],
     "related": [
       "whimsy",
@@ -50061,7 +50065,8 @@
       "stamp",
       "mark",
       "emblem",
-      "signet"
+      "signet",
+      "Emblem"
     ],
     "related": [
       "authentication",
@@ -65949,7 +65954,8 @@
       "bold",
       "dramatic",
       "strong",
-      "contrasts"
+      "contrasts",
+      "Contrasts"
     ],
     "related": [
       "monochrome",
@@ -71099,7 +71105,8 @@
       "spectrum",
       "prism",
       "polychrome",
-      "rainbows"
+      "rainbows",
+      "Spectrum"
     ],
     "related": [
       "colorful",
@@ -84968,6 +84975,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "billboard",
+    "label": "Billboard",
+    "synonyms": [
+      "signage"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "bind",
     "label": "bind",
     "synonyms": [
@@ -85346,6 +85363,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "blueprint",
+    "label": "Blueprint",
+    "synonyms": [
+      "drafting"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
   },
   {
     "id": "blur",
@@ -85861,6 +85888,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "composite",
+    "label": "Composite",
+    "synonyms": [
+      "mixed-media"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
   },
   {
     "id": "compositing",
@@ -87436,6 +87473,41 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "draft",
+    "label": "Draft",
+    "synonyms": [],
+    "related": [
+      "drafting"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
+    "id": "drafting",
+    "label": "Drafting",
+    "synonyms": [
+      "sketch",
+      "plan",
+      "map",
+      "blueprint"
+    ],
+    "related": [
+      "technical",
+      "illustrative",
+      "draft",
+      "prototype"
+    ],
+    "opposites": [
+      "Freehand",
+      "Digital"
+    ],
+    "category": "Design Technique",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "drawing",
@@ -89876,6 +89948,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "illustrative",
+    "label": "Illustrative",
+    "synonyms": [],
+    "related": [
+      "drafting"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "imaging",
     "label": "Imaging",
     "synonyms": [
@@ -90017,6 +90099,16 @@
       "engraving"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
+    "id": "installation",
+    "label": "Installation",
+    "synonyms": [],
+    "related": [
+      "mixed-media"
+    ],
     "opposites": [],
     "category": "Design Technique"
   },
@@ -91105,6 +91197,16 @@
     "category": "Design Technique"
   },
   {
+    "id": "map",
+    "label": "Map",
+    "synonyms": [
+      "drafting"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "marking",
     "label": "Marking",
     "synonyms": [
@@ -91359,6 +91461,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "mixed-media",
+    "label": "Mixed-media",
+    "synonyms": [
+      "composite"
+    ],
+    "related": [
+      "photomontage",
+      "installation"
+    ],
+    "opposites": [
+      "Monomedia",
+      "Single-medium"
+    ],
+    "category": "Design Technique",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "modeling",
@@ -92639,6 +92761,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "photomontage",
+    "label": "Photomontage",
+    "synonyms": [],
+    "related": [
+      "mixed-media"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "photoreal",
     "label": "Photoreal",
     "synonyms": [
@@ -92797,6 +92929,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "placard",
+    "label": "Placard",
+    "synonyms": [
+      "signage"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
+    "id": "plan",
+    "label": "Plan",
+    "synonyms": [
+      "drafting"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "pointless",
     "label": "pointless",
     "synonyms": [
@@ -92943,6 +93095,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "posting",
+    "label": "Posting",
+    "synonyms": [
+      "signage"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
   },
   {
     "id": "predefined",
@@ -93291,6 +93453,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "prototype",
+    "label": "Prototype",
+    "synonyms": [],
+    "related": [
+      "drafting"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
   },
   {
     "id": "quilling",
@@ -93856,6 +94028,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "signage",
+    "label": "Signage",
+    "synonyms": [
+      "wayfinding",
+      "posting",
+      "billboard",
+      "placard"
+    ],
+    "related": [],
+    "opposites": [
+      "Print",
+      "Digital"
+    ],
+    "category": "Design Technique",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "simplifying",
     "label": "simplifying",
     "synonyms": [
@@ -93971,6 +94163,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "sketch",
+    "label": "Sketch",
+    "synonyms": [
+      "drafting"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
   },
   {
     "id": "sketching",
@@ -95403,6 +95605,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "technical",
+    "label": "Technical",
+    "synonyms": [],
+    "related": [
+      "drafting"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "texturing",
     "label": "Texturing",
     "synonyms": [],
@@ -96118,6 +96330,16 @@
       "website"
     ],
     "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "wayfinding",
+    "label": "Wayfinding",
+    "synonyms": [
+      "signage"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Design Technique"
   },
   {
     "id": "web",
@@ -103325,6 +103547,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "electric",
+    "label": "Electric",
+    "synonyms": [],
+    "related": [
+      "tingle"
+    ],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "electrified",
     "label": "Electrified",
     "synonyms": [
@@ -109705,6 +109937,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "peppery",
+    "label": "Peppery",
+    "synonyms": [
+      "spicy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
+    "id": "piquant",
+    "label": "Piquant",
+    "synonyms": [
+      "spicy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "playful",
     "label": "Playful",
     "synonyms": [
@@ -113170,6 +113422,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "shiver",
+    "label": "Shiver",
+    "synonyms": [
+      "tingle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "shunning",
     "label": "shunning",
     "synonyms": [
@@ -113935,6 +114197,25 @@
       "sweetness"
     ],
     "category": "Feeling / Emotion"
+  },
+  {
+    "id": "spicy",
+    "label": "Spicy",
+    "synonyms": [
+      "tangy",
+      "piquant",
+      "peppery"
+    ],
+    "related": [],
+    "opposites": [
+      "Mild",
+      "Bland"
+    ],
+    "category": "Feeling / Emotion",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "stability",
@@ -115561,6 +115842,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "tangy",
+    "label": "Tangy",
+    "synonyms": [
+      "spicy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "thirst",
     "label": "thirst",
     "synonyms": [
@@ -115785,6 +116076,37 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "tinge",
+    "label": "Tinge",
+    "synonyms": [
+      "tingle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
+    "id": "tingle",
+    "label": "Tingle",
+    "synonyms": [
+      "tinge",
+      "shiver",
+      "vibe"
+    ],
+    "related": [
+      "electric"
+    ],
+    "opposites": [
+      "Numbness",
+      "Dullness"
+    ],
+    "category": "Feeling / Emotion",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "togetherness",
@@ -117476,6 +117798,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "vibe",
+    "label": "Vibe",
+    "synonyms": [
+      "tingle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
   },
   {
     "id": "victory",
@@ -120186,6 +120518,37 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "checked",
+    "label": "Checked",
+    "synonyms": [
+      "checkered"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "checkered",
+    "label": "Checkered",
+    "synonyms": [
+      "checked",
+      "plaid"
+    ],
+    "related": [
+      "tiled"
+    ],
+    "opposites": [
+      "Plain",
+      "Solid",
+      "Single"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "circle",
     "label": "Circle",
     "synonyms": [
@@ -120301,7 +120664,8 @@
     "id": "circular",
     "label": "Circular",
     "synonyms": [
-      "circulars"
+      "circulars",
+      "Circularity"
     ],
     "related": [
       "accordion",
@@ -121993,6 +122357,43 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "emblematic",
+    "label": "Emblematic",
+    "synonyms": [
+      "representative",
+      "indicative",
+      "iconic"
+    ],
+    "related": [],
+    "opposites": [
+      "Plain",
+      "Unadorned",
+      "inconspicuous"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "encapsulated",
+    "label": "Encapsulated",
+    "synonyms": [
+      "wrapped"
+    ],
+    "related": [],
+    "opposites": [
+      "Exposed",
+      "Open"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "encapsulation",
     "label": "Encapsulation",
     "synonyms": [
@@ -123263,6 +123664,16 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "iconic",
+    "label": "Iconic",
+    "synonyms": [
+      "emblematic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "imposing",
     "label": "Imposing",
     "synonyms": [
@@ -123389,6 +123800,26 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "inconspicuous",
+    "label": "Inconspicuous",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "emblematic"
+    ],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "indicative",
+    "label": "Indicative",
+    "synonyms": [
+      "emblematic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "integrated",
@@ -125233,6 +125664,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "plaid",
+    "label": "Plaid",
+    "synonyms": [
+      "checkered"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "point",
     "label": "point",
     "synonyms": [
@@ -125822,6 +126263,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "representative",
+    "label": "Representative",
+    "synonyms": [
+      "emblematic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "restrictive",
@@ -127629,6 +128080,16 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "tiled",
+    "label": "Tiled",
+    "synonyms": [],
+    "related": [
+      "checkered"
+    ],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "tiny",
     "label": "tiny",
     "synonyms": [
@@ -129112,12 +129573,32 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "wrapped",
+    "label": "Wrapped",
+    "synonyms": [
+      "encapsulated"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "accessories",
     "label": "Accessories",
     "synonyms": [
       "homegoods"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "activism",
+    "label": "Activism",
+    "synonyms": [],
+    "related": [
+      "advocacy"
+    ],
     "opposites": [],
     "category": "Industry"
   },
@@ -129229,6 +129710,27 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "advocacy",
+    "label": "Advocacy",
+    "synonyms": [
+      "champion",
+      "backing"
+    ],
+    "related": [
+      "activism"
+    ],
+    "opposites": [
+      "Opposition",
+      "Neglect",
+      "opposition"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "aesthetics",
@@ -129463,6 +129965,34 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "appendage",
+    "label": "Appendage",
+    "synonyms": [
+      "prosthetics"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "aquaculture",
+    "label": "Aquaculture",
+    "synonyms": [
+      "mariculture",
+      "farming"
+    ],
+    "related": [],
+    "opposites": [
+      "Agriculture",
+      "Forestry"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "aroma",
     "label": "Aroma",
     "synonyms": [],
@@ -129508,6 +130038,16 @@
     "related": [
       "souvenirs"
     ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "assessment",
+    "label": "Assessment",
+    "synonyms": [
+      "diagnostics"
+    ],
+    "related": [],
     "opposites": [],
     "category": "Industry"
   },
@@ -129627,6 +130167,16 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "backing",
+    "label": "Backing",
+    "synonyms": [
+      "advocacy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "bakery",
     "label": "Bakery",
     "synonyms": [
@@ -129729,6 +130279,16 @@
       "alcohol"
     ],
     "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "barefoot",
+    "label": "Barefoot",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "footwear"
+    ],
     "category": "Industry"
   },
   {
@@ -130157,6 +130717,16 @@
     "category": "Industry"
   },
   {
+    "id": "boots",
+    "label": "Boots",
+    "synonyms": [
+      "footwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "bourbon",
     "label": "Bourbon",
     "synonyms": [
@@ -130257,6 +130827,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "brasserie",
+    "label": "Brasserie",
+    "synonyms": [
+      "casualdining"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "brew",
     "label": "Brew",
     "synonyms": [
@@ -130277,12 +130857,32 @@
     "category": "Industry"
   },
   {
+    "id": "cafe",
+    "label": "Cafe",
+    "synonyms": [
+      "casualdining"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "caffeine",
     "label": "Caffeine",
     "synonyms": [
       "coffee"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "calligraphy",
+    "label": "Calligraphy",
+    "synonyms": [],
+    "related": [
+      "stationery"
+    ],
     "opposites": [],
     "category": "Industry"
   },
@@ -130320,6 +130920,45 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "casualdining",
+    "label": "CasualDining",
+    "synonyms": [
+      "cafe",
+      "brasserie"
+    ],
+    "related": [],
+    "opposites": [
+      "FineDining",
+      "Luxury"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "casualfootwear",
+    "label": "CasualFootwear",
+    "synonyms": [
+      "loafers",
+      "sandals",
+      "moccasins"
+    ],
+    "related": [
+      "sporty"
+    ],
+    "opposites": [
+      "FormalWear",
+      "BusinessAttire"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "catering",
@@ -130413,6 +131052,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "champion",
+    "label": "Champion",
+    "synonyms": [
+      "advocacy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "chance",
@@ -130763,6 +131412,32 @@
     "category": "Industry"
   },
   {
+    "id": "conferences",
+    "label": "Conferences",
+    "synonyms": [
+      "sessions",
+      "summits",
+      "meetings",
+      "symposia",
+      "gatherings"
+    ],
+    "related": [
+      "workshops",
+      "seminars",
+      "panel",
+      "discourse"
+    ],
+    "opposites": [
+      "Casual",
+      "Informal"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "consulting",
     "label": "Consulting",
     "synonyms": [
@@ -131059,6 +131734,16 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "cure",
+    "label": "Cure",
+    "synonyms": [
+      "therapy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "cybersecurity",
@@ -131423,12 +132108,54 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "device",
+    "label": "Device",
+    "synonyms": [
+      "prosthetics"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "diagnostics",
+    "label": "Diagnostics",
+    "synonyms": [
+      "assessment",
+      "examination"
+    ],
+    "related": [
+      "monitoring",
+      "reporting",
+      "feedback"
+    ],
+    "opposites": [
+      "Guesswork",
+      "Speculation"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "diet",
     "label": "Diet",
     "synonyms": [
       "nutrition"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "discourse",
+    "label": "Discourse",
+    "synonyms": [],
+    "related": [
+      "conferences"
+    ],
     "opposites": [],
     "category": "Industry"
   },
@@ -131870,6 +132597,24 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "ehs",
+    "label": "EHS",
+    "synonyms": [],
+    "related": [
+      "regulatory"
+    ],
+    "opposites": [
+      "Recreation",
+      "Entertainment",
+      "peril"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "electronics",
     "label": "Electronics",
     "synonyms": [
@@ -132048,6 +132793,16 @@
     "category": "Industry"
   },
   {
+    "id": "examination",
+    "label": "Examination",
+    "synonyms": [
+      "diagnostics"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "eyewear",
     "label": "Eyewear",
     "synonyms": [
@@ -132116,6 +132871,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "farming",
+    "label": "Farming",
+    "synonyms": [
+      "aquaculture"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "feedback",
+    "label": "Feedback",
+    "synonyms": [],
+    "related": [
+      "diagnostics"
+    ],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "fermentation",
@@ -132277,6 +133052,39 @@
     "related": [],
     "opposites": [],
     "category": "Industry"
+  },
+  {
+    "id": "footgear",
+    "label": "Footgear",
+    "synonyms": [
+      "footwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "footwear",
+    "label": "Footwear",
+    "synonyms": [
+      "shoes",
+      "boots",
+      "sneakers",
+      "footgear",
+      "slippers"
+    ],
+    "related": [],
+    "opposites": [
+      "Headwear",
+      "Outerwear",
+      "barefoot",
+      "unclad"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "fragrance",
@@ -132461,6 +133269,16 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "gatherings",
+    "label": "Gatherings",
+    "synonyms": [
+      "conferences"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "graphic",
     "label": "Graphic",
     "synonyms": [],
@@ -132484,6 +133302,37 @@
     ],
     "opposites": [],
     "category": "Industry"
+  },
+  {
+    "id": "grocer",
+    "label": "Grocer",
+    "synonyms": [
+      "grocery"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "grocery",
+    "label": "Grocery",
+    "synonyms": [
+      "market",
+      "store",
+      "grocer"
+    ],
+    "related": [
+      "packaged"
+    ],
+    "opposites": [
+      "Luxury",
+      "Electronics"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "grooming",
@@ -132595,6 +133444,23 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "haircare",
+    "label": "Haircare",
+    "synonyms": [
+      "treatment"
+    ],
+    "related": [],
+    "opposites": [
+      "Skincare",
+      "Fragrance"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "hazard",
     "label": "Hazard",
     "synonyms": [],
@@ -132602,6 +133468,16 @@
     "opposites": [
       "insurance"
     ],
+    "category": "Industry"
+  },
+  {
+    "id": "healing",
+    "label": "Healing",
+    "synonyms": [
+      "therapy"
+    ],
+    "related": [],
+    "opposites": [],
     "category": "Industry"
   },
   {
@@ -133038,6 +133914,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "implant",
+    "label": "Implant",
+    "synonyms": [
+      "prosthetics"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "inadequacy",
     "label": "Inadequacy",
     "synonyms": [],
@@ -133404,10 +134290,58 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "leather",
+    "label": "Leather",
+    "synonyms": [
+      "skin",
+      "tanning"
+    ],
+    "related": [],
+    "opposites": [
+      "Synthetic",
+      "Plastic"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "letterhead",
+    "label": "Letterhead",
+    "synonyms": [],
+    "related": [
+      "stationery"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "limb",
+    "label": "Limb",
+    "synonyms": [
+      "prosthetics"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "liquor",
     "label": "Liquor",
     "synonyms": [
       "alcohol"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "loafers",
+    "label": "Loafers",
+    "synonyms": [
+      "casualfootwear"
     ],
     "related": [],
     "opposites": [],
@@ -133620,6 +134554,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "mariculture",
+    "label": "Mariculture",
+    "synonyms": [
+      "aquaculture"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "marine",
     "label": "Marine",
     "synonyms": [
@@ -133706,6 +134650,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "market",
+    "label": "Market",
+    "synonyms": [
+      "grocery"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "marketing",
@@ -133896,6 +134850,36 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "meal",
+    "label": "Meal",
+    "synonyms": [
+      "streetfood"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "medicinal",
+    "label": "Medicinal",
+    "synonyms": [
+      "pharmaceutical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "meetings",
+    "label": "Meetings",
+    "synonyms": [
+      "conferences"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "mementos",
@@ -134173,12 +135157,32 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "moccasins",
+    "label": "Moccasins",
+    "synonyms": [
+      "casualfootwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "models",
     "label": "Models",
     "synonyms": [
       "toys"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "monitoring",
+    "label": "Monitoring",
+    "synonyms": [],
+    "related": [
+      "diagnostics"
+    ],
     "opposites": [],
     "category": "Industry"
   },
@@ -134613,6 +135617,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "notebook",
+    "label": "Notebook",
+    "synonyms": [
+      "stationery"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "nutrition",
     "label": "Nutrition",
     "synonyms": [
@@ -134647,6 +135661,16 @@
       "app"
     ],
     "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "opposition",
+    "label": "Opposition",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "advocacy"
+    ],
+    "category": "Industry"
   },
   {
     "id": "orthodontics",
@@ -134701,6 +135725,36 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "packaged",
+    "label": "Packaged",
+    "synonyms": [],
+    "related": [
+      "grocery"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "packaging",
+    "label": "Packaging",
+    "synonyms": [],
+    "related": [
+      "stationery"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "panel",
+    "label": "Panel",
+    "synonyms": [],
+    "related": [
+      "conferences"
+    ],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "parenthood",
@@ -134832,6 +135886,16 @@
     "category": "Industry"
   },
   {
+    "id": "peril",
+    "label": "Peril",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "ehs"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "personalcare",
     "label": "PersonalCare",
     "synonyms": [
@@ -134935,6 +135999,24 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "pharmaceutical",
+    "label": "Pharmaceutical",
+    "synonyms": [
+      "medicinal",
+      "therapeutic"
+    ],
+    "related": [],
+    "opposites": [
+      "Technology",
+      "Food"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "pillars",
@@ -135123,6 +136205,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "prosthetics",
+    "label": "Prosthetics",
+    "synonyms": [
+      "limb",
+      "appendage",
+      "device",
+      "implant"
+    ],
+    "related": [],
+    "opposites": [
+      "Natural",
+      "Unassisted"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "publishing",
     "label": "Publishing",
     "synonyms": [
@@ -135305,12 +136407,42 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "regulatory",
+    "label": "Regulatory",
+    "synonyms": [],
+    "related": [
+      "ehs"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "remedy",
+    "label": "Remedy",
+    "synonyms": [
+      "therapy"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "remembrances",
     "label": "Remembrances",
     "synonyms": [
       "souvenirs"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "reporting",
+    "label": "Reporting",
+    "synonyms": [],
+    "related": [
+      "diagnostics"
+    ],
     "opposites": [],
     "category": "Industry"
   },
@@ -135518,6 +136650,16 @@
     "category": "Industry"
   },
   {
+    "id": "sandals",
+    "label": "Sandals",
+    "synonyms": [
+      "casualfootwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "sauces",
     "label": "Sauces",
     "synonyms": [
@@ -135562,6 +136704,16 @@
     "category": "Industry"
   },
   {
+    "id": "seminars",
+    "label": "Seminars",
+    "synonyms": [],
+    "related": [
+      "conferences"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "serving",
     "label": "Serving",
     "synonyms": [],
@@ -135576,6 +136728,16 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "sessions",
+    "label": "Sessions",
+    "synonyms": [
+      "conferences"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "shipping",
     "label": "Shipping",
     "synonyms": [
@@ -135588,6 +136750,26 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "shoes",
+    "label": "Shoes",
+    "synonyms": [
+      "footwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "skin",
+    "label": "Skin",
+    "synonyms": [
+      "leather"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "skincare",
@@ -135677,6 +136859,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "slippers",
+    "label": "Slippers",
+    "synonyms": [
+      "footwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "snack",
+    "label": "Snack",
+    "synonyms": [
+      "streetfood"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "snacks",
     "label": "Snacks",
     "synonyms": [
@@ -135696,6 +136898,16 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "sneakers",
+    "label": "Sneakers",
+    "synonyms": [
+      "footwear"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "solutions",
@@ -135845,6 +137057,16 @@
     "category": "Industry"
   },
   {
+    "id": "sporty",
+    "label": "Sporty",
+    "synonyms": [],
+    "related": [
+      "casualfootwear"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "stamp",
     "label": "Stamp",
     "synonyms": [],
@@ -135857,6 +137079,58 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "stationery",
+    "label": "Stationery",
+    "synonyms": [
+      "notebook",
+      "writing",
+      "stationery"
+    ],
+    "related": [
+      "calligraphy",
+      "packaging",
+      "letterhead"
+    ],
+    "opposites": [
+      "Digital",
+      "Virtual"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "store",
+    "label": "Store",
+    "synonyms": [
+      "grocery"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "streetfood",
+    "label": "Streetfood",
+    "synonyms": [
+      "snack",
+      "meal"
+    ],
+    "related": [],
+    "opposites": [
+      "FineDining",
+      "Luxury",
+      "upscale"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "streetwear",
@@ -135951,6 +137225,16 @@
     "related": [
       "homegoods"
     ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "summits",
+    "label": "Summits",
+    "synonyms": [
+      "conferences"
+    ],
+    "related": [],
     "opposites": [],
     "category": "Industry"
   },
@@ -136076,6 +137360,26 @@
     "category": "Industry"
   },
   {
+    "id": "symposia",
+    "label": "Symposia",
+    "synonyms": [
+      "conferences"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "tanning",
+    "label": "Tanning",
+    "synonyms": [
+      "leather"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "tapers",
     "label": "Tapers",
     "synonyms": [
@@ -136172,6 +137476,35 @@
     ],
     "opposites": [],
     "category": "Industry"
+  },
+  {
+    "id": "therapeutic",
+    "label": "Therapeutic",
+    "synonyms": [
+      "pharmaceutical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "therapy",
+    "label": "Therapy",
+    "synonyms": [
+      "healing",
+      "cure",
+      "remedy"
+    ],
+    "related": [],
+    "opposites": [
+      "Avoidance",
+      "Denial"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "toddler",
@@ -136287,6 +137620,16 @@
     "category": "Industry"
   },
   {
+    "id": "treatment",
+    "label": "Treatment",
+    "synonyms": [
+      "haircare"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "treats",
     "label": "Treats",
     "synonyms": [
@@ -136294,6 +137637,26 @@
     ],
     "related": [],
     "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "unclad",
+    "label": "Unclad",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "footwear"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "upscale",
+    "label": "Upscale",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "streetfood"
+    ],
     "category": "Industry"
   },
   {
@@ -136859,6 +138222,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "workshops",
+    "label": "Workshops",
+    "synonyms": [],
+    "related": [
+      "conferences"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "writing",
+    "label": "Writing",
+    "synonyms": [
+      "stationery"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "xr",
@@ -137585,6 +138968,35 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "aquatic",
+    "label": "Aquatic",
+    "synonyms": [
+      "aquifer"
+    ],
+    "related": [
+      "blue"
+    ],
+    "opposites": [
+      "Terrestrial",
+      "Arid"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "aquifer",
+    "label": "Aquifer",
+    "synonyms": [
+      "aquatic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "archetype",
@@ -138936,6 +140348,16 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "blue",
+    "label": "Blue",
+    "synonyms": [],
+    "related": [
+      "aquatic"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "bond",
     "label": "Bond",
     "synonyms": [
@@ -138968,6 +140390,25 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "bounce",
+    "label": "Bounce",
+    "synonyms": [
+      "rebound",
+      "jump",
+      "vault"
+    ],
+    "related": [],
+    "opposites": [
+      "Flatness",
+      "Stillness"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "bounty",
@@ -145375,6 +146816,24 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "fruity",
+    "label": "Fruity",
+    "synonyms": [
+      "fruity",
+      "juicy"
+    ],
+    "related": [],
+    "opposites": [
+      "Artificial",
+      "Synthetic"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "fumble",
     "label": "fumble",
     "synonyms": [
@@ -146010,7 +147469,8 @@
       "evolving",
       "progressive",
       "advancing",
-      "growths"
+      "growths",
+      "Progressive"
     ],
     "related": [
       "Decay",
@@ -146875,6 +148335,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "juicy",
+    "label": "Juicy",
+    "synonyms": [
+      "fruity"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "jump",
+    "label": "Jump",
+    "synonyms": [
+      "bounce"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "jungle",
     "label": "Jungle",
     "synonyms": [
@@ -147596,6 +149076,21 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "metamorphosis",
+    "label": "Metamorphosis",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "Stagnation",
+      "Constancy"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "micro",
@@ -149803,6 +151298,16 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "rebound",
+    "label": "Rebound",
+    "synonyms": [
+      "bounce"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "reduction",
     "label": "Reduction",
     "synonyms": [
@@ -150473,6 +151978,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "revolve",
+    "label": "Revolve",
+    "synonyms": [
+      "whirl"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "ripple",
     "label": "Ripple",
     "synonyms": [
@@ -150778,6 +152293,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "rotate",
+    "label": "Rotate",
+    "synonyms": [
+      "whirl"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "rupture",
     "label": "Rupture",
     "synonyms": [
@@ -150841,7 +152366,8 @@
       "cry",
       "shout",
       "howl",
-      "wail"
+      "wail",
+      "Cream"
     ],
     "related": [
       "clamor",
@@ -154237,6 +155763,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "twirl",
+    "label": "Twirl",
+    "synonyms": [
+      "whirl"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "unbroken",
     "label": "unbroken",
     "synonyms": [
@@ -154932,6 +156468,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "vault",
+    "label": "Vault",
+    "synonyms": [
+      "bounce"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "veiling",
     "label": "veiling",
     "synonyms": [
@@ -155484,6 +157030,25 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "whirl",
+    "label": "Whirl",
+    "synonyms": [
+      "twirl",
+      "revolve",
+      "rotate"
+    ],
+    "related": [],
+    "opposites": [
+      "Stillness",
+      "Calm"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "whole",
@@ -168308,6 +169873,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "rejuvenation",
+    "label": "Rejuvenation",
+    "synonyms": [
+      "restoration"
+    ],
+    "related": [
+      "resurgence"
+    ],
+    "opposites": [
+      "Depletion",
+      "Decay",
+      "Exhaustion"
+    ],
+    "category": "Philosophical / Existential Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "remain",
     "label": "remain",
     "synonyms": [
@@ -168560,6 +170145,26 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "restoration",
+    "label": "Restoration",
+    "synonyms": [
+      "rejuvenation"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "resurgence",
+    "label": "Resurgence",
+    "synonyms": [],
+    "related": [
+      "rejuvenation"
+    ],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "risk",
@@ -174798,6 +176403,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "cyberculture",
+    "label": "Cyberculture",
+    "synonyms": [
+      "techno-culture"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "data",
     "label": "Data",
     "synonyms": [
@@ -175222,6 +176837,16 @@
     "opposites": [
       "eco-conscious"
     ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "digiculture",
+    "label": "Digiculture",
+    "synonyms": [
+      "techno-culture"
+    ],
+    "related": [],
+    "opposites": [],
     "category": "Social / Cultural Concepts"
   },
   {
@@ -176353,6 +177978,37 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "enterprise",
+    "label": "Enterprise",
+    "synonyms": [
+      "entrepreneurship"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "entrepreneurship",
+    "label": "Entrepreneurship",
+    "synonyms": [
+      "enterprise",
+      "venture",
+      "innovation"
+    ],
+    "related": [
+      "visionary"
+    ],
+    "opposites": [
+      "Employment",
+      "Dependency"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "environmental",
     "label": "Environmental",
     "synonyms": [
@@ -176478,7 +178134,8 @@
     "id": "event",
     "label": "Event",
     "synonyms": [
-      "premium"
+      "premium",
+      "Events"
     ],
     "related": [
       "adaptation",
@@ -179752,6 +181409,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "infosphere",
+    "label": "Infosphere",
+    "synonyms": [
+      "techno-culture"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "infrastructure",
     "label": "Infrastructure",
     "synonyms": [
@@ -179822,6 +181489,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "innovation",
+    "label": "Innovation",
+    "synonyms": [
+      "entrepreneurship"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "intelligence",
@@ -181832,6 +183509,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "nostalgic",
+    "label": "Nostalgic",
+    "synonyms": [],
+    "related": [
+      "pop-culture"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "novelty",
     "label": "Novelty",
     "synonyms": [
@@ -182557,6 +184244,25 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "pop-culture",
+    "label": "Pop-Culture",
+    "synonyms": [],
+    "related": [
+      "nostalgic",
+      "youthful"
+    ],
+    "opposites": [
+      "Classical",
+      "Traditional",
+      "subculture"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
   },
   {
     "id": "popular",
@@ -184420,6 +186126,21 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "self-care",
+    "label": "Self-care",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "Neglect",
+      "Apathy"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
     "id": "self-expression",
     "label": "Self-expression",
     "synonyms": [
@@ -185500,6 +187221,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "subculture",
+    "label": "Subculture",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "pop-culture"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "subterranean",
+    "label": "Subterranean",
+    "synonyms": [
+      "underground"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "subversion",
     "label": "Subversion",
     "synonyms": [
@@ -185798,6 +187539,36 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "techno-culture",
+    "label": "Techno-culture",
+    "synonyms": [
+      "cyberculture",
+      "digiculture",
+      "infosphere",
+      "technocentric"
+    ],
+    "related": [],
+    "opposites": [
+      "Luddism",
+      "Antiquity"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "brand"
+    ],
+    "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "technocentric",
+    "label": "Technocentric",
+    "synonyms": [
+      "techno-culture"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "technology",
@@ -186264,6 +188035,23 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "underground",
+    "label": "Underground",
+    "synonyms": [
+      "subterranean"
+    ],
+    "related": [],
+    "opposites": [
+      "Mainstream",
+      "Conventional"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "website"
+    ],
+    "embeddingStrategy": "website_style"
   },
   {
     "id": "ungendered",
@@ -186795,6 +188583,16 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "venture",
+    "label": "Venture",
+    "synonyms": [
+      "entrepreneurship"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "virtualization",
     "label": "Virtualization",
     "synonyms": [
@@ -186858,6 +188656,16 @@
       "app"
     ],
     "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "visionary",
+    "label": "Visionary",
+    "synonyms": [],
+    "related": [
+      "entrepreneurship"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "vogue",
@@ -187263,6 +189071,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "youthful",
+    "label": "Youthful",
+    "synonyms": [],
+    "related": [
+      "pop-culture"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "youthfulness",
@@ -202540,7 +204358,8 @@
     "id": "urban",
     "label": "Urban",
     "synonyms": [
-      "urbans"
+      "urbans",
+      "Urbanism"
     ],
     "related": [
       "Dreamlike",

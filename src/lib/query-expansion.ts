@@ -22,6 +22,116 @@ import curatedExpansionsData from './query-expansions.json'
 // Load curated expansions from JSON file (used for website and general queries)
 const CURATED_EXPANSIONS = curatedExpansionsData as Record<string, string[]>
 
+// Brand-specific curated expansions
+// These are tailored for brand identity design contexts (logos, brand guidelines, visual identity systems, etc.)
+const BRAND_CURATED_EXPANSIONS: Record<string, string[]> = {
+  "love": [
+    "warm romantic color palette in brand identity",
+    "affectionate design with heart motifs in logos",
+    "gentle pastel tones in brand guidelines",
+    "romantic color scheme in visual identity",
+    "soft emotional brand aesthetics"
+  ],
+  "fun": [
+    "bright colorful brand identity with playful graphics",
+    "vibrant brand guidelines with bold patterns",
+    "cheerful colorful logos with energetic designs",
+    "playful typography in brand identity",
+    "joyful colorful brand system with rounded shapes"
+  ],
+  "cozy": [
+    "warm brown and orange tones in brand identity",
+    "comfortable earthy colors in logos and brand guidelines",
+    "inviting warm color palette in visual identity",
+    "soft warm brand aesthetics",
+    "comfortable homey brand design"
+  ],
+  "serious": [
+    "minimalist professional brand identity",
+    "formal corporate logo design",
+    "authoritative monochrome brand guidelines",
+    "sober professional color scheme in visual identity",
+    "structured clean brand system with minimal colors"
+  ],
+  "calm": [
+    "peaceful muted colors in brand identity",
+    "tranquil soft color palette in logos",
+    "gentle serene tones in brand guidelines",
+    "relaxing peaceful visual identity",
+    "meditative zen brand aesthetic"
+  ],
+  "chaotic": [
+    "busy cluttered brand identity design",
+    "vibrant overwhelming logo graphics",
+    "energetic disorganized brand guidelines layout",
+    "intense busy visual identity composition",
+    "overwhelming visual noise in brand system"
+  ],
+  "happy": [
+    "bright cheerful colors in brand identity",
+    "joyful vibrant logo design",
+    "sunny optimistic brand guidelines",
+    "positive uplifting color palette in visual identity",
+    "cheerful bright brand system with playful elements"
+  ],
+  "sad": [
+    "melancholic muted tones in brand identity",
+    "gloomy desaturated brand colors",
+    "dark somber logo design",
+    "mournful quiet brand aesthetic",
+    "emotional downtrodden color scheme in visual identity"
+  ],
+  "energetic": [
+    "dynamic bold colors in brand identity",
+    "vibrant powerful logo design",
+    "fast-paced energetic brand guidelines",
+    "intense active visual identity composition",
+    "high-energy bold brand system"
+  ],
+  "peaceful": [
+    "tranquil calm brand identity design",
+    "gentle soft colors in logos",
+    "quiet serene brand guidelines",
+    "harmonious balanced visual identity layout",
+    "meditative peaceful brand system"
+  ],
+  "minimal": [
+    "clean simple brand identity design",
+    "minimalist logo with ample white space",
+    "simple geometric shapes in brand guidelines",
+    "uncluttered visual identity layout",
+    "sparse clean design in brand system"
+  ],
+  "luxury": [
+    "premium elegant brand identity",
+    "sophisticated high-end logo design",
+    "refined luxurious brand guidelines",
+    "exclusive premium visual identity materials",
+    "elegant sophisticated brand system"
+  ],
+  "organic": [
+    "natural earthy tones in brand identity",
+    "organic green logo design",
+    "sustainable eco-friendly brand guidelines aesthetics",
+    "natural textures in visual identity",
+    "earth-friendly brand system with natural colors"
+  ],
+  "modern": [
+    "contemporary sleek brand identity",
+    "cutting-edge modern logo design",
+    "futuristic innovative brand guidelines",
+    "current trendy visual identity aesthetics",
+    "sleek contemporary brand system"
+  ],
+  "vintage": [
+    "retro nostalgic brand identity",
+    "classic vintage logo design",
+    "antique-inspired brand guidelines",
+    "old-fashioned visual identity aesthetics",
+    "nostalgic retro brand system"
+  ]
+}
+
 // Packaging-specific curated expansions
 // These are tailored for packaging design contexts (product labels, boxes, containers, etc.)
 const PACKAGING_CURATED_EXPANSIONS: Record<string, string[]> = {
@@ -327,7 +437,7 @@ async function generateWithGroq(query: string, category?: string | null): Promis
     
     // Build category-specific context for the prompt
     const categoryContext = category 
-      ? `\n\nCONTEXT: This expansion is for ${category} designs. Focus on visual patterns relevant to ${category} (e.g., ${category === 'packaging' ? 'product labels, boxes, containers' : category === 'website' ? 'web pages, interfaces, layouts' : 'designs in this category'}).`
+      ? `\n\nCONTEXT: This expansion is for ${category} designs. Focus on visual patterns relevant to ${category} (e.g., ${category === 'packaging' ? 'product labels, boxes, containers' : category === 'brand' ? 'logos, brand identity, visual identity systems, brand guidelines' : category === 'website' ? 'web pages, interfaces, layouts' : 'designs in this category'}).`
       // Note: This is an optional optimization. For new categories not explicitly handled,
       // the system uses generic context ("designs in this category"), which works fine.
       : ''
@@ -486,13 +596,17 @@ export async function expandAbstractQuery(query: string, category?: string | nul
     
     console.log(`[query-expansion] Expanding "${query}" (normalized: "${normalized}")${category ? `, category: "${category}"` : ''}`)
     
-    // 1. Get curated expansions (category-specific for packaging, global for website/others)
+    // 1. Get curated expansions (category-specific for packaging/brand, global for website/others)
     let curated: string[] = []
     try {
       if (category === 'packaging') {
         // Use packaging-specific curated expansions
         curated = PACKAGING_CURATED_EXPANSIONS[normalized] || []
         console.log(`[query-expansion] Packaging-specific curated expansions: ${curated.length}`)
+      } else if (category === 'brand') {
+        // Use brand-specific curated expansions
+        curated = BRAND_CURATED_EXPANSIONS[normalized] || []
+        console.log(`[query-expansion] Brand-specific curated expansions: ${curated.length}`)
       } else {
         // Use global curated expansions (for website and other categories)
         curated = CURATED_EXPANSIONS[normalized] || []
