@@ -362,6 +362,7 @@ export async function GET(request: NextRequest) {
           displayText: suggestion.displayText, // Always the concept label
           isSynonym: false, // Always false since we only show concept labels
           synonyms: (concept?.synonyms as unknown as string[] || []),
+          opposites: (concept?.opposites as unknown as string[] || []),
         }
       })
     

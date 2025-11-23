@@ -28,6 +28,7 @@ body {
 .magical-glow {
   position: relative;
   border: 2px solid transparent;
+  isolation: isolate;
 }
 
 .magical-glow::before {
@@ -36,7 +37,7 @@ body {
   inset: -2px;
   border-radius: 9999px;
   background: linear-gradient(135deg, #a855f7, #06b6d4, #ec4899);
-  z-index: -1;
+  z-index: 0;
   padding: 2px;
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
