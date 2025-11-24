@@ -13,6 +13,7 @@ Looma is a web application that lets users discover great website designs by sea
 - **Automatic tagging**: New screenshots are embedded & auto-tagged on ingest
 - **Screenshot service**: Automated website screenshot capture with cookie banner removal
 - **Interactive gallery**: Responsive grid with beautiful UI and concept chips, with category tags
+- **Concept Spectrum**: Interactive slider system to explore the spectrum between concepts and their opposites, with 10-tier ranking for fine-grained control
 - **Submission form**: Easy site submission with automatic screenshot generation
 - **Hub detection**: Automatically detects and penalizes "hub" images that appear too frequently in search results
 
@@ -60,11 +61,17 @@ GEMINI_API_KEY="your-google-gemini-api-key"
 # Uses Groq API (OpenAI-compatible) for fast, low-latency query expansion
 GROQ_API_KEY="your-groq-api-key"
 
+# OpenAI API (optional - for generating concept relationships: opposites, synonyms, related)
+# Used by scripts/generate_concept_relationships.ts
+OPENAI_API_KEY="your-openai-api-key"
+
 # Screenshot Service (optional - only needed if using local screenshot service)
 SCREENSHOT_API_URL=http://localhost:3001
 ```
 
 ### 3. Database Setup
+
+The database (`prisma/dev-new.db`) is included in the repository, so all developers have access to the same dataset. If you need to set up a fresh database:
 
 ```bash
 # Generate Prisma client
@@ -76,6 +83,8 @@ npx prisma migrate dev
 # Optional: Open Prisma Studio to explore the database
 npx prisma studio
 ```
+
+**Note**: The database file is tracked in Git to ensure all developers work with the same data. If you need to reset or update the database, you can restore it from the repository.
 
 ### 4. Seed Design Concepts
 
@@ -334,6 +343,23 @@ npx tsx scripts/add_sites.ts
 4. Add multiple concepts to combine them (e.g., "playful gradient 3d")
 5. Results are ranked by CLIP cosine similarity + subtle concept boosts
 
+### Concept Spectrum
+
+The Concept Spectrum feature allows you to explore the visual spectrum between a concept and its opposite using interactive sliders:
+
+1. **Add a concept** to your search (e.g., "playful")
+2. **Open the Concept Spectrum** by clicking the spectrum button (appears when you have suggested concepts)
+3. **Adjust the slider** to explore different similarity tiers:
+   - **Right side (100-51%)**: Shows results for the original concept, transitioning from highest similarity to lowest
+   - **Left side (50-0%)**: Shows results for the opposite concept, transitioning from lowest to highest similarity
+4. **Multiple concepts**: When multiple concepts are added, each gets its own slider. Results are combined intelligently based on tier positions across all concepts.
+
+**How it works:**
+- Results are divided into 10 tiers (each ~10% of results) based on similarity scores
+- Moving the slider reorders results within each tier, creating smooth transitions
+- The system pre-fetches results for both the concept and its opposite for instant slider response
+- Slider positions reset when concepts are removed
+
 ### How Search Works
 
 - **Zero-shot CLIP search**: Your query is embedded as text and compared directly with image embeddings via cosine similarity
@@ -408,6 +434,21 @@ npx tsx scripts/check_concept_similarity.ts "playful gradient 3d"
 
 # Sync opposites from seed_concepts.json to concept-opposites.ts and re-tag all images
 npx tsx scripts/sync_and_retag_all.ts
+
+# Check and fix bidirectional opposite relationships
+npx tsx scripts/check_and_fix_opposites.ts
+
+# Fix missing opposites (with --fix flag to auto-fix)
+npx tsx scripts/check_and_fix_opposites.ts --fix
+
+# Generate missing opposites, related concepts, and synonyms using OpenAI
+npx tsx scripts/generate_concept_relationships.ts
+
+# Review and standardize concept taxonomy (capitalization, IDs)
+npx tsx scripts/review_concept_taxonomy.ts
+
+# Fix taxonomy issues (with --fix flag to auto-fix)
+npx tsx scripts/review_concept_taxonomy.ts --fix
 ```
 
 ### Site & Image Management
@@ -693,7 +734,7 @@ All application data is stored in a **single SQLite database** (via Prisma):
 **Everything is stored locally by default** (no cloud dependencies):
 
 **Local Files:**
-- **SQLite database** — `./dev-new.db` (project root)
+- **SQLite database** — `prisma/dev-new.db` (included in repository for shared dev data)
 - **Concept definitions** — `src/concepts/seed_concepts.json` (in repository)
 - **CLIP models** — Cached locally by `@xenova/transformers` (typically in `~/.cache/huggingface/` or `node_modules/.cache/`)
 
@@ -762,6 +803,7 @@ Concepts can have opposite relationships defined in `seed_concepts.json`. These 
 
 - **Search ranking**: Images with opposite tags receive penalties in search results
 - **Tag validation**: Helps filter false positive tags
+- **Concept Spectrum**: Interactive sliders allow users to explore the visual spectrum between a concept and its opposite, with 10-tier ranking for fine-grained control
 
 To sync opposites from `seed_concepts.json` to `concept-opposites.ts` and re-tag all images:
 
