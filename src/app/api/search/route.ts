@@ -101,9 +101,22 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category') || null // Get category filter: 'website', 'packaging', 'all', or null
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
+    
+    // Parse slider positions
+    let sliderPositions: Record<string, number> = {}
+    const slidersParam = searchParams.get('sliders')
+    if (slidersParam) {
+      try {
+        sliderPositions = JSON.parse(slidersParam)
+        console.log(`[search] Slider positions:`, sliderPositions)
+      } catch (e) {
+        console.warn('[search] Failed to parse slider positions:', e)
+      }
+    }
+    
     if (!q) return NextResponse.json({ images: [] })
     
-    console.log(`[search] Processing query: "${q}" (original: "${rawQuery.trim()}"), category: ${category || 'all'}`)
+    console.log(`[search] Processing query: "${q}" (original: "${rawQuery.trim()}"), category: ${category || 'all'}, sliders: ${Object.keys(sliderPositions).length > 0 ? JSON.stringify(sliderPositions) : 'none'}`)
 
     if (zeroShot) {
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
@@ -379,7 +392,76 @@ export async function GET(request: NextRequest) {
       // 4. Get popularity metrics for top K images
       const popularityMetrics = await getImagePopularityMetrics(topKImageIds, 20)
       
-      // 5. Apply very light boosts/penalties (tag-based)
+      // 4.5. Pre-compute opposite concept embeddings for slider logic (if sliders are set)
+      const conceptEmbeddingMap = new Map<string, number[]>()
+      let allConceptsForSliders: any[] = []
+      let conceptMapForSliders = new Map<string, any>()
+      if (Object.keys(sliderPositions).length > 0) {
+        const queryTokens = q.split(/[\s,]+/).filter(Boolean)
+        allConceptsForSliders = await prisma.concept.findMany()
+        conceptMapForSliders = new Map(allConceptsForSliders.map(c => [c.label.toLowerCase(), c]))
+        
+        for (const token of queryTokens) {
+          // Try to find slider position by token (exact match) or by concept label/id
+          let sliderPos = sliderPositions[token]
+          if (sliderPos === undefined) {
+            // Try to find by concept label (case-insensitive)
+            const concept = conceptMapForSliders.get(token.toLowerCase())
+            if (concept) {
+              sliderPos = sliderPositions[concept.label] || 
+                         sliderPositions[concept.label.toLowerCase()] ||
+                         sliderPositions[concept.id] ||
+                         sliderPositions[concept.id.toLowerCase()]
+            }
+          }
+          
+          // Also try direct lookup by lowercase token
+          if (sliderPos === undefined) {
+            sliderPos = sliderPositions[token.toLowerCase()]
+          }
+          
+          // Try normalized matching (remove whitespace)
+          if (sliderPos === undefined) {
+            for (const [key, pos] of Object.entries(sliderPositions)) {
+              if (key.toLowerCase().replace(/\s+/g, '') === token.toLowerCase().replace(/\s+/g, '')) {
+                sliderPos = pos
+                break
+              }
+            }
+          }
+          
+          if (sliderPos === undefined || sliderPos >= 0.5) continue
+          
+          const concept = conceptMapForSliders.get(token.toLowerCase())
+          if (!concept) continue
+          
+          const opposites = (concept.opposites as unknown as string[]) || []
+          if (opposites.length > 0) {
+            const firstOppositeId = opposites[0].toLowerCase()
+            const oppositeConcept = allConceptsForSliders.find(c => c.id.toLowerCase() === firstOppositeId)
+            if (oppositeConcept) {
+              const oppositeEmbedding = (oppositeConcept.embedding as unknown as number[]) || []
+              if (oppositeEmbedding.length > 0 && oppositeEmbedding.length === dim) {
+                // Store with multiple keys to ensure we can find it later
+                conceptEmbeddingMap.set(token.toLowerCase(), oppositeEmbedding)
+                conceptEmbeddingMap.set(concept.label.toLowerCase(), oppositeEmbedding)
+                conceptEmbeddingMap.set(concept.id.toLowerCase(), oppositeEmbedding)
+                console.log(`[search] Loaded opposite embedding for "${token}" -> "${oppositeConcept.label}" (${oppositeEmbedding.length} dim)`)
+              } else {
+                console.log(`[search] Opposite concept "${oppositeConcept.label}" has invalid embedding (length: ${oppositeEmbedding.length}, expected: ${dim})`)
+              }
+            } else {
+              console.log(`[search] Opposite concept with ID "${firstOppositeId}" not found`)
+            }
+          } else {
+            console.log(`[search] Concept "${concept.label}" has no opposites`)
+          }
+        }
+        
+        console.log(`[search] Loaded ${conceptEmbeddingMap.size} opposite embeddings for slider logic`)
+      }
+      
+      // 5. Apply very light boosts/penalties (tag-based) + slider adjustments
       const reranked = topK.map((item: any) => {
         const imageTags = tagsByImage.get(item.imageId) || new Map()
         let boost = 0
@@ -474,8 +556,145 @@ export async function GET(request: NextRequest) {
         // This ensures high semantic similarity can still rank well
         const adjustedBaseScore = item.baseScore * hubPenaltyMultiplier
         
-        // finalScore = (adjusted baseScore) + tiny boosts - tiny penalties - popularity penalty
-        const finalScore = adjustedBaseScore + boost - penalty - popularityPenalty
+        // Calculate base final score
+        let finalScore = adjustedBaseScore + boost - penalty - popularityPenalty
+        
+        // Apply slider-based ranking logic if sliders are set
+        if (Object.keys(sliderPositions).length > 0 && allConceptsForSliders.length > 0) {
+          const queryTokens = q.split(/[\s,]+/).filter(Boolean)
+          
+          // Debug: log first time we enter slider logic
+          if (Math.random() < 0.1) {
+            console.log(`[search] SLIDER LOGIC ACTIVE: query="${q}", tokens=${queryTokens.join(',')}, sliderKeys=${Object.keys(sliderPositions).join(',')}`)
+          }
+          
+          const img = images.find((img: any) => img.id === item.imageId) as any
+          if (img) {
+            const ivec = (img.embedding?.vector as unknown as number[]) || []
+            if (ivec.length === dim) {
+              const imageTagsMap = tagsByImage.get(item.imageId) || new Map()
+              
+              for (const token of queryTokens) {
+                // Try to find slider position by token (exact match) or by concept label/id
+                let sliderPos = sliderPositions[token]
+                if (sliderPos === undefined) {
+                  // Try to find by concept label (case-insensitive)
+                  const concept = conceptMapForSliders.get(token.toLowerCase())
+                  if (concept) {
+                    // Try exact label match first, then case-insensitive
+                    sliderPos = sliderPositions[concept.label] || 
+                               sliderPositions[concept.label.toLowerCase()] ||
+                               sliderPositions[concept.id] ||
+                               sliderPositions[concept.id.toLowerCase()]
+                  }
+                }
+                
+                // Also try direct lookup by lowercase token
+                if (sliderPos === undefined) {
+                  sliderPos = sliderPositions[token.toLowerCase()]
+                }
+                
+                if (sliderPos === undefined) {
+                  // Try one more time with normalized matching
+                  for (const [key, pos] of Object.entries(sliderPositions)) {
+                    if (key.toLowerCase() === token.toLowerCase() || 
+                        key.toLowerCase().replace(/\s+/g, '') === token.toLowerCase().replace(/\s+/g, '')) {
+                      sliderPos = pos
+                      break
+                    }
+                  }
+                }
+                
+                if (sliderPos === undefined) {
+                  // Silently skip if no match found (might be a custom concept)
+                  continue
+                }
+                
+                const concept = conceptMapForSliders.get(token.toLowerCase())
+                if (!concept) continue
+                
+                const hasConceptTag = imageTagsMap.has(concept.id.toLowerCase())
+                
+                if (sliderPos > 0.5) {
+                  // Slider between 0.51 and 1.0: Towards Concept A
+                  // At 1.0: Normal ranking (best Concept A matches first)
+                  // At 0.51: Reverse ranking (worst Concept A matches first)
+                  const reverseFactor = (1.0 - sliderPos) * 2 // 0 at 1.0, 0.98 at 0.51
+                  
+                  // For reverse: invert the score - make lower scores rank higher
+                  const scoreRange = 0.5 // Assume scores are roughly in range 0-0.5
+                  const invertedScore = scoreRange - finalScore
+                  
+                  // Blend: at 1.0 use normal, at 0.51 use fully inverted
+                  finalScore = finalScore * (1 - reverseFactor) + invertedScore * reverseFactor
+                } else if (sliderPos < 0.5) {
+                  // Slider between 0 and 0.49: Towards opposite
+                  // At 0.0: Normal ranking for opposite (best opposite matches first)
+                  // At 0.49: Reverse ranking for opposite (worst opposite matches first)
+                  const opposites = (concept.opposites as unknown as string[]) || []
+                  if (opposites.length > 0) {
+                    // Interpolate between opposite (0.0) and middle (0.5)
+                    const oppositeFactor = (0.5 - sliderPos) * 2 // 1.0 at 0.0, 0.02 at 0.49
+                    
+                    // Try multiple keys to find opposite embedding
+                    let oppositeEmbedding = conceptEmbeddingMap.get(token.toLowerCase())
+                    if (!oppositeEmbedding) {
+                      oppositeEmbedding = conceptEmbeddingMap.get(concept.label.toLowerCase())
+                    }
+                    if (!oppositeEmbedding) {
+                      oppositeEmbedding = conceptEmbeddingMap.get(concept.id.toLowerCase())
+                    }
+                    
+                    if (oppositeEmbedding && oppositeEmbedding.length === dim) {
+                      const oppositeSimilarity = cosine(oppositeEmbedding, ivec)
+                      
+                      // At 0.0: Use 100% opposite similarity (normal ranking for opposite)
+                      // At 0.49: Use mostly opposite similarity but reverse it
+                      // Calculate reverse factor for opposite: at 0.49, we want reverse
+                      const oppositeReverseFactor = (0.5 - sliderPos) * 2 // 1.0 at 0.0, 0.02 at 0.49
+                      // But we want reverse at 0.49, so: reverseFactor = 1.0 - oppositeReverseFactor when sliderPos is near 0.5
+                      // Actually, let's think: at 0.0 we want normal opposite, at 0.49 we want reverse opposite
+                      // So: at 0.0: use oppositeSimilarity as-is
+                      //     at 0.49: invert oppositeSimilarity
+                      const oppositeScoreRange = 0.5
+                      const invertedOppositeScore = oppositeScoreRange - oppositeSimilarity
+                      
+                      // At 0.0: Use oppositeSimilarity directly (normal opposite ranking)
+                      // At 0.49: Use inverted oppositeSimilarity (reverse opposite ranking)
+                      // reverseFactor = sliderPos / 0.5 gives:
+                      // - At 0.0: 0 (normal)
+                      // - At 0.49: 0.98 (reverse) - this is what we want!
+                      const reverseOppositeFactor = sliderPos / 0.5 // 0 at 0.0, 0.98 at 0.49
+                      const blendedOppositeScore = oppositeSimilarity * (1 - reverseOppositeFactor) + invertedOppositeScore * reverseOppositeFactor
+                      
+                      // Now blend between original score and the opposite score
+                      // At 0.0: Use 100% opposite score (normal opposite ranking)
+                      // At 0.49: Use mostly opposite score (but reversed)
+                      finalScore = finalScore * (1 - oppositeFactor) + blendedOppositeScore * oppositeFactor
+                    } else {
+                      // Fallback: use tag-based approach
+                      const firstOppositeId = opposites[0].toLowerCase()
+                      const hasOppositeTag = imageTagsMap.has(firstOppositeId)
+                      
+                      // At 0.0: Boost opposite tags (normal opposite ranking)
+                      // At 0.49: We want reverse, so reduce opposite tags
+                      const reverseOppositeTagFactor = sliderPos / 0.5 // 0 at 0.0, 0.98 at 0.49
+                      
+                      if (hasOppositeTag) {
+                        // Boost for normal, reduce for reverse
+                        finalScore += oppositeFactor * 0.5 * (1 - reverseOppositeTagFactor * 2)
+                      } else if (hasConceptTag) {
+                        // Reduce original concept tags
+                        finalScore -= oppositeFactor * 0.4
+                      }
+                    }
+                  }
+                }
+                // At exactly 0.5: No change (middle point)
+              }
+            }
+          }
+        }
         
         // Debug: Log top results with significant hub penalties
         if (hubPenaltyMultiplier < 1.0) {
@@ -596,7 +815,7 @@ export async function GET(request: NextRequest) {
         const siteId = r.site.id
         const existing = siteMap.get(siteId)
         if (!existing || r.score > existing.score) {
-          siteMap.set(siteId, { site: r.site, score: r.score })
+          siteMap.set(siteId, { site: { ...r.site, score: r.score }, score: r.score })
         }
       }
       // Sort by score (descending) to maintain ranking
