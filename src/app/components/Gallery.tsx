@@ -169,25 +169,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       return
     }
     
-    // For now, handle single concept case
-    if (selectedConcepts.length === 1) {
-      const concept = selectedConcepts[0]
-      const sliderPos = sliderPositions.get(concept) ?? 1.0
-      const conceptResultSet = conceptResults.get(concept) || []
-      const oppositeResultSet = oppositeResults.get(concept) || []
-      
-      console.log(`[STOP DEBUG] Concept: ${concept}, sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%)`)
-      console.log(`[STOP DEBUG] conceptResultSet.length: ${conceptResultSet.length}, oppositeResultSet.length: ${oppositeResultSet.length}`)
-      
-      if (conceptResultSet.length === 0 && oppositeResultSet.length === 0) {
-        console.log(`[STOP DEBUG] No results available, returning`)
-        return
-      }
-      
-      // Helper function to calculate similarity tiers based on percentile ranking
-      // This works correctly even when comparing different concepts with different score ranges
-      // Returns 10 tiers: each representing 10% of results, working from top down
-      const calculateTiers = (results: Site[]) => {
+    // Helper function to calculate similarity tiers based on percentile ranking
+    // This works correctly even when comparing different concepts with different score ranges
+    // Returns 10 tiers: each representing 10% of results, working from top down
+    const calculateTiers = (results: Site[]) => {
         if (results.length === 0) return { 
           tier1: [], tier2: [], tier3: [], tier4: [], tier5: [], 
           tier6: [], tier7: [], tier8: [], tier9: [], tier10: [] 
@@ -223,6 +208,21 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const tier10 = sorted.slice(tierSize * 9) // Bottom 10% (lowest similarity, includes remainder)
         
         return { tier1, tier2, tier3, tier4, tier5, tier6, tier7, tier8, tier9, tier10 }
+      }
+    
+    // Handle single concept case
+    if (selectedConcepts.length === 1) {
+      const concept = selectedConcepts[0]
+      const sliderPos = sliderPositions.get(concept) ?? 1.0
+      const conceptResultSet = conceptResults.get(concept) || []
+      const oppositeResultSet = oppositeResults.get(concept) || []
+      
+      console.log(`[STOP DEBUG] Concept: ${concept}, sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%)`)
+      console.log(`[STOP DEBUG] conceptResultSet.length: ${conceptResultSet.length}, oppositeResultSet.length: ${oppositeResultSet.length}`)
+      
+      if (conceptResultSet.length === 0 && oppositeResultSet.length === 0) {
+        console.log(`[STOP DEBUG] No results available, returning`)
+        return
       }
       
       let orderedResults: Site[] = []
@@ -445,18 +445,170 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         setSites(fallbackArray)
       }
     } else {
-      // Multiple concepts: for now, just use concept results
-      const allResults: Site[] = []
-      selectedConcepts.forEach(concept => {
-        const results = conceptResults.get(concept) || []
-        allResults.push(...results)
-      })
-      // Deduplicate by site ID
-      const deduplicatedResults = Array.from(
-        new Map(allResults.map(site => [site.id, site])).values()
-      )
-      if (deduplicatedResults.length > 0) {
-        setSites(deduplicatedResults)
+      // Multiple concepts: apply slider-based ranking for each concept, then combine
+      console.log(`[MULTI DEBUG] Processing ${selectedConcepts.length} concepts`)
+      
+      // Step 1: For each concept, calculate its tier-based ordering based on slider position
+      const conceptOrderedResults = new Map<string, Site[]>() // concept -> ordered results
+      
+      for (const concept of selectedConcepts) {
+        const sliderPos = sliderPositions.get(concept) ?? 1.0
+        const conceptResultSet = conceptResults.get(concept) || []
+        const oppositeResultSet = oppositeResults.get(concept) || []
+        
+        if (conceptResultSet.length === 0 && oppositeResultSet.length === 0) {
+          console.log(`[MULTI DEBUG] No results for concept: ${concept}`)
+          continue
+        }
+        
+        // Calculate stop number (same logic as single concept)
+        const clampedPos = Math.max(0, Math.min(1, sliderPos))
+        let stopNumber: number
+        if (clampedPos === 1.0) {
+          stopNumber = 10
+        } else {
+          stopNumber = Math.floor(clampedPos * 10) + 1
+        }
+        stopNumber = Math.max(1, Math.min(10, stopNumber))
+        
+        console.log(`[MULTI DEBUG] Concept: ${concept}, sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%), stop: ${stopNumber}`)
+        
+        let orderedResults: Site[] = []
+        
+        if (sliderPos > 0.5) {
+          // Right side: use concept results
+          const conceptTiers = calculateTiers(conceptResultSet)
+          const t1 = [...conceptTiers.tier1]
+          const t2 = [...conceptTiers.tier2]
+          const t3 = [...conceptTiers.tier3]
+          const t4 = [...conceptTiers.tier4]
+          const t5 = [...conceptTiers.tier5]
+          const t6 = [...conceptTiers.tier6]
+          const t7 = [...conceptTiers.tier7]
+          const t8 = [...conceptTiers.tier8]
+          const t9 = [...conceptTiers.tier9]
+          const t10 = [...conceptTiers.tier10]
+          
+          // Apply same tier ordering logic as single concept
+          if (stopNumber === 10) {
+            orderedResults = [...t1, ...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10]
+          } else if (stopNumber === 9) {
+            orderedResults = [...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1]
+          } else if (stopNumber === 8) {
+            orderedResults = [...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2]
+          } else if (stopNumber === 7) {
+            orderedResults = [...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3]
+          } else {
+            // Stop 6
+            orderedResults = [...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3, ...t4]
+          }
+        } else {
+          // Left side: use opposite results if available, otherwise concept results
+          if (oppositeResultSet.length === 0) {
+            // No opposite: use concept results with varied ordering
+            const conceptTiersNoOpp = calculateTiers(conceptResultSet)
+            const t1NoOpp = [...conceptTiersNoOpp.tier1]
+            const t2NoOpp = [...conceptTiersNoOpp.tier2]
+            const t3NoOpp = [...conceptTiersNoOpp.tier3]
+            const t4NoOpp = [...conceptTiersNoOpp.tier4]
+            const t5NoOpp = [...conceptTiersNoOpp.tier5]
+            const t6NoOpp = [...conceptTiersNoOpp.tier6]
+            const t7NoOpp = [...conceptTiersNoOpp.tier7]
+            const t8NoOpp = [...conceptTiersNoOpp.tier8]
+            const t9NoOpp = [...conceptTiersNoOpp.tier9]
+            const t10NoOpp = [...conceptTiersNoOpp.tier10]
+            
+            if (stopNumber === 1) {
+              orderedResults = [...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp]
+            } else if (stopNumber === 2) {
+              orderedResults = [...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp]
+            } else if (stopNumber === 3) {
+              orderedResults = [...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp]
+            } else if (stopNumber === 4) {
+              orderedResults = [...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp]
+            } else {
+              // Stop 5
+              orderedResults = [...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp]
+            }
+          } else {
+            // Use opposite results
+            const oppositeTiers = calculateTiers(oppositeResultSet)
+            const t1Opp = [...oppositeTiers.tier1]
+            const t2Opp = [...oppositeTiers.tier2]
+            const t3Opp = [...oppositeTiers.tier3]
+            const t4Opp = [...oppositeTiers.tier4]
+            const t5Opp = [...oppositeTiers.tier5]
+            const t6Opp = [...oppositeTiers.tier6]
+            const t7Opp = [...oppositeTiers.tier7]
+            const t8Opp = [...oppositeTiers.tier8]
+            const t9Opp = [...oppositeTiers.tier9]
+            const t10Opp = [...oppositeTiers.tier10]
+            
+            if (stopNumber === 1) {
+              orderedResults = [...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp]
+            } else if (stopNumber === 2) {
+              orderedResults = [...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp]
+            } else if (stopNumber === 3) {
+              orderedResults = [...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp]
+            } else if (stopNumber === 4) {
+              orderedResults = [...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp]
+            } else {
+              // Stop 5
+              orderedResults = [...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp]
+            }
+          }
+        }
+        
+        conceptOrderedResults.set(concept, orderedResults)
+        console.log(`[MULTI DEBUG] Concept ${concept}: ${orderedResults.length} ordered results`)
+      }
+      
+      // Step 2: Combine results from all concepts by scoring each site based on its tier position
+      // Sites that appear in higher tiers across multiple concepts get higher combined scores
+      const siteScores = new Map<string, { site: Site; score: number; conceptCount: number }>()
+      
+      for (const [concept, orderedResults] of conceptOrderedResults.entries()) {
+        // Score based on position: earlier in the list = higher score
+        // Use inverse position (first item gets highest score)
+        orderedResults.forEach((site, index) => {
+          const positionScore = 1.0 / (index + 1) // First item: 1.0, second: 0.5, third: 0.33, etc.
+          const existing = siteScores.get(site.id)
+          
+          if (existing) {
+            // Site appears in multiple concepts: combine scores (additive)
+            existing.score += positionScore
+            existing.conceptCount += 1
+          } else {
+            siteScores.set(site.id, {
+              site,
+              score: positionScore,
+              conceptCount: 1
+            })
+          }
+        })
+      }
+      
+      // Step 3: Sort by combined score (higher is better)
+      const combinedResults = Array.from(siteScores.values())
+        .sort((a, b) => {
+          // Primary sort: combined score (higher is better)
+          if (Math.abs(a.score - b.score) > 0.001) {
+            return b.score - a.score
+          }
+          // Secondary sort: number of concepts (more concepts = better)
+          if (a.conceptCount !== b.conceptCount) {
+            return b.conceptCount - a.conceptCount
+          }
+          // Tertiary sort: original score (higher is better)
+          return (b.site.score ?? 0) - (a.site.score ?? 0)
+        })
+        .map(item => item.site)
+      
+      console.log(`[MULTI DEBUG] Combined ${combinedResults.length} unique sites from ${selectedConcepts.length} concepts`)
+      console.log(`[MULTI DEBUG] First 10 IDs: ${combinedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
+      
+      if (combinedResults.length > 0) {
+        setSites(combinedResults)
       }
     }
   }, [
@@ -555,6 +707,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   
   
   // Check if slider crossed 50% threshold and fetch opposite if needed
+  // Also fetch opposites upfront for all concepts that don't have them yet
   const checkAndFetchOpposites = async () => {
     if (selectedConcepts.length === 0) return
     
@@ -569,13 +722,17 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       const lastSide = lastSliderSide.get(concept)
       const currentSide = sliderPos < 0.5 ? 'left' : 'right'
       
-      // If we crossed the 50% threshold, we need to fetch opposite
-      if (lastSide && lastSide !== currentSide) {
-        const conceptInfo = conceptData.get(concept.toLowerCase())
-        const opposites = conceptInfo?.opposites || []
-        if (opposites.length > 0 && !oppositeResults.has(concept)) {
-          needsOppositeFetch.push(concept)
-        }
+      const conceptInfo = conceptData.get(concept.toLowerCase())
+      const opposites = conceptInfo?.opposites || []
+      
+      // Fetch opposite if:
+      // 1. We crossed the 50% threshold, OR
+      // 2. We don't have opposite results yet (fetch upfront for all concepts)
+      const shouldFetch = opposites.length > 0 && !oppositeResults.has(concept)
+      const crossedThreshold = lastSide && lastSide !== currentSide
+      
+      if (shouldFetch || crossedThreshold) {
+        needsOppositeFetch.push(concept)
       }
       
       // Update last side
@@ -650,6 +807,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           }
         }
         const deduplicatedSites = Array.from(siteMap.values())
+        
         // Store results for each concept
         if (selectedConcepts.length === 1) {
           const concept = selectedConcepts[0]
@@ -680,8 +838,100 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             console.log(`[OPPOSITE DEBUG] No opposites found for ${concept}`)
           }
         } else {
-          // Multiple concepts: store combined results
-          setSites(deduplicatedSites)
+          // Multiple concepts: fetch results for each concept individually
+          console.log(`[MULTI FETCH] Fetching results for ${selectedConcepts.length} concepts individually`)
+          
+          const conceptResultsMap = new Map<string, Site[]>()
+          const fetchPromises: Promise<void>[] = []
+          
+          for (const concept of selectedConcepts) {
+            const fetchPromise = (async () => {
+              try {
+                const conceptSearchUrl = `/api/search?q=${encodeURIComponent(concept.trim())}&category=${encodeURIComponent(categoryParam)}`
+                const conceptResponse = await fetch(conceptSearchUrl)
+                if (!conceptResponse.ok) {
+                  console.error(`[MULTI FETCH] Failed to fetch results for concept "${concept}":`, conceptResponse.status)
+                  return
+                }
+                const conceptData = await conceptResponse.json()
+                
+                // Map images to sites (same logic as single concept)
+                const conceptImageMap = new Map<string, any>()
+                for (const image of conceptData.images || []) {
+                  const siteId = image.siteId || image.site?.id
+                  if (siteId) {
+                    if (!conceptImageMap.has(siteId) || (image.score || 0) > (conceptImageMap.get(siteId)?.score || 0)) {
+                      conceptImageMap.set(siteId, image)
+                    }
+                  }
+                }
+                
+                const conceptSitesWithImageIds = (conceptData.sites || []).map((site: Site) => {
+                  const image = conceptImageMap.get(site.id)
+                  const siteCategory = (site as any).category || image?.category || 'website'
+                  return {
+                    ...site,
+                    imageId: image?.imageId || undefined,
+                    category: siteCategory,
+                    score: image?.score || (site as any).score || 0,
+                  }
+                })
+                
+                // Deduplicate by site ID
+                const conceptSiteMap = new Map<string, Site>()
+                for (const site of conceptSitesWithImageIds) {
+                  const existing = conceptSiteMap.get(site.id)
+                  if (!existing || (site.score ?? 0) > (existing.score ?? 0)) {
+                    conceptSiteMap.set(site.id, site)
+                  }
+                }
+                const deduplicatedConceptSites = Array.from(conceptSiteMap.values())
+                
+                conceptResultsMap.set(concept, deduplicatedConceptSites)
+                console.log(`[MULTI FETCH] Fetched ${deduplicatedConceptSites.length} results for concept "${concept}"`)
+                
+                // Initialize last slider side
+                const sliderPos = sliderPositions.get(concept) ?? 1.0
+                setLastSliderSide(prev => new Map(prev).set(concept, sliderPos < 0.5 ? 'left' : 'right'))
+                
+                // Fetch opposite results for this concept (will use conceptData state)
+                // Note: conceptData is fetched separately, so opposites will be fetched
+                // when conceptData is available via checkAndFetchOpposites
+              } catch (error) {
+                console.error(`[MULTI FETCH] Error fetching results for concept "${concept}":`, error)
+              }
+            })()
+            
+            fetchPromises.push(fetchPromise)
+          }
+          
+          // Wait for all concept fetches to complete
+          await Promise.all(fetchPromises)
+          
+          // Store all concept results
+          setConceptResults(prev => {
+            const newMap = new Map(prev)
+            for (const [concept, results] of conceptResultsMap.entries()) {
+              newMap.set(concept, results)
+            }
+            return newMap
+          })
+          
+          // Increment version to trigger reordering
+          setResultsVersion(prev => prev + 1)
+          
+          // Display initial combined results (will be reordered by useEffect based on sliders)
+          const allResults: Site[] = []
+          for (const results of conceptResultsMap.values()) {
+            allResults.push(...results)
+          }
+          const deduplicatedAllResults = Array.from(
+            new Map(allResults.map(site => [site.id, site])).values()
+          )
+          if (deduplicatedAllResults.length > 0) {
+            const sorted = [...deduplicatedAllResults].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+            setSites(sorted)
+          }
         }
         
         // Results will be reordered by the useEffect hook when sliderPositions change
@@ -800,11 +1050,37 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       next.delete(concept)
       return next
     })
+    // Reset slider position and related state for this concept
+    setSliderPositions(prev => {
+      const newMap = new Map(prev)
+      newMap.delete(concept)
+      return newMap
+    })
+    setConceptResults(prev => {
+      const newMap = new Map(prev)
+      newMap.delete(concept)
+      return newMap
+    })
+    setOppositeResults(prev => {
+      const newMap = new Map(prev)
+      newMap.delete(concept)
+      return newMap
+    })
+    setLastSliderSide(prev => {
+      const newMap = new Map(prev)
+      newMap.delete(concept)
+      return newMap
+    })
   }
 
   const clearAllConcepts = () => {
     setSelectedConcepts([])
     setCustomConcepts(new Set())
+    // Reset all slider positions and related state
+    setSliderPositions(new Map())
+    setConceptResults(new Map())
+    setOppositeResults(new Map())
+    setLastSliderSide(new Map())
   }
 
   const handleSubmissionSuccess = () => {
@@ -1051,17 +1327,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       )}
 
       {/* Searchbar - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#fbf9f4] z-50 pt-4 pb-8">
-        <div className="max-w-full mx-auto px-[52px] relative overflow-visible">
-          {/* Gradient fade overlay at top of container - above tags and input */}
-          <div 
-            className="absolute top-0 left-0 right-0 pointer-events-none z-10" 
-            style={{ 
-              height: '24px',
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(251, 249, 244, 0.2) 10%, rgba(251, 249, 244, 0.5) 25%, rgba(251, 249, 244, 0.8) 50%, rgba(251, 249, 244, 0.95) 75%, #fbf9f4 100%)',
-              transform: 'translateY(-36px)'
-            }}
-          ></div>
+      <div className="fixed bottom-0 left-0 right-0 bg-[#fbf9f4] z-50 pb-8">
+        <div className="max-w-full mx-auto px-[52px] relative overflow-visible border-t border-gray-300">
           {/* Selected concept chips - above search bar */}
           <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-1 relative z-20">
           {selectedConcepts.length > 0 && (
@@ -1200,7 +1467,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             isPanelOpen ? 'w-80' : 'w-0'
           }`}
         >
-          <div className={`p-6 ${isPanelOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+          <div className={`p-6 pr-[52px] ${isPanelOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">Concept Spectrum</h2>
             <button
@@ -1363,8 +1630,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                             </div>
                           </>
                         )}
-                        <div className="w-20 p-3 text-right overflow-hidden">
-                          <span className="text-sm text-gray-900 truncate block">{concept}</span>
+                        <div className="w-20 p-3 overflow-hidden flex justify-end">
+                          <span className="text-sm text-gray-900 truncate block text-right">{concept}</span>
                         </div>
                       </div>
                     )

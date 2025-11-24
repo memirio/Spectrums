@@ -43,7 +43,8 @@ next-env.d.ts
 /src/generated/prisma
 
 # database
+# Ignore all .db files first
 *.db
 *.db-journal
-dev-new.db
-prisma/*.db
+# But allow the main database to be committed (for all devs to have same data)
+!prisma/dev-new.db
