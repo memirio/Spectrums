@@ -86,6 +86,27 @@ npx prisma studio
 
 **Note**: The database file is tracked in Git to ensure all developers work with the same data. If you need to reset or update the database, you can restore it from the repository.
 
+#### Using Supabase (PostgreSQL) for Shared Database
+
+For a shared database across all developers, you can use Supabase (free PostgreSQL hosting):
+
+1. **Create a Supabase project** at [supabase.com](https://supabase.com)
+2. **Get your connection string** from Settings → Database → Connection string (URI)
+3. **Update your `.env`**:
+   ```bash
+   DATABASE_URL="postgresql://postgres:your-password@db.xxxxx.supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
+   ```
+4. **Run the setup script**:
+   ```bash
+   npx tsx scripts/setup_supabase.ts
+   ```
+5. **(Optional) Migrate existing SQLite data**:
+   ```bash
+   npx tsx scripts/migrate_to_supabase.ts
+   ```
+
+See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for detailed instructions.
+
 ### 4. Seed Design Concepts
 
 Seed the 94+ design concepts used for auto-tagging and search ranking:
