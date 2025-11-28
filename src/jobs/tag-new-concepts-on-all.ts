@@ -74,7 +74,6 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
         related: concept.related || [],
         weight: 1.0,
         embedding: normalized as any,
-        category: concept.category || null,
       },
       create: {
         id: concept.id,
@@ -84,7 +83,6 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
         related: concept.related || [],
         weight: 1.0,
         embedding: normalized as any,
-        category: concept.category || null,
       },
     })
   }

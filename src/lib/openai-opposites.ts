@@ -12,6 +12,7 @@ type Concept = {
   id: string
   label: string
   category?: string
+  synonyms?: string[]
 }
 
 function getOpenAIClient(): OpenAI {

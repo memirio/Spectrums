@@ -520,7 +520,8 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       
       try {
         const { generateSynonymsAndRelatedWithAI } = await import('@/lib/concept-enrichment');
-        const aiGenerated = await generateSynonymsAndRelatedWithAI(conceptLabel, category?.label || category, existingConcepts);
+        const categoryLabel = typeof category === 'string' ? category : category?.label || undefined;
+        const aiGenerated = await generateSynonymsAndRelatedWithAI(conceptLabel, categoryLabel, existingConcepts as any[]);
         synonyms = aiGenerated.synonyms || [];
         related = aiGenerated.related || [];
         console.log(`[tagImage] ✅ Generated ${synonyms.length} synonyms and ${related.length} related terms for "${conceptLabel}" using AI`);
@@ -875,8 +876,6 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
           opposites: oppositeIds.length > 0 ? oppositeIds : undefined,
           weight: 1.0,
           embedding: emb,
-          applicableCategories: applicableCategories,
-          embeddingStrategy: embeddingStrategy,
         },
         create: {
           id: newConcept.id,
@@ -887,8 +886,6 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
           opposites: oppositeIds.length > 0 ? oppositeIds : undefined,
           weight: 1.0,
           embedding: emb,
-          applicableCategories: applicableCategories,
-          embeddingStrategy: embeddingStrategy,
         }
       });
       

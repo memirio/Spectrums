@@ -252,6 +252,7 @@ export async function GET(request: NextRequest) {
     const siteConcepts = new Map<string, Set<string>>()
     for (const it of imageTags) {
       const siteId = it.image.siteId
+      if (!siteId) continue // Skip if siteId is null
       if (!siteConcepts.has(siteId)) {
         siteConcepts.set(siteId, new Set())
       }
