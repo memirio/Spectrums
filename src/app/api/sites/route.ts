@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
         } else {
           // Use raw SQL query to avoid Prisma schema sync issues
           // PostgreSQL uses $1, $2, etc. instead of ? placeholders
-          const placeholders = fetchedSiteIds.map((_, i) => `$${i + 1}`).join(',')
+          const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
           images = await (prisma.$queryRawUnsafe as any)(
             `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) ORDER BY "id" DESC`,
             ...fetchedSiteIds
