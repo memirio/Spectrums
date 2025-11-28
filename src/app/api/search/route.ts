@@ -840,7 +840,7 @@ export async function GET(request: NextRequest) {
     const expandSet = new Set<string>()
     for (const t of rawTokens) {
       expandSet.add(t)
-      const c = concepts.find(x => x.id.toLowerCase() === t.toLowerCase() || x.label.toLowerCase() === t.toLowerCase())
+      const c = concepts.find((x: any) => x.id.toLowerCase() === t.toLowerCase() || x.label.toLowerCase() === t.toLowerCase())
       if (c) {
         const syn = (c.synonyms as unknown as string[] | undefined) || []
         const rel = (c.related as unknown as string[] | undefined) || []
