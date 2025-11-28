@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     const vec = (emb.vector as unknown as number[]) || []
     const concepts = await prisma.concept.findMany()
-    const scored = concepts.map(c => ({
+    const scored = concepts.map((c: any) => ({
       concept: c.id,
       score: cosine(vec, (c.embedding as unknown as number[]) || []),
     }))
