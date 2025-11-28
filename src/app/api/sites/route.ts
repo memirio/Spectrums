@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
       }
 
       return NextResponse.json({
-        sites: sites.map(site => ({
+        sites: sites.map((site: any) => ({
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
           imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
