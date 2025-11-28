@@ -333,7 +333,7 @@ export async function GET(request: NextRequest) {
       // Get opposites for relevant concepts
       const oppositeConceptIds = new Set<string>()
       for (const conceptId of relevantConceptIds) {
-        const concept = allConcepts.find(c => c.id === conceptId)
+        const concept = allConcepts.find((c: any) => c.id === conceptId)
         if (concept?.opposites) {
           const opposites = (concept.opposites as unknown as string[]) || []
           for (const oppId of opposites) {
