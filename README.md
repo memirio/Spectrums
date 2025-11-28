@@ -38,6 +38,16 @@ Looma is a web application that lets users discover great website designs by sea
 - **npm** (or pnpm/yarn)
 - **Docker Desktop** (optional, for screenshot service with MinIO)
 
+### 0. Deployment
+
+**Want to deploy to your own domain?** See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for complete deployment instructions.
+
+Quick options:
+- **Vercel** (recommended): Zero-config Next.js deployment with automatic SSL
+- **Railway**: Full-stack deployment with database support
+- **Netlify**: Similar to Vercel, good Next.js support
+- **Self-hosted**: Deploy on your own VPS with Docker
+
 ### 1. Clone & Install
 
 ```bash
