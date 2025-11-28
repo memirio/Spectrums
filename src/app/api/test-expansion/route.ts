@@ -8,12 +8,12 @@ const logs: string[] = []
 const originalLog = console.log
 const originalError = console.error
 console.log = (...args: any[]) => {
-  const message = args.map(arg => typeof arg === 'string' ? arg : JSON.stringify(arg)).join(' ')
+  const message = args.map((arg: any) => typeof arg === 'string' ? arg : JSON.stringify(arg)).join(' ')
   logs.push(`[LOG] ${message}`)
   originalLog(...args)
 }
 console.error = (...args: any[]) => {
-  const message = args.map(arg => typeof arg === 'string' ? arg : JSON.stringify(arg)).join(' ')
+  const message = args.map((arg: any) => typeof arg === 'string' ? arg : JSON.stringify(arg)).join(' ')
   logs.push(`[ERROR] ${message}`)
   originalError(...args)
 }
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       query: q,
       isAbstract,
       expansions,
-      logs: logs.filter(log => 
+      logs: logs.filter((log: string) => 
         log.includes('[search]') || 
         log.includes('[query-expansion]') ||
         log.includes('ERROR')
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       error: error.message,
       stack: error.stack,
-      logs: logs.filter(log => 
+      logs: logs.filter((log: string) => 
         log.includes('[search]') || 
         log.includes('[query-expansion]') ||
         log.includes('Error') ||
