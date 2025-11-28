@@ -136,8 +136,9 @@ export async function GET(request: NextRequest) {
       // If category is specified, filter sites that have images with that category
       if (category) {
         // Use raw SQL query as workaround for Prisma schema sync issue
+        // PostgreSQL uses $1, $2, etc. instead of ? placeholders
         const sitesWithCategoryImages = await (prisma.$queryRawUnsafe as any)(
-          `SELECT DISTINCT "siteId" FROM "images" WHERE "category" = ? AND "siteId" IS NOT NULL`,
+          `SELECT DISTINCT "siteId" FROM "images" WHERE "category" = $1 AND "siteId" IS NOT NULL`,
           category
         )
         const siteIds = (sitesWithCategoryImages as any[]).map((row: any) => row.siteId).filter(Boolean)
@@ -149,15 +150,9 @@ export async function GET(request: NextRequest) {
       }
       
       // Return all sites if no concepts specified
+      // Note: tags relationship is legacy/unused - we use Concepts/ImageTags instead
       const sites = await prisma.site.findMany({
         where: whereClause,
-        include: {
-          tags: {
-            include: {
-              tag: true
-            }
-          }
-        },
         orderBy: {
           createdAt: 'desc'
         }
@@ -169,15 +164,17 @@ export async function GET(request: NextRequest) {
       if (fetchedSiteIds.length > 0) {
         if (category) {
           // Use raw SQL query as workaround for Prisma schema sync issue
-          const placeholders = fetchedSiteIds.map(() => '?').join(',')
+          // PostgreSQL uses $1, $2, etc. instead of ? placeholders
+          const placeholders = fetchedSiteIds.map((_, i) => `$${i + 1}`).join(',')
           images = await (prisma.$queryRawUnsafe as any)(
-            `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) AND "category" = ? ORDER BY "id" DESC`,
+            `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) AND "category" = $${fetchedSiteIds.length + 1} ORDER BY "id" DESC`,
             ...fetchedSiteIds,
             category
           )
         } else {
           // Use raw SQL query to avoid Prisma schema sync issues
-          const placeholders = fetchedSiteIds.map(() => '?').join(',')
+          // PostgreSQL uses $1, $2, etc. instead of ? placeholders
+          const placeholders = fetchedSiteIds.map((_, i) => `$${i + 1}`).join(',')
           images = await (prisma.$queryRawUnsafe as any)(
             `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) ORDER BY "id" DESC`,
             ...fetchedSiteIds
@@ -198,7 +195,6 @@ export async function GET(request: NextRequest) {
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
           imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
-          tags: site.tags.map((st: any) => st.tag),
           category: categoryBySite.get(site.id) || 'website', // Include category from image
         }))
       })
@@ -229,18 +225,44 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Fetch sites with tags
+    // Fetch sites (no tags - we use Concepts/ImageTags instead)
     const sites = await prisma.site.findMany({
-      include: {
-        tags: { include: { tag: true } },
-      },
       orderBy: { createdAt: 'desc' },
     })
 
-    // Build a helper to check if a site satisfies a concept either via tags or textual content
+    // Fetch image tags (concepts) for all sites
+    const siteIds = sites.map(s => s.id)
+    const imageTags = siteIds.length > 0 
+      ? await prisma.imageTag.findMany({
+          where: { 
+            image: { 
+              siteId: { in: siteIds } 
+            } 
+          },
+          include: {
+            concept: true,
+            image: {
+              select: { siteId: true }
+            }
+          }
+        })
+      : []
+    
+    // Build a map of siteId -> concept names
+    const siteConcepts = new Map<string, Set<string>>()
+    for (const it of imageTags) {
+      const siteId = it.image.siteId
+      if (!siteConcepts.has(siteId)) {
+        siteConcepts.set(siteId, new Set())
+      }
+      siteConcepts.get(siteId)!.add(normalize(it.concept.label))
+    }
+
+    // Build a helper to check if a site satisfies a concept via image tags (concepts) or textual content
     const siteMatchesConcept = (site: any, concept: string): boolean => {
-      const siteTagNames = site.tags.map((st: any) => normalize(st.tag.name))
-      if (siteTagNames.some((t: string) => normalize(t) === concept)) return true
+      // Check image tags (concepts)
+      const siteConceptNames = Array.from(siteConcepts.get(site.id) || [])
+      if (siteConceptNames.some((t: string) => normalize(t) === concept)) return true
 
       // Also check title/description heuristically
       const haystack = normalize(`${site.title} ${site.description ?? ''}`)
@@ -277,7 +299,6 @@ export async function GET(request: NextRequest) {
       sites: filteredSites.map(site => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
-        tags: site.tags.map((st: any) => st.tag),
         category: categoryBySite.get(site.id) || 'website', // Include category from image
       }))
     })
@@ -428,7 +449,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         site: {
           ...existingSite,
-          tags: existingSite.tags.map((st: any) => st.tag),
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl
           imageUrl: existingSite.images?.[0]?.url || existingSite.imageUrl || null,
         },
@@ -436,18 +456,7 @@ export async function POST(request: NextRequest) {
       }, { status: 200 })
     }
 
-    // Create or find tags
-    const tagRecords = await Promise.all(
-      tags.map((tagName: string) =>
-        prisma.tag.upsert({
-          where: { name: tagName },
-          update: {},
-          create: { name: tagName },
-        })
-      )
-    )
-
-    // Create site
+    // Create site (tags are legacy/unused - we use Concepts/ImageTags instead)
     const site = await prisma.site.create({
       data: {
         title,
@@ -455,18 +464,6 @@ export async function POST(request: NextRequest) {
         url: normalizedUrl,
         imageUrl: finalImageUrl,
         author,
-        tags: {
-          create: tagRecords.map(tag => ({
-            tagId: tag.id
-          }))
-        }
-      },
-      include: {
-        tags: {
-          include: {
-            tag: true
-          }
-        }
       }
     })
 
@@ -635,10 +632,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      site: {
-        ...site,
-        tags: site.tags.map(st => st.tag)
-      }
+      site
     })
   } catch (error) {
     console.error('Error creating site:', error)
@@ -648,3 +642,4 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+

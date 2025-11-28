@@ -96,6 +96,7 @@ export async function tagImage(imageId: string): Promise<string[]> {
 
   // STEP 1: Analyze image and CREATE new abstract concepts (at least one per category)
   // Use Gemini to generate concepts directly from the image (no similarity matching)
+  // Falls back to OpenAI if Gemini times out or fails
   const newlyCreatedConcepts = await createNewConceptsFromImage(image.id, buf, imageCategory);
   
   // STEP 2: Tag the image using pre-computed concept embeddings (fast hybrid approach)
@@ -909,11 +910,11 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     
     // Note: OpenAI opposite concepts and synonym/related concepts are already processed in the allNewConcepts loop above
     
-    // Generate opposites for new concepts that have synonyms but no opposites
-    // This ensures every concept with synonyms gets opposites
-    console.log(`[tagImage] Checking for concepts with synonyms but no opposites...`);
+    // Generate opposites for ALL new concepts that don't have opposites yet
+    // This ensures EVERY concept gets opposites, regardless of whether it has synonyms
+    console.log(`[tagImage] Checking for concepts missing opposites...`);
     try {
-      const { generateOppositesForConceptWithSynonyms } = await import('@/lib/openai-opposites');
+      const { generateOppositesForConceptWithSynonyms, generateOppositeConceptsForNewTag } = await import('@/lib/openai-opposites');
       
       // Build sets of existing concept labels and IDs for filtering
       const existingLabels = new Set<string>();
@@ -928,8 +929,13 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         const hasSynonyms = newConcept.synonyms && newConcept.synonyms.length > 0;
         const hasOpposites = newConcept.opposites && newConcept.opposites.length > 0;
         
-        // If concept has synonyms but no opposites, generate them
-        if (hasSynonyms && !hasOpposites) {
+        // Skip if already has opposites
+        if (hasOpposites) {
+          continue;
+        }
+        
+        // If concept has synonyms but no opposites, generate them using the synonyms-aware function
+        if (hasSynonyms) {
           try {
             console.log(`[tagImage] Generating opposites for "${newConcept.label}" (has ${newConcept.synonyms.length} synonyms but no opposites)...`);
             const oppositeLabels = await generateOppositesForConceptWithSynonyms(
@@ -992,6 +998,92 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
               
               oppositesGenerated++;
               console.log(`[tagImage] ✅ Generated ${oppositeLabels.length} opposites for "${newConcept.label}": ${oppositeLabels.join(', ')}`);
+              
+              // Update database record with newly generated opposites
+              if (newConcept.opposites && newConcept.opposites.length > 0) {
+                await prisma.concept.update({
+                  where: { id: newConcept.id },
+                  data: { opposites: newConcept.opposites }
+                });
+              }
+            }
+          } catch (error: any) {
+            // Non-fatal: continue even if OpenAI fails for one concept
+            console.warn(`[tagImage] ⚠️  Failed to generate opposites for "${newConcept.label}": ${error.message}`);
+          }
+        } else {
+          // Concept has NO synonyms but also no opposites - generate them anyway
+          // This ensures EVERY new concept gets opposites
+          try {
+            console.log(`[tagImage] Generating opposites for "${newConcept.label}" (no synonyms, no opposites)...`);
+            const oppositeLabels = await generateOppositeConceptsForNewTag(
+              newConcept,
+              existingLabels,
+              existingIds,
+              3 // max retries
+            );
+            
+            if (oppositeLabels.length > 0) {
+              // Import function to find existing concepts
+              const { findConceptIdForLabel } = await import('@/lib/update-concept-opposites');
+              
+              // Add opposites to the concept
+              if (!newConcept.opposites) {
+                newConcept.opposites = [];
+              }
+              
+              // Process each opposite label - check if it matches existing concepts
+              for (const oppLabel of oppositeLabels) {
+                // Try to find if this label matches an existing concept
+                const existingOppConceptId = await findConceptIdForLabel(oppLabel);
+                
+                if (existingOppConceptId) {
+                  // Opposite already exists - link to it and check for contradictions
+                  const existingOppConcept = seedConcepts.find(sc => sc.id === existingOppConceptId);
+                  if (existingOppConcept) {
+                    // Remove from synonyms/related if present (contradiction)
+                    if (existingOppConcept.synonyms?.includes(newConcept.id)) {
+                      existingOppConcept.synonyms = existingOppConcept.synonyms.filter((s: string) => s !== newConcept.id);
+                      console.log(`[tagImage]   ⚠️  Removed "${newConcept.label}" from "${oppLabel}" synonyms (contradiction)`);
+                    }
+                    if (existingOppConcept.related?.includes(newConcept.id)) {
+                      existingOppConcept.related = existingOppConcept.related.filter((r: string) => r !== newConcept.id);
+                      console.log(`[tagImage]   ⚠️  Removed "${newConcept.label}" from "${oppLabel}" related (contradiction)`);
+                    }
+                    
+                    // Ensure bidirectional opposite link
+                    if (!existingOppConcept.opposites) {
+                      existingOppConcept.opposites = [];
+                    }
+                    if (!existingOppConcept.opposites.includes(newConcept.id)) {
+                      existingOppConcept.opposites.push(newConcept.id);
+                    }
+                  }
+                  
+                  // Add to new concept's opposites
+                  if (existingOppConceptId !== newConcept.id && !newConcept.opposites.includes(existingOppConceptId)) {
+                    newConcept.opposites.push(existingOppConceptId);
+                    console.log(`[tagImage]   Linked "${oppLabel}" to existing concept "${existingOppConceptId}"`);
+                  }
+                } else {
+                  // Opposite doesn't exist - use normalized ID
+                  const oppId = oppLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                  if (oppId !== newConcept.id && oppId.length > 0 && !newConcept.opposites.includes(oppId)) {
+                    newConcept.opposites.push(oppId);
+                  }
+                }
+              }
+              
+              oppositesGenerated++;
+              console.log(`[tagImage] ✅ Generated ${oppositeLabels.length} opposites for "${newConcept.label}": ${oppositeLabels.join(', ')}`);
+              
+              // Update database record with newly generated opposites
+              if (newConcept.opposites && newConcept.opposites.length > 0) {
+                await prisma.concept.update({
+                  where: { id: newConcept.id },
+                  data: { opposites: newConcept.opposites }
+                });
+              }
             }
           } catch (error: any) {
             // Non-fatal: continue even if OpenAI fails for one concept
@@ -1001,7 +1093,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       }
       
       if (oppositesGenerated > 0) {
-        console.log(`[tagImage] ✅ Generated opposites for ${oppositesGenerated} concepts that had synonyms but no opposites`);
+        console.log(`[tagImage] ✅ Generated opposites for ${oppositesGenerated} concepts that were missing opposites`);
         
         // Re-save seed file with updated opposites
         await fs.writeFile(seedPath, JSON.stringify(seedConcepts, null, 2));

@@ -1,5 +1,13 @@
 # Supabase Quick Start
 
+## Step 0: Backup Your Database ⚠️
+
+**IMPORTANT**: Backup your SQLite database before migrating:
+
+```bash
+npx tsx scripts/backup_database.ts
+```
+
 ## Step 1: Create Supabase Project
 
 1. Go to https://supabase.com and sign up/login

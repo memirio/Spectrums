@@ -432,14 +432,22 @@ IMPORTANT:
     // Convert buffer to base64 for Gemini API
     const base64Image = imageBuffer.toString('base64');
 
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Image,
-          mimeType: mimeType,
+    // Add timeout wrapper (30 seconds) - if timeout, will trigger OpenAI fallback
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('503 Service Unavailable: Request timeout after 30s')), 30000);
+    });
+
+    const result = await Promise.race([
+      model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: base64Image,
+            mimeType: mimeType,
+          },
         },
-      },
+      ]),
+      timeoutPromise
     ]);
 
     const response = result.response;

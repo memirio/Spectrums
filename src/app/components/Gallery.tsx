@@ -993,14 +993,32 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     if (conceptSuggestions.length > 0) {
       if (e.key === 'Enter') {
         e.preventDefault()
-        // If a suggestion is highlighted, select it; otherwise add exact input value
+        // If a suggestion is highlighted, select it
         if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < conceptSuggestions.length) {
           handleSuggestionSelect(conceptSuggestions[selectedSuggestionIndex])
         } else if (inputValue.trim()) {
-          addConcept(inputValue.trim(), true) // Custom tag
-          setShowSuggestions(false)
-          setConceptSuggestions([])
-          setSelectedSuggestionIndex(-1)
+          // Check if input exactly matches a concept (label or ID) before adding as custom
+          const trimmed = inputValue.trim()
+          const trimmedLower = trimmed.toLowerCase()
+          const queryId = trimmedLower.replace(/[^a-z0-9]+/g, '-')
+          
+          // Find exact match in suggestions
+          const exactMatch = conceptSuggestions.find((suggestion: ConceptSuggestion) => {
+            const labelLower = suggestion.label.toLowerCase()
+            const idLower = suggestion.id.toLowerCase()
+            return labelLower === trimmedLower || idLower === trimmedLower || idLower === queryId
+          })
+          
+          if (exactMatch) {
+            // Auto-select exact match
+            handleSuggestionSelect(exactMatch)
+          } else {
+            // No exact match - add as custom tag
+            addConcept(trimmed, true)
+            setShowSuggestions(false)
+            setConceptSuggestions([])
+            setSelectedSuggestionIndex(-1)
+          }
         }
       } else if (e.key === 'Tab') {
         // Tab to select first suggestion
@@ -1030,7 +1048,32 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       // Fallback to original behavior when no suggestions
       if (e.key === 'Enter' && inputValue.trim()) {
         e.preventDefault()
-        addConcept(inputValue.trim(), true) // Custom tag
+        // Even without suggestions visible, check if query matches a concept exactly
+        // by fetching concepts API
+        const trimmed = inputValue.trim()
+        fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`)
+          .then(res => res.json())
+          .then(data => {
+            const suggestions = Array.isArray(data.concepts) ? data.concepts : []
+            const trimmedLower = trimmed.toLowerCase()
+            const queryId = trimmedLower.replace(/[^a-z0-9]+/g, '-')
+            
+            const exactMatch = suggestions.find((suggestion: ConceptSuggestion) => {
+              const labelLower = suggestion.label.toLowerCase()
+              const idLower = suggestion.id.toLowerCase()
+              return labelLower === trimmedLower || idLower === trimmedLower || idLower === queryId
+            })
+            
+            if (exactMatch) {
+              addConcept(exactMatch.label, false) // Use concept label
+            } else {
+              addConcept(trimmed, true) // Custom tag
+            }
+          })
+          .catch(() => {
+            // If API fails, add as custom tag
+            addConcept(trimmed, true)
+          })
       } else if (e.key === 'Tab' && inputValue.trim()) {
         e.preventDefault()
         addConcept(inputValue.trim(), true) // Custom tag
@@ -1247,11 +1290,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                          onClick={() => handleSiteClick(site)}
                        >
                          <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                           {site.imageUrl ? (
-                             <img
-                               src={site.imageUrl}
-                               alt={site.title}
-                               className="w-full h-full object-cover object-top"
+                          {site.imageUrl ? (
+                            <img
+                              src={site.imageUrl}
+                              alt={site.title}
+                              className="w-full h-full object-cover object-top"
                               onError={(e) => {
                                 // Silently handle image load errors
                                 // Don't log errors for MinIO/localhost URLs (MinIO may not be running)
@@ -1262,41 +1305,41 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                                 }
                                 e.currentTarget.style.display = 'none';
                               }}
-                             />
-                           ) : (
-                             <div className="h-full bg-gray-200 flex items-center justify-center">
-                               <span className="text-gray-400">No image</span>
-                             </div>
-                           )}
+                            />
+                          ) : (
+                            <div className="h-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-gray-400">No image</span>
+                            </div>
+                          )}
                          </div>
                        </a>
-                      <div className="py-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <a
-                            href={site.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-black no-underline text-xs focus:outline-none hover:underline flex-1 min-w-0"
-                            onClick={() => handleSiteClick(site)}
-                          >
-                            {getDisplayName(site)}
-                          </a>
-                          {site.category && (
-                            <span className="bg-[#f0eeea] text-gray-700 text-xs font-medium whitespace-nowrap px-2 py-0.5 rounded">
-                              {site.category === 'packaging' ? 'Packaging' : 
-                               site.category === 'app' ? 'App' :
-                               site.category === 'fonts' ? 'Fonts' :
-                               site.category === 'graphic-design' ? 'Graphic Design' :
-                               site.category === 'branding' ? 'Branding' :
-                               site.category === 'brand' ? 'Brand' :
-                               site.category === 'website' ? 'Website' :
-                               // Fallback: show category string as-is for new categories
-                               toTitleCase(site.category)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                     </div>
+                  <div className="py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <a
+                        href={site.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-black no-underline text-xs focus:outline-none hover:underline flex-1 min-w-0"
+                        onClick={() => handleSiteClick(site)}
+                      >
+                        {getDisplayName(site)}
+                      </a>
+                      {site.category && (
+                        <span className="bg-[#f0eeea] text-gray-700 text-xs font-medium whitespace-nowrap px-2 py-0.5 rounded">
+                          {site.category === 'packaging' ? 'Packaging' : 
+                           site.category === 'app' ? 'App' :
+                           site.category === 'fonts' ? 'Fonts' :
+                           site.category === 'graphic-design' ? 'Graphic Design' :
+                           site.category === 'branding' ? 'Branding' :
+                           site.category === 'brand' ? 'Brand' :
+                           site.category === 'website' ? 'Website' :
+                           // Fallback: show category string as-is for new categories
+                           toTitleCase(site.category)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
             ))}
           </div>
         ) : (

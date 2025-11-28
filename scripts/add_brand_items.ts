@@ -8,7 +8,7 @@
 import 'dotenv/config'
 import { prisma } from '../src/lib/prisma'
 import { canonicalizeImage, embedImageFromBuffer } from '../src/lib/embeddings'
-import { uploadImageToMinIO } from './upload_to_minio'
+import { uploadImageToSupabaseStorage } from './upload_to_supabase_storage'
 import sharp from 'sharp'
 import fs from 'fs'
 import path from 'path'
@@ -100,9 +100,9 @@ async function processImage(filePath: string, site: any, category: string = 'bra
   const { hash: contentHash } = await canonicalizeImage(buf)
   console.log(`   🔐 Content hash: ${contentHash.substring(0, 16)}...`)
   
-  // Upload to MinIO/CDN
-  console.log(`   ☁️  Uploading to MinIO...`)
-  const imageUrl = await uploadImageToMinIO(filePath, contentHash)
+  // Upload to Supabase Storage
+  console.log(`   ☁️  Uploading to Supabase Storage...`)
+  const imageUrl = await uploadImageToSupabaseStorage(filePath, contentHash)
   console.log(`   ✅ Uploaded: ${imageUrl}`)
   
   // Create Image record (unified asset table - same for all categories)

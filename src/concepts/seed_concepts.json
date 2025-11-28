@@ -3311,7 +3311,8 @@
       "aesthetic",
       "Arts",
       "Earth",
-      "PopArt"
+      "PopArt",
+      "Op-art"
     ],
     "related": [
       "masonry",
@@ -45938,7 +45939,8 @@
     ],
     "category": "Aesthetic / Formal",
     "synonyms": [
-      "divergence"
+      "divergence",
+      "Concentric"
     ],
     "related": [
       "symmetry",
@@ -120518,6 +120520,34 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "centrifugal",
+    "label": "Centrifugal",
+    "synonyms": [
+      "rotational"
+    ],
+    "related": [],
+    "opposites": [
+      "Centripetal",
+      "Linear",
+      "centripetal"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "website"
+    ],
+    "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "centripetal",
+    "label": "Centripetal",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "centrifugal"
+    ],
+    "category": "Form & Structure"
+  },
+  {
     "id": "checked",
     "label": "Checked",
     "synonyms": [
@@ -126396,6 +126426,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "rotational",
+    "label": "Rotational",
+    "synonyms": [
+      "centrifugal"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "round",
@@ -133899,6 +133939,16 @@
     "category": "Industry"
   },
   {
+    "id": "illegal",
+    "label": "Illegal",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "legal"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "imagery",
     "label": "Imagery",
     "synonyms": [],
@@ -134290,6 +134340,16 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "lawful",
+    "label": "Lawful",
+    "synonyms": [
+      "legal"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "leather",
     "label": "Leather",
     "synonyms": [
@@ -134306,6 +134366,36 @@
       "brand"
     ],
     "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "legal",
+    "label": "Legal",
+    "synonyms": [
+      "lawful",
+      "legitimate"
+    ],
+    "related": [],
+    "opposites": [
+      "Creative",
+      "Artistic",
+      "illegal",
+      "unlawful"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "website"
+    ],
+    "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "legitimate",
+    "label": "Legitimate",
+    "synonyms": [
+      "legal"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "letterhead",
@@ -137646,6 +137736,16 @@
     "related": [],
     "opposites": [
       "footwear"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "unlawful",
+    "label": "Unlawful",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "legal"
     ],
     "category": "Industry"
   },
@@ -159043,6 +159143,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "closure",
+    "label": "Closure",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "opportunity"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "coexistence",
     "label": "Coexistence",
     "synonyms": [
@@ -168463,6 +168573,35 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "occasion",
+    "label": "Occasion",
+    "synonyms": [
+      "opportunity"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "opportunity",
+    "label": "Opportunity",
+    "synonyms": [
+      "prospect",
+      "occasion"
+    ],
+    "related": [],
+    "opposites": [
+      "Restriction",
+      "Limitation",
+      "closure"
+    ],
+    "category": "Philosophical / Existential Concepts",
+    "applicableCategories": [
+      "website"
+    ],
+    "embeddingStrategy": "website_style"
+  },
+  {
     "id": "optimization",
     "label": "Optimization",
     "synonyms": [
@@ -169441,6 +169580,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "prospect",
+    "label": "Prospect",
+    "synonyms": [
+      "opportunity"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "provocation",
@@ -198597,6 +198746,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "distracting",
+    "label": "Distracting",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "hypnotic"
+    ],
+    "category": "Vibe / Mood"
+  },
+  {
     "id": "downcast",
     "label": "downcast",
     "synonyms": [
@@ -199339,6 +199498,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "enthralling",
+    "label": "Enthralling",
+    "synonyms": [
+      "hypnotic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
+  },
+  {
+    "id": "entrancing",
+    "label": "Entrancing",
+    "synonyms": [
+      "hypnotic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
   },
   {
     "id": "epic",
@@ -200466,6 +200645,28 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "hypnotic",
+    "label": "Hypnotic",
+    "synonyms": [
+      "mesmerizing",
+      "entrancing",
+      "enthralling"
+    ],
+    "related": [
+      "trance"
+    ],
+    "opposites": [
+      "Awake",
+      "Alert",
+      "distracting"
+    ],
+    "category": "Vibe / Mood",
+    "applicableCategories": [
+      "website"
+    ],
+    "embeddingStrategy": "website_style"
+  },
+  {
     "id": "imaginary",
     "label": "imaginary",
     "synonyms": [
@@ -201284,6 +201485,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "mesmerizing",
+    "label": "Mesmerizing",
+    "synonyms": [
+      "hypnotic"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
   },
   {
     "id": "methodical",
@@ -204181,6 +204392,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "trance",
+    "label": "Trance",
+    "synonyms": [],
+    "related": [
+      "hypnotic"
+    ],
+    "opposites": [],
+    "category": "Vibe / Mood"
   },
   {
     "id": "tranquility",

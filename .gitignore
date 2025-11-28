@@ -48,3 +48,7 @@ next-env.d.ts
 *.db-journal
 # But allow the main database to be committed (for all devs to have same data)
 !prisma/dev-new.db
+# Ignore database backups
+prisma/backups/
+*.db.backup*
+*.sql

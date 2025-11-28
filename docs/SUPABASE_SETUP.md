@@ -2,6 +2,20 @@
 
 This guide will help you migrate from SQLite to Supabase PostgreSQL for a shared database across all developers.
 
+## Step 0: Backup Your Database ⚠️
+
+**IMPORTANT**: Before migrating, create a backup of your SQLite database:
+
+```bash
+# Create a timestamped backup
+npx tsx scripts/backup_database.ts
+
+# Or manually copy the database
+cp prisma/dev-new.db prisma/dev-new.db.backup-$(date +%Y%m%d-%H%M%S)
+```
+
+This ensures you can restore your data if anything goes wrong during migration.
+
 ## Step 1: Create a Supabase Project
 
 1. Go to [supabase.com](https://supabase.com) and sign up/login
