@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide will help you deploy Looma to your own domain.
+This guide will help you deploy Spectrums to your own domain.
 
 ## Prerequisites
 
@@ -107,7 +107,7 @@ Vercel is the easiest option for Next.js applications and provides automatic SSL
 
 6. **Configure custom domain**:
    - Go to **Settings** → **Domains**
-   - Click **"Add"** and enter your domain (e.g., `looma.com`)
+   - Click **"Add"** and enter your domain (e.g., `spectrums.com`)
    - Follow DNS instructions to add the required records:
      - **A record** or **CNAME record** pointing to Vercel's servers
    - Vercel will automatically provision SSL certificates (takes ~1-2 minutes)
@@ -166,7 +166,7 @@ Railway is great for full-stack apps with databases and background jobs.
    - Click "New Project"
    - Select "Deploy from GitHub repo"
    - Connect your GitHub account
-   - Select the `Looma` repository
+   - Select the `spectrums` repository
    - Select the `main` branch
 
 3. **Add environment variables**:
@@ -254,8 +254,8 @@ For full control, deploy on your own server.
 
 3. **Clone and build**:
    ```bash
-   git clone https://github.com/yourusername/Looma.git
-   cd Looma
+   git clone https://github.com/yourusername/spectrums.git
+   cd spectrums
    npm install
    npm run build
    ```
@@ -270,7 +270,7 @@ For full control, deploy on your own server.
 5. **Run with PM2** (process manager):
    ```bash
    npm install -g pm2
-   pm2 start npm --name "looma" -- start
+   pm2 start npm --name "spectrums" -- start
    pm2 save
    pm2 startup  # Set up auto-start on boot
    ```
@@ -278,7 +278,7 @@ For full control, deploy on your own server.
 6. **Set up Nginx reverse proxy**:
    ```bash
    sudo apt install nginx
-   sudo nano /etc/nginx/sites-available/looma
+   sudo nano /etc/nginx/sites-available/spectrums
    ```
 
    Nginx config:
@@ -299,7 +299,7 @@ For full control, deploy on your own server.
    ```
 
    ```bash
-   sudo ln -s /etc/nginx/sites-available/looma /etc/nginx/sites-enabled/
+   sudo ln -s /etc/nginx/sites-available/spectrums /etc/nginx/sites-enabled/
    sudo nginx -t
    sudo systemctl restart nginx
    ```

@@ -13,7 +13,7 @@ npx tsx scripts/backup_database.ts
 1. Go to https://supabase.com and sign up/login
 2. Click **"New Project"**
 3. Fill in:
-   - **Name**: `looma`
+   - **Name**: `spectrums`
    - **Database Password**: (save this password!)
    - **Region**: Choose closest to you
    - **Pricing Plan**: Free

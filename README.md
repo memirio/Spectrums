@@ -1,6 +1,6 @@
-# Looma — Design Discovery by Abstract Concepts
+# Spectrums — Design Discovery by Abstract Concepts
 
-Looma is a web application that lets users discover great website designs by searching for abstract visual concepts (e.g., "playful", "austere", "measurement", "3d", "gradient"). Users can stack multiple concepts to refine results. Screenshots are automatically captured and tagged using CLIP embeddings, enabling zero-shot semantic search.
+Spectrums is a web application that lets users discover great website designs by searching for abstract visual concepts (e.g., "playful", "austere", "measurement", "3d", "gradient"). Users can stack multiple concepts to refine results. Screenshots are automatically captured and tagged using CLIP embeddings, enabling zero-shot semantic search.
 
 ## Features
 
@@ -52,7 +52,7 @@ Quick options:
 
 ```bash
 git clone <repository-url>
-cd Looma
+cd spectrums
 npm install
 ```
 
@@ -869,7 +869,7 @@ This script:
 
 **Solution**: Ensure you're in the project root directory:
 ```bash
-cd /path/to/Looma
+cd /path/to/spectrums
 npx tsx scripts/seed_concepts.ts
 ```
 
@@ -934,7 +934,7 @@ npx tsx scripts/seed_concepts.ts
 ## Project Structure
 
 ```
-Looma/
+spectrums/
 ├── src/
 │   ├── app/
 │   │   ├── api/
@@ -1030,7 +1030,7 @@ MIT
 - **Land-book** — Curated landing page gallery
 - **Site Inspire** — Web design inspiration
 
-**Looma's twist**: Discovery by abstract concept instead of just categories—stack "playful + precise + editorial" and find visuals that feel right, powered by AI understanding of visual semantics.
+**Spectrums' twist**: Discovery by abstract concept instead of just categories—stack "playful + precise + editorial" and find visuals that feel right, powered by AI understanding of visual semantics.
 
 ---
 

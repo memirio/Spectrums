@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Looma - Discover Great Website Designs",
+  title: "Spectrums - Discover Great Website Designs",
   description: "Find and explore amazing website designs with concept-based search",
 };
 
