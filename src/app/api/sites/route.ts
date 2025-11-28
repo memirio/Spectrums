@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
       })
 
       // Fetch first images for these sites as a fallback when site.imageUrl is null
-      const fetchedSiteIds = sites.map(s => s.id)
+      const fetchedSiteIds = sites.map((s: any) => s.id)
       let images: any[] = []
       if (fetchedSiteIds.length > 0) {
         if (category) {
