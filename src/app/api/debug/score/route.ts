@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       concept: c.id,
       score: cosine(vec, (c.embedding as unknown as number[]) || []),
     }))
-    scored.sort((a, b) => b.score - a.score)
+    scored.sort((a: any, b: any) => b.score - a.score)
     return NextResponse.json({ imageId, scores: scored })
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 })
