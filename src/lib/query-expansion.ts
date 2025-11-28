@@ -302,8 +302,9 @@ async function getGroqExpansionsFromDb(term: string, category?: string | null): 
         return []
       }
       
+      // Use case-insensitive comparison (LOWER) to ensure we find expansions regardless of how they were stored
       const expansions = await (prisma.$queryRawUnsafe as any)(
-        `SELECT "expansion" FROM "query_expansions" WHERE "term" = ? AND "source" = ? AND "category" = ? ORDER BY "createdAt" DESC`,
+        `SELECT "expansion" FROM "query_expansions" WHERE LOWER("term") = $1 AND "source" = $2 AND "category" = $3 ORDER BY "createdAt" DESC`,
         normalizedTerm,
         'groq',
         normalizedCategory
@@ -357,17 +358,28 @@ async function insertGroqExpansions(term: string, expansions: string[], category
       return
     }
     
-    // Insert each expansion (using create with error handling for duplicates)
+    // Check if expansions already exist for this term-category pair
+    // Only insert if none exist (to prevent duplicates)
+    const existing = await getGroqExpansionsFromDb(normalizedTerm, category)
+    if (existing.length > 0) {
+      console.log(`[query-expansion] Expansions already exist for "${normalizedTerm}" (category: "${normalizedCategory}"), skipping insert`)
+      return
+    }
+    
+    // Insert new expansions (only if none exist)
     for (let i = 0; i < expansions.length; i++) {
       const expansion = expansions[i].trim()
       if (!expansion) continue // Skip empty expansions
       
       try {
         // Use raw SQL to insert (avoids Prisma type issues with category field)
-        // Use INSERT OR IGNORE to handle duplicates gracefully
+        // PostgreSQL uses $1, $2, etc. for parameters
+        // Use INSERT ... ON CONFLICT DO NOTHING to prevent duplicates
         const now = new Date().toISOString()
         await (prisma.$executeRawUnsafe as any)(
-          `INSERT OR IGNORE INTO "query_expansions" ("term", "expansion", "source", "category", "model", "createdAt", "lastUsedAt") VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO "query_expansions" ("term", "expansion", "source", "category", "model", "createdAt", "lastUsedAt") 
+           VALUES ($1, $2, $3, $4, $5, $6::timestamp, $7::timestamp)
+           ON CONFLICT ("term", "expansion", "source", "category") DO NOTHING`,
           normalizedTerm,
           expansion,
           'groq',
@@ -379,7 +391,7 @@ async function insertGroqExpansions(term: string, expansions: string[], category
       } catch (insertError: any) {
         // Log but don't throw - caching is best-effort
         // P2002 is unique constraint - that's fine, expansion already exists
-        if (insertError.code !== 'P2002' && !insertError.message?.includes('UNIQUE constraint')) {
+        if (insertError.code !== 'P2002' && !insertError.message?.includes('UNIQUE constraint') && !insertError.message?.includes('duplicate')) {
           console.warn(`[query-expansion] Error inserting expansion "${expansion.substring(0, 30)}...":`, insertError.message)
         }
       }
@@ -408,7 +420,7 @@ async function updateLastUsedAt(term: string, source: 'curated' | 'groq', catego
       // Update Groq expansions for this term and category using raw SQL
       try {
         await (prisma.$executeRawUnsafe as any)(
-          `UPDATE "query_expansions" SET "lastUsedAt" = ? WHERE "term" = ? AND "source" = ? AND "category" = ?`,
+          `UPDATE "query_expansions" SET "lastUsedAt" = $1::timestamp WHERE "term" = $2 AND "source" = $3 AND "category" = $4`,
           new Date().toISOString(),
           normalizedTerm,
           'groq',
@@ -627,9 +639,10 @@ export async function expandAbstractQuery(query: string, category?: string | nul
       groqFromDb = []
     }
     
-    // 3. If no Groq expansions in DB, generate and cache them
+    // 3. Only generate new expansions if none exist in DB
+    // IMPORTANT: Always use existing cached expansions if available - don't generate new ones
     if (groqFromDb.length === 0) {
-      console.log(`[query-expansion] No cached Groq expansions, generating...`)
+      console.log(`[query-expansion] No cached Groq expansions found, generating new ones...`)
       try {
         const { expansions: generated, model: usedModel } = await generateWithGroq(query, category)
         console.log(`[query-expansion] Generated ${generated.length} expansions from Groq`)
@@ -649,6 +662,8 @@ export async function expandAbstractQuery(query: string, category?: string | nul
         groqFromDb = []
       }
     } else {
+      // Use existing cached expansions - don't generate new ones
+      console.log(`[query-expansion] Using ${groqFromDb.length} existing cached expansions (skipping generation)`)
       // Update lastUsedAt for telemetry (non-blocking)
       // Pass category so we update the correct cached expansions
       updateLastUsedAt(normalized, 'groq', category).catch((err) => {
