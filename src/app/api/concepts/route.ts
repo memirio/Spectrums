@@ -157,7 +157,7 @@ export async function GET(request: NextRequest) {
         // Exclude concepts already found by label
         NOT: {
           id: {
-            in: labelStartsWithQuery.map(c => c.id),
+            in: labelStartsWithQuery.map((c: any) => c.id),
           },
         },
       },
