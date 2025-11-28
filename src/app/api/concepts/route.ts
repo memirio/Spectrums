@@ -22,13 +22,13 @@ function matchesConcept(query: string, concept: any): boolean {
   if (id === q || id.startsWith(q) || q.startsWith(id)) return true
   
   // Check synonyms - only exact or starts-with matches
-  const synonyms = (concept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+  const synonyms = (concept.synonyms as unknown as string[] || []).map((s: any) => String(s).toLowerCase())
   for (const syn of synonyms) {
     if (syn === q || syn.startsWith(q) || q.startsWith(syn)) return true
   }
   
   // Check related terms - only exact or starts-with matches
-  const related = (concept.related as unknown as string[] || []).map(r => String(r).toLowerCase())
+  const related = (concept.related as unknown as string[] || []).map((r: any) => String(r).toLowerCase())
   for (const rel of related) {
     if (rel === q || rel.startsWith(q) || q.startsWith(rel)) return true
   }
@@ -84,7 +84,7 @@ function calculateScore(query: string, concept: any): number {
   if (q.startsWith(id)) return 500
   
   // Check synonyms - only exact or starts-with
-  const synonyms = (concept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+  const synonyms = (concept.synonyms as unknown as string[] || []).map((s: any) => String(s).toLowerCase())
   for (const syn of synonyms) {
     if (syn === q) return 750
     if (syn.startsWith(q)) return 550
@@ -228,7 +228,7 @@ export async function GET(request: NextRequest) {
       for (const concept of concepts) {
         const label = concept.label.toLowerCase()
         const id = concept.id.toLowerCase()
-        const synonyms = (concept.synonyms as unknown as string[] || []).map(s => String(s).toLowerCase())
+        const synonyms = (concept.synonyms as unknown as string[] || []).map((s: any) => String(s).toLowerCase())
         
         if (label === qLower || id === qLower || id === queryConceptId || synonyms.includes(qLower)) {
           queryConcept = concept
@@ -276,7 +276,7 @@ export async function GET(request: NextRequest) {
       
       const label = concept.label.toLowerCase()
       const synonyms = (concept.synonyms as unknown as string[] || [])
-      const synonymsLower = synonyms.map(s => String(s).toLowerCase())
+      const synonymsLower = synonyms.map((s: any) => String(s).toLowerCase())
       
       let bestScore = 0
       

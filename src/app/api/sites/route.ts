@@ -69,7 +69,7 @@ async function findBestMatch(input: string, candidates: string[], maxDistance = 
   const inputStem = stem(inputLower)
 
   // Exact match
-  const exact = candidates.find(c => normalize(c) === inputLower)
+  const exact = candidates.find((c: any) => normalize(c) === inputLower)
   if (exact) return exact
 
   // Stem match
@@ -203,12 +203,12 @@ export async function GET(request: NextRequest) {
     // Parse concepts from query string (comma-separated)
     const conceptList = concepts
       .split(',')
-      .map(c => c.trim().toLowerCase())
+      .map((c: string) => c.trim().toLowerCase())
       .filter(Boolean)
 
     // Fetch all tags for intelligent matching
     const allTags = await prisma.tag.findMany()
-    const tagNames = allTags.map(t => t.name)
+    const tagNames = allTags.map((t: any) => t.name)
 
     // Resolve each input concept to canonical tag names using intelligent matching
     const resolvedRequired = new Set<string>()
@@ -231,7 +231,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Fetch image tags (concepts) for all sites
-    const siteIds = sites.map(s => s.id)
+    const siteIds = sites.map((s: any) => s.id)
     const imageTags = siteIds.length > 0 
       ? await prisma.imageTag.findMany({
           where: { 
@@ -283,7 +283,7 @@ export async function GET(request: NextRequest) {
     )
 
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
-    const fIds = filteredSites.map(s => s.id)
+    const fIds = filteredSites.map((s: any) => s.id)
     const fImages = fIds.length
       ? await (prisma.image as any).findMany({ where: { siteId: { in: fIds } }, orderBy: { id: 'desc' } })
       : []
@@ -556,7 +556,7 @@ export async function POST(request: NextRequest) {
           
           // Check existing concepts BEFORE generating new ones
           const existingConceptIdsBefore = new Set(
-            (await prisma.concept.findMany({ select: { id: true } })).map(c => c.id)
+            (await prisma.concept.findMany({ select: { id: true } })).map((c: any) => c.id)
           )
           
           let newlyCreatedConceptIds: string[] = []

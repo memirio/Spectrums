@@ -343,7 +343,7 @@ export async function GET(request: NextRequest) {
       }
       
       // 2. Load ImageTags for top K images
-      const topKImageIds = topK.map(r => r.imageId)
+      const topKImageIds = topK.map((r: any) => r.imageId)
       const imageTags = await prisma.imageTag.findMany({
         where: { imageId: { in: topKImageIds } },
       })
@@ -399,7 +399,7 @@ export async function GET(request: NextRequest) {
       if (Object.keys(sliderPositions).length > 0) {
         const queryTokens = q.split(/[\s,]+/).filter(Boolean)
         allConceptsForSliders = await prisma.concept.findMany()
-        conceptMapForSliders = new Map(allConceptsForSliders.map(c => [c.label.toLowerCase(), c]))
+        conceptMapForSliders = new Map(allConceptsForSliders.map((c: any) => [c.label.toLowerCase(), c]))
         
         for (const token of queryTokens) {
           // Try to find slider position by token (exact match) or by concept label/id
@@ -833,7 +833,7 @@ export async function GET(request: NextRequest) {
 
     // Fallback to old concept-expansion logic (if zeroShot is false)
     // Query is already normalized to lowercase
-    const rawTokens = q.split(/[,+\s]+/).map(t => t.trim()).filter(Boolean)
+    const rawTokens = q.split(/[,+\s]+/).map((t: string) => t.trim()).filter(Boolean)
     if (rawTokens.length === 0) return NextResponse.json({ images: [] })
 
     const concepts = await prisma.concept.findMany()
@@ -858,7 +858,7 @@ export async function GET(request: NextRequest) {
     for (let i = 0; i < dim; i++) query[i] /= nrm
 
     const images = await (prisma.image.findMany as any)({ include: { embedding: true, tags: true } })
-    const conceptIds = new Set(rawTokens.map(t => t.toLowerCase()))
+    const conceptIds = new Set(rawTokens.map((t: string) => t.toLowerCase()))
 
     const ranked = [] as Array<{ imageId: string; siteId: string; url: string; score: number }>
     for (const img of images as any[]) {
