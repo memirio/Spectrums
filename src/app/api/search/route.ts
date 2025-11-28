@@ -438,7 +438,7 @@ export async function GET(request: NextRequest) {
           const opposites = (concept.opposites as unknown as string[]) || []
           if (opposites.length > 0) {
             const firstOppositeId = opposites[0].toLowerCase()
-            const oppositeConcept = allConceptsForSliders.find(c => c.id.toLowerCase() === firstOppositeId)
+            const oppositeConcept = allConceptsForSliders.find((c: any) => c.id.toLowerCase() === firstOppositeId)
             if (oppositeConcept) {
               const oppositeEmbedding = (oppositeConcept.embedding as unknown as number[]) || []
               if (oppositeEmbedding.length > 0 && oppositeEmbedding.length === dim) {
