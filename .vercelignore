@@ -1,0 +1,27 @@
+# Exclude screenshot-service from Vercel builds
+screenshot-service/
+
+# Exclude scripts directory (not needed for production build)
+scripts/
+
+# Exclude development files
+*.md
+docs/
+.git/
+.gitignore
+
+# Exclude test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Exclude database files (already handled by gitignore, but extra safety)
+*.db
+*.db-journal
+*.db.backup*
+
+# Exclude local env files
+.env.local
+.env*.local
+
