@@ -2,7 +2,10 @@
 screenshot-service/
 
 # Exclude scripts directory (not needed for production build)
-scripts/
+# But allow copy-prisma-to-next.js which is needed for build
+scripts/*
+!scripts/copy-prisma-to-next.js
+!scripts/ensure-prisma-binaries.js
 
 # Exclude development files
 *.md
