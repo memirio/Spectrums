@@ -124,6 +124,15 @@ async function findBestMatch(input: string, candidates: string[], maxDistance = 
 
 export async function GET(request: NextRequest) {
   try {
+    // Check database connection
+    if (!process.env.DATABASE_URL) {
+      console.error('[sites] DATABASE_URL environment variable is not set')
+      return NextResponse.json(
+        { error: 'Database configuration error', details: 'DATABASE_URL not set' },
+        { status: 500 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const concepts = searchParams.get('concepts')
     const category = searchParams.get('category') // Optional category filter
@@ -304,10 +313,19 @@ export async function GET(request: NextRequest) {
       }))
     })
   } catch (error: any) {
-    console.error('Error fetching sites:', error)
-    console.error('Error stack:', error.stack)
+    console.error('[sites] Error fetching sites:', error)
+    console.error('[sites] Error message:', error.message)
+    console.error('[sites] Error stack:', error.stack)
+    console.error('[sites] DATABASE_URL present:', !!process.env.DATABASE_URL)
+    console.error('[sites] DATABASE_URL starts with:', process.env.DATABASE_URL?.substring(0, 20))
+    
+    // Return more detailed error in development, generic in production
+    const errorDetails = process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : error.message
+    
     return NextResponse.json(
-      { error: 'Failed to fetch sites', details: error.message },
+      { error: 'Failed to fetch sites', details: errorDetails },
       { status: 500 }
     )
   }
