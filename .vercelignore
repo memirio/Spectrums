@@ -1,11 +1,22 @@
 # Exclude screenshot-service from Vercel builds
 screenshot-service/
 
-# Exclude scripts directory (not needed for production build)
-# But allow copy-prisma-to-next.js which is needed for build
-scripts/*
-!scripts/copy-prisma-to-next.js
-!scripts/ensure-prisma-binaries.js
+# Exclude most scripts, but keep build scripts needed for Vercel
+scripts/add_site.ts
+scripts/check_*.ts
+scripts/cleanup_*.ts
+scripts/expand_*.ts
+scripts/fix_*.ts
+scripts/generate_*.ts
+scripts/map_*.ts
+scripts/restore_*.ts
+scripts/retry_*.ts
+scripts/review_*.ts
+scripts/sync_*.ts
+scripts/test_*.ts
+scripts/update_*.ts
+scripts/validate_*.ts
+scripts/watch_*.ts
 
 # Exclude development files
 *.md
