@@ -33,7 +33,7 @@ function getPrismaClient(): PrismaClient {
   }
 }
 
-export const prisma =
+const prisma =
   globalForPrisma.prisma ?? getPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
