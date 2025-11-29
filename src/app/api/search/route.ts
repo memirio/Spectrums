@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
       // Query is already normalized to lowercase
       
       // Count words in query
-      const wordCount = q.trim().split(/\s+/).filter(w => w.length > 0).length
+      const wordCount = q.trim().split(/\s+/).filter((w: string) => w.length > 0).length
       const useExpansion = wordCount <= 2 // Only use expansion for queries with 2 words or less
       
       let isAbstract = false
@@ -155,8 +155,8 @@ export async function GET(request: NextRequest) {
           // Generate expansions for all categories in parallel (non-blocking)
           const allCategories = ['website', 'packaging', 'brand']
           Promise.all(
-            allCategories.map(cat => 
-              expandAbstractQuery(q, cat).catch(err => {
+            allCategories.map((cat: string) => 
+              expandAbstractQuery(q, cat).catch((err: any) => {
                 console.warn(`[search] Failed to generate expansions for category "${cat}":`, err.message)
                 return []
               })
@@ -820,8 +820,8 @@ export async function GET(request: NextRequest) {
       }
       // Sort by score (descending) to maintain ranking
       const uniqueSites = Array.from(siteMap.values())
-        .sort((a, b) => b.score - a.score)
-        .map(item => item.site)
+        .sort((a: any, b: any) => b.score - a.score)
+        .map((item: any) => item.site)
       
       // Return results
       return NextResponse.json({ 

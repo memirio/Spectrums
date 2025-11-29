@@ -297,7 +297,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      sites: filteredSites.map(site => ({
+      sites: filteredSites.map((site: any) => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
         category: categoryBySite.get(site.id) || 'website', // Include category from image

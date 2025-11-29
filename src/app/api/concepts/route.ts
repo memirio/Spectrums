@@ -351,10 +351,10 @@ export async function GET(request: NextRequest) {
     // Sort suggestions by match score (already deduplicated by concept ID)
     // OPTIMIZATION: Use conceptMap for O(1) lookup instead of O(n) find()
     const uniqueSuggestions = suggestions
-      .filter(s => s.matchScore > 0) // Only include suggestions with a meaningful score
-      .sort((a, b) => b.matchScore - a.matchScore)
+      .filter((s: any) => s.matchScore > 0) // Only include suggestions with a meaningful score
+      .sort((a: any, b: any) => b.matchScore - a.matchScore)
       .slice(0, limit)
-      .map(suggestion => {
+      .map((suggestion: any) => {
         const concept = conceptMap.get(suggestion.id)
         return {
           id: suggestion.id,
