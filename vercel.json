@@ -8,10 +8,7 @@
   },
   "functions": {
     "src/app/api/**/*.ts": {
-      "includeFiles": [
-        "node_modules/.prisma/client/**",
-        "node_modules/@prisma/client/**"
-      ],
+      "includeFiles": "node_modules/.prisma/client/**",
       "maxDuration": 30
     }
   },
