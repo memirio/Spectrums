@@ -1295,15 +1295,22 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                               src={site.imageUrl}
                               alt={site.title}
                               className="w-full h-full object-cover object-top"
+                              loading="lazy"
                               onError={(e) => {
-                                // Silently handle image load errors
-                                // Don't log errors for MinIO/localhost URLs (MinIO may not be running)
-                                if (site.imageUrl && 
-                                    !site.imageUrl.startsWith('/') && 
-                                    !site.imageUrl.includes('localhost:9000')) {
-                                  console.error('Image failed to load:', site.imageUrl);
-                                }
+                                // Log all image load errors for debugging
+                                console.error('Image failed to load:', {
+                                  url: site.imageUrl,
+                                  siteId: site.id,
+                                  siteTitle: site.title,
+                                  error: e
+                                });
                                 e.currentTarget.style.display = 'none';
+                              }}
+                              onLoad={() => {
+                                // Log successful loads for debugging (can remove later)
+                                if (process.env.NODE_ENV === 'development') {
+                                  console.log('Image loaded successfully:', site.imageUrl);
+                                }
                               }}
                             />
                           ) : (
