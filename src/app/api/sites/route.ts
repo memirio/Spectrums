@@ -132,15 +132,6 @@ async function findBestMatch(input: string, candidates: string[], maxDistance = 
 
 export async function GET(request: NextRequest) {
   try {
-    // Check database connection
-    if (!process.env.DATABASE_URL) {
-      console.error('[sites] DATABASE_URL environment variable is not set')
-      return NextResponse.json(
-        { error: 'Database configuration error', details: 'DATABASE_URL not set' },
-        { status: 500 }
-      )
-    }
-
     const { searchParams } = new URL(request.url)
     const concepts = searchParams.get('concepts')
     const category = searchParams.get('category') // Optional category filter
