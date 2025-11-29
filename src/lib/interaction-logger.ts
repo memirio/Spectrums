@@ -77,7 +77,7 @@ export async function logSearchImpression(impression: SearchImpression): Promise
 export async function logSearchImpressions(impressions: SearchImpression[]): Promise<void> {
   try {
     await prisma.userInteraction.createMany({
-      data: impressions.map(imp => ({
+      data: impressions.map((imp: any) => ({
         query: imp.query,
         queryEmbedding: imp.queryEmbedding,
         imageId: imp.imageId,
@@ -190,7 +190,7 @@ export async function getInteractionStats(): Promise<{
       prisma.userInteraction.groupBy({
         by: ['query'],
         _count: true,
-      }).then(groups => groups.length),
+      }).then((groups: any) => groups.length),
     ])
 
     return {
