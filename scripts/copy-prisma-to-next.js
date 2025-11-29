@@ -18,9 +18,11 @@ if (!fs.existsSync(nextServerPath)) {
   process.exit(0);
 }
 
-// Create prisma directory in .next/server
-const nextPrismaPath = path.join(nextServerPath, 'node_modules', '.prisma', 'client');
-fs.mkdirSync(nextPrismaPath, { recursive: true });
+// Copy Prisma binaries to multiple locations to ensure they're found
+const locations = [
+  path.join(nextServerPath, 'node_modules', '.prisma', 'client'),
+  path.join(nextServerPath, 'node_modules', '@prisma', 'client'),
+];
 
 // Copy all binary files
 const files = fs.readdirSync(prismaClientPath);
@@ -32,16 +34,19 @@ const binaryFiles = files.filter(f =>
 );
 
 console.log('Copying Prisma binaries to .next/server...');
-binaryFiles.forEach(file => {
-  const source = path.join(prismaClientPath, file);
-  const dest = path.join(nextPrismaPath, file);
-  try {
-    fs.copyFileSync(source, dest);
-    console.log(`✓ Copied ${file}`);
-  } catch (error) {
-    console.warn(`Failed to copy ${file}:`, error.message);
-  }
+locations.forEach(location => {
+  fs.mkdirSync(location, { recursive: true });
+  
+  binaryFiles.forEach(file => {
+    const source = path.join(prismaClientPath, file);
+    const dest = path.join(location, file);
+    try {
+      fs.copyFileSync(source, dest);
+      console.log(`✓ Copied ${file} to ${path.relative(process.cwd(), location)}`);
+    } catch (error) {
+      console.warn(`Failed to copy ${file} to ${location}:`, error.message);
+    }
+  });
 });
 
 console.log('Prisma binary copy completed');
-
