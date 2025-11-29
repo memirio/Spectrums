@@ -8,9 +8,9 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 // Use driver adapter for serverless (no binaries needed)
 // Always use adapter when DATABASE_URL is present (Vercel/production)
 function getPrismaClient(): PrismaClient {
-  // If using Prisma Accelerate (prisma:// URL), use default client
+  // If using Prisma Accelerate (prisma:// or prisma+postgres:// URL), use default client
   // Accelerate handles everything through Prisma's cloud (no binaries needed)
-  if (process.env.DATABASE_URL?.startsWith('prisma://')) {
+  if (process.env.DATABASE_URL?.startsWith('prisma://') || process.env.DATABASE_URL?.startsWith('prisma+postgres://')) {
     console.log('[prisma] Using Prisma Accelerate (Data Proxy)')
     return new PrismaClient()
   }
