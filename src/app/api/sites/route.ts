@@ -278,8 +278,8 @@ export async function GET(request: NextRequest) {
       return false
     }
 
-    const filteredSites = sites.filter(site =>
-      Array.from(resolvedRequired).every(req => siteMatchesConcept(site, req))
+    const filteredSites = sites.filter((site: any) =>
+      Array.from(resolvedRequired).every((req: any) => siteMatchesConcept(site, req))
     )
 
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
@@ -585,7 +585,7 @@ export async function POST(request: NextRequest) {
           if (newlyCreatedConceptIds.length > 0) {
             try {
               // Filter to only concepts that didn't exist before (safety check)
-              const trulyNewConceptIds = newlyCreatedConceptIds.filter(id => !existingConceptIdsBefore.has(id))
+              const trulyNewConceptIds = newlyCreatedConceptIds.filter((id: any) => !existingConceptIdsBefore.has(id))
               
               if (trulyNewConceptIds.length > 0) {
                 // New concepts that didn't exist before - tag all sites with only these new concepts
