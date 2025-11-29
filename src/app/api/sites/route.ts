@@ -553,7 +553,7 @@ export async function POST(request: NextRequest) {
             where: { contentHash: contentHash } as any
           })
           
-          let ivec: number[]
+          let ivec: number[] | null = null
           if (existing) {
             // Reuse existing embedding vector
             ivec = existing.vector as unknown as number[]
@@ -568,9 +568,11 @@ export async function POST(request: NextRequest) {
               } as any,
             })
           } else {
-            // Compute new embedding
-            const result = await embedImageFromBuffer(buf)
-            ivec = result.vector
+            // Compute new embedding (lazy load to avoid native library issues)
+            try {
+              const { embedImageFromBuffer } = await import('@/lib/embeddings')
+              const result = await embedImageFromBuffer(buf)
+              ivec = result.vector
               await prisma.imageEmbedding.upsert({
                 where: { imageId: image.id },
                 update: { 
@@ -589,6 +591,7 @@ export async function POST(request: NextRequest) {
               console.warn(`[sites] Failed to generate embedding (transformers not available):`, embedError.message)
               // Skip embedding generation - image will be created without embedding
               // This is okay - the image will still be stored and can be tagged later
+              ivec = null
             }
           }
           
