@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "postinstall": "prisma generate",
+    "postinstall": "DATABASE_URL=\"postgresql://dummy:dummy@dummy:5432/dummy\" prisma generate || true",
     "start": "next start",
     "lint": "eslint",
     "seed:concepts": "tsx src/concepts/seed.ts",
