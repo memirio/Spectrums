@@ -190,11 +190,21 @@ export async function GET(request: NextRequest) {
         }
       }
 
+      // Helper to filter out localhost URLs in production
+      const filterImageUrl = (url: string | null | undefined): string | null => {
+        if (!url) return null
+        // In production, filter out localhost URLs
+        if (process.env.NODE_ENV === 'production' && url.includes('localhost')) {
+          return null
+        }
+        return url
+      }
+
       return NextResponse.json({
         sites: sites.map((site: any) => ({
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
-          imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
+          imageUrl: filterImageUrl(firstImageBySite.get(site.id) || site.imageUrl || null),
           category: categoryBySite.get(site.id) || 'website', // Include category from image
         }))
       })
@@ -296,10 +306,20 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Helper to filter out localhost URLs in production
+    const filterImageUrl = (url: string | null | undefined): string | null => {
+      if (!url) return null
+      // In production, filter out localhost URLs
+      if (process.env.NODE_ENV === 'production' && url.includes('localhost')) {
+        return null
+      }
+      return url
+    }
+
     return NextResponse.json({
       sites: filteredSites.map((site: any) => ({
         ...site,
-        imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
+        imageUrl: filterImageUrl(firstImageBySite.get(site.id) || site.imageUrl || null),
         category: categoryBySite.get(site.id) || 'website', // Include category from image
       }))
     })
