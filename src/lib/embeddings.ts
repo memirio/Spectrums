@@ -1,6 +1,7 @@
 // src/lib/embeddings.ts
 import sharp from 'sharp';
-import { AutoTokenizer, CLIPTextModelWithProjection } from '@xenova/transformers';
+// Lazy load transformers to avoid native library issues in serverless
+// import { AutoTokenizer, CLIPTextModelWithProjection } from '@xenova/transformers';
 import { createHash } from 'node:crypto';
 
 declare global {
@@ -68,16 +69,27 @@ async function getPipeline(task: any, modelId?: string) {
 /** Singleton loaders (idempotent, safe across multiple imports) */
 // Explicit CLIP text tower loader (tokenizer + model)
 async function loadClipText() {
-  if (!globalThis.__clip_text_tokenizer) {
-    globalThis.__clip_text_tokenizer = await AutoTokenizer.from_pretrained(MODEL_ID);
+  try {
+    // Lazy load transformers to avoid native library issues in serverless
+    const { AutoTokenizer, CLIPTextModelWithProjection } = await import('@xenova/transformers').catch((err) => {
+      console.error('[embeddings] Failed to load @xenova/transformers:', err.message);
+      throw new Error('Transformers library not available in this environment');
+    });
+    
+    if (!globalThis.__clip_text_tokenizer) {
+      globalThis.__clip_text_tokenizer = await AutoTokenizer.from_pretrained(MODEL_ID);
+    }
+    if (!globalThis.__clip_text_model) {
+      globalThis.__clip_text_model = await CLIPTextModelWithProjection.from_pretrained(MODEL_ID, { quantized: true });
+    }
+    return {
+      tokenizer: globalThis.__clip_text_tokenizer!,
+      model: globalThis.__clip_text_model!,
+    };
+  } catch (error: any) {
+    console.error('[embeddings] Error loading CLIP text model:', error.message);
+    throw error;
   }
-  if (!globalThis.__clip_text_model) {
-    globalThis.__clip_text_model = await CLIPTextModelWithProjection.from_pretrained(MODEL_ID, { quantized: true });
-  }
-  return {
-    tokenizer: globalThis.__clip_text_tokenizer!,
-    model: globalThis.__clip_text_model!,
-  };
 }
 export async function loadImageExtractor() {
   if (!globalThis.__clip_image_extractor) {
