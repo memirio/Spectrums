@@ -12,18 +12,22 @@ function getPrismaClient(): PrismaClient {
   // This avoids binary issues in serverless environments
   if (process.env.DATABASE_URL) {
     try {
+      console.log('[prisma] Using driver adapter (no binaries needed)')
       const pool = new Pool({
         connectionString: process.env.DATABASE_URL,
         max: 1, // Limit connections for serverless
       })
       const adapter = new PrismaPg(pool)
-      return new PrismaClient({ adapter })
+      const client = new PrismaClient({ adapter })
+      console.log('[prisma] PrismaClient created with adapter')
+      return client
     } catch (error) {
       console.error('[prisma] Failed to create adapter, falling back to default:', error)
       // Fallback to default if adapter fails
       return new PrismaClient()
     }
   } else {
+    console.log('[prisma] Using default PrismaClient (no DATABASE_URL)')
     // Use default client for local development (no DATABASE_URL)
     return new PrismaClient({
       // log: ['query','error','warn'], // uncomment for debugging
