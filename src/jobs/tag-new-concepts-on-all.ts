@@ -120,7 +120,7 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
   const images: Array<{ id: string; embedding: { vector: any } }> = []
   for (const site of sites) {
     if (site.imageUrl) {
-      const image = site.images.find(img => img.url === site.imageUrl && img.embedding)
+      const image = site.images.find((img: any) => img.url === site.imageUrl && img.embedding)
       if (image && image.embedding) {
         images.push({
           id: image.id,

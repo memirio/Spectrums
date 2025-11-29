@@ -113,15 +113,15 @@ export async function tagImage(imageId: string): Promise<string[]> {
   
   // Score all concepts (don't filter by MIN_SCORE yet - we need unfiltered list for fallback)
   const allScored = concepts
-    .filter(c => c.embedding && Array.isArray(c.embedding))
-    .map(c => ({ 
+    .filter((c: any) => c.embedding && Array.isArray(c.embedding))
+    .map((c: any) => ({ 
       conceptId: c.id, 
       score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || []) 
     }))
-    .sort((a, b) => b.score - a.score)
+    .sort((a: any, b: any) => b.score - a.score)
   
   // Filter to only scores above MIN_SCORE for main tagging logic
-  const scored = allScored.filter(s => s.score >= TAG_CONFIG.MIN_SCORE)
+  const scored = allScored.filter((s: any) => s.score >= TAG_CONFIG.MIN_SCORE)
   
   // Apply pragmatic tagging logic
   const chosen: typeof allScored = []
@@ -165,7 +165,7 @@ export async function tagImage(imageId: string): Promise<string[]> {
   // Fallback: ensure minimum tags (use allScored if scored is empty or insufficient)
   if (chosen.length < MIN_TAGS_PER_IMAGE) {
     const fallback = (scored.length >= MIN_TAGS_PER_IMAGE ? scored : allScored).slice(0, MIN_TAGS_PER_IMAGE)
-    const keep = new Set(chosen.map(c => c.conceptId))
+    const keep = new Set(chosen.map((c: any) => c.conceptId))
     for (const f of fallback) {
       if (!keep.has(f.conceptId)) {
         chosen.push(f)
@@ -175,14 +175,14 @@ export async function tagImage(imageId: string): Promise<string[]> {
     }
   }
   
-  const tagResults = chosen.sort((a, b) => b.score - a.score)
-  const chosenConceptIds = new Set(tagResults.map(t => t.conceptId))
+  const tagResults = chosen.sort((a: any, b: any) => b.score - a.score)
+  const chosenConceptIds = new Set(tagResults.map((t: any) => t.conceptId))
 
   // Get existing tags to avoid duplicates
   const existingTags = await prisma.imageTag.findMany({
     where: { imageId: image.id },
   })
-  const existingConceptIds = new Set(existingTags.map(t => t.conceptId))
+  const existingConceptIds = new Set(existingTags.map((t: any) => t.conceptId))
 
   // Only create new tags (don't update or delete existing ones)
   for (const t of tagResults) {
@@ -277,8 +277,8 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
   const existingConcepts = await prisma.concept.findMany({
     select: { id: true, label: true, synonyms: true, related: true }
   });
-  const existingIds = new Set(existingConcepts.map(c => c.id.toLowerCase()));
-  const existingLabels = new Set(existingConcepts.map(c => c.label.toLowerCase()));
+  const existingIds = new Set(existingConcepts.map((c: any) => c.id.toLowerCase()));
+  const existingLabels = new Set(existingConcepts.map((c: any) => c.label.toLowerCase()));
   
   // Also collect all synonyms and related terms from existing concepts
   const existingSynonyms = new Set<string>();
@@ -384,15 +384,15 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       // If labels are very similar (e.g., "Joy" vs "Joyful", "Minimal" vs "Minimalism")
       if (labelLower === existingLabel) {
         // Find the concept with this label
-        const c = existingConcepts.find(c => c.label.toLowerCase() === existingLabel);
+        const c = existingConcepts.find((c: any) => c.label.toLowerCase() === existingLabel);
         if (c) return { id: c.id, label: c.label };
       }
       if (labelLower.includes(existingLabel) && labelLower.length <= existingLabel.length + 3) {
-        const c = existingConcepts.find(c => c.label.toLowerCase() === existingLabel);
+        const c = existingConcepts.find((c: any) => c.label.toLowerCase() === existingLabel);
         if (c) return { id: c.id, label: c.label };
       }
       if (existingLabel.includes(labelLower) && existingLabel.length <= labelLower.length + 3) {
-        const c = existingConcepts.find(c => c.label.toLowerCase() === existingLabel);
+        const c = existingConcepts.find((c: any) => c.label.toLowerCase() === existingLabel);
         if (c) return { id: c.id, label: c.label };
       }
     }
@@ -487,7 +487,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         console.log(`[tagImage] Merging "${conceptLabel}" into existing concept "${existingMatch.label}" as synonym`);
         
         // Update the existing concept's synonyms in seed file
-        const seedConcept = seedConcepts.find(sc => sc.id === existingMatch.id);
+        const seedConcept = seedConcepts.find((sc: any) => sc.id === existingMatch.id);
         if (seedConcept) {
           const synonyms = (seedConcept.synonyms || []) as string[];
           if (!synonyms.includes(conceptLabel)) {
@@ -497,7 +497,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         }
         
         // Also update in database
-        const dbConcept = existingConcepts.find(c => c.id === existingMatch.id);
+        const dbConcept = existingConcepts.find((c: any) => c.id === existingMatch.id);
         if (dbConcept) {
           const synonyms = ((dbConcept.synonyms as unknown as string[]) || []);
           if (!synonyms.includes(conceptLabel)) {
@@ -536,8 +536,8 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
       const allRelated = [...compoundSynonyms, ...related];
       
       // Filter synonyms/related to avoid exact duplicates
-      const validSynonyms = synonyms.filter(syn => !isExactDuplicate(syn, syn.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
-      const validRelated = allRelated.filter(rel => !isExactDuplicate(rel, rel.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
+      const validSynonyms = synonyms.filter((syn: string) => !isExactDuplicate(syn, syn.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
+      const validRelated = allRelated.filter((rel: string) => !isExactDuplicate(rel, rel.toLowerCase().replace(/[^a-z0-9]+/g, '-')));
       
       // Note: Full opposite checking and semantic similarity validation will happen later
       // in the mapping script (map_existing_synonyms_and_related.ts) which uses embeddings
@@ -730,7 +730,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
                 console.log(`[tagImage]   Linking "${oppLabel}" to existing concept "${existingOppConceptId}"`);
                 
                 // Check for contradictions: opposite shouldn't be in synonyms or related
-                const existingOppConcept = seedConcepts.find(sc => sc.id === existingOppConceptId);
+                const existingOppConcept = seedConcepts.find((sc: any) => sc.id === existingOppConceptId);
                 if (existingOppConcept) {
                   // Remove from synonyms/related if present (contradiction)
                   if (existingOppConcept.synonyms?.includes(newConcept.id)) {
@@ -958,7 +958,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
                 
                 if (existingOppConceptId) {
                   // Opposite already exists - link to it and check for contradictions
-                  const existingOppConcept = seedConcepts.find(sc => sc.id === existingOppConceptId);
+                  const existingOppConcept = seedConcepts.find((sc: any) => sc.id === existingOppConceptId);
                   if (existingOppConcept) {
                     // Remove from synonyms/related if present (contradiction)
                     if (existingOppConcept.synonyms?.includes(newConcept.id)) {
@@ -1036,7 +1036,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
                 
                 if (existingOppConceptId) {
                   // Opposite already exists - link to it and check for contradictions
-                  const existingOppConcept = seedConcepts.find(sc => sc.id === existingOppConceptId);
+                  const existingOppConcept = seedConcepts.find((sc: any) => sc.id === existingOppConceptId);
                   if (existingOppConcept) {
                     // Remove from synonyms/related if present (contradiction)
                     if (existingOppConcept.synonyms?.includes(newConcept.id)) {
@@ -1144,7 +1144,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     if (synonymRelatedConcepts.length > 0) {
       console.log(`[tagImage] ✅ Created ${synonymRelatedConcepts.length} concepts for synonyms/related terms`);
     }
-    return [...newConcepts.map(nc => nc.id), ...openAIOppositeConcepts.map(oc => oc.id), ...synonymRelatedConcepts.map(src => src.id)];
+    return [...newConcepts.map((nc: any) => nc.id), ...openAIOppositeConcepts.map((oc: any) => oc.id), ...synonymRelatedConcepts.map((src: any) => src.id)];
   }
   
   return [];

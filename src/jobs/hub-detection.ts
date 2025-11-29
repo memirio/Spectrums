@@ -88,7 +88,7 @@ async function buildTestQueries(): Promise<string[]> {
   }
   
   // Remove duplicates and normalize
-  const uniqueQueries = Array.from(new Set(queries.map(q => q.trim().toLowerCase()).filter(Boolean)))
+  const uniqueQueries = Array.from(new Set(queries.map((q: string) => q.trim().toLowerCase()).filter(Boolean)))
   
   return uniqueQueries
 }
@@ -133,7 +133,7 @@ function getTopNImagesWithScores(
   images: ImageWithEmbedding[],
   topN: number = 40
 ): Array<{ imageId: string; score: number }> {
-  const scored = images.map(img => ({
+  const scored = images.map((img: any) => ({
     imageId: img.id,
     score: cosine(queryEmbedding, img.embedding),
   }))
@@ -451,7 +451,7 @@ export async function detectHubForImages(
         : 0
       
       // Check if any target images are in top N
-      const targetImageIdsSet = new Set(targetImageEmbeddings.map(img => img.id))
+      const targetImageIdsSet = new Set(targetImageEmbeddings.map((img: any) => img.id))
       for (const { imageId, score } of topNImages) {
         if (targetImageIdsSet.has(imageId)) {
           // This target image appeared in top N for this query

@@ -99,8 +99,8 @@ export async function generateAbstractConceptsFromImages() {
   const existingConcepts = await prisma.concept.findMany({
     select: { id: true, label: true }
   })
-  const existingIds = new Set(existingConcepts.map(c => c.id.toLowerCase()))
-  const existingLabels = new Set(existingConcepts.map(c => c.label.toLowerCase()))
+  const existingIds = new Set(existingConcepts.map((c: any) => c.id.toLowerCase()))
+  const existingLabels = new Set(existingConcepts.map((c: any) => c.label.toLowerCase()))
   
   console.log(`📚 Found ${existingConcepts.length} existing concepts`)
   
@@ -138,7 +138,7 @@ export async function generateAbstractConceptsFromImages() {
     console.log(`\n📂 Processing category: ${category.label}`)
     
     // Embed all examples for this category
-    const categoryPrompts = category.examples.map(example => 
+    const categoryPrompts = category.examples.map((example: string) => 
       `website UI with ${example.toLowerCase()} ${category.description.toLowerCase()}`
     )
     
@@ -170,7 +170,7 @@ export async function generateAbstractConceptsFromImages() {
       
       // Ensure at least one match per image per category (even if below threshold)
       // Take the top match if no concept exceeds threshold
-      const topMatches = scores.filter(s => s.score > 0.25)
+      const topMatches = scores.filter((s: any) => s.score > 0.25)
       const guaranteedMatch = scores.length > 0 ? [scores[0]] : [] // Top match regardless of threshold
       
       // Use guaranteed match if no matches above threshold
@@ -222,7 +222,7 @@ export async function generateAbstractConceptsFromImages() {
     
     for (const [conceptId, score] of sortedConcepts) {
       // Find the original example label
-      const example = category.examples.find(e => 
+      const example = category.examples.find((e: string) => 
         e.toLowerCase().replace(/[^a-z0-9]+/g, '-') === conceptId
       )
       
@@ -324,7 +324,7 @@ function generateRelated(example: string, category: any, categoryExamples: strin
   const related: string[] = []
   
   // Add other examples from the same category
-  const otherExamples = categoryExamples.filter(e => e !== example).slice(0, 3)
+  const otherExamples = categoryExamples.filter((e: any) => e !== example).slice(0, 3)
   related.push(...otherExamples)
   
   // Add cross-category related terms (can come from any category)
