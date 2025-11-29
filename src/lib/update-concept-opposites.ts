@@ -44,7 +44,7 @@ async function getAllConcepts(): Promise<Array<{ id: string; label: string }>> {
       // Merge: DB concepts take precedence, but add seed concepts that aren't in DB
       const allConcepts = [...dbConcepts];
       for (const [id, concept] of seedConceptMap) {
-        if (!dbConcepts.find(c => c.id === id)) {
+        if (!dbConcepts.find((c: any) => c.id === id)) {
           allConcepts.push(concept);
         }
       }
@@ -74,14 +74,14 @@ export async function findConceptIdForLabel(label: string): Promise<string | nul
   
   // Check database by ID first
   const allConcepts = await getAllConcepts();
-  const dbConceptById = allConcepts.find(c => c.id === conceptId);
+  const dbConceptById = allConcepts.find((c: any) => c.id === conceptId);
   
   if (dbConceptById) {
     return conceptId;
   }
   
   // Check if label matches (case-insensitive)
-  const dbConceptByLabel = allConcepts.find(c => 
+  const dbConceptByLabel = allConcepts.find((c: any) => 
     c.label.toLowerCase() === label.toLowerCase()
   );
   
@@ -196,7 +196,7 @@ export async function updateConceptOpposites(
   
   // Get concept labels for comments (use cached concepts)
   const allConcepts = await getAllConcepts();
-  const conceptLabelMap = new Map(allConcepts.map(c => [c.id, c.label]));
+  const conceptLabelMap = new Map(allConcepts.map((c: any) => [c.id, c.label]));
   
   const sortedIds = Object.keys(existingOpposites).sort();
   for (const id of sortedIds) {
@@ -204,7 +204,7 @@ export async function updateConceptOpposites(
     if (opps.length === 0) continue;
     
     const label = conceptLabelMap.get(id) || id;
-    outputLines.push(`  '${id}': [${opps.map(o => `'${o}'`).join(', ')}], // ${label}`);
+    outputLines.push(`  '${id}': [${opps.map((o: any) => `'${o}'`).join(', ')}], // ${label}`);
   }
   
   outputLines.push('} as const');
@@ -283,8 +283,8 @@ export async function syncOppositesFromSeed(): Promise<void> {
     if (opposites.length > 0) {
       // Normalize opposite IDs and filter out invalid ones
       const validOpposites = opposites
-        .map(opp => String(opp).toLowerCase().trim())
-        .filter(opp => opp.length > 0 && opp !== conceptId);
+        .map((opp: any) => String(opp).toLowerCase().trim())
+        .filter((opp: string) => opp.length > 0 && opp !== conceptId);
       
       if (validOpposites.length > 0) {
         oppositesMap[conceptId] = Array.from(new Set(validOpposites)).sort();
@@ -322,7 +322,7 @@ export async function syncOppositesFromSeed(): Promise<void> {
   // Get concept labels for comments
   clearConceptsCache();
   const allConcepts = await getAllConcepts();
-  const conceptLabelMap = new Map(allConcepts.map(c => [c.id.toLowerCase(), c.label]));
+  const conceptLabelMap = new Map(allConcepts.map((c: any) => [c.id.toLowerCase(), c.label]));
   
   // Also check seed file for labels not in database
   for (const concept of seedConcepts) {
@@ -361,7 +361,7 @@ export async function syncOppositesFromSeed(): Promise<void> {
     if (opps.length === 0) continue;
     
     const label = conceptLabelMap.get(id) || id;
-    outputLines.push(`  '${id}': [${opps.map(o => `'${o}'`).join(', ')}], // ${label}`);
+    outputLines.push(`  '${id}': [${opps.map((o: any) => `'${o}'`).join(', ')}], // ${label}`);
   }
   
   outputLines.push('} as const');
