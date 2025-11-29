@@ -59,7 +59,7 @@ async function main() {
     })
 
     upserted++
-    const preview = (emb.slice(0, 4) as number[]).map(v => v.toFixed(4))
+    const preview = (emb.slice(0, 4) as number[]).map((v: number) => v.toFixed(4))
     console.log(`Upserted concept ${row.id} (${row.label}) emb[0..3]=[${preview.join(', ')}]`)
   }
 

@@ -22,7 +22,7 @@ function norm(v: number[]) {
 }
 function unit(v: number[]) {
   const n = norm(v);
-  return v.map(x => x / n);
+  return v.map((x: number) => x / n);
 }
 function ensureUnit(v: number[], tag: string) {
   const n = norm(v);
@@ -52,7 +52,7 @@ export function meanVec(vecs: number[][]): number[] {
     }
   }
   const n = vecs.length;
-  return avg.map(x => x / n);
+  return avg.map((x: number) => x / n);
 }
 
 /** L2-normalize a vector (unit length) */
@@ -89,7 +89,7 @@ export async function loadImageExtractor() {
 /** Text embeddings (CLIP text encoder) */
 export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   const { tokenizer, model } = await loadClipText();
-  const safe = texts.map(t => String(t ?? ''));
+  const safe = texts.map((t: string) => String(t ?? ''));
   const inputs = await tokenizer(safe, { padding: true, truncation: true } as any);
   const { text_embeds }: any = await model(inputs as any);
   const flat = Array.from(text_embeds.data as Float32Array);
@@ -98,7 +98,7 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   for (let i = 0; i < safe.length; i++) {
     const v = flat.slice(i * dim, (i + 1) * dim);
     const n = Math.sqrt(v.reduce((s, x) => s + x * x, 0)) || 1;
-    rows.push(v.map(x => x / n));
+    rows.push(v.map((x: number) => x / n));
   }
   return rows;
 }

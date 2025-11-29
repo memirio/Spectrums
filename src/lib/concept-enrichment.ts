@@ -134,7 +134,7 @@ function isDesignSpecificTerm(term: string): boolean {
     '3d-printed', '3d-printing', '2d', '3d', 'rendering',
     'printed', 'printing', 'modeling', 'sculpture', 'fabrication'
   ]
-  if (designTerms.some(dt => term.includes(dt))) {
+  if (designTerms.some((dt: string) => term.includes(dt))) {
     return true
   }
   
@@ -258,7 +258,7 @@ async function generateSynonymsAndRelatedWithAIOnly(
   const client = new OpenAI({ apiKey })
   
   const categoryContext = category ? ` in the category "${category}"` : ''
-  const existingIds = existingConcepts.slice(0, 100).map(c => c.id).join(', ')
+  const existingIds = existingConcepts.slice(0, 100).map((c: any) => c.id).join(', ')
   
   const prompt = `Generate synonyms and related terms for the design/visual aesthetics concept "${conceptLabel}"${categoryContext}.
 
@@ -430,7 +430,7 @@ async function validateSynonyms(
   // 1. Not in the opposites list (contradiction check)
   // 2. Not the same as the concept itself (including label variations)
   // 3. Not listed as opposites by other concepts
-  const validated = synonyms.filter(syn => {
+  const validated = synonyms.filter((syn: string) => {
     const synLower = syn.toLowerCase()
     const synId = synLower.replace(/[^a-z0-9]+/g, '-')
     const conceptLabelLower = conceptLabel.toLowerCase()

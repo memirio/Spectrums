@@ -277,7 +277,7 @@ export function isAbstractQuery(query: string): boolean {
     /^(romantic|intimate|distant|close|open|closed|free|restricted)$/i
   ]
   
-  return abstractPatterns.some(pattern => pattern.test(q))
+  return abstractPatterns.some((pattern: RegExp) => pattern.test(q))
 }
 
 /**
@@ -733,7 +733,7 @@ export async function getExpansionEmbeddings(query: string, category?: string | 
   }
   
   // L2-normalize each embedding individually
-  const normalized = embeddings.map(emb => l2norm(emb))
+  const normalized = embeddings.map((emb: number[]) => l2norm(emb))
   console.log(`[query-expansion] Returning ${normalized.length} normalized embedding vectors`)
   
   return normalized

@@ -47,12 +47,12 @@ export async function tagImageWithZeroShot(
   const conceptPrompts: Array<{ conceptId: string; prompts: string[] }> = []
   
   for (const concept of concepts) {
-    const synonyms = (concept.synonyms as string[] || []).filter(s => s && typeof s === 'string')
-    const related = (concept.related as string[] || []).filter(r => r && typeof r === 'string')
+    const synonyms = (concept.synonyms as string[] || []).filter((s: any) => s && typeof s === 'string')
+    const related = (concept.related as string[] || []).filter((r: any) => r && typeof r === 'string')
     
     // Use label + synonyms for embedding (related terms are less important for tagging)
     const tokens = [concept.label, ...synonyms]
-    const prompts = tokens.map(t => `website UI with a ${t} visual style`)
+    const prompts = tokens.map((t: string) => `website UI with a ${t} visual style`)
     
     conceptPrompts.push({
       conceptId: concept.id,
@@ -107,8 +107,8 @@ export async function tagImageWithZeroShot(
     }
     
     // L2-normalize
-    const norm = Math.sqrt(avg.reduce((s, x) => s + x * x, 0)) || 1
-    const normalized = avg.map(x => x / norm)
+    const norm = Math.sqrt(avg.reduce((s: number, x: number) => s + x * x, 0)) || 1
+    const normalized = avg.map((x: number) => x / norm)
     
     conceptVectors.set(conceptId, normalized)
   }
@@ -119,11 +119,11 @@ export async function tagImageWithZeroShot(
       conceptId,
       score: cosineSimilarity(imageEmbedding, conceptVec)
     }))
-    .filter(s => s.score > 0) // Only keep positive scores
-    .sort((a, b) => b.score - a.score)
+    .filter((s: any) => s.score > 0) // Only keep positive scores
+    .sort((a: any, b: any) => b.score - a.score)
   
   // Apply pragmatic tagging logic
-  const aboveThreshold = scores.filter(s => s.score >= minScore)
+  const aboveThreshold = scores.filter((s: any) => s.score >= minScore)
   const chosen: typeof scores = []
   const MIN_TAGS_PER_IMAGE = 8
   let prevScore = aboveThreshold.length > 0 ? aboveThreshold[0].score : 0
@@ -156,7 +156,7 @@ export async function tagImageWithZeroShot(
   // Fallback: ensure minimum tags for coverage
   if (chosen.length < MIN_TAGS_PER_IMAGE) {
     const fallback = scores.slice(0, MIN_TAGS_PER_IMAGE)
-    const keep = new Set(chosen.map(c => c.conceptId))
+    const keep = new Set(chosen.map((c: any) => c.conceptId))
     for (const f of fallback) {
       if (!keep.has(f.conceptId)) {
         chosen.push(f)
