@@ -55,7 +55,7 @@ async function getAllConcepts(): Promise<Array<{ id: string; label: string }>> {
       allConceptsCache = dbConcepts;
     }
   }
-  return allConceptsCache;
+  return allConceptsCache!; // Non-null assertion: cache is always set in the if block above
 }
 
 /**
