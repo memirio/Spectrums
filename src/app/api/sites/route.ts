@@ -7,7 +7,8 @@ import natural from 'natural'
 // import { pipeline } from '@xenova/transformers'
 import sharp from 'sharp'
 import { enqueueTaggingJob } from '@/jobs/tagging'
-import { embedImageFromBuffer, canonicalizeImage } from '@/lib/embeddings'
+// Lazy load embeddings to avoid native library issues in serverless
+// import { embedImageFromBuffer, canonicalizeImage } from '@/lib/embeddings'
 
 // prisma imported from singleton
 
@@ -534,8 +535,18 @@ export async function POST(request: NextRequest) {
           console.log(`[sites] ✅ Image record created/updated: ${image.id}`)
 
           // Inline tagging (can move to worker later)
-          // Canonicalize to get contentHash
-          const { hash: contentHash } = await canonicalizeImage(buf)
+          // Canonicalize to get contentHash (lazy load to avoid native library issues)
+          let contentHash: string | null = null
+          try {
+            const { canonicalizeImage } = await import('@/lib/embeddings')
+            const result = await canonicalizeImage(buf)
+            contentHash = result.hash
+          } catch (error: any) {
+            console.warn(`[sites] Failed to canonicalize image (embeddings not available):`, error.message)
+            // Generate a simple hash as fallback
+            const crypto = await import('crypto')
+            contentHash = crypto.createHash('sha256').update(buf).digest('hex')
+          }
           
           // Check if embedding already exists by contentHash
           const existing = await prisma.imageEmbedding.findFirst({ 
@@ -560,21 +571,29 @@ export async function POST(request: NextRequest) {
             // Compute new embedding
             const result = await embedImageFromBuffer(buf)
             ivec = result.vector
-            await prisma.imageEmbedding.upsert({
-              where: { imageId: image.id },
-              update: { 
-                vector: ivec as any, 
-                model: 'clip-ViT-L/14', 
-                contentHash: contentHash 
-              } as any,
-              create: { 
-                imageId: image.id, 
-                vector: ivec as any, 
-                model: 'clip-ViT-L/14', 
-                contentHash: contentHash 
-              } as any,
-            })
+              await prisma.imageEmbedding.upsert({
+                where: { imageId: image.id },
+                update: { 
+                  vector: ivec as any, 
+                  model: 'clip-ViT-L/14', 
+                  contentHash: contentHash 
+                } as any,
+                create: { 
+                  imageId: image.id, 
+                  vector: ivec as any, 
+                  model: 'clip-ViT-L/14', 
+                  contentHash: contentHash 
+                } as any,
+              })
+            } catch (embedError: any) {
+              console.warn(`[sites] Failed to generate embedding (transformers not available):`, embedError.message)
+              // Skip embedding generation - image will be created without embedding
+              // This is okay - the image will still be stored and can be tagged later
+            }
           }
+          
+          // Only proceed with tagging if we have an embedding
+          if (ivec) {
 
           // HYBRID APPROACH: Generate new concepts for this site, then tag appropriately
           console.log(`[sites] Generating new concepts and tagging image ${image.id}...`)
