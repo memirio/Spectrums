@@ -31,9 +31,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Ensure Prisma binaries are included in the build
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client'],
-  },
+  serverExternalPackages: ['@prisma/client'],
 };
 
 export default nextConfig;
