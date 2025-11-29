@@ -278,7 +278,7 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     select: { id: true, label: true, synonyms: true, related: true }
   });
   const existingIds = new Set(existingConcepts.map((c: any) => c.id.toLowerCase()));
-  const existingLabels = new Set(existingConcepts.map((c: any) => c.label.toLowerCase()));
+  const existingLabels = new Set<string>(existingConcepts.map((c: any) => c.label.toLowerCase()));
   
   // Also collect all synonyms and related terms from existing concepts
   const existingSynonyms = new Set<string>();
