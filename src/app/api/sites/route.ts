@@ -3,7 +3,8 @@ import { clearSearchResultCache } from '@/lib/search-cache'
 import { prisma } from '@/lib/prisma'
 import leven from 'leven'
 import natural from 'natural'
-import { pipeline } from '@xenova/transformers'
+// Lazy load transformers to avoid native library issues in serverless
+// import { pipeline } from '@xenova/transformers'
 import sharp from 'sharp'
 import { enqueueTaggingJob } from '@/jobs/tagging'
 import { embedImageFromBuffer, canonicalizeImage } from '@/lib/embeddings'
@@ -23,6 +24,11 @@ async function getEmbeddings(text: string): Promise<number[]> {
 
   try {
     if (!embeddingPipeline) {
+      // Lazy load transformers to avoid native library issues in serverless
+      const { pipeline } = await import('@xenova/transformers').catch((err) => {
+        console.error('[sites] Failed to load @xenova/transformers:', err.message)
+        throw new Error('Transformers library not available in this environment')
+      })
       embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')
     }
     
@@ -30,8 +36,9 @@ async function getEmbeddings(text: string): Promise<number[]> {
     const embeddings = Array.from(result.data as Float32Array) as number[]
     embeddingCache.set(text, embeddings)
     return embeddings
-  } catch (error) {
-    console.error('Error generating embeddings:', error)
+  } catch (error: any) {
+    console.error('[sites] Error generating embeddings:', error.message)
+    // Return empty array instead of failing - embeddings are optional for text matching
     return []
   }
 }
