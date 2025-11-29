@@ -10,6 +10,9 @@
     "src/app/api/**/*.ts": {
       "includeFiles": "node_modules/.prisma/client/**",
       "maxDuration": 30
+    },
+    ".next/server/**/*.js": {
+      "includeFiles": "node_modules/.prisma/client/**"
     }
   },
   "rewrites": [
