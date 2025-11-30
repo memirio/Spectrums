@@ -1044,6 +1044,28 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }
 
+  // Clear search query
+  const clearSearchQuery = () => {
+    setSearchQuery('')
+    // Also remove from selectedConcepts if it was added
+    const trimmed = searchQuery.trim()
+    if (trimmed && selectedConcepts.includes(trimmed)) {
+      setSelectedConcepts(prev => prev.filter(c => c !== trimmed))
+      setCustomConcepts(prev => {
+        const next = new Set(prev)
+        next.delete(trimmed)
+        return next
+      })
+      setSliderPositions(prev => {
+        const newMap = new Map(prev)
+        newMap.delete(trimmed)
+        return newMap
+      })
+      // Also remove from spectrums if it exists
+      setSpectrums(prev => prev.filter(s => s.concept !== trimmed))
+    }
+  }
+
   // Spectrum input change handler
   const handleSpectrumInputChange = (spectrumId: string, value: string) => {
     setSpectrums(prev => prev.map(s => 
@@ -1594,16 +1616,229 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                     </div>
                   )}
                   
-                  {/* Spectrum slider - only show if concept is selected */}
-                  {spectrum.concept && firstOpposite && (
+                  {/* Spectrum slider - show different layouts for concept vs custom query */}
+                  {spectrum.concept && (
                     <div className="space-y-1">
-                      {/* Labels on top, opposite ends */}
-                      <div className="flex items-center justify-between px-1">
-                        <span className="text-xs text-gray-700 truncate flex-1 text-left pr-2">{firstOpposite}</span>
-                        <span className="text-xs text-gray-700 truncate flex-1 text-right pl-2">{spectrum.concept}</span>
-                      </div>
-                      {/* Slider */}
-                      <div className="flex items-center justify-center">
+                      {/* Check if this is a custom concept (single-pole slider) */}
+                      {customConcepts.has(spectrum.concept) ? (
+                        // Single-pole slider for custom queries
+                        <>
+                          {/* Label on top, right side only */}
+                          <div className="flex items-center justify-end px-1 mb-2">
+                            <span className="text-xs text-gray-700 truncate">{spectrum.concept}</span>
+                          </div>
+                          {/* Single-pole slider (only right half) */}
+                          <div className="flex items-center justify-end">
+                            <div 
+                              className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
+                              style={{ marginLeft: 'auto' }}
+                              onMouseDown={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                const sliderTrack = e.currentTarget
+                                const handleSliderStart = (clientX: number) => {
+                                  const initialTrackRect = sliderTrack.getBoundingClientRect()
+                                  const initialPosition = spectrum.sliderPosition
+                                  
+                                  let lastUpdateTime = 0
+                                  const throttleDelay = 16
+                                  let lastPosition = initialPosition
+                                  
+                                  const updatePosition = (currentX: number) => {
+                                    const now = Date.now()
+                                    if (now - lastUpdateTime < throttleDelay) return
+                                    lastUpdateTime = now
+                                    
+                                    const deltaX = currentX - initialTrackRect.left
+                                    // For single-pole, map 0-1 to 0.5-1.0 (right half only)
+                                    const rawPosition = Math.max(0, Math.min(1, deltaX / initialTrackRect.width))
+                                    const newPosition = 0.5 + (rawPosition * 0.5) // Map to 0.5-1.0 range
+                                    
+                                    if (Math.abs(lastPosition - newPosition) < 0.001) return
+                                    
+                                    lastPosition = newPosition
+                                    
+                                    setSpectrums(prev => prev.map(s => 
+                                      s.id === spectrum.id 
+                                        ? { ...s, sliderPosition: newPosition }
+                                        : s
+                                    ))
+                                    
+                                    setSliderPositions(prev => {
+                                      const newMap = new Map(prev)
+                                      newMap.set(spectrum.concept, newPosition)
+                                      return newMap
+                                    })
+                                    
+                                    requestAnimationFrame(() => {
+                                      setSliderVersion(v => v + 1)
+                                    })
+                                  }
+                                  
+                                  const clickPosition = Math.max(0, Math.min(1, (clientX - initialTrackRect.left) / initialTrackRect.width))
+                                  const mappedPosition = 0.5 + (clickPosition * 0.5)
+                                  
+                                  setSpectrums(prev => prev.map(s => 
+                                    s.id === spectrum.id 
+                                      ? { ...s, sliderPosition: mappedPosition }
+                                      : s
+                                  ))
+                                  
+                                  setSliderPositions(prev => {
+                                    const newMap = new Map(prev)
+                                    newMap.set(spectrum.concept, mappedPosition)
+                                    return newMap
+                                  })
+                                  
+                                  requestAnimationFrame(() => {
+                                    setSliderVersion(v => v + 1)
+                                  })
+                                  
+                                  const handleMouseMove = (moveEvent: MouseEvent) => {
+                                    updatePosition(moveEvent.clientX)
+                                  }
+                                  
+                                  const handleTouchMove = (moveEvent: TouchEvent) => {
+                                    moveEvent.preventDefault()
+                                    if (moveEvent.touches.length > 0) {
+                                      updatePosition(moveEvent.touches[0].clientX)
+                                    }
+                                  }
+                                  
+                                  const handleEnd = () => {
+                                    document.removeEventListener('mousemove', handleMouseMove)
+                                    document.removeEventListener('mouseup', handleEnd)
+                                    document.removeEventListener('touchmove', handleTouchMove)
+                                    document.removeEventListener('touchend', handleEnd)
+                                    document.removeEventListener('touchcancel', handleEnd)
+                                  }
+                                  
+                                  document.addEventListener('mousemove', handleMouseMove)
+                                  document.addEventListener('mouseup', handleEnd)
+                                  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                                  document.addEventListener('touchend', handleEnd)
+                                  document.addEventListener('touchcancel', handleEnd)
+                                }
+                                
+                                handleSliderStart(e.clientX)
+                              }}
+                              onTouchStart={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                const sliderTrack = e.currentTarget
+                                if (e.touches.length > 0) {
+                                  const handleSliderStart = (clientX: number) => {
+                                    const initialTrackRect = sliderTrack.getBoundingClientRect()
+                                    const initialPosition = spectrum.sliderPosition
+                                    
+                                    let lastUpdateTime = 0
+                                    const throttleDelay = 16
+                                    let lastPosition = initialPosition
+                                    
+                                    const updatePosition = (currentX: number) => {
+                                      const now = Date.now()
+                                      if (now - lastUpdateTime < throttleDelay) return
+                                      lastUpdateTime = now
+                                      
+                                      const deltaX = currentX - initialTrackRect.left
+                                      const rawPosition = Math.max(0, Math.min(1, deltaX / initialTrackRect.width))
+                                      const newPosition = 0.5 + (rawPosition * 0.5)
+                                      
+                                      if (Math.abs(lastPosition - newPosition) < 0.001) return
+                                      
+                                      lastPosition = newPosition
+                                      
+                                      setSpectrums(prev => prev.map(s => 
+                                        s.id === spectrum.id 
+                                          ? { ...s, sliderPosition: newPosition }
+                                          : s
+                                      ))
+                                      
+                                      setSliderPositions(prev => {
+                                        const newMap = new Map(prev)
+                                        newMap.set(spectrum.concept, newPosition)
+                                        return newMap
+                                      })
+                                      
+                                      requestAnimationFrame(() => {
+                                        setSliderVersion(v => v + 1)
+                                      })
+                                    }
+                                    
+                                    const clickPosition = Math.max(0, Math.min(1, (clientX - initialTrackRect.left) / initialTrackRect.width))
+                                    const mappedPosition = 0.5 + (clickPosition * 0.5)
+                                    
+                                    setSpectrums(prev => prev.map(s => 
+                                      s.id === spectrum.id 
+                                        ? { ...s, sliderPosition: mappedPosition }
+                                        : s
+                                    ))
+                                    
+                                    setSliderPositions(prev => {
+                                      const newMap = new Map(prev)
+                                      newMap.set(spectrum.concept, mappedPosition)
+                                      return newMap
+                                    })
+                                    
+                                    requestAnimationFrame(() => {
+                                      setSliderVersion(v => v + 1)
+                                    })
+                                    
+                                    const handleMouseMove = (moveEvent: MouseEvent) => {
+                                      updatePosition(moveEvent.clientX)
+                                    }
+                                    
+                                    const handleTouchMove = (moveEvent: TouchEvent) => {
+                                      moveEvent.preventDefault()
+                                      if (moveEvent.touches.length > 0) {
+                                        updatePosition(moveEvent.touches[0].clientX)
+                                      }
+                                    }
+                                    
+                                    const handleEnd = () => {
+                                      document.removeEventListener('mousemove', handleMouseMove)
+                                      document.removeEventListener('mouseup', handleEnd)
+                                      document.removeEventListener('touchmove', handleTouchMove)
+                                      document.removeEventListener('touchend', handleEnd)
+                                      document.removeEventListener('touchcancel', handleEnd)
+                                    }
+                                    
+                                    document.addEventListener('mousemove', handleMouseMove)
+                                    document.addEventListener('mouseup', handleEnd)
+                                    document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                                    document.addEventListener('touchend', handleEnd)
+                                    document.addEventListener('touchcancel', handleEnd)
+                                  }
+                                  
+                                  handleSliderStart(e.touches[0].clientX)
+                                }
+                              }}
+                            >
+                              <div 
+                                className="absolute flex items-center justify-center pointer-events-none"
+                                style={{ 
+                                  left: `calc(${Math.max(50, Math.min(100, ((spectrum.sliderPosition - 0.5) / 0.5) * 100))}% - 12px)`, 
+                                  top: '50%',
+                                  marginTop: '-12px',
+                                  width: '24px',
+                                  height: '24px'
+                                }}
+                              >
+                                <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : firstOpposite ? (
+                        // Two-pole slider for concepts with opposites
+                        <>
+                          {/* Labels on top, opposite ends */}
+                          <div className="flex items-center justify-between px-1 mb-2">
+                            <span className="text-xs text-gray-700 truncate flex-1 text-left pr-2">{firstOpposite}</span>
+                            <span className="text-xs text-gray-700 truncate flex-1 text-right pl-2">{spectrum.concept}</span>
+                          </div>
+                          {/* Slider */}
+                          <div className="flex items-center justify-center">
                         <div 
                           className="flex-shrink-0 w-full h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
                           onMouseDown={(e) => {
@@ -1798,14 +2033,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Add Concept button below slider */}
-                      <button
-                        onClick={addSpectrum}
-                        className="w-full mt-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
-                      >
-                        + Add Concept
-                      </button>
+                        </>
+                      ) : null}
                     </div>
                   )}
                   
@@ -1849,18 +2078,31 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 id="search-input"
               />
             </div>
-            {/* Icon-only button - 32px tall */}
-            <button
-              onClick={handleSearchSubmit}
-              disabled={!searchQuery.trim()}
-              className="flex items-center justify-center mx-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ width: '32px', height: '32px' }}
-              aria-label="Search"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11 2C15.9706 2 20 6.02944 20 11C20 13.125 19.2619 15.0766 18.0303 16.6162L21.7051 20.291C22.0955 20.6815 22.0956 21.3146 21.7051 21.7051C21.3146 22.0956 20.6815 22.0955 20.291 21.7051L16.6162 18.0303C15.0766 19.2619 13.125 20 11 20C6.02944 20 2 15.9706 2 11C2 6.02944 6.02944 2 11 2ZM11 4C7.13401 4 4 7.13401 4 11C4 14.866 7.13401 18 11 18C12.8873 18 14.5985 17.2514 15.8574 16.0371C15.8831 16.0039 15.911 15.9719 15.9414 15.9414C15.9719 15.911 16.0039 15.8831 16.0371 15.8574C17.2514 14.5985 18 12.8873 18 11C18 7.13401 14.866 4 11 4Z" fill="black"/>
-              </svg>
-            </button>
+            {/* Icon-only button - 32px tall - shows X when query exists, search icon otherwise */}
+            {searchQuery.trim() ? (
+              <button
+                onClick={clearSearchQuery}
+                className="flex items-center justify-center mx-2 transition-colors hover:opacity-70"
+                style={{ width: '32px', height: '32px' }}
+                aria-label="Clear search"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            ) : (
+              <button
+                onClick={handleSearchSubmit}
+                disabled={!searchQuery.trim()}
+                className="flex items-center justify-center mx-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ width: '32px', height: '32px' }}
+                aria-label="Search"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 2C15.9706 2 20 6.02944 20 11C20 13.125 19.2619 15.0766 18.0303 16.6162L21.7051 20.291C22.0955 20.6815 22.0956 21.3146 21.7051 21.7051C21.3146 22.0956 20.6815 22.0955 20.291 21.7051L16.6162 18.0303C15.0766 19.2619 13.125 20 11 20C6.02944 20 2 15.9706 2 11C2 6.02944 6.02944 2 11 2ZM11 4C7.13401 4 4 7.13401 4 11C4 14.866 7.13401 18 11 18C12.8873 18 14.5985 17.2514 15.8574 16.0371C15.8831 16.0039 15.911 15.9719 15.9414 15.9414C15.9719 15.911 16.0039 15.8831 16.0371 15.8574C17.2514 14.5985 18 12.8873 18 11C18 7.13401 14.866 4 11 4Z" fill="black"/>
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>
