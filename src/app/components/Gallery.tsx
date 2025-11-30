@@ -55,6 +55,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
   const [spectrums, setSpectrums] = useState<Spectrum[]>([])
   const [showAddConceptInput, setShowAddConceptInput] = useState(false) // Track if "Add Concept" button should show input
+  const [addConceptInputValue, setAddConceptInputValue] = useState('') // Track the value of the "Add Concept" input
+  const [addConceptSuggestions, setAddConceptSuggestions] = useState<ConceptSuggestion[]>([]) // Suggestions for Add Concept input
+  const [addConceptSelectedIndex, setAddConceptSelectedIndex] = useState(-1) // Selected suggestion index
   
   // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
@@ -1100,6 +1103,42 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }, [spectrums.map(s => s.inputValue).join(',')])
 
+  // Debounce concept suggestions for Add Concept input
+  useEffect(() => {
+    const trimmed = addConceptInputValue.trim()
+    if (!trimmed || trimmed.length < 1) {
+      setAddConceptSuggestions([])
+      setAddConceptSelectedIndex(-1)
+      return
+    }
+
+    const controller = new AbortController()
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`, {
+          signal: controller.signal,
+        })
+        if (!response.ok) {
+          setAddConceptSuggestions([])
+          return
+        }
+        const data = await response.json()
+        setAddConceptSuggestions(Array.isArray(data.concepts) ? data.concepts : [])
+        setAddConceptSelectedIndex(-1)
+      } catch (error: any) {
+        if (error.name !== 'AbortError') {
+          console.error('Error fetching concept suggestions:', error)
+        }
+        setAddConceptSuggestions([])
+      }
+    }, 250)
+
+    return () => {
+      controller.abort()
+      clearTimeout(timer)
+    }
+  }, [addConceptInputValue])
+
   // Add a new spectrum to the drawer - shows input field
   const addSpectrum = () => {
     const newSpectrum: Spectrum = {
@@ -1489,71 +1528,222 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           {/* Add Concept button or input */}
           {!showAddConceptInput ? (
             <button
-              onClick={showAddConceptButtonInput}
+              onClick={() => {
+                setShowAddConceptInput(true)
+                setAddConceptInputValue('')
+              }}
               className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
             >
               + Add Concept
             </button>
           ) : (
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <input
                 type="text"
-                value=""
+                value={addConceptInputValue}
                 onChange={(e) => {
-                  // Create new spectrum with input
-                  const newSpectrum: Spectrum = {
-                    id: `spectrum-${Date.now()}`,
-                    concept: '',
-                    inputValue: e.target.value,
-                    sliderPosition: 1.0,
-                    conceptSuggestions: [],
-                    selectedSuggestionIndex: -1,
-                    showSuggestions: false,
-                    isInputVisible: true
-                  }
-                  setSpectrums(prev => [...prev, newSpectrum])
-                  setShowAddConceptInput(false)
+                  // Just update the input value, don't create spectrum yet
+                  setAddConceptInputValue(e.target.value)
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                    e.preventDefault()
-                    const trimmed = e.currentTarget.value.trim()
-                    const newSpectrum: Spectrum = {
-                      id: `spectrum-${Date.now()}`,
-                      concept: trimmed,
-                      inputValue: trimmed,
-                      sliderPosition: 1.0,
-                      conceptSuggestions: [],
-                      selectedSuggestionIndex: -1,
-                      showSuggestions: false,
-                      isInputVisible: false
+                  if (addConceptSuggestions.length > 0) {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      if (addConceptSelectedIndex >= 0 && addConceptSelectedIndex < addConceptSuggestions.length) {
+                        // Select suggestion
+                        const suggestion = addConceptSuggestions[addConceptSelectedIndex]
+                        const conceptLabel = suggestion.label
+                        const newSpectrum: Spectrum = {
+                          id: `spectrum-${Date.now()}`,
+                          concept: conceptLabel,
+                          inputValue: conceptLabel,
+                          sliderPosition: 1.0,
+                          conceptSuggestions: [],
+                          selectedSuggestionIndex: -1,
+                          showSuggestions: false,
+                          isInputVisible: false
+                        }
+                        setSpectrums(prev => [...prev, newSpectrum])
+                        if (!selectedConcepts.includes(conceptLabel)) {
+                          setSelectedConcepts(prev => [...prev, conceptLabel])
+                          setSliderPositions(prev => {
+                            const newMap = new Map(prev)
+                            newMap.set(conceptLabel, 1.0)
+                            return newMap
+                          })
+                        }
+                        setShowAddConceptInput(false)
+                        setAddConceptInputValue('')
+                        setAddConceptSuggestions([])
+                        setAddConceptSelectedIndex(-1)
+                      } else if (addConceptInputValue.trim()) {
+                        // Add as custom concept
+                        const trimmed = addConceptInputValue.trim()
+                        const newSpectrum: Spectrum = {
+                          id: `spectrum-${Date.now()}`,
+                          concept: trimmed,
+                          inputValue: trimmed,
+                          sliderPosition: 1.0,
+                          conceptSuggestions: [],
+                          selectedSuggestionIndex: -1,
+                          showSuggestions: false,
+                          isInputVisible: false
+                        }
+                        setSpectrums(prev => [...prev, newSpectrum])
+                        if (!selectedConcepts.includes(trimmed)) {
+                          setSelectedConcepts(prev => [...prev, trimmed])
+                          setCustomConcepts(prev => new Set(prev).add(trimmed))
+                          setSliderPositions(prev => {
+                            const newMap = new Map(prev)
+                            newMap.set(trimmed, 1.0)
+                            return newMap
+                          })
+                        }
+                        setShowAddConceptInput(false)
+                        setAddConceptInputValue('')
+                        setAddConceptSuggestions([])
+                        setAddConceptSelectedIndex(-1)
+                      }
+                    } else if (e.key === 'ArrowDown') {
+                      e.preventDefault()
+                      setAddConceptSelectedIndex(prev => 
+                        prev < addConceptSuggestions.length - 1 ? prev + 1 : prev
+                      )
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault()
+                      setAddConceptSelectedIndex(prev => prev > 0 ? prev - 1 : -1)
+                    } else if (e.key === 'Escape') {
+                      setShowAddConceptInput(false)
+                      setAddConceptInputValue('')
+                      setAddConceptSuggestions([])
+                      setAddConceptSelectedIndex(-1)
                     }
-                    setSpectrums(prev => [...prev, newSpectrum])
-                    if (!selectedConcepts.includes(trimmed)) {
-                      setSelectedConcepts(prev => [...prev, trimmed])
-                      setCustomConcepts(prev => new Set(prev).add(trimmed))
-                      setSliderPositions(prev => {
-                        const newMap = new Map(prev)
-                        newMap.set(trimmed, 1.0)
-                        return newMap
-                      })
+                  } else {
+                    if (e.key === 'Enter' && addConceptInputValue.trim()) {
+                      e.preventDefault()
+                      const trimmed = addConceptInputValue.trim()
+                      const newSpectrum: Spectrum = {
+                        id: `spectrum-${Date.now()}`,
+                        concept: trimmed,
+                        inputValue: trimmed,
+                        sliderPosition: 1.0,
+                        conceptSuggestions: [],
+                        selectedSuggestionIndex: -1,
+                        showSuggestions: false,
+                        isInputVisible: false
+                      }
+                      setSpectrums(prev => [...prev, newSpectrum])
+                      if (!selectedConcepts.includes(trimmed)) {
+                        setSelectedConcepts(prev => [...prev, trimmed])
+                        setCustomConcepts(prev => new Set(prev).add(trimmed))
+                        setSliderPositions(prev => {
+                          const newMap = new Map(prev)
+                          newMap.set(trimmed, 1.0)
+                          return newMap
+                        })
+                      }
+                      setShowAddConceptInput(false)
+                      setAddConceptInputValue('')
+                    } else if (e.key === 'Escape') {
+                      setShowAddConceptInput(false)
+                      setAddConceptInputValue('')
+                      setAddConceptSuggestions([])
+                      setAddConceptSelectedIndex(-1)
                     }
-                    setShowAddConceptInput(false)
-                  } else if (e.key === 'Escape') {
-                    setShowAddConceptInput(false)
                   }
                 }}
                 onBlur={() => {
-                  // If empty, hide input
+                  // If empty, hide input after a delay
                   setTimeout(() => {
-                    if (!showAddConceptInput) return
-                    setShowAddConceptInput(false)
+                    if (!addConceptInputValue.trim()) {
+                      setShowAddConceptInput(false)
+                      setAddConceptInputValue('')
+                    }
                   }, 200)
                 }}
                 placeholder="Search for concept..."
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
                 autoFocus
               />
+              
+              {/* Concept suggestions dropdown for Add Concept input */}
+              {addConceptInputValue.trim().length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                  {addConceptSuggestions.length > 0 ? (
+                    addConceptSuggestions.map((suggestion, index) => (
+                      <button
+                        key={`add-concept-${suggestion.id}-${index}`}
+                        onClick={() => {
+                          const conceptLabel = suggestion.label
+                          const newSpectrum: Spectrum = {
+                            id: `spectrum-${Date.now()}`,
+                            concept: conceptLabel,
+                            inputValue: conceptLabel,
+                            sliderPosition: 1.0,
+                            conceptSuggestions: [],
+                            selectedSuggestionIndex: -1,
+                            showSuggestions: false,
+                            isInputVisible: false
+                          }
+                          setSpectrums(prev => [...prev, newSpectrum])
+                          if (!selectedConcepts.includes(conceptLabel)) {
+                            setSelectedConcepts(prev => [...prev, conceptLabel])
+                            setSliderPositions(prev => {
+                              const newMap = new Map(prev)
+                              newMap.set(conceptLabel, 1.0)
+                              return newMap
+                            })
+                          }
+                          setShowAddConceptInput(false)
+                          setAddConceptInputValue('')
+                          setAddConceptSuggestions([])
+                          setAddConceptSelectedIndex(-1)
+                        }}
+                        className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                          addConceptSelectedIndex === index
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {suggestion.displayText || suggestion.label}
+                      </button>
+                    ))
+                  ) : (
+                    <button
+                      onClick={() => {
+                        const trimmed = addConceptInputValue.trim()
+                        if (trimmed) {
+                          const newSpectrum: Spectrum = {
+                            id: `spectrum-${Date.now()}`,
+                            concept: trimmed,
+                            inputValue: trimmed,
+                            sliderPosition: 1.0,
+                            conceptSuggestions: [],
+                            selectedSuggestionIndex: -1,
+                            showSuggestions: false,
+                            isInputVisible: false
+                          }
+                          setSpectrums(prev => [...prev, newSpectrum])
+                          if (!selectedConcepts.includes(trimmed)) {
+                            setSelectedConcepts(prev => [...prev, trimmed])
+                            setCustomConcepts(prev => new Set(prev).add(trimmed))
+                            setSliderPositions(prev => {
+                              const newMap = new Map(prev)
+                              newMap.set(trimmed, 1.0)
+                              return newMap
+                            })
+                          }
+                          setShowAddConceptInput(false)
+                          setAddConceptInputValue('')
+                        }
+                      }}
+                      className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Add "{addConceptInputValue.trim()}"
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
           
