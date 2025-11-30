@@ -8,6 +8,16 @@ Standalone CLIP embedding service that runs separately from the main Next.js app
 - **Railway/Fly.io/etc** (where this service runs) supports native binaries perfectly
 - Clean separation: frontend on Vercel, ML backend here
 
+## Quick Deploy to Railway
+
+See [DEPLOY.md](./DEPLOY.md) for step-by-step instructions.
+
+**TL;DR:**
+1. Railway → New Project → Deploy from GitHub
+2. Set Root Directory to `embedding-service`
+3. Add `EMBEDDING_SERVICE_API_KEY` environment variable
+4. Copy the Railway URL to Vercel as `EMBEDDING_SERVICE_URL`
+
 ## Quick Start
 
 ### Local Development

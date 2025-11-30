@@ -39,57 +39,7 @@ NEXT_PUBLIC_APP_URL="https://yourdomain.com"  # Your domain URL
 
 ## Deployment Options
 
-### Option 1: Railway (Recommended - Supports Native Binaries)
-
-**Railway is the recommended option** because it supports native binaries (required for `@xenova/transformers`), making it the easiest deployment with zero code changes.
-
-#### Steps:
-
-1. **Sign up/Login to Railway**:
-   - Go to https://railway.app
-   - Sign up/login with your GitHub account
-
-2. **Create a new project**:
-   - Click **"New Project"**
-   - Select **"Deploy from GitHub repo"**
-   - Select your `Spectrums` repository
-   - Railway will auto-detect Next.js
-
-3. **Add environment variables**:
-   - In your Railway project dashboard, go to **Variables** tab
-   - Click **"New Variable"** and add each required variable:
-     - `DATABASE_URL` (your Supabase connection string)
-     - `GEMINI_API_KEY`
-     - `GROQ_API_KEY`
-     - `OPENAI_API_KEY` (optional)
-     - `SUPABASE_URL`
-     - `SUPABASE_KEY`
-     - `SUPABASE_SERVICE_ROLE_KEY` (optional)
-     - `NODE_ENV` = `production`
-     - `NEXT_PUBLIC_APP_URL` = `https://your-app-name.up.railway.app` (or your custom domain)
-
-4. **Deploy**:
-   - Railway will automatically deploy when you push to your main branch
-   - Or click **"Deploy"** in the dashboard
-   - Your app will be live at `https://your-app-name.up.railway.app`
-
-5. **Custom Domain (Optional)**:
-   - Go to **Settings** → **Networking**
-   - Click **"Custom Domain"**
-   - Add your domain and follow DNS instructions
-
-**Benefits:**
-- ✅ Supports native binaries (`@xenova/transformers` works out of the box)
-- ✅ Zero code changes required
-- ✅ Free tier available ($5 credit/month)
-- ✅ Automatic deployments from GitHub
-- ✅ Easy environment variable management
-
----
-
-### Option 2: Vercel (Limited - No Native Binaries)
-
-**Note**: Vercel doesn't support native binaries, so `@xenova/transformers` won't work. You'll need to use an external embeddings API instead.
+### Option 1: Vercel (Recommended for Next.js)
 
 Vercel is the easiest option for Next.js applications and provides automatic SSL, CDN, and domain configuration.
 
