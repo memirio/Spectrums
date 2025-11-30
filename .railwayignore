@@ -1,0 +1,3 @@
+# Tell Railway to ignore root directory when Root Directory is set
+# This prevents Railway from trying to build the Next.js app
+
