@@ -114,27 +114,79 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   const embeddingServiceApiKey = process.env.EMBEDDING_SERVICE_API_KEY;
   
   if (embeddingServiceUrl) {
-    try {
-      console.log('[embeddings] Using external embedding service:', embeddingServiceUrl);
-      const response = await fetch(`${embeddingServiceUrl}/embed/text`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(embeddingServiceApiKey && { 'Authorization': `Bearer ${embeddingServiceApiKey}` }),
-        },
-        body: JSON.stringify({ texts }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Embedding service returned ${response.status}`);
+    // Retry logic: Railway might be slow on first request (cold start)
+    const maxRetries = 2;
+    let lastError: any = null;
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        if (attempt > 0) {
+          console.log(`[embeddings] Retry attempt ${attempt}/${maxRetries} for embedding service`);
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        } else {
+          console.log('[embeddings] Using external embedding service:', embeddingServiceUrl);
+        }
+        
+        // Create AbortController for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+        
+        try {
+          const response = await fetch(`${embeddingServiceUrl}/embed/text`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(embeddingServiceApiKey && { 'Authorization': `Bearer ${embeddingServiceApiKey}` }),
+            },
+            body: JSON.stringify({ texts }),
+            signal: controller.signal,
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            // 502 Bad Gateway often means service is starting up - retry
+            if (response.status === 502 && attempt < maxRetries) {
+              console.warn(`[embeddings] Service returned 502 (likely cold start), will retry...`);
+              lastError = new Error(`Embedding service returned ${response.status}`);
+              continue;
+            }
+            throw new Error(`Embedding service returned ${response.status}`);
+          }
+          
+          const data = await response.json();
+          if (!data.embeddings || !Array.isArray(data.embeddings)) {
+            throw new Error('Invalid response from embedding service');
+          }
+          
+          console.log(`[embeddings] Successfully got embeddings from external service (${data.embeddings.length} vectors)`);
+          return data.embeddings;
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          if (fetchError.name === 'AbortError') {
+            throw new Error('Embedding service request timed out after 30s');
+          }
+          throw fetchError;
+        }
+      } catch (error: any) {
+        lastError = error;
+        // Don't retry on certain errors (auth, validation, etc.)
+        if (error.message?.includes('401') || error.message?.includes('400') || error.message?.includes('422')) {
+          throw error;
+        }
+        // Retry on network/timeout/502 errors
+        if (attempt < maxRetries && (error.message?.includes('timeout') || error.message?.includes('502') || error.message?.includes('fetch'))) {
+          continue;
+        }
+        // If last attempt, log and fall through
+        console.warn(`[embeddings] External service failed after ${attempt + 1} attempts:`, error.message);
+        break;
       }
-      
-      const data = await response.json();
-      return data.embeddings;
-    } catch (error: any) {
-      console.warn('[embeddings] External service failed, trying local CLIP:', error.message);
-      // Fall through to local CLIP
     }
+    
+    // If all retries failed, log and fall through to local CLIP
+    console.warn('[embeddings] External service failed, trying local CLIP:', lastError?.message || 'Unknown error');
   }
   
   try {
