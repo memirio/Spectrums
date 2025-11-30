@@ -13,7 +13,7 @@ export default function Header({ onSubmitClick }: HeaderProps) {
       <div className="max-w-full mx-auto px-[52px] py-3">
         <div className="flex items-center justify-between relative">
           <Link href="/" className="flex items-center">
-            <img src="/Logo.png" alt="Logo" className="h-6 w-auto" />
+            <img src="/Logo.svg" alt="Logo" className="h-6 w-auto" />
           </Link>
           <div className="absolute left-1/2 transform -translate-x-1/2">
             <Navigation />
