@@ -1661,7 +1661,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                     }
                   }, 200)
                 }}
-                placeholder="Search for concept..."
+                placeholder="Search for anything..."
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
                 autoFocus
               />
@@ -1785,7 +1785,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                             ))
                           }, 200)
                         }}
-                        placeholder="Search for concept..."
+                        placeholder="Search for anything..."
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
                         autoFocus
                       />
