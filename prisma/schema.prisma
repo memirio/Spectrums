@@ -3,12 +3,12 @@
 
 generator client {
   provider = "prisma-client-js"
-  // binaryTargets removed - using driver adapter instead (no binaries needed)
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // url moved to prisma.config.ts (Prisma 7 requirement)
 }
 
 model Site {
