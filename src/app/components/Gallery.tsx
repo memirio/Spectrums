@@ -1348,7 +1348,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         
         {/* Searchbar - Sticky at the top */}
         <div className="sticky top-0 bg-[#fbf9f4] z-50">
-        <div className="max-w-full mx-auto px-4 md:px-[52px] mt-4">
+          <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
           {/* Selected concept chips - above search bar */}
           <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-2 relative z-20">
           {selectedConcepts.length > 0 && (
