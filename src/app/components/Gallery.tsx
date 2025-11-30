@@ -1311,18 +1311,18 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               <div key={i}>
                 {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
-                  <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+                  <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
                 </div>
                 {/* Text section skeleton - matches py-2 structure */}
                 <div className="py-2">
                   <div className="flex items-center justify-between gap-2">
                     {/* Title skeleton - flex-1, text-xs size */}
                     <div className="relative h-3 bg-[#e8e8e4] rounded flex-1 overflow-hidden">
-                      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+                      <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
                     </div>
                     {/* Category badge skeleton - matches badge size */}
                     <div className="relative h-5 w-16 bg-[#e8e8e4] rounded overflow-hidden">
-                      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+                      <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
                     </div>
                   </div>
                 </div>

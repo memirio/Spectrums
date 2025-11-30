@@ -50,13 +50,15 @@ body {
 /* Shimmer animation for loading skeletons */
 @keyframes shimmer {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(-100%) translateY(-100%);
   }
   100% {
-    transform: translateX(100%);
+    transform: translateX(100%) translateY(100%);
   }
 }
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
+  width: 200%;
+  height: 200%;
 }
