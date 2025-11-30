@@ -3,7 +3,10 @@ import { PrismaClient } from '@prisma/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
+const globalForPrisma = globalThis as unknown as { 
+  prisma?: PrismaClient
+  pool?: Pool
+}
 
 function getPrismaClient(): PrismaClient {
   const dbUrl = process.env.DATABASE_URL || ''
@@ -14,11 +17,23 @@ function getPrismaClient(): PrismaClient {
     try {
       console.log('[prisma] Using driver adapter to connect to Supabase (no binaries needed)')
       console.log('[prisma] DATABASE_URL starts with:', dbUrl.substring(0, 30))
-      const pool = new Pool({
-        connectionString: dbUrl,
-        max: 1, // Limit connections for serverless
-      })
-      const adapter = new PrismaPg(pool)
+      
+      // CRITICAL: Reuse pool across serverless invocations to avoid "max clients reached" errors
+      // In Vercel/serverless, each function invocation can create a new instance,
+      // but we must reuse the same Pool to stay within Supabase Session Pooler limits (1 connection)
+      if (!globalForPrisma.pool) {
+        globalForPrisma.pool = new Pool({
+          connectionString: dbUrl,
+          max: 1, // Session pooler only allows 1 connection
+          idleTimeoutMillis: 30000, // Close idle connections after 30s
+          connectionTimeoutMillis: 5000, // Timeout after 5s
+        })
+        console.log('[prisma] Created new connection pool')
+      } else {
+        console.log('[prisma] Reusing existing connection pool')
+      }
+      
+      const adapter = new PrismaPg(globalForPrisma.pool)
       const client = new PrismaClient({ adapter })
       console.log('[prisma] PrismaClient created successfully with adapter')
       return client
@@ -39,6 +54,7 @@ function getPrismaClient(): PrismaClient {
 
 const prisma = globalForPrisma.prisma ?? getPrismaClient()
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Always reuse the same instance in serverless (Vercel) to avoid connection pool exhaustion
+globalForPrisma.prisma = prisma
 
 export { prisma }

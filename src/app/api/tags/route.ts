@@ -17,7 +17,7 @@ export async function GET() {
       { error: 'Failed to fetch tags', details: (error as Error).message },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
+  // Removed $disconnect() - we're using a shared PrismaClient instance
+  // Disconnecting would break other concurrent requests in serverless
 }
