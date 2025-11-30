@@ -2,8 +2,8 @@
 nixPkgs = ["nodejs-18_x"]
 
 [phases.install]
-cmds = ["cd embedding-service && npm install"]
+cmds = ["npm install"]
 
 [start]
-cmd = "cd embedding-service && node server.js"
+cmd = "node server.js"
 
