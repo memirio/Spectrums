@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import SubmissionForm from './SubmissionForm'
 import Header from './Header'
 
@@ -55,6 +56,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [lastSliderSide, setLastSliderSide] = useState<Map<string, 'left' | 'right'>>(new Map()) // Track which side of 50% we're on
   const [resultsVersion, setResultsVersion] = useState(0) // Version counter to trigger reordering when results change
   const [sliderVersion, setSliderVersion] = useState(0) // Version counter to trigger reordering when slider moves
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true) // Drawer open/closed state
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -1291,14 +1293,61 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf9f4]">
-      {/* Header - fixed, not affected by panel */}
-      <Header 
-        onSubmitClick={() => setShowSubmissionForm(true)}
-      />
-      
-      {/* Searchbar - Sticky at the top */}
-      <div className="sticky top-0 bg-[#fbf9f4] z-50">
+    <div className="min-h-screen bg-[#fbf9f4] flex">
+      {/* Left Drawer - Dynamic, splits page down the middle */}
+      <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out relative ${
+        isDrawerOpen ? 'w-1/2' : 'w-0'
+      } overflow-hidden`}>
+        <div className="h-full flex flex-col">
+          {/* Logo at top of drawer */}
+          <div className="p-4 md:p-6 border-b border-gray-300">
+            <Link href="/" className="flex items-center">
+              <img src="/Logo.svg" alt="Logo" className="h-6 w-auto" />
+            </Link>
+          </div>
+          
+          {/* Drawer content - can add navigation or other content here */}
+          <div className="flex-1 p-4 md:p-6">
+            {/* Drawer content placeholder - can add navigation, filters, etc. */}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Content Area */}
+      <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 ${
+        isDrawerOpen ? 'w-1/2' : 'w-full'
+      }`}>
+        {/* Header - without logo (logo is now in drawer) */}
+        <Header 
+          onSubmitClick={() => setShowSubmissionForm(true)}
+        />
+        
+        {/* Drawer toggle button - positioned on drawer's right edge */}
+        <button
+          onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+          className={`absolute top-4 z-50 p-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-all duration-300 ${
+            isDrawerOpen ? 'right-[-16px]' : 'left-4'
+          }`}
+          aria-label={isDrawerOpen ? 'Close drawer' : 'Open drawer'}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            {isDrawerOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            )}
+          </svg>
+        </button>
+        
+        {/* Searchbar - Sticky at the top */}
+        <div className="sticky top-0 bg-[#fbf9f4] z-50">
         <div className="max-w-full mx-auto px-4 md:px-[52px] mt-4">
           {/* Selected concept chips - above search bar */}
           <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-2 relative z-20">
@@ -1557,7 +1606,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           onSuccess={handleSubmissionSuccess}
         />
       )}
-      </div>
 
         {/* Side Panel - slides in from right and pushes content */}
         <div
@@ -1762,6 +1810,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           </div>
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </div>
   )
