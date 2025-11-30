@@ -1840,10 +1840,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                             <span className="text-xs text-gray-700 truncate">{spectrum.concept}</span>
                           </div>
                           {/* Single-pole slider (only right half) */}
-                          <div className="flex items-center justify-end">
+                          <div className="flex items-center justify-center">
                             <div 
-                              className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
-                              style={{ marginLeft: 'auto' }}
+                              className="flex-shrink-0 w-full h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
                               onMouseDown={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
