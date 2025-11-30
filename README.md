@@ -21,12 +21,19 @@ Spectrums is a web application that lets users discover great website designs by
 
 - **Frontend**: Next.js 16 (App Router), React 19, TypeScript 5
 - **Styling**: Tailwind CSS 4
-- **Database**: SQLite via Prisma 6
-- **Embeddings**: @xenova/transformers (CLIP ViT-L/14)
+- **Database**: Supabase PostgreSQL (production) / SQLite (local dev) via Prisma 7
+- **Vector Search**: pgvector extension for fast approximate nearest neighbor (ANN) search
+- **Embeddings**: 
+  - **Production**: External embedding service (Railway) using @xenova/transformers (CLIP ViT-L/14)
+  - **Local Dev**: @xenova/transformers (CLIP ViT-L/14) with fallback to OpenAI embeddings
 - **Concept Generation**: Google Gemini 1.5 Flash (vision-language model)
 - **Query Expansion**: Groq API (llama-3.3-70b-versatile) for abstract query expansion
 - **Image Processing**: Sharp
-- **Screenshot Service**: Playwright (Chromium) with BullMQ queue
+- **Screenshot Service**: Playwright (Chromium) with BullMQ queue (optional)
+- **Deployment**: 
+  - **Frontend**: Vercel (Next.js optimized)
+  - **Embedding Service**: Railway (supports native binaries)
+  - **Database**: Supabase (PostgreSQL with pgvector)
 
 ---
 
@@ -62,7 +69,11 @@ Create a `.env` file in the project root:
 
 ```bash
 # Database
+# Local development (SQLite)
 DATABASE_URL="file:./dev-new.db"
+
+# Production (Supabase PostgreSQL with Transaction Pooler)
+# DATABASE_URL="postgresql://postgres:[PASSWORD]@aws-[REGION].pooler.supabase.com:6543/postgres"
 
 # Concept Generation (required for auto-tagging)
 GEMINI_API_KEY="your-google-gemini-api-key"
@@ -73,7 +84,12 @@ GROQ_API_KEY="your-groq-api-key"
 
 # OpenAI API (optional - for generating concept relationships: opposites, synonyms, related)
 # Used by scripts/generate_concept_relationships.ts
+# Also used as fallback for embeddings if local CLIP fails
 OPENAI_API_KEY="your-openai-api-key"
+
+# Embedding Service (production only - Railway deployment)
+# EMBEDDING_SERVICE_URL="https://your-railway-service.railway.app"
+# EMBEDDING_SERVICE_API_KEY="your-api-key"
 
 # Screenshot Service (optional - only needed if using local screenshot service)
 SCREENSHOT_API_URL=http://localhost:3001
@@ -81,7 +97,9 @@ SCREENSHOT_API_URL=http://localhost:3001
 
 ### 3. Database Setup
 
-The database (`prisma/dev-new.db`) is included in the repository, so all developers have access to the same dataset. If you need to set up a fresh database:
+#### Local Development (SQLite)
+
+For local development, SQLite is used by default:
 
 ```bash
 # Generate Prisma client
@@ -94,28 +112,34 @@ npx prisma migrate dev
 npx prisma studio
 ```
 
-**Note**: The database file is tracked in Git to ensure all developers work with the same data. If you need to reset or update the database, you can restore it from the repository.
+**Note**: The database file (`prisma/dev-new.db`) is tracked in Git to ensure all developers work with the same data.
 
-#### Using Supabase (PostgreSQL) for Shared Database
+#### Production (Supabase PostgreSQL with pgvector)
 
-For a shared database across all developers, you can use Supabase (free PostgreSQL hosting):
+For production deployments, we use Supabase PostgreSQL with pgvector for fast vector similarity search:
 
 1. **Create a Supabase project** at [supabase.com](https://supabase.com)
-2. **Get your connection string** from Settings → Database → Connection string (URI)
-3. **Update your `.env`**:
-   ```bash
-   DATABASE_URL="postgresql://postgres:your-password@db.xxxxx.supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
+2. **Enable pgvector extension**:
+   ```sql
+   CREATE EXTENSION IF NOT EXISTS vector;
    ```
-4. **Run the setup script**:
+3. **Get your connection string** from Settings → Database → Connection string (URI)
+   - **Recommended**: Use Transaction Pooler (port 6543) for better concurrency
+   - Format: `postgresql://postgres:[PASSWORD]@aws-[REGION].pooler.supabase.com:6543/postgres`
+4. **Update your `.env`**:
    ```bash
-   npx tsx scripts/setup_supabase.ts
+   DATABASE_URL="postgresql://postgres:your-password@aws-REGION.pooler.supabase.com:6543/postgres"
    ```
-5. **(Optional) Migrate existing SQLite data**:
+5. **Run migrations**:
    ```bash
-   npx tsx scripts/migrate_to_supabase.ts
+   npx prisma migrate deploy
+   ```
+6. **Migrate embeddings to pgvector** (one-time):
+   ```bash
+   npx tsx scripts/migrate_embeddings_to_pgvector.ts
    ```
 
-See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for detailed instructions.
+See [docs/SUPABASE_QUICKSTART.md](docs/SUPABASE_QUICKSTART.md) and [docs/PGVECTOR_SETUP.md](docs/PGVECTOR_SETUP.md) for detailed instructions.
 
 ### 4. Seed Design Concepts
 
@@ -742,13 +766,24 @@ export const SEARCH_CONFIG = {
 
 ### Database Storage
 
-All application data is stored in a **single SQLite database** (via Prisma):
+**Production (Supabase PostgreSQL):**
+- **Database**: Supabase PostgreSQL with pgvector extension
+- **Vector Storage**: pgvector `vector(768)` type for fast ANN search
+- **Connection**: Transaction Pooler (port 6543) for better concurrency in serverless
+- **Prisma**: Uses driver adapter (`@prisma/adapter-pg`) to avoid native binaries in serverless
 
-**Stored in SQLite Database:**
+**Local Development (SQLite):**
+- **Database**: SQLite via Prisma
+- **Vector Storage**: JSON column (fallback mode, slower)
+
+**Stored in Database:**
 - **Sites** — Website records (title, URL, author, description)
 - **Tags** — Legacy tag system (many-to-many with sites)
-- **Images** — Image metadata (URL, dimensions, bytes, timestamps)
-- **ImageEmbeddings** — CLIP image embeddings (768-dim vectors) with contentHash for deduplication
+- **Images** — Image metadata (URL, dimensions, bytes, timestamps, category)
+- **ImageEmbeddings** — CLIP image embeddings (768-dim vectors)
+  - **Production**: pgvector `vector(768)` type with IVFFlat index for fast similarity search
+  - **Local Dev**: JSON column (fallback)
+  - Includes `contentHash` for deduplication
 - **Concepts** — Design concept definitions (labels, synonyms, related terms, opposites, embeddings)
 - **ImageTags** — Auto-tagging relationships (image ↔ concept with similarity scores)
   - Images are tagged only with directly matched concepts (no synonym expansion)
@@ -756,41 +791,50 @@ All application data is stored in a **single SQLite database** (via Prisma):
 - **QueryExpansion** — Cached LLM-generated query expansions (Groq) for abstract terms, with category field for category-specific expansions
 
 **Stored Separately (Not in Database):**
-- **Screenshot files** — Stored in MinIO (S3-compatible object storage)
-  - Database only stores the URL reference (e.g., `http://localhost:9000/screenshots/...`)
-  - Actual image files are in MinIO buckets
+- **Screenshot files** — Stored in Supabase Storage (production) or MinIO (local dev)
+  - Database only stores the URL reference
+  - Production: `https://[project].supabase.co/storage/v1/object/public/Images/...`
+  - Local: `http://localhost:9000/screenshots/...`
 - **Job queue state** — Redis (ephemeral, used by screenshot service for BullMQ)
 
 **Summary:**
-- All structured data (sites, images, embeddings, concepts, tags) → Same SQLite database
-- Screenshot image files → MinIO object storage (referenced by URL)
+- All structured data (sites, images, embeddings, concepts, tags) → PostgreSQL (production) / SQLite (local)
+- Vector embeddings → pgvector for fast ANN search (production) / JSON (local)
+- Screenshot image files → Supabase Storage (production) / MinIO (local)
 - Job queue state → Redis (ephemeral)
 
-### Local Storage
+### Architecture Overview
 
-**Everything is stored locally by default** (no cloud dependencies):
+**Production Architecture (Split Deployment):**
 
-**Local Files:**
-- **SQLite database** — `prisma/dev-new.db` (included in repository for shared dev data)
-- **Concept definitions** — `src/concepts/seed_concepts.json` (in repository)
-- **CLIP models** — Cached locally by `@xenova/transformers` (typically in `~/.cache/huggingface/` or `node_modules/.cache/`)
+```
+┌─────────────────┐         ┌──────────────────┐         ┌─────────────────┐
+│   Vercel        │         │   Railway        │         │   Supabase      │
+│   (Frontend)    │────────▶│   (Embedding     │         │   (Database +   │
+│                 │         │    Service)      │         │    Storage)     │
+│  Next.js App    │         │  CLIP Embeddings │         │  PostgreSQL +  │
+│  - Search API   │         │  @xenova/        │         │  pgvector       │
+│  - Gallery UI   │         │  transformers    │         │  - Sites        │
+│                 │         │                  │         │  - Images       │
+│                 │         │                  │         │  - Embeddings   │
+│                 │         │                  │         │  - Concepts     │
+└─────────────────┘         └──────────────────┘         └─────────────────┘
+```
 
-**Local Docker Volumes** (if using screenshot service):
-- **MinIO data** — Docker volume `minio-data` (screenshot files)
-- **Redis data** — Docker volume `redis-data` (job queue state)
+**Why Split Architecture?**
+- **Vercel**: Optimized for Next.js, but doesn't support native binaries (required by @xenova/transformers)
+- **Railway**: Supports native binaries, perfect for ML workloads
+- **Supabase**: PostgreSQL with pgvector for fast vector search, plus image storage
+
+**Local Development:**
+- **SQLite**: Single database file (`prisma/dev-new.db`)
+- **@xenova/transformers**: Runs locally (native binaries supported)
+- **MinIO**: Local S3-compatible storage for screenshots (optional)
 
 **External Services:**
-- **Google Gemini API** — Remote API calls only (no data stored remotely)
-  - Used for concept generation from images
-  - Requires `GEMINI_API_KEY` environment variable
-- **Groq API** — Remote API calls only (no data stored remotely)
-  - Used for abstract query expansion
-  - Requires `GROQ_API_KEY` environment variable
-  - Expansions are cached locally in SQLite database
-
-**Note:** All data persists locally. The only external dependencies are:
-- Gemini API for generating new concepts (optional - you can disable it or use existing concepts only)
-- Groq API for query expansion (optional - system falls back to direct embedding if expansion fails)
+- **Google Gemini API** — Concept generation from images (optional)
+- **Groq API** — Abstract query expansion (optional, cached in database)
+- **OpenAI API** — Fallback for embeddings if local CLIP fails (optional)
 
 ### Production Pipeline Flow
 
@@ -800,12 +844,28 @@ See [Production Pipeline (Add Photo Pipeline)](#5-production-pipeline-add-photo-
 
 1. **Query expansion** (if abstract) → Abstract queries expanded into concrete visual descriptions
 2. **Query embedding** → User query (or expanded query) embedded as CLIP text vector
-3. **Image ranking** → All images ranked by cosine(query, imageEmbedding) - this is the primary ranking signal
-4. **Light reranking** (top 200) → For top results, apply very small tag-based boosts/penalties:
+   - **Production**: Calls external embedding service (Railway) for fast, reliable embeddings
+   - **Local Dev**: Uses @xenova/transformers with fallback to OpenAI
+3. **Vector similarity search** → Uses pgvector for fast approximate nearest neighbor (ANN) search
+   - Queries only top 100 candidates (instead of scanning all 436+ embeddings)
+   - Uses IVFFlat index with cosine similarity for 10-100x faster search
+   - Falls back to linear scan if pgvector not available
+4. **Light reranking** (top 100) → For top results, apply very small tag-based boosts/penalties:
    - Images with matching concept tags get 5% boost (0.05 * tagScore)
    - Images with opposite concept tags get 3% penalty (0.03 * tagScore)
-5. **Interaction logging** → Log impressions for learned reranker training (top 20 results)
-6. **Result return** → All sites returned, ranked by final score
+   - Hub penalty applied to images that appear too frequently
+   - Popularity boost for frequently clicked images
+5. **Parallel data loading** → Loads tags, hub scores, and popularity metrics in parallel
+6. **Interaction logging** → Log impressions for learned reranker training (top 20 results)
+7. **Result return** → Top 100 sites returned, ranked by final score
+
+**Performance Optimizations:**
+- **pgvector ANN search**: 10-100x faster than linear scan
+- **Lazy loading**: Frontend loads 50 sites initially, then 50 more as user scrolls
+- **Parallel queries**: Database queries run in parallel instead of sequentially
+- **Result caching**: Search results cached for 5 minutes (via `search-cache.ts`)
+- **Concept caching**: All concepts cached in memory to avoid repeated database queries
+- **Reduced candidates**: Processes only top 100 candidates instead of all images
 
 **Future: Learned Reranker**
 - Once 1000+ interactions are collected, a small MLP model will replace step 4
