@@ -5,17 +5,20 @@ Spectrums is a web application that lets users discover great website designs by
 ## Features
 
 - **Zero-shot semantic search**: Search with any text query, ranked by CLIP image-text similarity
+- **Fast vector search**: Uses pgvector for approximate nearest neighbor (ANN) search - 10-100x faster than linear scan
 - **Category-aware search**: Filter by category (website, packaging, brand) or search across all categories
 - **Abstract query expansion**: Automatically expands abstract queries (e.g., "euphoric", "serene") into concrete visual descriptions for better CLIP matching, with category-specific expansions
 - **Concept-based boosting**: 94+ seeded design concepts provide subtle ranking improvements
 - **Learned reranker (in development)**: Small MLP model that learns from user interactions to improve search relevance (requires ~1000+ interactions to train)
 - **Multi-concept stacking**: Combine multiple terms like "playful gradient 3d"
 - **Automatic tagging**: New screenshots are embedded & auto-tagged on ingest
+- **Lazy loading**: Gallery loads sites incrementally (50 at a time) for faster initial page load
 - **Screenshot service**: Automated website screenshot capture with cookie banner removal
 - **Interactive gallery**: Responsive grid with beautiful UI and concept chips, with category tags
 - **Concept Spectrum**: Interactive slider system to explore the spectrum between concepts and their opposites, with 10-tier ranking for fine-grained control
 - **Submission form**: Easy site submission with automatic screenshot generation
 - **Hub detection**: Automatically detects and penalizes "hub" images that appear too frequently in search results
+- **Performance optimized**: Parallel database queries, result caching, and optimized search algorithms
 
 ## Tech Stack
 
