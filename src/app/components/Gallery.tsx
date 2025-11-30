@@ -2028,7 +2028,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                               <div 
                                 className="absolute flex items-center justify-center pointer-events-none"
                                 style={{ 
-                                  left: `calc(${Math.max(50, Math.min(100, ((spectrum.sliderPosition - 0.5) / 0.5) * 100))}% - 12px)`, 
+                                  left: `calc(${Math.max(0, Math.min(100, ((spectrum.sliderPosition - 0.5) / 0.5) * 100))}% - 12px)`, 
                                   top: '50%',
                                   marginTop: '-12px',
                                   width: '24px',
