@@ -236,11 +236,8 @@ export async function GET(request: NextRequest) {
           // Use pgvector for fast ANN search
           console.log(`[search] pgvector available - using fast similarity search`)
           
-          const categoryFilter = category && category !== 'all' 
-            ? `AND i.category = '${category.replace(/'/g, "''")}'`
-            : ''
-          
-          const pgvectorResults = await prisma.$queryRawUnsafe<any[]>(`
+          // Build query with parameterized category filter
+          let pgvectorQuery = `
             SELECT 
               ie."imageId",
               ie.model,
@@ -253,10 +250,19 @@ export async function GET(request: NextRequest) {
             FROM "image_embeddings" ie
             JOIN "images" i ON i.id = ie."imageId"
             WHERE ie.vector IS NOT NULL
-            ${categoryFilter}
-            ORDER BY ie.vector <=> $1::vector
-            LIMIT $2
-          `, queryVectorStr, TOP_CANDIDATES)
+          `
+          
+          const queryParams: any[] = [queryVectorStr]
+          
+          if (category && category !== 'all') {
+            pgvectorQuery += ` AND i.category = $${queryParams.length + 1}`
+            queryParams.push(category)
+          }
+          
+          pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector LIMIT $${queryParams.length + 1}`
+          queryParams.push(TOP_CANDIDATES)
+          
+          const pgvectorResults = await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
           
           // Transform results to match expected format
           imageEmbeddings = pgvectorResults.map((row: any) => ({
