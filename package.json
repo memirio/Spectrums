@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build && node scripts/copy-prisma-to-next.js",
-    "vercel-build": "prisma generate && next build && node scripts/copy-prisma-to-next.js",
+    "build": "prisma generate --no-engine && next build",
+    "vercel-build": "prisma generate --no-engine && next build",
     "postinstall": "DATABASE_URL=\"postgresql://dummy:dummy@dummy:5432/dummy\" prisma generate || true",
     "start": "next start",
     "lint": "eslint",
@@ -20,6 +20,7 @@
     "@google/generative-ai": "^0.21.0",
     "@prisma/adapter-pg": "^7.0.1",
     "@prisma/client": "^6.18.0",
+    "@prisma/extension-accelerate": "^3.0.0",
     "@supabase/supabase-js": "^2.86.0",
     "@types/pg": "^8.15.6",
     "@xenova/transformers": "2.16.1",
