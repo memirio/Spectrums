@@ -124,46 +124,39 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ concepts: [] })
     }
     
+    // OPTIMIZATION: Cache concepts in memory to avoid database queries
+    const globalForConcepts = globalThis as unknown as { concepts?: any[] }
+    if (!globalForConcepts.concepts) {
+      console.log('[concepts] Loading concepts into cache...')
+      globalForConcepts.concepts = await prisma.concept.findMany({
+        select: {
+          id: true,
+          label: true,
+          synonyms: true,
+          opposites: true,
+        },
+      })
+      console.log(`[concepts] Cached ${globalForConcepts.concepts.length} concepts`)
+    }
+    const allConcepts = globalForConcepts.concepts
+    
     const qLower = qTrimmed.toLowerCase()
     const qUpper = qTrimmed.toUpperCase()
     const qTitle = qTrimmed.charAt(0).toUpperCase() + qTrimmed.slice(1).toLowerCase()
     const queryConceptId = labelToConceptId(qTrimmed)
     
-    // OPTIMIZATION: Use database-level filtering instead of loading all concepts
-    // Filter concepts where label starts with the query (case-insensitive for SQLite)
-    // SQLite doesn't support mode: 'insensitive', so we check multiple case variations
-    const labelStartsWithQuery = await prisma.concept.findMany({
-      where: {
-        OR: [
-          { label: { startsWith: qLower } },
-          { label: { startsWith: qUpper } },
-          { label: { startsWith: qTitle } },
-          { label: { startsWith: qTrimmed } }, // Original case
-        ],
-      },
-      take: 50, // Limit initial results for performance
-      orderBy: { label: 'asc' },
-    })
+    // OPTIMIZATION: Filter in memory instead of database queries (faster with cached concepts)
+    const labelStartsWithQuery = allConcepts.filter((c: any) => {
+      const label = c.label.toLowerCase()
+      return label.startsWith(qLower) || label.startsWith(qUpper) || label.startsWith(qTitle) || label.startsWith(qTrimmed)
+    }).slice(0, 50)
     
     // Also fetch concepts where the ID starts with the query
-    const idStartsWithQuery = await prisma.concept.findMany({
-      where: {
-        OR: [
-          { id: { startsWith: qLower } },
-          { id: { startsWith: qUpper } },
-          { id: { startsWith: qTitle } },
-          { id: { startsWith: qTrimmed } }, // Original case
-        ],
-        // Exclude concepts already found by label
-        NOT: {
-          id: {
-            in: labelStartsWithQuery.map((c: any) => c.id),
-          },
-        },
-      },
-      take: 50,
-      orderBy: { label: 'asc' },
-    })
+    const idStartsWithQuery = allConcepts.filter((c: any) => {
+      if (labelStartsWithQuery.some((lc: any) => lc.id === c.id)) return false // Exclude already found
+      const id = c.id.toLowerCase()
+      return id.startsWith(qLower) || id.startsWith(qUpper) || id.startsWith(qTitle) || id.startsWith(qTrimmed)
+    }).slice(0, 50)
     
     // Combine and deduplicate
     const conceptMap = new Map<string, any>()
@@ -172,25 +165,15 @@ export async function GET(request: NextRequest) {
     }
     
     // If we have very few results, also search for concepts that contain the query
-    // This helps with cases like "3d" matching "3D Rendering"
+    // OPTIMIZATION: Use cached concepts for contains matches (faster than database query)
     if (conceptMap.size < 5 && qLower.length >= 2) {
-      const containsMatches = await prisma.concept.findMany({
-        where: {
-          OR: [
-            { label: { contains: qLower } },
-            { label: { contains: qUpper } },
-            { id: { contains: qLower } },
-            { id: { contains: qUpper } },
-          ],
-          NOT: {
-            id: {
-              in: Array.from(conceptMap.keys()),
-            },
-          },
-        },
-        take: 20, // Limit to prevent performance issues
-        orderBy: { label: 'asc' },
-      })
+      const existingIds = new Set(conceptMap.keys())
+      const containsMatches = allConcepts.filter((c: any) => {
+        if (existingIds.has(c.id)) return false
+        const label = c.label.toLowerCase()
+        const id = c.id.toLowerCase()
+        return label.includes(qLower) || label.includes(qUpper) || id.includes(qLower) || id.includes(qUpper)
+      }).slice(0, 20)
       
       for (const concept of containsMatches) {
         conceptMap.set(concept.id, concept)
@@ -200,20 +183,13 @@ export async function GET(request: NextRequest) {
     const concepts = Array.from(conceptMap.values())
     
     // Find if the query itself matches a concept (to check for opposites)
-    // Check exact matches first (most likely to be the query concept)
+    // OPTIMIZATION: Use cached concepts instead of database query
     let queryConcept: any = null
-    const exactMatch = await prisma.concept.findFirst({
-      where: {
-        OR: [
-          { label: { equals: qLower } },
-          { label: { equals: qUpper } },
-          { label: { equals: qTitle } },
-          { label: { equals: qTrimmed } },
-          { id: { equals: qLower } },
-          { id: { equals: qUpper } },
-          { id: { equals: queryConceptId } },
-        ],
-      },
+    const exactMatch = allConcepts.find((c: any) => {
+      const label = c.label.toLowerCase()
+      const id = c.id.toLowerCase()
+      return label === qLower || label === qUpper || label === qTitle || label === qTrimmed ||
+             id === qLower || id === qUpper || id === queryConceptId
     })
     
     if (exactMatch) {

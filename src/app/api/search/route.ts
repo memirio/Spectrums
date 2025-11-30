@@ -205,97 +205,47 @@ export async function GET(request: NextRequest) {
         console.log(`[search] Filtering by category: ${category}`)
       }
       
-      // Load only what we need: id, category, siteId, url, and embedding vector
-      const images = await (prisma.image.findMany as any)({
-        where: whereClause,
+      // OPTIMIZATION: Load embeddings first, compute scores, then load site data only for top candidates
+      // This dramatically reduces database queries and data transfer
+      console.log(`[search] Loading image embeddings for scoring...`)
+      const imageEmbeddings = await (prisma.imageEmbedding.findMany as any)({
+        where: {
+          image: whereClause, // Filter by category through image relation
+        },
         select: {
-          id: true,
-          siteId: true,
-          url: true,
-          category: true,
-          embedding: {
-            select: {
-              vector: true,
-              model: true,
-              contentHash: true,
-            },
-          },
-          site: {
+          imageId: true,
+          vector: true,
+          model: true,
+          image: {
             select: {
               id: true,
-              title: true,
-              description: true,
+              siteId: true,
               url: true,
-              author: true,
+              category: true,
             },
           },
         },
       })
-      console.log(`[search] Loaded ${images.length} images${category && category !== 'all' ? ` (category: ${category})` : ''}`)
+      console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings${category && category !== 'all' ? ` (category: ${category})` : ''}`)
       
-      if (debug) {
-        // Debug mode: pure CLIP cosine ranking only
-        const ranked = [] as Array<{
-          imageId: string
-          siteUrl: string
-          score: number
-          contentHash: string | null
-          model: string
-        }>
-        for (const img of images as any[]) {
-          const ivec = (img.embedding?.vector as unknown as number[]) || []
-          if (ivec.length !== dim) continue
-          
-          let score: number
-          if (isExpanded && expansionEmbeddings) {
-            // Use pooling for expanded queries in debug mode too
-            const expansionScores = expansionEmbeddings.map(expVec => cosine(expVec, ivec))
-            if (usePooling === 'max') {
-              score = poolMax(expansionScores)
-            } else {
-              score = poolSoftmax(expansionScores, poolingTemp)
-            }
-          } else {
-            score = cosine(queryVec!, ivec)
-          }
-          
-          ranked.push({
-            imageId: img.id,
-            siteUrl: img.site?.url || '',
-            score,
-            contentHash: (img.embedding?.contentHash as string | null) || null,
-            model: img.embedding?.model || '',
-          })
-        }
-        ranked.sort((a, b) => b.score - a.score)
-        return NextResponse.json({
-          query: q,
-          mode: 'debug',
-          pooling: usePooling,
-          images: ranked.slice(0, 60),
-        })
-      }
-      
-      // 3. CLIP-FIRST: Rank by cosine similarity (primary semantic signal)
-      // This handles abstract queries like "love", "fun", "3d dashboard", "fun mobile app" etc.
-      const ranked = [] as Array<{
-        imageId: string
-        siteId: string
+      // Compute scores for all images (fast - just vector operations)
+      const scoredImages = [] as Array<{
+        id: string
+        siteId: string | null
         url: string
-        siteUrl: string
+        category: string
         score: number
         baseScore: number
-        site: any
+        embedding: any
       }>
       
-      for (const img of images as any[]) {
-        const ivec = (img.embedding?.vector as unknown as number[]) || []
+      for (const emb of imageEmbeddings as any[]) {
+        const ivec = (emb.vector as unknown as number[]) || []
         if (ivec.length !== dim) continue
         
-        // PRIMARY: CLIP cosine similarity (this is the main ranking signal)
+        // PRIMARY: CLIP cosine similarity
         let baseScore: number
         if (isExpanded && expansionEmbeddings) {
-          // For expanded queries: compute score with each expansion, then pool
           const expansionScores = expansionEmbeddings.map(expVec => cosine(expVec, ivec))
           if (usePooling === 'max') {
             baseScore = poolMax(expansionScores)
@@ -303,39 +253,96 @@ export async function GET(request: NextRequest) {
             baseScore = poolSoftmax(expansionScores, poolingTemp)
           }
         } else {
-          // For direct queries: simple cosine similarity
           baseScore = cosine(queryVec!, ivec)
         }
-        let score = baseScore
         
+        scoredImages.push({
+          id: emb.image.id,
+          siteId: emb.image.siteId,
+          url: emb.image.url,
+          category: emb.image.category || 'website',
+          score: baseScore,
+          baseScore,
+          embedding: { vector: emb.vector, model: emb.model },
+        })
+      }
+      
+      // Sort by score and take top candidates for expensive operations
+      scoredImages.sort((a, b) => b.baseScore - a.baseScore)
+      const TOP_CANDIDATES = 500 // Process top 500 for reranking
+      const topCandidates = scoredImages.slice(0, TOP_CANDIDATES)
+      
+      // Load site data only for top candidates (reduces database queries significantly)
+      const siteIds = new Set(topCandidates.map(img => img.siteId).filter(Boolean))
+      const sites = siteIds.size > 0 ? await (prisma.site.findMany as any)({
+        where: { id: { in: Array.from(siteIds) } },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          url: true,
+          author: true,
+        },
+      }) : []
+      const siteMap = new Map(sites.map((s: any) => [s.id, s]))
+      
+      // Build images array with site data for top candidates
+      const images = topCandidates.map(img => ({
+        ...img,
+        site: siteMap.get(img.siteId || '') || null,
+      }))
+      
+      console.log(`[search] Processed ${images.length} top candidates (out of ${scoredImages.length} total)`)
+      
+      // 3. CLIP-FIRST: Rank by cosine similarity (already computed above)
+      // Convert scored images to ranked format
+      const ranked = images.map((img: any) => ({
+        imageId: img.id,
+        siteId: img.siteId || '',
+        url: img.url,
+        siteUrl: img.site?.url || '',
+        score: img.score,
+        baseScore: img.baseScore,
+        site: img.site ? {
+          id: img.site.id,
+          title: img.site.title,
+          description: img.site.description,
+          url: img.site.url,
+          imageUrl: img.url,
+          author: img.site.author,
+          tags: [],
+          category: img.category || 'website',
+        } : null,
+      }))
+      
+      // Add remaining candidates (without site data, lower priority)
+      for (const img of scoredImages.slice(TOP_CANDIDATES)) {
         ranked.push({
           imageId: img.id,
-          siteId: (img as any).siteId,
-          url: (img as any).url,
-          siteUrl: img.site.url,
-          score,
-          baseScore,
-          site: {
-            id: img.site.id,
-            title: img.site.title,
-            description: img.site.description,
-            url: img.site.url,
-            imageUrl: (img as any).url,
-            author: img.site.author,
-            tags: [],
-            category: (img as any).category || 'website', // Include category from image
-          },
+          siteId: img.siteId || '',
+          url: img.url,
+          siteUrl: '',
+          score: img.score,
+          baseScore: img.baseScore,
+          site: null, // Will be loaded later if needed
         } as any)
       }
       
-      // Sort by CLIP cosine similarity (primary ranking)
-      ranked.sort((a: any, b: any) => {
-        // Primary: CLIP cosine similarity (baseScore)
-        if (Math.abs(a.baseScore - b.baseScore) > 0.0001) {
-          return b.baseScore - a.baseScore
-        }
-        return 0
-      })
+      if (debug) {
+        // Debug mode: return top results with scores
+        return NextResponse.json({
+          query: q,
+          mode: 'debug',
+          pooling: usePooling,
+          images: ranked.slice(0, 60).map((r: any) => ({
+            imageId: r.imageId,
+            siteUrl: r.siteUrl,
+            score: r.baseScore,
+            contentHash: null,
+            model: 'clip-ViT-L/14',
+          })),
+        })
+      }
       
       // LIGHT RERANK: Apply very small tag-based adjustments (only to top K)
       const TOP_K_FOR_RERANK = 200

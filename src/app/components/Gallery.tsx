@@ -937,9 +937,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Results will be reordered by the useEffect hook when sliderPositions change
       } else {
         // No search query: show all sites (optionally filtered by category)
+        // OPTIMIZATION: Limit initial load to 100 sites for faster page load
         const sitesUrl = category 
-          ? `/api/sites?category=${encodeURIComponent(category)}`
-          : '/api/sites'
+          ? `/api/sites?category=${encodeURIComponent(category)}&limit=100`
+          : '/api/sites?limit=100'
         try {
           const response = await fetch(sitesUrl)
           if (!response.ok) {

@@ -157,13 +157,16 @@ export async function GET(request: NextRequest) {
         whereClause.id = { in: siteIds }
       }
       
+      // OPTIMIZATION: Limit initial load to improve performance
       // Return all sites if no concepts specified
       // Note: tags relationship is legacy/unused - we use Concepts/ImageTags instead
+      const limit = parseInt(searchParams.get('limit') || '100') // Default 100, allow override
       const sites = await prisma.site.findMany({
         where: whereClause,
         orderBy: {
           createdAt: 'desc'
-        }
+        },
+        take: limit, // Limit results for faster initial load
       })
 
       // Fetch first images for these sites as a fallback when site.imageUrl is null
