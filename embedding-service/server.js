@@ -29,12 +29,13 @@ function authenticate(req, res, next) {
   next();
 }
 
-app.use(authenticate);
-
-// Health check
+// Health check (no auth required)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'clip-embeddings' });
 });
+
+// All other routes require auth
+app.use(authenticate);
 
 // Text embeddings endpoint
 app.post('/embed/text', async (req, res) => {
