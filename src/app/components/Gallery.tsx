@@ -56,6 +56,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [resultsVersion, setResultsVersion] = useState(0) // Version counter to trigger reordering when results change
   const [sliderVersion, setSliderVersion] = useState(0) // Version counter to trigger reordering when slider moves
   const loadMoreRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetchSites()
@@ -1557,6 +1558,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           onSuccess={handleSubmissionSuccess}
         />
       )}
+      </div>
 
         {/* Side Panel - slides in from right and pushes content */}
         <div
