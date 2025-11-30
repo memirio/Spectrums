@@ -1,0 +1,10 @@
+# Railway configuration for embedding-service
+# This tells Railway to only build the embedding-service directory
+
+[build]
+builder = "NIXPACKS"
+nixpacksConfigPath = "embedding-service/nixpacks.toml"
+
+[deploy]
+startCommand = "cd embedding-service && node server.js"
+
