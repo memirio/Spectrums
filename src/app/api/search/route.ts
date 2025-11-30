@@ -874,6 +874,8 @@ export async function GET(request: NextRequest) {
       // Deduplicate sites by ID (keep best match per site)
       const siteMap = new Map<string, { site: any; score: number }>()
       for (const r of finalRanked) {
+        // Skip if site is null (remaining candidates without site data)
+        if (!r.site || !r.site.id) continue
         const siteId = r.site.id
         const existing = siteMap.get(siteId)
         if (!existing || r.score > existing.score) {
