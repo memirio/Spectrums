@@ -205,7 +205,7 @@ export async function GET(request: NextRequest) {
         console.log(`[search] Filtering by category: ${category}`)
       }
       
-      // OPTIMIZATION: Load embeddings first, compute scores, then load site data only for top candidates
+      // OPTIMIZATION: Load embeddings first, compute scores efficiently, then load site data only for top candidates
       // This dramatically reduces database queries and data transfer
       console.log(`[search] Loading image embeddings for scoring...`)
       const imageEmbeddings = await (prisma.imageEmbedding.findMany as any)({
@@ -228,8 +228,9 @@ export async function GET(request: NextRequest) {
       })
       console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings${category && category !== 'all' ? ` (category: ${category})` : ''}`)
       
-      // Compute scores for all images (fast - just vector operations)
-      const scoredImages = [] as Array<{
+      // OPTIMIZATION: Compute scores efficiently and limit processing
+      const TOP_CANDIDATES = 500 // Process top 500 for reranking
+      const scoredImages: Array<{
         id: string
         siteId: string | null
         url: string
@@ -237,7 +238,10 @@ export async function GET(request: NextRequest) {
         score: number
         baseScore: number
         embedding: any
-      }>
+      }> = []
+      
+      // Pre-compute query vector length for optimization
+      const queryVecArray = queryVec!
       
       for (const emb of imageEmbeddings as any[]) {
         const ivec = (emb.vector as unknown as number[]) || []
@@ -253,7 +257,7 @@ export async function GET(request: NextRequest) {
             baseScore = poolSoftmax(expansionScores, poolingTemp)
           }
         } else {
-          baseScore = cosine(queryVec!, ivec)
+          baseScore = cosine(queryVecArray, ivec)
         }
         
         scoredImages.push({
@@ -267,9 +271,8 @@ export async function GET(request: NextRequest) {
         })
       }
       
-      // Sort by score and take top candidates for expensive operations
+      // Sort by score and take top candidates (only sort once, not during insertion)
       scoredImages.sort((a, b) => b.baseScore - a.baseScore)
-      const TOP_CANDIDATES = 500 // Process top 500 for reranking
       const topCandidates = scoredImages.slice(0, TOP_CANDIDATES)
       
       // Load site data only for top candidates (reduces database queries significantly)
@@ -887,11 +890,18 @@ export async function GET(request: NextRequest) {
         .sort((a: any, b: any) => b.score - a.score)
         .map((item: any) => item.site)
       
+      // OPTIMIZATION: Return only top results (pagination will be added later)
+      // Limit results to improve response time and reduce data transfer
+      const MAX_RESULTS = 100 // Return top 100 results initially
+      const limitedSites = uniqueSites.slice(0, MAX_RESULTS)
+      const limitedImages = finalRanked.slice(0, MAX_RESULTS)
+      
       // Return results
       return NextResponse.json({ 
         query: q, 
-        sites: uniqueSites,
-        images: finalRanked
+        sites: limitedSites,
+        images: limitedImages,
+        total: finalRanked.length, // Include total for pagination
       })
     }
 

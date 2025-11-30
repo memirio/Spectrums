@@ -113,6 +113,7 @@ model ImageEmbedding {
   image       Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
 
   @@index([contentHash])
+  @@index([imageId]) // Already unique, but explicit index helps with joins
   @@map("image_embeddings")
 }
 
