@@ -107,10 +107,38 @@ export async function loadImageExtractor() {
   return globalThis.__clip_image_extractor!;
 }
 
-/** Text embeddings (CLIP text encoder) with OpenAI fallback */
+/** Text embeddings (CLIP text encoder) with external service fallback */
 export async function embedTextBatch(texts: string[]): Promise<number[][]> {
+  // Try external embedding service first (if configured)
+  const embeddingServiceUrl = process.env.EMBEDDING_SERVICE_URL;
+  const embeddingServiceApiKey = process.env.EMBEDDING_SERVICE_API_KEY;
+  
+  if (embeddingServiceUrl) {
+    try {
+      console.log('[embeddings] Using external embedding service:', embeddingServiceUrl);
+      const response = await fetch(`${embeddingServiceUrl}/embed/text`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(embeddingServiceApiKey && { 'Authorization': `Bearer ${embeddingServiceApiKey}` }),
+        },
+        body: JSON.stringify({ texts }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Embedding service returned ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.embeddings;
+    } catch (error: any) {
+      console.warn('[embeddings] External service failed, trying local CLIP:', error.message);
+      // Fall through to local CLIP
+    }
+  }
+  
   try {
-    // Try CLIP first (works locally)
+    // Try CLIP locally (works in Railway/Fly.io, not Vercel)
     const { tokenizer, model } = await loadClipText();
     const safe = texts.map((t: string) => String(t ?? ''));
     const inputs = await tokenizer(safe, { padding: true, truncation: true } as any);
@@ -125,7 +153,7 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
     }
     return rows;
   } catch (error: any) {
-    // Fallback to OpenAI if CLIP is not available (e.g., in Vercel serverless)
+    // Last resort: OpenAI (but dimension mismatch with CLIP images)
     console.warn('[embeddings] CLIP not available, falling back to OpenAI embeddings:', error.message);
     const { embedTextBatchOpenAI } = await import('./embeddings-openai');
     return embedTextBatchOpenAI(texts);
