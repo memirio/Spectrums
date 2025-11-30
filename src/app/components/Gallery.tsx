@@ -1607,12 +1607,97 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 // This maps to 0% to 100% of the usable track area
                 const handlePositionPercent = clampedPosition * 100
                     
+                    // Shared function to handle both mouse and touch events
+                    const handleSliderStart = (clientX: number, sliderTrack: HTMLElement) => {
+                      // Store the initial track rect and position
+                      const initialTrackRect = sliderTrack.getBoundingClientRect()
+                      const initialPosition = sliderPositions.get(concept) ?? 1.0
+                      
+                      let lastUpdateTime = 0
+                      const throttleDelay = 16 // ~60fps
+                      let lastPosition = initialPosition
+                      
+                      const updatePosition = (currentX: number) => {
+                        const now = Date.now()
+                        if (now - lastUpdateTime < throttleDelay) return
+                        lastUpdateTime = now
+                        
+                        // Calculate delta from initial position
+                        const deltaX = currentX - initialTrackRect.left
+                        // Map to position (0-1)
+                        const newPosition = Math.max(0, Math.min(1, deltaX / initialTrackRect.width))
+                        
+                        // Only update if position changed significantly
+                        if (Math.abs(lastPosition - newPosition) < 0.001) {
+                          return // No change, skip update
+                        }
+                        
+                        lastPosition = newPosition
+                        
+                        // Update position
+                        setSliderPositions(prev => {
+                          const newMap = new Map(prev)
+                          newMap.set(concept, newPosition)
+                          return newMap
+                        })
+                        
+                        // Increment version AFTER state update
+                        requestAnimationFrame(() => {
+                          setSliderVersion(v => v + 1)
+                        })
+                      }
+                      
+                      // Initial click/touch: calculate position from location
+                      const clickPosition = Math.max(0, Math.min(1, (clientX - initialTrackRect.left) / initialTrackRect.width))
+                      
+                      setSliderPositions(prev => {
+                        const currentPos = prev.get(concept) ?? 1.0
+                        if (Math.abs(currentPos - clickPosition) < 0.001) {
+                          return prev // No change
+                        }
+                        const newMap = new Map(prev)
+                        newMap.set(concept, clickPosition)
+                        requestAnimationFrame(() => {
+                          setSliderVersion(v => v + 1)
+                        })
+                        return newMap
+                      })
+                      
+                      // Mouse move handler
+                      const handleMouseMove = (moveEvent: MouseEvent) => {
+                        updatePosition(moveEvent.clientX)
+                      }
+                      
+                      // Touch move handler
+                      const handleTouchMove = (moveEvent: TouchEvent) => {
+                        moveEvent.preventDefault() // Prevent scrolling
+                        if (moveEvent.touches.length > 0) {
+                          updatePosition(moveEvent.touches[0].clientX)
+                        }
+                      }
+                      
+                      // Cleanup handlers
+                      const handleEnd = () => {
+                        document.removeEventListener('mousemove', handleMouseMove)
+                        document.removeEventListener('mouseup', handleEnd)
+                        document.removeEventListener('touchmove', handleTouchMove)
+                        document.removeEventListener('touchend', handleEnd)
+                        document.removeEventListener('touchcancel', handleEnd)
+                      }
+                      
+                      // Add event listeners
+                      document.addEventListener('mousemove', handleMouseMove)
+                      document.addEventListener('mouseup', handleEnd)
+                      document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                      document.addEventListener('touchend', handleEnd)
+                      document.addEventListener('touchcancel', handleEnd)
+                    }
+                    
                     const handleSliderMouseDown = (e: React.MouseEvent) => {
                       e.preventDefault()
                       e.stopPropagation()
                       
-                      // Find the actual slider track element (the gray bar with bg-gray-300)
-                      // The track is the element with class 'bg-gray-300' and 'w-32'
+                      // Find the actual slider track element
                       let sliderTrack = e.currentTarget as HTMLElement
                       if (!sliderTrack.classList.contains('bg-gray-300')) {
                         sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
@@ -1623,90 +1708,27 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                         return
                       }
                       
+                      handleSliderStart(e.clientX, sliderTrack)
+                    }
+                    
+                    const handleSliderTouchStart = (e: React.TouchEvent) => {
+                      e.preventDefault()
+                      e.stopPropagation()
                       
-                      // Store the initial track rect and mouse position when mouse down happens
-                      const initialTrackRect = sliderTrack.getBoundingClientRect()
-                      const initialMouseX = e.clientX
-                      const initialPosition = sliderPositions.get(concept) ?? 1.0
-                      
-                      let lastUpdateTime = 0
-                      const throttleDelay = 16 // ~60fps
-                      let lastPosition = initialPosition
-                      
-                      const handleMouseMove = (moveEvent: MouseEvent) => {
-                        const now = Date.now()
-                        if (now - lastUpdateTime < throttleDelay) return
-                        lastUpdateTime = now
-                        
-                        // Calculate delta from initial mouse position
-                        const deltaX = moveEvent.clientX - initialMouseX
-                        // Map delta to position change (delta / track width)
-                        const positionDelta = deltaX / initialTrackRect.width
-                        // Calculate new position based on initial position + delta
-                        const newPosition = Math.max(0, Math.min(1, initialPosition + positionDelta))
-                        
-                        // Calculate which stop this position would be
-                        // First half (0-50%) maps to stops 1-5, second half (50-100%) maps to stops 6-10
-                        let calculatedStop: number
-                        if (newPosition < 0.5) {
-                          // Left half: map 0.0-0.5 to stops 1-5
-                          calculatedStop = Math.min(5, Math.max(1, Math.floor(newPosition * 10) + 1))
-                        } else {
-                          // Right half: map 0.5-1.0 to stops 6-10
-                          calculatedStop = Math.min(10, Math.max(6, Math.floor((newPosition - 0.5) * 10) + 6))
-                        }
-                        console.log(`[POSITION DEBUG] Mouse move - clientX: ${moveEvent.clientX.toFixed(1)}, initialMouseX: ${initialMouseX.toFixed(1)}, deltaX: ${deltaX.toFixed(1)}, trackWidth: ${initialTrackRect.width.toFixed(1)}, positionDelta: ${positionDelta.toFixed(3)}, initialPosition: ${initialPosition.toFixed(3)}, newPosition: ${newPosition.toFixed(3)} (${(newPosition * 100).toFixed(1)}%), stop: ${calculatedStop}`)
-                        
-                        // Only update if position changed significantly
-                        if (Math.abs(lastPosition - newPosition) < 0.001) {
-                          return // No change, skip update
-                        }
-                        
-                        const oldStop = Math.min(10, Math.max(1, Math.floor(lastPosition * 10) + 1))
-                        if (oldStop !== calculatedStop) {
-                          console.log(`[POSITION DEBUG] Position changed: ${(lastPosition * 100).toFixed(1)}% (stop ${oldStop}) -> ${(newPosition * 100).toFixed(1)}% (stop ${calculatedStop})`)
-                        }
-                        lastPosition = newPosition
-                        
-                        // Update position
-                        setSliderPositions(prev => {
-                          const newMap = new Map(prev)
-                          newMap.set(concept, newPosition)
-                          return newMap
-                        })
-                        
-                        // Increment version AFTER state update, using requestAnimationFrame to prevent loops
-                        requestAnimationFrame(() => {
-                          setSliderVersion(v => v + 1)
-                        })
+                      // Find the actual slider track element
+                      let sliderTrack = e.currentTarget as HTMLElement
+                      if (!sliderTrack.classList.contains('bg-gray-300')) {
+                        sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
                       }
                       
-                      const handleMouseUp = () => {
-                        document.removeEventListener('mousemove', handleMouseMove)
-                        document.removeEventListener('mouseup', handleMouseUp)
+                      if (!sliderTrack) {
+                        console.error('[Slider] Could not find slider track element')
+                        return
                       }
                       
-                      document.addEventListener('mousemove', handleMouseMove)
-                      document.addEventListener('mouseup', handleMouseUp)
-                      
-                      // Initial click: calculate position from click location
-                      const clickX = e.clientX - initialTrackRect.left
-                      const clickPosition = Math.max(0, Math.min(1, clickX / initialTrackRect.width))
-                      
-                      // Update position if it changed
-                      setSliderPositions(prev => {
-                        const currentPos = prev.get(concept) ?? 1.0
-                        if (Math.abs(currentPos - clickPosition) < 0.001) {
-                          return prev // No change
-                        }
-                        const newMap = new Map(prev)
-                        newMap.set(concept, clickPosition)
-                        // Increment version using requestAnimationFrame to prevent loops
-                        requestAnimationFrame(() => {
-                          setSliderVersion(v => v + 1)
-                        })
-                        return newMap
-                      })
+                      if (e.touches.length > 0) {
+                        handleSliderStart(e.touches[0].clientX, sliderTrack)
+                      }
                     }
                     
                     return (
@@ -1718,8 +1740,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                             </div>
                             <div className="flex-1 flex items-center justify-center">
                               <div 
-                                className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer"
+                                className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
                                 onMouseDown={handleSliderMouseDown}
+                                onTouchStart={handleSliderTouchStart}
                               >
                             <div 
                               className="absolute flex items-center justify-center pointer-events-none"
