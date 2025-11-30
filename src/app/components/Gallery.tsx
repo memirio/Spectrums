@@ -1308,11 +1308,17 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm border animate-pulse">
-                <div className="h-48 bg-gray-200 rounded-t-lg"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+              <div key={i}>
+                {/* Image skeleton - matches aspect-[4/3] */}
+                <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200 animate-pulse"></div>
+                {/* Text section skeleton - matches py-2 structure */}
+                <div className="py-2">
+                  <div className="flex items-center justify-between gap-2">
+                    {/* Title skeleton - flex-1, text-xs size */}
+                    <div className="h-3 bg-gray-200 rounded flex-1 animate-pulse"></div>
+                    {/* Category badge skeleton - matches badge size */}
+                    <div className="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
                 </div>
               </div>
             ))}
