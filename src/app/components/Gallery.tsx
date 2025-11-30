@@ -1309,15 +1309,21 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
               <div key={i}>
-                {/* Image skeleton - matches aspect-[4/3] */}
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200 animate-pulse"></div>
+                {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
+                <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-100">
+                  <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+                </div>
                 {/* Text section skeleton - matches py-2 structure */}
                 <div className="py-2">
                   <div className="flex items-center justify-between gap-2">
                     {/* Title skeleton - flex-1, text-xs size */}
-                    <div className="h-3 bg-gray-200 rounded flex-1 animate-pulse"></div>
+                    <div className="relative h-3 bg-gray-100 rounded flex-1 overflow-hidden">
+                      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+                    </div>
                     {/* Category badge skeleton - matches badge size */}
-                    <div className="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+                    <div className="relative h-5 w-16 bg-gray-100 rounded overflow-hidden">
+                      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
+                    </div>
                   </div>
                 </div>
               </div>
