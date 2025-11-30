@@ -1296,6 +1296,131 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         onSubmitClick={() => setShowSubmissionForm(true)}
       />
       
+      {/* Searchbar - At the top */}
+      <div className="bg-[#fbf9f4] border-b border-gray-300">
+        <div className="max-w-full mx-auto px-4 md:px-[52px] py-4">
+          {/* Selected concept chips - above search bar */}
+          <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-2 relative z-20">
+          {selectedConcepts.length > 0 && (
+            <>
+              <button
+                onClick={clearAllConcepts}
+                className="text-sm text-gray-500 hover:text-gray-700 mr-2"
+              >
+                Clear all
+              </button>
+              {selectedConcepts.some(concept => !customConcepts.has(concept)) && (
+                <button
+                  type="button"
+                  onClick={() => setIsPanelOpen(!isPanelOpen)}
+                  className="magical-glow inline-flex items-center justify-center rounded-full bg-[#fbf9f4] text-gray-900 px-1.5 py-1 text-sm font-medium relative z-10"
+                  aria-label="Suggested concepts"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C12.5523 2 13 2.44772 13 3V4.36816C14.8993 5.23659 17.3882 5.99996 19 6H21C21.5523 6 22 6.44772 22 7C22 7.55228 21.5523 8 21 8H20.0684L22.9375 15.6484C23.0935 16.0643 22.956 16.5333 22.6006 16.7998C21.562 17.5784 20.299 17.9999 19.001 18C17.7028 17.9999 16.4391 17.5785 15.4004 16.7998C15.0452 16.5334 14.9076 16.0642 15.0635 15.6484L17.957 7.92969C16.386 7.74156 14.556 7.18366 13 6.5459V20H17C17.5523 20 18 20.4477 18 21C18 21.5523 17.5523 22 17 22H7C6.44778 21.9999 6 21.5522 6 21C6 20.4478 6.44778 20.0001 7 20H11V6.5459C9.4436 7.18379 7.61321 7.74172 6.04199 7.92969L8.9375 15.6484C9.09352 16.0643 8.95599 16.5333 8.60059 16.7998C7.56199 17.5784 6.299 17.9999 5.00098 18C3.7028 17.9999 2.43907 17.5785 1.40039 16.7998C1.0452 16.5334 0.907615 16.0642 1.06348 15.6484L3.93164 8H3C2.44778 7.99992 2 7.55224 2 7C2 6.44777 2.44778 6.00008 3 6H5C6.61174 6 9.10065 5.23657 11 4.36816V3C11 2.44776 11.4478 2.00008 12 2ZM3.22461 15.5811C3.77402 15.8533 4.38127 15.9999 5.00098 16C5.62023 15.9999 6.22631 15.853 6.77539 15.5811L5 10.8477L3.22461 15.5811ZM17.2246 15.5811C17.774 15.8533 18.3813 15.9999 19.001 16C19.6202 15.9999 20.2263 15.853 20.7754 15.5811L19 10.8477L17.2246 15.5811Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              )}
+              {selectedConcepts.map((concept) => (
+                <span
+                  key={concept}
+                  className="inline-flex items-center gap-1 rounded-full bg-[#fbf9f4] text-gray-900 px-3 py-1 text-sm relative z-0 font-medium border-2 border-gray-300"
+                >
+                  {concept}
+                  <button
+                    onClick={() => removeConcept(concept)}
+                    className="ml-1 text-gray-400 hover:text-gray-600 relative z-10 text-base leading-none"
+                    aria-label={`Remove ${concept}`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </>
+          )}
+          </div>
+
+          <div className="border border-gray-300 rounded-md p-2 relative z-20">
+            <div className="flex flex-col gap-2">
+              <div className="flex-1 min-w-[220px] relative">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => {
+                    setShowSuggestions(inputValue.length > 0 || conceptSuggestions.length > 0)
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      setShowSuggestions(false)
+                    }, 200)
+                  }}
+                  placeholder="Add search concepts (e.g., playful, 3d, minimalistic)"
+                  className="w-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
+                  id="search-input"
+                  style={{ height: '40px' }}
+                />
+                
+                {/* Autocomplete suggestions dropdown - show below input when at top */}
+                {showSuggestions && conceptSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                    {conceptSuggestions.map((suggestion, index) => (
+                      <button
+                        key={`${suggestion.id}-${index}`}
+                        onClick={() => handleSuggestionSelect(suggestion)}
+                        className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                          selectedSuggestionIndex === index
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {suggestion.displayText || suggestion.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Fallback: show typed value if no suggestions but input has value */}
+                {showSuggestions && conceptSuggestions.length === 0 && inputValue.trim() && !selectedConcepts.includes(inputValue.trim()) && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                  <button
+                    onClick={() => addConcept(inputValue.trim(), true)} // Custom tag
+                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                  >
+                    Add "{inputValue.trim()}"
+                  </button>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => {
+                  if (inputValue.trim()) {
+                    addConcept(inputValue.trim(), true) // Custom tag
+                  }
+                }}
+                disabled={!inputValue.trim()}
+                className="bg-gray-900 text-white rounded-md hover:bg-gray-900 transition-colors disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center self-end"
+                style={{ width: '40px', height: '40px' }}
+                aria-label="Add concept"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Main Content and Panel Container */}
       <div className="flex">
         {/* Main Content - shifts when panel opens */}
@@ -1303,7 +1428,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
 
           {/* Gallery Grid */}
-          <main className="bg-transparent pb-32">
+          <main className="bg-transparent pb-8">
             <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1432,141 +1557,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           onSuccess={handleSubmissionSuccess}
         />
       )}
-
-          {/* Searchbar - Fixed at bottom */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#fbf9f4] z-50 pb-8">
-            <div className="max-w-full mx-auto px-4 md:px-[52px] relative overflow-visible border-t border-gray-300">
-          {/* Selected concept chips - above search bar */}
-          <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-1 relative z-20">
-          {selectedConcepts.length > 0 && (
-            <>
-              <button
-                onClick={clearAllConcepts}
-                className="text-sm text-gray-500 hover:text-gray-700 mr-2"
-              >
-                Clear all
-              </button>
-              {selectedConcepts.some(concept => !customConcepts.has(concept)) && (
-                <button
-                  type="button"
-                  onClick={() => setIsPanelOpen(!isPanelOpen)}
-                  className="magical-glow inline-flex items-center justify-center rounded-full bg-[#fbf9f4] text-gray-900 px-1.5 py-1 text-sm font-medium relative z-10"
-                  aria-label="Suggested concepts"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C12.5523 2 13 2.44772 13 3V4.36816C14.8993 5.23659 17.3882 5.99996 19 6H21C21.5523 6 22 6.44772 22 7C22 7.55228 21.5523 8 21 8H20.0684L22.9375 15.6484C23.0935 16.0643 22.956 16.5333 22.6006 16.7998C21.562 17.5784 20.299 17.9999 19.001 18C17.7028 17.9999 16.4391 17.5785 15.4004 16.7998C15.0452 16.5334 14.9076 16.0642 15.0635 15.6484L17.957 7.92969C16.386 7.74156 14.556 7.18366 13 6.5459V20H17C17.5523 20 18 20.4477 18 21C18 21.5523 17.5523 22 17 22H7C6.44778 21.9999 6 21.5522 6 21C6 20.4478 6.44778 20.0001 7 20H11V6.5459C9.4436 7.18379 7.61321 7.74172 6.04199 7.92969L8.9375 15.6484C9.09352 16.0643 8.95599 16.5333 8.60059 16.7998C7.56199 17.5784 6.299 17.9999 5.00098 18C3.7028 17.9999 2.43907 17.5785 1.40039 16.7998C1.0452 16.5334 0.907615 16.0642 1.06348 15.6484L3.93164 8H3C2.44778 7.99992 2 7.55224 2 7C2 6.44777 2.44778 6.00008 3 6H5C6.61174 6 9.10065 5.23657 11 4.36816V3C11 2.44776 11.4478 2.00008 12 2ZM3.22461 15.5811C3.77402 15.8533 4.38127 15.9999 5.00098 16C5.62023 15.9999 6.22631 15.853 6.77539 15.5811L5 10.8477L3.22461 15.5811ZM17.2246 15.5811C17.774 15.8533 18.3813 15.9999 19.001 16C19.6202 15.9999 20.2263 15.853 20.7754 15.5811L19 10.8477L17.2246 15.5811Z" fill="currentColor"/>
-                  </svg>
-                </button>
-              )}
-              {selectedConcepts.map((concept) => (
-                <span
-                  key={concept}
-                  className="inline-flex items-center gap-1 rounded-full bg-[#fbf9f4] text-gray-900 px-3 py-1 text-sm relative z-0 font-medium border-2 border-gray-300"
-                >
-                  {concept}
-                  <button
-                    onClick={() => removeConcept(concept)}
-                    className="ml-1 text-gray-400 hover:text-gray-600 relative z-10 text-base leading-none"
-                    aria-label={`Remove ${concept}`}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </>
-          )}
-          </div>
-
-          <div className="border border-gray-300 rounded-md p-2 relative z-20">
-            <div className="flex flex-col gap-2">
-              <div className="flex-1 min-w-[220px] relative">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  onFocus={() => {
-                    setShowSuggestions(inputValue.length > 0 || conceptSuggestions.length > 0)
-                    // Clear placeholder on focus
-                    const input = document.getElementById('search-input') as HTMLInputElement
-                    if (input) {
-                      input.placeholder = ''
-                    }
-                  }}
-                  onBlur={() => {
-                    setTimeout(() => {
-                      setShowSuggestions(false)
-                      // Restore placeholder on blur if empty
-                      const input = document.getElementById('search-input') as HTMLInputElement
-                      if (input && !inputValue.trim()) {
-                        input.placeholder = 'Add search concepts (e.g., playful, 3d, minimalistic)'
-                      }
-                    }, 200)
-                  }}
-                  placeholder="Add search concepts (e.g., playful, 3d, minimalistic)"
-                  className="w-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
-                  id="search-input"
-                  style={{ height: '40px' }}
-                />
-                
-                {/* Autocomplete suggestions dropdown - show above input when at bottom */}
-                {showSuggestions && conceptSuggestions.length > 0 && (
-                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-                    {conceptSuggestions.map((suggestion, index) => (
-                      <button
-                        key={`${suggestion.id}-${index}`}
-                        onClick={() => handleSuggestionSelect(suggestion)}
-                        className={`w-full px-3 py-2 text-left text-sm transition-colors ${
-                          selectedSuggestionIndex === index
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {suggestion.displayText || suggestion.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Fallback: show typed value if no suggestions but input has value */}
-                {showSuggestions && conceptSuggestions.length === 0 && inputValue.trim() && !selectedConcepts.includes(inputValue.trim()) && (
-                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                  <button
-                    onClick={() => addConcept(inputValue.trim(), true)} // Custom tag
-                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-                  >
-                    Add "{inputValue.trim()}"
-                  </button>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => {
-                  if (inputValue.trim()) {
-                    addConcept(inputValue.trim(), true) // Custom tag
-                  }
-                }}
-                disabled={!inputValue.trim()}
-                className="bg-gray-900 text-white rounded-md hover:bg-gray-900 transition-colors disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center self-end"
-                style={{ width: '40px', height: '40px' }}
-                aria-label="Add concept"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        </div>
-        </div>
 
         {/* Side Panel - slides in from right and pushes content */}
         <div
