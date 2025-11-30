@@ -437,18 +437,8 @@ export async function GET(request: NextRequest) {
         } : null,
       }))
       
-      // Add remaining candidates (without site data, lower priority)
-      for (const img of scoredImages.slice(TOP_CANDIDATES)) {
-        ranked.push({
-          imageId: img.id,
-          siteId: img.siteId || '',
-          url: img.url,
-          siteUrl: '',
-          score: img.score,
-          baseScore: img.baseScore,
-          site: null, // Will be loaded later if needed
-        } as any)
-      }
+      // OPTIMIZATION: Don't add remaining candidates - we already have enough (TOP_CANDIDATES = 200)
+      // This reduces data transfer and processing time
       
       if (debug) {
         // Debug mode: return top results with scores
