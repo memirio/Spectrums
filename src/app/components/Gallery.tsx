@@ -1302,9 +1302,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
 
 
-      {/* Gallery Grid */}
-      <main className="bg-transparent pb-32">
-        <div className="max-w-full mx-auto px-[52px] pt-3 pb-8">
+          {/* Gallery Grid */}
+          <main className="bg-transparent pb-32">
+            <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -1433,9 +1433,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         />
       )}
 
-      {/* Searchbar - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#fbf9f4] z-50 pb-8">
-        <div className="max-w-full mx-auto px-[52px] relative overflow-visible border-t border-gray-300">
+          {/* Searchbar - Fixed at bottom */}
+          <div className="fixed bottom-0 left-0 right-0 bg-[#fbf9f4] z-50 pb-8">
+            <div className="max-w-full mx-auto px-4 md:px-[52px] relative overflow-visible border-t border-gray-300">
           {/* Selected concept chips - above search bar */}
           <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-1 relative z-20">
           {selectedConcepts.length > 0 && (
