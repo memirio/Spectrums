@@ -114,23 +114,24 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   const embeddingServiceApiKey = process.env.EMBEDDING_SERVICE_API_KEY;
   
   if (embeddingServiceUrl) {
-    // Retry logic: Railway might be slow on first request (cold start)
-    const maxRetries = 2;
+    // Retry logic: Railway might be slow on first request (cold start - model loading takes 10-30s)
+    const maxRetries = 3; // Increased retries for cold starts
     let lastError: any = null;
     
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         if (attempt > 0) {
-          console.log(`[embeddings] Retry attempt ${attempt}/${maxRetries} for embedding service`);
-          // Wait before retry (exponential backoff)
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          // Exponential backoff: 5s, 10s, 15s (Railway cold starts can take 20-30s)
+          const delay = 5000 * attempt;
+          console.log(`[embeddings] Retry attempt ${attempt}/${maxRetries} for embedding service (waiting ${delay}ms for cold start...)`);
+          await new Promise(resolve => setTimeout(resolve, delay));
         } else {
           console.log('[embeddings] Using external embedding service:', embeddingServiceUrl);
         }
         
-        // Create AbortController for timeout
+        // Create AbortController for timeout (45s to allow for cold starts)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout for cold starts
         
         try {
           const response = await fetch(`${embeddingServiceUrl}/embed/text`, {
@@ -146,9 +147,15 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
           clearTimeout(timeoutId);
           
           if (!response.ok) {
-            // 502 Bad Gateway often means service is starting up - retry
+            // 502 Bad Gateway often means service is starting up - retry with longer delay
             if (response.status === 502 && attempt < maxRetries) {
-              console.warn(`[embeddings] Service returned 502 (likely cold start), will retry...`);
+              console.warn(`[embeddings] Service returned 502 (likely cold start), will retry with longer delay...`);
+              lastError = new Error(`Embedding service returned ${response.status}`);
+              continue;
+            }
+            // 503 Service Unavailable also indicates startup
+            if (response.status === 503 && attempt < maxRetries) {
+              console.warn(`[embeddings] Service returned 503 (service unavailable), will retry...`);
               lastError = new Error(`Embedding service returned ${response.status}`);
               continue;
             }
@@ -165,7 +172,13 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
         } catch (fetchError: any) {
           clearTimeout(timeoutId);
           if (fetchError.name === 'AbortError') {
-            throw new Error('Embedding service request timed out after 30s');
+            // Timeout - might be cold start, retry if attempts remaining
+            if (attempt < maxRetries) {
+              console.warn(`[embeddings] Request timed out (likely cold start), will retry...`);
+              lastError = fetchError;
+              continue;
+            }
+            throw new Error('Embedding service request timed out after 45s');
           }
           throw fetchError;
         }
@@ -175,8 +188,14 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
         if (error.message?.includes('401') || error.message?.includes('400') || error.message?.includes('422')) {
           throw error;
         }
-        // Retry on network/timeout/502 errors
-        if (attempt < maxRetries && (error.message?.includes('timeout') || error.message?.includes('502') || error.message?.includes('fetch'))) {
+        // Retry on network/timeout/502/503 errors
+        if (attempt < maxRetries && (
+          error.message?.includes('timeout') || 
+          error.message?.includes('502') || 
+          error.message?.includes('503') ||
+          error.message?.includes('fetch') ||
+          error.message?.includes('ECONNREFUSED')
+        )) {
           continue;
         }
         // If last attempt, log and fall through
