@@ -206,31 +206,121 @@ export async function GET(request: NextRequest) {
         console.log(`[search] Filtering by category: ${category}`)
       }
       
-      // OPTIMIZATION: Load embeddings first, compute scores efficiently, then load site data only for top candidates
-      // This dramatically reduces database queries and data transfer
-      console.log(`[search] Loading image embeddings for scoring...`)
-      const imageEmbeddings = await (prisma.imageEmbedding.findMany as any)({
-        where: {
-          image: whereClause, // Filter by category through image relation
-        },
-        select: {
-          imageId: true,
-          vector: true,
-          model: true,
-          image: {
+      // OPTIMIZATION: Use pgvector for fast approximate nearest neighbor search
+      // This dramatically reduces computation by only loading top K candidates
+      console.log(`[search] Using pgvector for similarity search...`)
+      
+      // Convert query vector to pgvector format
+      const queryVectorStr = '[' + queryVec!.join(',') + ']'
+      
+      // Use pgvector similarity search (cosine distance: 1 - cosine similarity)
+      // We'll get top 500 candidates directly from the database
+      const TOP_CANDIDATES = 500
+      
+      let imageEmbeddings: any[] = []
+      
+      try {
+        // Check if pgvector is available (vector column exists and is not JSON)
+        const pgvectorAvailable = await prisma.$queryRaw<[{ exists: boolean }]>`
+          SELECT EXISTS (
+            SELECT 1 
+            FROM information_schema.columns 
+            WHERE table_name = 'image_embeddings' 
+            AND column_name = 'vector'
+            AND data_type = 'USER-DEFINED'
+            AND udt_name = 'vector'
+          ) as exists
+        `
+        
+        if (pgvectorAvailable[0].exists) {
+          // Use pgvector for fast ANN search
+          console.log(`[search] pgvector available - using fast similarity search`)
+          
+          const categoryFilter = category && category !== 'all' 
+            ? `AND i.category = '${category.replace(/'/g, "''")}'`
+            : ''
+          
+          const pgvectorResults = await prisma.$queryRawUnsafe<any[]>(`
+            SELECT 
+              ie."imageId",
+              ie.model,
+              ie.vector,
+              1 - (ie.vector <=> $1::vector) as similarity,
+              i.id,
+              i."siteId",
+              i.url,
+              i.category
+            FROM "image_embeddings" ie
+            JOIN "images" i ON i.id = ie."imageId"
+            WHERE ie.vector IS NOT NULL
+            ${categoryFilter}
+            ORDER BY ie.vector <=> $1::vector
+            LIMIT $2
+          `, queryVectorStr, TOP_CANDIDATES)
+          
+          // Transform results to match expected format
+          imageEmbeddings = pgvectorResults.map((row: any) => ({
+            imageId: row.imageId,
+            model: row.model,
+            vector: row.vector, // pgvector returns as array-like
+            image: {
+              id: row.id,
+              siteId: row.siteId,
+              url: row.url,
+              category: row.category || 'website',
+            },
+            similarity: row.similarity, // Pre-computed similarity
+          }))
+          
+          console.log(`[search] Loaded ${imageEmbeddings.length} top candidates via pgvector${category && category !== 'all' ? ` (category: ${category})` : ''}`)
+        } else {
+          // Fallback to loading all embeddings (old method)
+          console.log(`[search] pgvector not available - falling back to full scan`)
+          imageEmbeddings = await (prisma.imageEmbedding.findMany as any)({
+            where: {
+              image: whereClause,
+            },
             select: {
-              id: true,
-              siteId: true,
-              url: true,
-              category: true,
+              imageId: true,
+              vector: true,
+              model: true,
+              image: {
+                select: {
+                  id: true,
+                  siteId: true,
+                  url: true,
+                  category: true,
+                },
+              },
+            },
+          })
+          console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings${category && category !== 'all' ? ` (category: ${category})` : ''}`)
+        }
+      } catch (error: any) {
+        // If pgvector query fails, fallback to old method
+        console.warn(`[search] pgvector query failed, falling back:`, error.message)
+        imageEmbeddings = await (prisma.imageEmbedding.findMany as any)({
+          where: {
+            image: whereClause,
+          },
+          select: {
+            imageId: true,
+            vector: true,
+            model: true,
+            image: {
+              select: {
+                id: true,
+                siteId: true,
+                url: true,
+                category: true,
+              },
             },
           },
-        },
-      })
-      console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings${category && category !== 'all' ? ` (category: ${category})` : ''}`)
+        })
+        console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings (fallback)`)
+      }
       
-      // OPTIMIZATION: Compute scores efficiently and limit processing
-      const TOP_CANDIDATES = 500 // Process top 500 for reranking
+      // OPTIMIZATION: Use pre-computed similarity if available (pgvector), otherwise compute
       const scoredImages: Array<{
         id: string
         siteId: string | null
@@ -245,20 +335,26 @@ export async function GET(request: NextRequest) {
       const queryVecArray = queryVec!
       
       for (const emb of imageEmbeddings as any[]) {
-        const ivec = (emb.vector as unknown as number[]) || []
-        if (ivec.length !== dim) continue
-        
-        // PRIMARY: CLIP cosine similarity
         let baseScore: number
-        if (isExpanded && expansionEmbeddings) {
-          const expansionScores = expansionEmbeddings.map(expVec => cosine(expVec, ivec))
-          if (usePooling === 'max') {
-            baseScore = poolMax(expansionScores)
-          } else {
-            baseScore = poolSoftmax(expansionScores, poolingTemp)
-          }
+        
+        // If similarity is pre-computed (pgvector), use it
+        if (emb.similarity !== undefined) {
+          baseScore = emb.similarity
         } else {
-          baseScore = cosine(queryVecArray, ivec)
+          // Otherwise compute cosine similarity (fallback)
+          const ivec = (emb.vector as unknown as number[]) || []
+          if (ivec.length !== dim) continue
+          
+          if (isExpanded && expansionEmbeddings) {
+            const expansionScores = expansionEmbeddings.map(expVec => cosine(expVec, ivec))
+            if (usePooling === 'max') {
+              baseScore = poolMax(expansionScores)
+            } else {
+              baseScore = poolSoftmax(expansionScores, poolingTemp)
+            }
+          } else {
+            baseScore = cosine(queryVecArray, ivec)
+          }
         }
         
         scoredImages.push({
@@ -272,9 +368,9 @@ export async function GET(request: NextRequest) {
         })
       }
       
-      // Sort by score and take top candidates (only sort once, not during insertion)
+      // Sort by score (pgvector results are already sorted, but we sort anyway for consistency)
       scoredImages.sort((a, b) => b.baseScore - a.baseScore)
-      const topCandidates = scoredImages.slice(0, TOP_CANDIDATES)
+      const topCandidates = scoredImages // Already limited by pgvector query
       
       // Load site data only for top candidates (reduces database queries significantly)
       const siteIds = new Set(topCandidates.map(img => img.siteId).filter(Boolean))
