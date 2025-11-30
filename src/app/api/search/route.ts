@@ -4,10 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { hasOppositeTags } from '@/lib/concept-opposites'
 import { isAbstractQuery, expandAbstractQuery, expandAndEmbedQuery, getExpansionEmbeddings, poolMax, poolSoftmax } from '@/lib/query-expansion'
 import { logSearchImpressions, type SearchImpression } from '@/lib/interaction-logger'
-
-// Simple in-memory cache for search results (cleared on server restart)
-const searchCache = new Map<string, { results: any; timestamp: number }>()
-const CACHE_TTL = 30000 // 30 seconds cache (short TTL to allow new images to appear)
+import { getCachedSearchResults, cacheSearchResults } from '@/lib/search-cache'
 
 function cosine(a: number[], b: number[]): number {
   const len = Math.min(a.length, b.length)
@@ -909,15 +906,7 @@ export async function GET(request: NextRequest) {
       
       // Cache results (skip for debug mode)
       if (!debug && q) {
-        const cacheKey = `${q}:${category || 'all'}`
-        searchCache.set(cacheKey, { results, timestamp: Date.now() })
-        // Clean up old cache entries (keep cache size reasonable)
-        if (searchCache.size > 100) {
-          const entries = Array.from(searchCache.entries())
-          entries.sort((a, b) => b[1].timestamp - a[1].timestamp)
-          searchCache.clear()
-          entries.slice(0, 50).forEach(([key, value]) => searchCache.set(key, value))
-        }
+        cacheSearchResults(q, category, 100, 0, results)
       }
       
       return NextResponse.json(results)
