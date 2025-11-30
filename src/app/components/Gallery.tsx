@@ -51,8 +51,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     conceptSuggestions: ConceptSuggestion[]
     selectedSuggestionIndex: number
     showSuggestions: boolean
+    isInputVisible: boolean // Track if input is visible or button is shown
   }
   const [spectrums, setSpectrums] = useState<Spectrum[]>([])
+  const [showAddConceptInput, setShowAddConceptInput] = useState(false) // Track if "Add Concept" button should show input
   
   // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
@@ -1024,11 +1026,21 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     setSearchQuery(e.target.value)
   }
 
-  // Main search submit handler
+  // Main search submit handler - uses same logic as before (custom queries) but no concept suggestions
   const handleSearchSubmit = () => {
-    if (searchQuery.trim()) {
-      // TODO: Implement simple text search
-      console.log('Searching for:', searchQuery.trim())
+    const trimmed = searchQuery.trim()
+    if (trimmed) {
+      // Add as custom concept and trigger search (same logic as before, but no concept matching)
+      if (!selectedConcepts.includes(trimmed)) {
+        setSelectedConcepts(prev => [...prev, trimmed])
+        setCustomConcepts(prev => new Set(prev).add(trimmed))
+        setSliderPositions(prev => {
+          const newMap = new Map(prev)
+          newMap.set(trimmed, 1.0) // Default position
+          return newMap
+        })
+      }
+      // Keep the search query visible in the input field
     }
   }
 
@@ -1066,7 +1078,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }, [spectrums.map(s => s.inputValue).join(',')])
 
-  // Add a new spectrum to the drawer
+  // Add a new spectrum to the drawer - shows input field
   const addSpectrum = () => {
     const newSpectrum: Spectrum = {
       id: `spectrum-${Date.now()}`,
@@ -1075,9 +1087,15 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       sliderPosition: 1.0,
       conceptSuggestions: [],
       selectedSuggestionIndex: -1,
-      showSuggestions: false
+      showSuggestions: false,
+      isInputVisible: true // Start with input visible
     }
     setSpectrums(prev => [...prev, newSpectrum])
+  }
+
+  // Show "Add Concept" button input (for the main button)
+  const showAddConceptButtonInput = () => {
+    setShowAddConceptInput(true)
   }
 
   // Remove a spectrum from the drawer
@@ -1110,7 +1128,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             showSuggestions: false,
             conceptSuggestions: [],
             selectedSuggestionIndex: -1,
-            sliderPosition: 1.0 // Default slider position
+            sliderPosition: 1.0, // Default slider position
+            isInputVisible: false // Hide input after selection
           }
         : s
     ))
@@ -1160,7 +1179,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                     showSuggestions: false,
                     conceptSuggestions: [],
                     selectedSuggestionIndex: -1,
-                    sliderPosition: 1.0
+                    sliderPosition: 1.0,
+                    isInputVisible: false // Hide input after Enter
                   }
                 : s
             ))
@@ -1206,7 +1226,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               concept: trimmed,
               inputValue: trimmed,
               showSuggestions: false,
-              sliderPosition: 1.0
+              sliderPosition: 1.0,
+              isInputVisible: false // Hide input after Enter
             }
           : s
       ))
@@ -1232,11 +1253,15 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }
 
-  // Main search keydown handler (simple text search)
+  // Main search keydown handler - same logic as before but no concept suggestions
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       handleSearchSubmit()
+    } else if (e.key === ',' && searchQuery.trim()) {
+      e.preventDefault()
+      handleSearchSubmit()
+      setSearchQuery('') // Clear after comma
     }
   }
 
@@ -1439,13 +1464,76 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         
         {/* Drawer content - scrollable */}
         <div className={`flex-1 overflow-y-auto p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-          {/* Add Spectrum button */}
-          <button
-            onClick={addSpectrum}
-            className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
-          >
-            + Add Spectrum
-          </button>
+          {/* Add Concept button or input */}
+          {!showAddConceptInput ? (
+            <button
+              onClick={showAddConceptButtonInput}
+              className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
+            >
+              + Add Concept
+            </button>
+          ) : (
+            <div className="mb-4">
+              <input
+                type="text"
+                value=""
+                onChange={(e) => {
+                  // Create new spectrum with input
+                  const newSpectrum: Spectrum = {
+                    id: `spectrum-${Date.now()}`,
+                    concept: '',
+                    inputValue: e.target.value,
+                    sliderPosition: 1.0,
+                    conceptSuggestions: [],
+                    selectedSuggestionIndex: -1,
+                    showSuggestions: false,
+                    isInputVisible: true
+                  }
+                  setSpectrums(prev => [...prev, newSpectrum])
+                  setShowAddConceptInput(false)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                    e.preventDefault()
+                    const trimmed = e.currentTarget.value.trim()
+                    const newSpectrum: Spectrum = {
+                      id: `spectrum-${Date.now()}`,
+                      concept: trimmed,
+                      inputValue: trimmed,
+                      sliderPosition: 1.0,
+                      conceptSuggestions: [],
+                      selectedSuggestionIndex: -1,
+                      showSuggestions: false,
+                      isInputVisible: false
+                    }
+                    setSpectrums(prev => [...prev, newSpectrum])
+                    if (!selectedConcepts.includes(trimmed)) {
+                      setSelectedConcepts(prev => [...prev, trimmed])
+                      setCustomConcepts(prev => new Set(prev).add(trimmed))
+                      setSliderPositions(prev => {
+                        const newMap = new Map(prev)
+                        newMap.set(trimmed, 1.0)
+                        return newMap
+                      })
+                    }
+                    setShowAddConceptInput(false)
+                  } else if (e.key === 'Escape') {
+                    setShowAddConceptInput(false)
+                  }
+                }}
+                onBlur={() => {
+                  // If empty, hide input
+                  setTimeout(() => {
+                    if (!showAddConceptInput) return
+                    setShowAddConceptInput(false)
+                  }, 200)
+                }}
+                placeholder="Search for concept..."
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
+                autoFocus
+              />
+            </div>
+          )}
           
           {/* Spectrum list */}
           <div className="space-y-4">
@@ -1456,62 +1544,68 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               
               return (
                 <div key={spectrum.id} className="space-y-2">
-                  {/* Spectrum input field with concept suggestions */}
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={spectrum.inputValue}
-                      onChange={(e) => handleSpectrumInputChange(spectrum.id, e.target.value)}
-                      onKeyDown={(e) => handleSpectrumKeyDown(spectrum.id, e)}
-                      onFocus={() => {
-                        setSpectrums(prev => prev.map(s => 
-                          s.id === spectrum.id 
-                            ? { ...s, showSuggestions: s.inputValue.length > 0 || s.conceptSuggestions.length > 0 }
-                            : s
-                        ))
-                      }}
-                      onBlur={() => {
-                        setTimeout(() => {
+                  {/* Spectrum input field with concept suggestions - only show if isInputVisible */}
+                  {spectrum.isInputVisible && (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={spectrum.inputValue}
+                        onChange={(e) => handleSpectrumInputChange(spectrum.id, e.target.value)}
+                        onKeyDown={(e) => handleSpectrumKeyDown(spectrum.id, e)}
+                        onFocus={() => {
                           setSpectrums(prev => prev.map(s => 
                             s.id === spectrum.id 
-                              ? { ...s, showSuggestions: false }
+                              ? { ...s, showSuggestions: s.inputValue.length > 0 || s.conceptSuggestions.length > 0 }
                               : s
                           ))
-                        }, 200)
-                      }}
-                      placeholder="Search for concept..."
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
-                    />
-                    
-                    {/* Concept suggestions dropdown */}
-                    {spectrum.showSuggestions && spectrum.conceptSuggestions.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-                        {spectrum.conceptSuggestions.map((suggestion, index) => (
-                          <button
-                            key={`${spectrum.id}-${suggestion.id}-${index}`}
-                            onClick={() => handleSpectrumConceptSelect(spectrum.id, suggestion)}
-                            className={`w-full px-3 py-2 text-left text-sm transition-colors ${
-                              spectrum.selectedSuggestionIndex === index
-                                ? 'bg-gray-100 text-gray-900'
-                                : 'text-gray-700 hover:bg-gray-50'
-                            }`}
-                          >
-                            {suggestion.displayText || suggestion.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                        }}
+                        onBlur={() => {
+                          setTimeout(() => {
+                            setSpectrums(prev => prev.map(s => 
+                              s.id === spectrum.id 
+                                ? { ...s, showSuggestions: false }
+                                : s
+                            ))
+                          }, 200)
+                        }}
+                        placeholder="Search for concept..."
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
+                        autoFocus
+                      />
+                      
+                      {/* Concept suggestions dropdown */}
+                      {spectrum.showSuggestions && spectrum.conceptSuggestions.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                          {spectrum.conceptSuggestions.map((suggestion, index) => (
+                            <button
+                              key={`${spectrum.id}-${suggestion.id}-${index}`}
+                              onClick={() => handleSpectrumConceptSelect(spectrum.id, suggestion)}
+                              className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                                spectrum.selectedSuggestionIndex === index
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              {suggestion.displayText || suggestion.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   {/* Spectrum slider - only show if concept is selected */}
                   {spectrum.concept && firstOpposite && (
-                    <div className="flex items-center">
-                      <div className="w-20 p-3 text-left overflow-hidden">
-                        <span className="text-sm text-gray-900 truncate block">{firstOpposite}</span>
+                    <div className="space-y-1">
+                      {/* Labels on top, opposite ends */}
+                      <div className="flex items-center justify-between px-1">
+                        <span className="text-xs text-gray-700 truncate flex-1 text-left pr-2">{firstOpposite}</span>
+                        <span className="text-xs text-gray-700 truncate flex-1 text-right pl-2">{spectrum.concept}</span>
                       </div>
-                      <div className="flex-1 flex items-center justify-center">
+                      {/* Slider */}
+                      <div className="flex items-center justify-center">
                         <div 
-                          className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
+                          className="flex-shrink-0 w-full h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
                           onMouseDown={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
@@ -1704,9 +1798,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                           </div>
                         </div>
                       </div>
-                      <div className="w-20 p-3 overflow-hidden flex justify-end">
-                        <span className="text-sm text-gray-900 truncate block text-right">{spectrum.concept}</span>
-                      </div>
+                      
+                      {/* Add Concept button below slider */}
+                      <button
+                        onClick={addSpectrum}
+                        className="w-full mt-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
+                      >
+                        + Add Concept
+                      </button>
                     </div>
                   )}
                   
