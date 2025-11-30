@@ -1748,11 +1748,16 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           )}
           
           {/* Spectrum list */}
-          <div className="space-y-4">
+          <div className="space-y-10">
             {spectrums.map((spectrum) => {
               const conceptInfo = conceptData.get(spectrum.concept.toLowerCase())
               const opposites = conceptInfo?.opposites || []
               const firstOpposite = opposites.length > 0 ? opposites[0] : null
+              // Check if slider is loading (concept exists but data not yet fetched, or results are loading)
+              const isSliderLoading = spectrum.concept && (
+                (!customConcepts.has(spectrum.concept) && !conceptInfo) || // Concept without data yet
+                loading // Or overall loading state
+              )
               
               return (
                 <div key={spectrum.id} className="space-y-2">
@@ -1809,12 +1814,29 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   {/* Spectrum slider - show different layouts for concept vs custom query */}
                   {spectrum.concept && (
                     <div className="space-y-1">
+                      {/* Skeleton loader while slider is loading */}
+                      {isSliderLoading ? (
+                        <div className="space-y-2">
+                          {/* Skeleton for labels */}
+                          <div className="flex items-center justify-between px-1 mb-4">
+                            <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                            <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                          </div>
+                          {/* Skeleton for slider */}
+                          <div className="flex items-center justify-center">
+                            <div className="w-full h-1 bg-gray-200 rounded-full relative">
+                              <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gray-300 rounded-full"></div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
                       {/* Check if this is a custom concept (single-pole slider) */}
                       {customConcepts.has(spectrum.concept) ? (
                         // Single-pole slider for custom queries
                         <>
                           {/* Label on top, right side only */}
-                          <div className="flex items-center justify-end px-1 mb-2">
+                          <div className="flex items-center justify-end px-1 mb-4">
                             <span className="text-xs text-gray-700 truncate">{spectrum.concept}</span>
                           </div>
                           {/* Single-pole slider (only right half) */}
@@ -2023,7 +2045,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                         // Two-pole slider for concepts with opposites
                         <>
                           {/* Labels on top, opposite ends */}
-                          <div className="flex items-center justify-between px-1 mb-2">
+                          <div className="flex items-center justify-between px-1 mb-4">
                             <span className="text-xs text-gray-700 truncate flex-1 text-left pr-2">{firstOpposite}</span>
                             <span className="text-xs text-gray-700 truncate flex-1 text-right pl-2">{spectrum.concept}</span>
                           </div>
