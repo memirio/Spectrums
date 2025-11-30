@@ -1298,39 +1298,37 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       {/* Left Drawer - Dynamic, max width 280px */}
       <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out relative ${
         isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0'
-      } overflow-hidden`}>
-        <div className="h-full flex flex-col">
-          {/* Logo and collapse button at top of drawer */}
-          <div className="p-4 md:p-6 border-b border-gray-300 flex items-center justify-between">
-            <Link href="/" className="flex items-center">
-              <img src="/Logo.svg" alt="Logo" className="h-6 w-auto" />
-            </Link>
-            <button
-              onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
-              className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
-              aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
+      } overflow-hidden flex flex-col`}>
+        {/* Logo and collapse button at top of drawer - sticky */}
+        <div className="sticky top-0 z-50 bg-[#fbf9f4] p-4 md:p-6 border-b border-gray-300 flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <img src="/Logo.svg" alt="Logo" className="h-6 w-auto" />
+          </Link>
+          <button
+            onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
+            className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
+            aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                {isDrawerCollapsed ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                )}
-              </svg>
-            </button>
-          </div>
-          
-          {/* Drawer content - can add navigation or other content here */}
-          <div className={`flex-1 p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-            {/* Drawer content placeholder - can add navigation, filters, etc. */}
-          </div>
+              {isDrawerCollapsed ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              )}
+            </svg>
+          </button>
+        </div>
+        
+        {/* Drawer content - scrollable */}
+        <div className={`flex-1 overflow-y-auto p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
+          {/* Drawer content placeholder - can add navigation, filters, etc. */}
         </div>
       </div>
 
