@@ -18,24 +18,29 @@ function getPrismaClient(): PrismaClient {
       console.log('[prisma] Using driver adapter to connect to Supabase (no binaries needed)')
       console.log('[prisma] DATABASE_URL starts with:', dbUrl.substring(0, 30))
       
-      // CRITICAL: Reuse pool across serverless invocations to avoid "max clients reached" errors
-      // In Vercel/serverless, each function invocation can create a new instance,
-      // but we must reuse the same Pool to stay within connection limits
+      // ROOT CAUSE FIX: In Vercel serverless, each function invocation is isolated.
+      // globalThis doesn't persist between invocations, so we can't reliably reuse pools.
+      // Instead, we create a minimal pool per invocation that closes connections quickly.
       // 
-      // IMPORTANT: Use Supabase Transaction Pooler (port 6543) instead of Session Pooler (port 5432)
-      // Transaction Pooler allows multiple concurrent connections, Session Pooler only allows 1
-      // Transaction Pooler URL format: postgresql://postgres.PROJECT_REF:[PASSWORD]@aws-REGION.pooler.supabase.com:6543/postgres
+      // IMPORTANT: Use Supabase Transaction Pooler (port 6543) for better concurrency.
+      // Transaction Pooler URL: postgresql://postgres.PROJECT_REF:[PASSWORD]@aws-REGION.pooler.supabase.com:6543/postgres
       const isTransactionPooler = dbUrl.includes(':6543') || dbUrl.includes('pooler.supabase.com')
-      const maxConnections = isTransactionPooler ? 5 : 1 // Transaction Pooler allows more connections
       
+      // For serverless: Use minimal pool size (1 connection per invocation)
+      // Transaction Pooler handles the actual pooling at Supabase's end
+      // Each Vercel function invocation gets its own pool, which is fine because
+      // Transaction Pooler can handle many concurrent connections
       if (!globalForPrisma.pool) {
         globalForPrisma.pool = new Pool({
           connectionString: dbUrl,
-          max: maxConnections,
-          idleTimeoutMillis: 20000, // Close idle connections after 20s
-          connectionTimeoutMillis: 10000, // Timeout after 10s
+          max: 1, // One connection per serverless function invocation
+          min: 0, // Don't keep idle connections
+          idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
+          connectionTimeoutMillis: 5000, // Fail fast if can't connect (5s)
+          // For Transaction Pooler, connections are pooled at Supabase's end
+          // We just need to ensure we don't leak connections
         })
-        console.log(`[prisma] Created new connection pool (max: ${maxConnections}, pooler: ${isTransactionPooler ? 'Transaction' : 'Session'})`)
+        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'})`)
       } else {
         console.log('[prisma] Reusing existing connection pool')
       }
@@ -61,7 +66,12 @@ function getPrismaClient(): PrismaClient {
 
 const prisma = globalForPrisma.prisma ?? getPrismaClient()
 
-// Always reuse the same instance in serverless (Vercel) to avoid connection pool exhaustion
-globalForPrisma.prisma = prisma
+// In serverless, try to reuse but don't rely on it persisting
+// Each invocation may create a new instance, which is fine with Transaction Pooler
+if (process.env.NODE_ENV === 'production') {
+  globalForPrisma.prisma = prisma
+} else {
+  globalForPrisma.prisma = prisma
+}
 
 export { prisma }
