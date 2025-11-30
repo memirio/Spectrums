@@ -39,14 +39,26 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [sites, setSites] = useState<Site[]>([])
   const [allSites, setAllSites] = useState<Site[]>([]) // Store all sites for lazy loading
   const [displayedCount, setDisplayedCount] = useState(50) // Number of sites to display initially
+  // Main search (simple text search, no concepts)
+  const [searchQuery, setSearchQuery] = useState('')
+  
+  // Drawer spectrums (concept-based sliders)
+  interface Spectrum {
+    id: string
+    concept: string
+    inputValue: string
+    sliderPosition: number
+    conceptSuggestions: ConceptSuggestion[]
+    selectedSuggestionIndex: number
+    showSuggestions: boolean
+  }
+  const [spectrums, setSpectrums] = useState<Spectrum[]>([])
+  
+  // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
   const [customConcepts, setCustomConcepts] = useState<Set<string>>(new Set())
-  const [inputValue, setInputValue] = useState('')
   const [loading, setLoading] = useState(true)
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [conceptSuggestions, setConceptSuggestions] = useState<ConceptSuggestion[]>([])
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
   const [clickStartTimes, setClickStartTimes] = useState<Map<string, number>>(new Map())
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [conceptData, setConceptData] = useState<Map<string, { id: string; label: string; opposites: string[] }>>(new Map())
@@ -655,42 +667,43 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     resultsVersion,
   ]) // Use sliderVersion to detect slider changes, resultsVersion to detect result changes
 
-  // Fetch concept suggestions when input changes
-  useEffect(() => {
-    const trimmed = inputValue.trim()
+  // Fetch concept suggestions for a specific spectrum input
+  const fetchSpectrumSuggestions = async (spectrumId: string, query: string) => {
+    const trimmed = query.trim()
     if (!trimmed || trimmed.length < 1) {
-      setConceptSuggestions([])
-      setSelectedSuggestionIndex(-1)
+      setSpectrums(prev => prev.map(s => 
+        s.id === spectrumId 
+          ? { ...s, conceptSuggestions: [], selectedSuggestionIndex: -1, showSuggestions: false }
+          : s
+      ))
       return
     }
 
-    const controller = new AbortController()
-    const timer = setTimeout(async () => {
-      try {
-        const response = await fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`, {
-          signal: controller.signal,
-        })
-        if (!response.ok) {
-          setConceptSuggestions([])
-          return
-        }
-        const data = await response.json()
-        setConceptSuggestions(Array.isArray(data.concepts) ? data.concepts : [])
-        setSelectedSuggestionIndex(-1)
-      } catch (error: any) {
-        // Ignore abort errors (cancelled requests)
-        if (error.name !== 'AbortError') {
-          console.error('Error fetching concept suggestions:', error)
-        }
-        setConceptSuggestions([])
+    try {
+      const response = await fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`)
+      if (!response.ok) {
+        setSpectrums(prev => prev.map(s => 
+          s.id === spectrumId 
+            ? { ...s, conceptSuggestions: [], selectedSuggestionIndex: -1 }
+            : s
+        ))
+        return
       }
-    }, 250) // Debounce for 250ms (slightly increased to reduce API calls)
-
-    return () => {
-      controller.abort()
-      clearTimeout(timer)
+      const data = await response.json()
+      setSpectrums(prev => prev.map(s => 
+        s.id === spectrumId 
+          ? { ...s, conceptSuggestions: Array.isArray(data.concepts) ? data.concepts : [], selectedSuggestionIndex: -1, showSuggestions: true }
+          : s
+      ))
+    } catch (error: any) {
+      console.error('Error fetching concept suggestions:', error)
+      setSpectrums(prev => prev.map(s => 
+        s.id === spectrumId 
+          ? { ...s, conceptSuggestions: [], selectedSuggestionIndex: -1 }
+          : s
+      ))
     }
-  }, [inputValue])
+  }
 
   // Fetch opposite results for a concept
   const fetchOppositeResults = async (concept: string, oppositeLabel: string, categoryParam: string) => {
@@ -1006,13 +1019,210 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setInputValue(value)
-    setShowSuggestions(value.length > 0)
-    setSelectedSuggestionIndex(-1)
+  // Main search input handler (simple text search)
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
   }
 
+  // Main search submit handler
+  const handleSearchSubmit = () => {
+    if (searchQuery.trim()) {
+      // TODO: Implement simple text search
+      console.log('Searching for:', searchQuery.trim())
+    }
+  }
+
+  // Spectrum input change handler
+  const handleSpectrumInputChange = (spectrumId: string, value: string) => {
+    setSpectrums(prev => prev.map(s => 
+      s.id === spectrumId 
+        ? { ...s, inputValue: value }
+        : s
+    ))
+  }
+
+  // Debounce concept suggestions for spectrum inputs
+  useEffect(() => {
+    const timers = new Map<string, NodeJS.Timeout>()
+    
+    spectrums.forEach(spectrum => {
+      const trimmed = spectrum.inputValue.trim()
+      if (trimmed && trimmed.length >= 1) {
+        const timer = setTimeout(() => {
+          fetchSpectrumSuggestions(spectrum.id, trimmed)
+        }, 250)
+        timers.set(spectrum.id, timer)
+      } else {
+        setSpectrums(prev => prev.map(s => 
+          s.id === spectrum.id 
+            ? { ...s, conceptSuggestions: [], selectedSuggestionIndex: -1, showSuggestions: false }
+            : s
+        ))
+      }
+    })
+    
+    return () => {
+      timers.forEach(timer => clearTimeout(timer))
+    }
+  }, [spectrums.map(s => s.inputValue).join(',')])
+
+  // Add a new spectrum to the drawer
+  const addSpectrum = () => {
+    const newSpectrum: Spectrum = {
+      id: `spectrum-${Date.now()}`,
+      concept: '',
+      inputValue: '',
+      sliderPosition: 1.0,
+      conceptSuggestions: [],
+      selectedSuggestionIndex: -1,
+      showSuggestions: false
+    }
+    setSpectrums(prev => [...prev, newSpectrum])
+  }
+
+  // Remove a spectrum from the drawer
+  const removeSpectrum = (spectrumId: string) => {
+    setSpectrums(prev => {
+      const filtered = prev.filter(s => s.id !== spectrumId)
+      // Also remove from selectedConcepts if it was added
+      const spectrum = prev.find(s => s.id === spectrumId)
+      if (spectrum && spectrum.concept) {
+        setSelectedConcepts(prevConcepts => prevConcepts.filter(c => c !== spectrum.concept))
+        setCustomConcepts(prevCustom => {
+          const next = new Set(prevCustom)
+          next.delete(spectrum.concept)
+          return next
+        })
+      }
+      return filtered
+    })
+  }
+
+  // Handle spectrum concept selection (when user selects a concept from suggestions)
+  const handleSpectrumConceptSelect = (spectrumId: string, suggestion: ConceptSuggestion) => {
+    const conceptLabel = suggestion.label
+    setSpectrums(prev => prev.map(s => 
+      s.id === spectrumId 
+        ? { 
+            ...s, 
+            concept: conceptLabel,
+            inputValue: conceptLabel,
+            showSuggestions: false,
+            conceptSuggestions: [],
+            selectedSuggestionIndex: -1,
+            sliderPosition: 1.0 // Default slider position
+          }
+        : s
+    ))
+    
+    // Add to selectedConcepts and trigger search
+    if (!selectedConcepts.includes(conceptLabel)) {
+      setSelectedConcepts(prev => [...prev, conceptLabel])
+      setSliderPositions(prev => {
+        const newMap = new Map(prev)
+        newMap.set(conceptLabel, 1.0) // Default position
+        return newMap
+      })
+    }
+  }
+
+  // Handle spectrum input Enter key (add concept)
+  const handleSpectrumKeyDown = (spectrumId: string, e: React.KeyboardEvent<HTMLInputElement>) => {
+    const spectrum = spectrums.find(s => s.id === spectrumId)
+    if (!spectrum) return
+
+    if (spectrum.conceptSuggestions.length > 0) {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        if (spectrum.selectedSuggestionIndex >= 0 && spectrum.selectedSuggestionIndex < spectrum.conceptSuggestions.length) {
+          handleSpectrumConceptSelect(spectrumId, spectrum.conceptSuggestions[spectrum.selectedSuggestionIndex])
+        } else if (spectrum.inputValue.trim()) {
+          const trimmed = spectrum.inputValue.trim()
+          const trimmedLower = trimmed.toLowerCase()
+          const queryId = trimmedLower.replace(/[^a-z0-9]+/g, '-')
+          
+          const exactMatch = spectrum.conceptSuggestions.find((suggestion: ConceptSuggestion) => {
+            const labelLower = suggestion.label.toLowerCase()
+            const idLower = suggestion.id.toLowerCase()
+            return labelLower === trimmedLower || idLower === trimmedLower || idLower === queryId
+          })
+          
+          if (exactMatch) {
+            handleSpectrumConceptSelect(spectrumId, exactMatch)
+          } else {
+            // Add as custom concept
+            setSpectrums(prev => prev.map(s => 
+              s.id === spectrumId 
+                ? { 
+                    ...s, 
+                    concept: trimmed,
+                    inputValue: trimmed,
+                    showSuggestions: false,
+                    conceptSuggestions: [],
+                    selectedSuggestionIndex: -1,
+                    sliderPosition: 1.0
+                  }
+                : s
+            ))
+            if (!selectedConcepts.includes(trimmed)) {
+              setSelectedConcepts(prev => [...prev, trimmed])
+              setCustomConcepts(prev => new Set(prev).add(trimmed))
+              setSliderPositions(prev => {
+                const newMap = new Map(prev)
+                newMap.set(trimmed, 1.0)
+                return newMap
+              })
+            }
+          }
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSpectrums(prev => prev.map(s => 
+          s.id === spectrumId 
+            ? { ...s, selectedSuggestionIndex: s.selectedSuggestionIndex < s.conceptSuggestions.length - 1 ? s.selectedSuggestionIndex + 1 : s.selectedSuggestionIndex }
+            : s
+        ))
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSpectrums(prev => prev.map(s => 
+          s.id === spectrumId 
+            ? { ...s, selectedSuggestionIndex: s.selectedSuggestionIndex > 0 ? s.selectedSuggestionIndex - 1 : -1 }
+            : s
+        ))
+      } else if (e.key === 'Escape') {
+        setSpectrums(prev => prev.map(s => 
+          s.id === spectrumId 
+            ? { ...s, showSuggestions: false, conceptSuggestions: [], selectedSuggestionIndex: -1 }
+            : s
+        ))
+      }
+    } else if (e.key === 'Enter' && spectrum.inputValue.trim()) {
+      e.preventDefault()
+      const trimmed = spectrum.inputValue.trim()
+      setSpectrums(prev => prev.map(s => 
+        s.id === spectrumId 
+          ? { 
+              ...s, 
+              concept: trimmed,
+              inputValue: trimmed,
+              showSuggestions: false,
+              sliderPosition: 1.0
+            }
+          : s
+      ))
+      if (!selectedConcepts.includes(trimmed)) {
+        setSelectedConcepts(prev => [...prev, trimmed])
+        setCustomConcepts(prev => new Set(prev).add(trimmed))
+        setSliderPositions(prev => {
+          const newMap = new Map(prev)
+          newMap.set(trimmed, 1.0)
+          return newMap
+        })
+      }
+    }
+  }
+
+  // Legacy addConcept function (kept for backward compatibility)
   const addConcept = (concept: string, isCustom: boolean = false) => {
     const cleaned = concept.trim()
     if (!cleaned || selectedConcepts.includes(cleaned)) return
@@ -1020,112 +1230,13 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     if (isCustom) {
       setCustomConcepts(prev => new Set(prev).add(cleaned))
     }
-    setInputValue('')
-    setShowSuggestions(false)
-    setConceptSuggestions([])
-    setSelectedSuggestionIndex(-1)
   }
 
-  const handleSuggestionSelect = (suggestion: ConceptSuggestion) => {
-    // Use the concept label for search (even if displayText is a synonym)
-    // This ensures synonyms map to their parent concept
-    addConcept(suggestion.label, false) // Not a custom tag - from suggestions
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (conceptSuggestions.length > 0) {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        // If a suggestion is highlighted, select it
-        if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < conceptSuggestions.length) {
-          handleSuggestionSelect(conceptSuggestions[selectedSuggestionIndex])
-        } else if (inputValue.trim()) {
-          // Check if input exactly matches a concept (label or ID) before adding as custom
-          const trimmed = inputValue.trim()
-          const trimmedLower = trimmed.toLowerCase()
-          const queryId = trimmedLower.replace(/[^a-z0-9]+/g, '-')
-          
-          // Find exact match in suggestions
-          const exactMatch = conceptSuggestions.find((suggestion: ConceptSuggestion) => {
-            const labelLower = suggestion.label.toLowerCase()
-            const idLower = suggestion.id.toLowerCase()
-            return labelLower === trimmedLower || idLower === trimmedLower || idLower === queryId
-          })
-          
-          if (exactMatch) {
-            // Auto-select exact match
-            handleSuggestionSelect(exactMatch)
-          } else {
-            // No exact match - add as custom tag
-            addConcept(trimmed, true)
-            setShowSuggestions(false)
-            setConceptSuggestions([])
-            setSelectedSuggestionIndex(-1)
-          }
-        }
-      } else if (e.key === 'Tab') {
-        // Tab to select first suggestion
-        e.preventDefault()
-        if (conceptSuggestions.length > 0) {
-          handleSuggestionSelect(conceptSuggestions[0])
-        }
-      } else if (e.key === 'ArrowDown') {
-        // Arrow down to navigate suggestions
-        e.preventDefault()
-        setSelectedSuggestionIndex(prev => 
-          prev < conceptSuggestions.length - 1 ? prev + 1 : prev
-        )
-      } else if (e.key === 'ArrowUp') {
-        // Arrow up to navigate suggestions
-        e.preventDefault()
-        setSelectedSuggestionIndex(prev => prev > 0 ? prev - 1 : -1)
-      } else if (e.key === ',' && inputValue.trim()) {
-        e.preventDefault()
-        addConcept(inputValue.trim().replace(',', ''), true) // Custom tag
-      } else if (e.key === 'Escape') {
-        setShowSuggestions(false)
-        setConceptSuggestions([])
-        setSelectedSuggestionIndex(-1)
-      }
-    } else {
-      // Fallback to original behavior when no suggestions
-      if (e.key === 'Enter' && inputValue.trim()) {
-        e.preventDefault()
-        // Even without suggestions visible, check if query matches a concept exactly
-        // by fetching concepts API
-        const trimmed = inputValue.trim()
-        fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`)
-          .then(res => res.json())
-          .then(data => {
-            const suggestions = Array.isArray(data.concepts) ? data.concepts : []
-            const trimmedLower = trimmed.toLowerCase()
-            const queryId = trimmedLower.replace(/[^a-z0-9]+/g, '-')
-            
-            const exactMatch = suggestions.find((suggestion: ConceptSuggestion) => {
-              const labelLower = suggestion.label.toLowerCase()
-              const idLower = suggestion.id.toLowerCase()
-              return labelLower === trimmedLower || idLower === trimmedLower || idLower === queryId
-            })
-            
-            if (exactMatch) {
-              addConcept(exactMatch.label, false) // Use concept label
-            } else {
-              addConcept(trimmed, true) // Custom tag
-            }
-          })
-          .catch(() => {
-            // If API fails, add as custom tag
-            addConcept(trimmed, true)
-          })
-      } else if (e.key === 'Tab' && inputValue.trim()) {
-        e.preventDefault()
-        addConcept(inputValue.trim(), true) // Custom tag
-      } else if (e.key === ',' && inputValue.trim()) {
-        e.preventDefault()
-        addConcept(inputValue.trim().replace(',', ''), true) // Custom tag
-      } else if (e.key === 'Escape') {
-        setShowSuggestions(false)
-      }
+  // Main search keydown handler (simple text search)
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSearchSubmit()
     }
   }
 
@@ -1328,7 +1439,290 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         
         {/* Drawer content - scrollable */}
         <div className={`flex-1 overflow-y-auto p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-          {/* Drawer content placeholder - can add navigation, filters, etc. */}
+          {/* Add Spectrum button */}
+          <button
+            onClick={addSpectrum}
+            className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
+          >
+            + Add Spectrum
+          </button>
+          
+          {/* Spectrum list */}
+          <div className="space-y-4">
+            {spectrums.map((spectrum) => {
+              const conceptInfo = conceptData.get(spectrum.concept.toLowerCase())
+              const opposites = conceptInfo?.opposites || []
+              const firstOpposite = opposites.length > 0 ? opposites[0] : null
+              
+              return (
+                <div key={spectrum.id} className="space-y-2">
+                  {/* Spectrum input field with concept suggestions */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={spectrum.inputValue}
+                      onChange={(e) => handleSpectrumInputChange(spectrum.id, e.target.value)}
+                      onKeyDown={(e) => handleSpectrumKeyDown(spectrum.id, e)}
+                      onFocus={() => {
+                        setSpectrums(prev => prev.map(s => 
+                          s.id === spectrum.id 
+                            ? { ...s, showSuggestions: s.inputValue.length > 0 || s.conceptSuggestions.length > 0 }
+                            : s
+                        ))
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => {
+                          setSpectrums(prev => prev.map(s => 
+                            s.id === spectrum.id 
+                              ? { ...s, showSuggestions: false }
+                              : s
+                          ))
+                        }, 200)
+                      }}
+                      placeholder="Search for concept..."
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
+                    />
+                    
+                    {/* Concept suggestions dropdown */}
+                    {spectrum.showSuggestions && spectrum.conceptSuggestions.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                        {spectrum.conceptSuggestions.map((suggestion, index) => (
+                          <button
+                            key={`${spectrum.id}-${suggestion.id}-${index}`}
+                            onClick={() => handleSpectrumConceptSelect(spectrum.id, suggestion)}
+                            className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                              spectrum.selectedSuggestionIndex === index
+                                ? 'bg-gray-100 text-gray-900'
+                                : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            {suggestion.displayText || suggestion.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Spectrum slider - only show if concept is selected */}
+                  {spectrum.concept && firstOpposite && (
+                    <div className="flex items-center">
+                      <div className="w-20 p-3 text-left overflow-hidden">
+                        <span className="text-sm text-gray-900 truncate block">{firstOpposite}</span>
+                      </div>
+                      <div className="flex-1 flex items-center justify-center">
+                        <div 
+                          className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            const sliderTrack = e.currentTarget
+                            const handleSliderStart = (clientX: number) => {
+                              const initialTrackRect = sliderTrack.getBoundingClientRect()
+                              const initialPosition = spectrum.sliderPosition
+                              
+                              let lastUpdateTime = 0
+                              const throttleDelay = 16
+                              let lastPosition = initialPosition
+                              
+                              const updatePosition = (currentX: number) => {
+                                const now = Date.now()
+                                if (now - lastUpdateTime < throttleDelay) return
+                                lastUpdateTime = now
+                                
+                                const deltaX = currentX - initialTrackRect.left
+                                const newPosition = Math.max(0, Math.min(1, deltaX / initialTrackRect.width))
+                                
+                                if (Math.abs(lastPosition - newPosition) < 0.001) return
+                                
+                                lastPosition = newPosition
+                                
+                                setSpectrums(prev => prev.map(s => 
+                                  s.id === spectrum.id 
+                                    ? { ...s, sliderPosition: newPosition }
+                                    : s
+                                ))
+                                
+                                // Update sliderPositions for backward compatibility
+                                setSliderPositions(prev => {
+                                  const newMap = new Map(prev)
+                                  newMap.set(spectrum.concept, newPosition)
+                                  return newMap
+                                })
+                                
+                                requestAnimationFrame(() => {
+                                  setSliderVersion(v => v + 1)
+                                })
+                              }
+                              
+                              const clickPosition = Math.max(0, Math.min(1, (clientX - initialTrackRect.left) / initialTrackRect.width))
+                              
+                              setSpectrums(prev => prev.map(s => 
+                                s.id === spectrum.id 
+                                  ? { ...s, sliderPosition: clickPosition }
+                                  : s
+                              ))
+                              
+                              setSliderPositions(prev => {
+                                const newMap = new Map(prev)
+                                newMap.set(spectrum.concept, clickPosition)
+                                return newMap
+                              })
+                              
+                              requestAnimationFrame(() => {
+                                setSliderVersion(v => v + 1)
+                              })
+                              
+                              const handleMouseMove = (moveEvent: MouseEvent) => {
+                                updatePosition(moveEvent.clientX)
+                              }
+                              
+                              const handleTouchMove = (moveEvent: TouchEvent) => {
+                                moveEvent.preventDefault()
+                                if (moveEvent.touches.length > 0) {
+                                  updatePosition(moveEvent.touches[0].clientX)
+                                }
+                              }
+                              
+                              const handleEnd = () => {
+                                document.removeEventListener('mousemove', handleMouseMove)
+                                document.removeEventListener('mouseup', handleEnd)
+                                document.removeEventListener('touchmove', handleTouchMove)
+                                document.removeEventListener('touchend', handleEnd)
+                                document.removeEventListener('touchcancel', handleEnd)
+                              }
+                              
+                              document.addEventListener('mousemove', handleMouseMove)
+                              document.addEventListener('mouseup', handleEnd)
+                              document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                              document.addEventListener('touchend', handleEnd)
+                              document.addEventListener('touchcancel', handleEnd)
+                            }
+                            
+                            handleSliderStart(e.clientX)
+                          }}
+                          onTouchStart={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            const sliderTrack = e.currentTarget
+                            if (e.touches.length > 0) {
+                              const handleSliderStart = (clientX: number) => {
+                                const initialTrackRect = sliderTrack.getBoundingClientRect()
+                                const initialPosition = spectrum.sliderPosition
+                                
+                                let lastUpdateTime = 0
+                                const throttleDelay = 16
+                                let lastPosition = initialPosition
+                                
+                                const updatePosition = (currentX: number) => {
+                                  const now = Date.now()
+                                  if (now - lastUpdateTime < throttleDelay) return
+                                  lastUpdateTime = now
+                                  
+                                  const deltaX = currentX - initialTrackRect.left
+                                  const newPosition = Math.max(0, Math.min(1, deltaX / initialTrackRect.width))
+                                  
+                                  if (Math.abs(lastPosition - newPosition) < 0.001) return
+                                  
+                                  lastPosition = newPosition
+                                  
+                                  setSpectrums(prev => prev.map(s => 
+                                    s.id === spectrum.id 
+                                      ? { ...s, sliderPosition: newPosition }
+                                      : s
+                                  ))
+                                  
+                                  setSliderPositions(prev => {
+                                    const newMap = new Map(prev)
+                                    newMap.set(spectrum.concept, newPosition)
+                                    return newMap
+                                  })
+                                  
+                                  requestAnimationFrame(() => {
+                                    setSliderVersion(v => v + 1)
+                                  })
+                                }
+                                
+                                const clickPosition = Math.max(0, Math.min(1, (clientX - initialTrackRect.left) / initialTrackRect.width))
+                                
+                                setSpectrums(prev => prev.map(s => 
+                                  s.id === spectrum.id 
+                                    ? { ...s, sliderPosition: clickPosition }
+                                    : s
+                                ))
+                                
+                                setSliderPositions(prev => {
+                                  const newMap = new Map(prev)
+                                  newMap.set(spectrum.concept, clickPosition)
+                                  return newMap
+                                })
+                                
+                                requestAnimationFrame(() => {
+                                  setSliderVersion(v => v + 1)
+                                })
+                                
+                                const handleMouseMove = (moveEvent: MouseEvent) => {
+                                  updatePosition(moveEvent.clientX)
+                                }
+                                
+                                const handleTouchMove = (moveEvent: TouchEvent) => {
+                                  moveEvent.preventDefault()
+                                  if (moveEvent.touches.length > 0) {
+                                    updatePosition(moveEvent.touches[0].clientX)
+                                  }
+                                }
+                                
+                                const handleEnd = () => {
+                                  document.removeEventListener('mousemove', handleMouseMove)
+                                  document.removeEventListener('mouseup', handleEnd)
+                                  document.removeEventListener('touchmove', handleTouchMove)
+                                  document.removeEventListener('touchend', handleEnd)
+                                  document.removeEventListener('touchcancel', handleEnd)
+                                }
+                                
+                                document.addEventListener('mousemove', handleMouseMove)
+                                document.addEventListener('mouseup', handleEnd)
+                                document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                                document.addEventListener('touchend', handleEnd)
+                                document.addEventListener('touchcancel', handleEnd)
+                              }
+                              
+                              handleSliderStart(e.touches[0].clientX)
+                            }
+                          }}
+                        >
+                          <div 
+                            className="absolute flex items-center justify-center pointer-events-none"
+                            style={{ 
+                              left: `calc(${Math.max(0, Math.min(100, spectrum.sliderPosition * 100))}% - 12px)`, 
+                              top: '50%',
+                              marginTop: '-12px',
+                              width: '24px',
+                              height: '24px'
+                            }}
+                          >
+                            <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-20 p-3 overflow-hidden flex justify-end">
+                        <span className="text-sm text-gray-900 truncate block text-right">{spectrum.concept}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Remove spectrum button */}
+                  {spectrum.concept && (
+                    <button
+                      onClick={() => removeSpectrum(spectrum.id)}
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
@@ -1348,61 +1742,18 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               <input
                 ref={inputRef}
                 type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => {
-                  setShowSuggestions(inputValue.length > 0 || conceptSuggestions.length > 0)
-                }}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setShowSuggestions(false)
-                  }, 200)
-                }}
-                  placeholder="Search for anything..."
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Search for anything..."
                 className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
                 id="search-input"
               />
-              
-              {/* Autocomplete suggestions dropdown - show below input when at top */}
-              {showSuggestions && conceptSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-                  {conceptSuggestions.map((suggestion, index) => (
-                    <button
-                      key={`${suggestion.id}-${index}`}
-                      onClick={() => handleSuggestionSelect(suggestion)}
-                      className={`w-full px-3 py-2 text-left text-sm transition-colors ${
-                        selectedSuggestionIndex === index
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {suggestion.displayText || suggestion.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-              
-              {/* Fallback: show typed value if no suggestions but input has value */}
-              {showSuggestions && conceptSuggestions.length === 0 && inputValue.trim() && !selectedConcepts.includes(inputValue.trim()) && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                <button
-                  onClick={() => addConcept(inputValue.trim(), true)} // Custom tag
-                  className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-                >
-                  Add "{inputValue.trim()}"
-                </button>
-                </div>
-              )}
             </div>
             {/* Icon-only button - 32px tall */}
             <button
-              onClick={() => {
-                if (inputValue.trim()) {
-                  addConcept(inputValue.trim(), true) // Custom tag
-                }
-              }}
-              disabled={!inputValue.trim()}
+              onClick={handleSearchSubmit}
+              disabled={!searchQuery.trim()}
               className="flex items-center justify-center mx-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               style={{ width: '32px', height: '32px' }}
               aria-label="Search"
