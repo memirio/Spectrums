@@ -6,17 +6,22 @@ import { PrismaPg } from '@prisma/adapter-pg'
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 
 function getPrismaClient(): PrismaClient {
+  const dbUrl = process.env.DATABASE_URL || ''
+  
   // For direct PostgreSQL connections (like Supabase), use driver adapter (no binaries needed)
   // This works in serverless environments like Vercel
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.startsWith('prisma://') && !process.env.DATABASE_URL.startsWith('prisma+postgres://')) {
+  if (dbUrl && (dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://'))) {
     try {
       console.log('[prisma] Using driver adapter to connect to Supabase (no binaries needed)')
+      console.log('[prisma] DATABASE_URL starts with:', dbUrl.substring(0, 30))
       const pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
+        connectionString: dbUrl,
         max: 1, // Limit connections for serverless
       })
       const adapter = new PrismaPg(pool)
-      return new PrismaClient({ adapter })
+      const client = new PrismaClient({ adapter })
+      console.log('[prisma] PrismaClient created successfully with adapter')
+      return client
     } catch (error) {
       console.error('[prisma] Failed to create adapter:', error)
       throw new Error(`Failed to initialize Prisma with adapter: ${error}`)
@@ -25,6 +30,8 @@ function getPrismaClient(): PrismaClient {
   
   // Fallback to default client (for local development or if adapter fails)
   console.log('[prisma] Using default PrismaClient')
+  console.log('[prisma] DATABASE_URL type:', typeof process.env.DATABASE_URL)
+  console.log('[prisma] DATABASE_URL starts with:', dbUrl.substring(0, 30))
   return new PrismaClient({
     // log: ['query','error','warn'], // uncomment for debugging
   })
