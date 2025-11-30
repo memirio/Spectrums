@@ -57,6 +57,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [resultsVersion, setResultsVersion] = useState(0) // Version counter to trigger reordering when results change
   const [sliderVersion, setSliderVersion] = useState(0) // Version counter to trigger reordering when slider moves
   const [isDrawerOpen, setIsDrawerOpen] = useState(true) // Drawer open/closed state
+  const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false) // Drawer collapsed state (80px vs 280px)
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -1294,29 +1295,47 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   return (
     <div className="min-h-screen bg-[#fbf9f4] flex">
-      {/* Left Drawer - Dynamic, splits page down the middle */}
+      {/* Left Drawer - Dynamic, max width 280px */}
       <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out relative ${
-        isDrawerOpen ? 'w-1/2' : 'w-0'
+        isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0'
       } overflow-hidden`}>
         <div className="h-full flex flex-col">
-          {/* Logo at top of drawer */}
-          <div className="p-4 md:p-6 border-b border-gray-300">
+          {/* Logo and collapse button at top of drawer */}
+          <div className="p-4 md:p-6 border-b border-gray-300 flex items-center justify-between">
             <Link href="/" className="flex items-center">
               <img src="/Logo.svg" alt="Logo" className="h-6 w-auto" />
             </Link>
+            <button
+              onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
+              className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
+              aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                {isDrawerCollapsed ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                )}
+              </svg>
+            </button>
           </div>
           
           {/* Drawer content - can add navigation or other content here */}
-          <div className="flex-1 p-4 md:p-6">
+          <div className={`flex-1 p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
             {/* Drawer content placeholder - can add navigation, filters, etc. */}
           </div>
         </div>
       </div>
 
       {/* Right Content Area */}
-      <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 ${
-        isDrawerOpen ? 'w-1/2' : 'w-full'
-      }`}>
+      <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
         {/* Header - without logo (logo is now in drawer) */}
         <Header 
           onSubmitClick={() => setShowSubmissionForm(true)}
@@ -1349,47 +1368,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         {/* Searchbar - Sticky at the top */}
         <div className="sticky top-0 bg-[#fbf9f4] z-50">
           <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
-          {/* Selected concept chips - above search bar */}
-          <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-2 relative z-20">
-          {selectedConcepts.length > 0 && (
-            <>
-              <button
-                onClick={clearAllConcepts}
-                className="text-sm text-gray-500 hover:text-gray-700 mr-2"
-              >
-                Clear all
-              </button>
-              {selectedConcepts.some(concept => !customConcepts.has(concept)) && (
-                <button
-                  type="button"
-                  onClick={() => setIsPanelOpen(!isPanelOpen)}
-                  className="magical-glow inline-flex items-center justify-center rounded-full bg-[#fbf9f4] text-gray-900 px-1.5 py-1 text-sm font-medium relative z-10"
-                  aria-label="Suggested concepts"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C12.5523 2 13 2.44772 13 3V4.36816C14.8993 5.23659 17.3882 5.99996 19 6H21C21.5523 6 22 6.44772 22 7C22 7.55228 21.5523 8 21 8H20.0684L22.9375 15.6484C23.0935 16.0643 22.956 16.5333 22.6006 16.7998C21.562 17.5784 20.299 17.9999 19.001 18C17.7028 17.9999 16.4391 17.5785 15.4004 16.7998C15.0452 16.5334 14.9076 16.0642 15.0635 15.6484L17.957 7.92969C16.386 7.74156 14.556 7.18366 13 6.5459V20H17C17.5523 20 18 20.4477 18 21C18 21.5523 17.5523 22 17 22H7C6.44778 21.9999 6 21.5522 6 21C6 20.4478 6.44778 20.0001 7 20H11V6.5459C9.4436 7.18379 7.61321 7.74172 6.04199 7.92969L8.9375 15.6484C9.09352 16.0643 8.95599 16.5333 8.60059 16.7998C7.56199 17.5784 6.299 17.9999 5.00098 18C3.7028 17.9999 2.43907 17.5785 1.40039 16.7998C1.0452 16.5334 0.907615 16.0642 1.06348 15.6484L3.93164 8H3C2.44778 7.99992 2 7.55224 2 7C2 6.44777 2.44778 6.00008 3 6H5C6.61174 6 9.10065 5.23657 11 4.36816V3C11 2.44776 11.4478 2.00008 12 2ZM3.22461 15.5811C3.77402 15.8533 4.38127 15.9999 5.00098 16C5.62023 15.9999 6.22631 15.853 6.77539 15.5811L5 10.8477L3.22461 15.5811ZM17.2246 15.5811C17.774 15.8533 18.3813 15.9999 19.001 16C19.6202 15.9999 20.2263 15.853 20.7754 15.5811L19 10.8477L17.2246 15.5811Z" fill="currentColor"/>
-                  </svg>
-                </button>
-              )}
-              {selectedConcepts.map((concept) => (
-                <span
-                  key={concept}
-                  className="inline-flex items-center gap-1 rounded-full bg-[#fbf9f4] text-gray-900 px-3 py-1 text-sm relative z-0 font-medium border-2 border-gray-300"
-                >
-                  {concept}
-                  <button
-                    onClick={() => removeConcept(concept)}
-                    className="ml-1 text-gray-400 hover:text-gray-600 relative z-10 text-base leading-none"
-                    aria-label={`Remove ${concept}`}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </>
-          )}
-          </div>
-
           {/* Search field container - 52px tall */}
           <div className="border border-gray-300 rounded-md relative z-20 flex items-center" style={{ height: '52px' }}>
             <div className="flex-1 min-w-0 relative h-full">
