@@ -177,8 +177,20 @@ export async function GET(request: NextRequest) {
         } else {
           console.log(`[search] Using direct embedding for concrete term`)
         }
-        const [vec] = await embedTextBatch([q])
-        queryVec = vec
+        try {
+          const [vec] = await embedTextBatch([q])
+          queryVec = vec
+        } catch (error: any) {
+          console.error('[search] Failed to embed query:', error.message)
+          return NextResponse.json(
+            { 
+              error: 'Search temporarily unavailable',
+              message: 'Embedding service is not available in this environment. Please try again later.',
+              details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            },
+            { status: 503 }
+          )
+        }
       }
       const dim = queryVec.length
       

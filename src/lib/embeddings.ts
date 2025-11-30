@@ -71,16 +71,24 @@ async function getPipeline(task: any, modelId?: string) {
 async function loadClipText() {
   try {
     // Lazy load transformers to avoid native library issues in serverless
-    const { AutoTokenizer, CLIPTextModelWithProjection } = await import('@xenova/transformers').catch((err) => {
+    const transformersModule = await import('@xenova/transformers').catch((err) => {
       console.error('[embeddings] Failed to load @xenova/transformers:', err.message);
-      throw new Error('Transformers library not available in this environment');
+      throw new Error(`Transformers library not available in this environment: ${err.message}`);
     });
     
+    const { AutoTokenizer, CLIPTextModelWithProjection } = transformersModule;
+    
     if (!globalThis.__clip_text_tokenizer) {
-      globalThis.__clip_text_tokenizer = await AutoTokenizer.from_pretrained(MODEL_ID);
+      globalThis.__clip_text_tokenizer = await AutoTokenizer.from_pretrained(MODEL_ID).catch((err: any) => {
+        console.error('[embeddings] Failed to load tokenizer:', err.message);
+        throw new Error(`Failed to load CLIP tokenizer: ${err.message}`);
+      });
     }
     if (!globalThis.__clip_text_model) {
-      globalThis.__clip_text_model = await CLIPTextModelWithProjection.from_pretrained(MODEL_ID, { quantized: true });
+      globalThis.__clip_text_model = await CLIPTextModelWithProjection.from_pretrained(MODEL_ID, { quantized: true }).catch((err: any) => {
+        console.error('[embeddings] Failed to load model:', err.message);
+        throw new Error(`Failed to load CLIP model: ${err.message}`);
+      });
     }
     return {
       tokenizer: globalThis.__clip_text_tokenizer!,
@@ -88,6 +96,7 @@ async function loadClipText() {
     };
   } catch (error: any) {
     console.error('[embeddings] Error loading CLIP text model:', error.message);
+    console.error('[embeddings] Full error:', error);
     throw error;
   }
 }
