@@ -284,12 +284,12 @@ export async function GET(request: NextRequest) {
           author: true,
         },
       }) : []
-      const siteMap = new Map(sites.map((s: any) => [s.id, s]))
+      const topCandidatesSiteMap = new Map(sites.map((s: any) => [s.id, s]))
       
       // Build images array with site data for top candidates
       const images = topCandidates.map(img => ({
         ...img,
-        site: siteMap.get(img.siteId || '') || null,
+        site: topCandidatesSiteMap.get(img.siteId || '') || null,
       }))
       
       console.log(`[search] Processed ${images.length} top candidates (out of ${scoredImages.length} total)`)

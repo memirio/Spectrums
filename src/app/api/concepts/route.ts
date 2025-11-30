@@ -218,8 +218,7 @@ export async function GET(request: NextRequest) {
     // We'll check synonyms of the concepts we've already loaded (which should cover most cases)
     // If needed, we could add a separate synonym search, but it's expensive
     
-    // Use the concepts we've already loaded
-    const allConcepts = concepts
+    // Use the concepts we've already loaded (allConcepts is already defined above from cache)
     
     // Build suggestions array with both concepts and their synonyms
     const suggestions: Array<{
@@ -235,6 +234,7 @@ export async function GET(request: NextRequest) {
     const addedConceptIds = new Set<string>()
     
     // OPTIMIZATION: Process concepts with early exits and optimized scoring
+    // Use cached allConcepts for processing (already loaded above)
     for (const concept of allConcepts) {
       // Skip if this concept is an opposite of the query concept
       if (queryConcept && areOpposites(queryConcept.id, concept.id)) {
