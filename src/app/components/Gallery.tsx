@@ -1341,30 +1341,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           onSubmitClick={() => setShowSubmissionForm(true)}
         />
         
-        {/* Drawer toggle button - positioned on drawer's right edge */}
-        <button
-          onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-          className={`absolute top-4 z-50 p-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-all duration-300 ${
-            isDrawerOpen ? 'right-[-16px]' : 'left-4'
-          }`}
-          aria-label={isDrawerOpen ? 'Close drawer' : 'Open drawer'}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            {isDrawerOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            )}
-          </svg>
-        </button>
-        
         {/* Searchbar - Sticky at the top */}
         <div className="sticky top-0 bg-[#fbf9f4] z-50">
           <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
@@ -1385,7 +1361,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                     setShowSuggestions(false)
                   }, 200)
                 }}
-                placeholder="Add search concepts (e.g., playful, 3d, minimalistic)"
+                  placeholder="Search for anything..."
                 className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
                 id="search-input"
               />
