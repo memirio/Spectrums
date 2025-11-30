@@ -2247,6 +2247,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                       </div>
                         </>
                       ) : null}
+                        </>
+                      )}
                     </div>
                   )}
                   
