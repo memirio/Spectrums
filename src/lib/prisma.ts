@@ -20,15 +20,22 @@ function getPrismaClient(): PrismaClient {
       
       // CRITICAL: Reuse pool across serverless invocations to avoid "max clients reached" errors
       // In Vercel/serverless, each function invocation can create a new instance,
-      // but we must reuse the same Pool to stay within Supabase Session Pooler limits (1 connection)
+      // but we must reuse the same Pool to stay within connection limits
+      // 
+      // IMPORTANT: Use Supabase Transaction Pooler (port 6543) instead of Session Pooler (port 5432)
+      // Transaction Pooler allows multiple concurrent connections, Session Pooler only allows 1
+      // Transaction Pooler URL format: postgresql://postgres.PROJECT_REF:[PASSWORD]@aws-REGION.pooler.supabase.com:6543/postgres
+      const isTransactionPooler = dbUrl.includes(':6543') || dbUrl.includes('pooler.supabase.com')
+      const maxConnections = isTransactionPooler ? 5 : 1 // Transaction Pooler allows more connections
+      
       if (!globalForPrisma.pool) {
         globalForPrisma.pool = new Pool({
           connectionString: dbUrl,
-          max: 1, // Session pooler only allows 1 connection
-          idleTimeoutMillis: 30000, // Close idle connections after 30s
-          connectionTimeoutMillis: 5000, // Timeout after 5s
+          max: maxConnections,
+          idleTimeoutMillis: 20000, // Close idle connections after 20s
+          connectionTimeoutMillis: 10000, // Timeout after 10s
         })
-        console.log('[prisma] Created new connection pool')
+        console.log(`[prisma] Created new connection pool (max: ${maxConnections}, pooler: ${isTransactionPooler ? 'Transaction' : 'Session'})`)
       } else {
         console.log('[prisma] Reusing existing connection pool')
       }
