@@ -214,8 +214,8 @@ export async function GET(request: NextRequest) {
       const queryVectorStr = '[' + queryVec!.join(',') + ']'
       
       // Use pgvector similarity search (cosine distance: 1 - cosine similarity)
-      // OPTIMIZATION: Reduce candidates to speed up queries (200 is enough for reranking)
-      const TOP_CANDIDATES = 200
+      // OPTIMIZATION: Reduce candidates to speed up queries (150 is enough for reranking)
+      const TOP_CANDIDATES = 150
       
       let imageEmbeddings: any[] = []
       
