@@ -220,17 +220,24 @@ export async function GET(request: NextRequest) {
       let imageEmbeddings: any[] = []
       
       try {
-        // Check if pgvector is available (vector column exists and is not JSON)
+        // Check if pgvector is available (vector column exists and is pgvector type, not JSON)
         const pgvectorAvailable = await prisma.$queryRaw<[{ exists: boolean }]>`
           SELECT EXISTS (
             SELECT 1 
-            FROM information_schema.columns 
-            WHERE table_name = 'image_embeddings' 
-            AND column_name = 'vector'
-            AND data_type = 'USER-DEFINED'
-            AND udt_name = 'vector'
+            FROM information_schema.columns c
+            JOIN pg_type t ON t.oid = (
+              SELECT atttypid 
+              FROM pg_attribute 
+              WHERE attrelid = (
+                SELECT oid FROM pg_class WHERE relname = 'image_embeddings'
+              ) 
+              AND attname = 'vector'
+            )
+            WHERE c.table_name = 'image_embeddings' 
+            AND c.column_name = 'vector'
+            AND t.typname = 'vector'
           ) as exists
-        `
+        `.catch(() => [{ exists: false }])
         
         if (pgvectorAvailable[0].exists) {
           // Use pgvector for fast ANN search
