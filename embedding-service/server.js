@@ -47,8 +47,8 @@ app.post('/embed/text', async (req, res) => {
     
     console.log(`[embedding-service] Embedding ${texts.length} text(s)`);
     
-    // Lazy load embeddings module
-    const { embedTextBatch } = await import('../src/lib/embeddings.js');
+    // Use standalone embeddings module
+    const { embedTextBatch } = require('./embeddings.js');
     
     const embeddings = await embedTextBatch(texts);
     
@@ -75,13 +75,12 @@ app.post('/embed/image', async (req, res) => {
       return res.status(400).json({ error: 'image is required (base64)' });
     }
     
-    console.log('[embedding-service] Embedding image');
+    console.log('[embedding-service] Image embedding not yet implemented');
+    return res.status(501).json({ error: 'Image embedding endpoint not yet implemented' });
     
-    // Lazy load embeddings module
-    const { embedImageFromBuffer } = await import('../src/lib/embeddings.js');
-    
-    const buffer = Buffer.from(image, 'base64');
-    const result = await embedImageFromBuffer(buffer);
+    // TODO: Implement image embedding
+    // const buffer = Buffer.from(image, 'base64');
+    // const result = await embedImageFromBuffer(buffer);
     
     res.json({
       embedding: result.vector,
