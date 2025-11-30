@@ -36,6 +36,8 @@ interface GalleryProps {
 
 export default function Gallery({ category }: GalleryProps = {} as GalleryProps) {
   const [sites, setSites] = useState<Site[]>([])
+  const [allSites, setAllSites] = useState<Site[]>([]) // Store all sites for lazy loading
+  const [displayedCount, setDisplayedCount] = useState(50) // Number of sites to display initially
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
   const [customConcepts, setCustomConcepts] = useState<Set<string>>(new Set())
   const [inputValue, setInputValue] = useState('')
@@ -53,10 +55,39 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [lastSliderSide, setLastSliderSide] = useState<Map<string, 'left' | 'right'>>(new Map()) // Track which side of 50% we're on
   const [resultsVersion, setResultsVersion] = useState(0) // Version counter to trigger reordering when results change
   const [sliderVersion, setSliderVersion] = useState(0) // Version counter to trigger reordering when slider moves
+  const loadMoreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetchSites()
   }, [])
+
+  // Lazy loading: Update displayed sites when allSites or displayedCount changes
+  useEffect(() => {
+    setSites(allSites.slice(0, displayedCount))
+  }, [allSites, displayedCount])
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && displayedCount < allSites.length) {
+          // Load 50 more sites when user scrolls to bottom
+          setDisplayedCount((prev) => Math.min(prev + 50, allSites.length))
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current)
+      }
+    }
+  }, [displayedCount, allSites.length])
 
   // Fetch concept data with opposites when concepts change (not just when panel opens)
   // This ensures opposites are available for fetching opposite results
@@ -437,12 +468,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       if (deduplicatedResults.length > 0) {
         const newSitesArray = [...deduplicatedResults] // Create new array reference
         console.log(`[FINAL DEBUG] Stop ${stopNumber} - Setting ${newSitesArray.length} sites, first ID: ${newSitesArray[0]?.id.substring(0, 8)}`)
-        setSites(newSitesArray)
+        setAllSites(newSitesArray)
+        setDisplayedCount(50)
       } else if (conceptResultSet.length > 0) {
         // Fallback: if reordering produced no results, use original concept results
         const fallbackArray = [...conceptResultSet].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
         console.log(`[FINAL DEBUG] Using fallback, first ID: ${fallbackArray[0]?.id.substring(0, 8)}`)
-        setSites(fallbackArray)
+        setAllSites(fallbackArray)
+        setDisplayedCount(50)
       }
     } else {
       // Multiple concepts: apply slider-based ranking for each concept, then combine
@@ -608,7 +641,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       console.log(`[MULTI DEBUG] First 10 IDs: ${combinedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
       
       if (combinedResults.length > 0) {
-        setSites(combinedResults)
+        setAllSites(combinedResults)
+        setDisplayedCount(50)
       }
     }
   }, [
@@ -818,10 +852,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           // Increment version to trigger reordering
           setResultsVersion(prev => prev + 1)
           
-          // Display results immediately (will be reordered by useEffect)
+          // Store all sites for lazy loading (will be displayed by useEffect)
           if (deduplicatedSites.length > 0) {
             const sorted = [...deduplicatedSites].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-            setSites(sorted)
+            setAllSites(sorted)
+            setDisplayedCount(50)
           }
           
           // ALWAYS fetch opposite results upfront so both sides work immediately
@@ -930,7 +965,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           )
           if (deduplicatedAllResults.length > 0) {
             const sorted = [...deduplicatedAllResults].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-            setSites(sorted)
+            setAllSites(sorted)
+            setDisplayedCount(50)
           }
         }
         
@@ -946,11 +982,13 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}))
             console.error('Failed response fetching sites', response.status, errorData)
-            setSites([])
+            setAllSites([])
+            setDisplayedCount(50)
             return
           }
           const data = await response.json()
-          setSites(Array.isArray(data.sites) ? data.sites : [])
+          setAllSites(Array.isArray(data.sites) ? data.sites : [])
+          setDisplayedCount(50)
         } catch (error) {
           console.error('Error fetching sites:', error)
           setSites([])
@@ -1349,6 +1387,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   </div>
                 </div>
             ))}
+            {/* Lazy loading trigger - load more when this becomes visible */}
+            {displayedCount < allSites.length && (
+              <div ref={loadMoreRef} className="col-span-full flex justify-center py-8">
+                <div className="text-gray-400 text-sm">Loading more...</div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center py-12">
