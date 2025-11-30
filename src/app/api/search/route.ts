@@ -348,6 +348,7 @@ export async function GET(request: NextRequest) {
       const queryTokens = q.split(/[\s,]+/).filter(Boolean)
       
       // Cache concepts in global scope (cleared on server restart)
+      // Include embeddings and opposites for slider logic
       const globalForConcepts = globalThis as unknown as { concepts?: any[] }
       if (!globalForConcepts.concepts) {
         console.log('[search] Loading concepts into cache...')
@@ -355,6 +356,8 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             label: true,
+            embedding: true,
+            opposites: true,
           },
         })
         console.log(`[search] Cached ${globalForConcepts.concepts.length} concepts`)
