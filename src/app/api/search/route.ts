@@ -214,30 +214,38 @@ export async function GET(request: NextRequest) {
       const queryVectorStr = '[' + queryVec!.join(',') + ']'
       
       // Use pgvector similarity search (cosine distance: 1 - cosine similarity)
-      // We'll get top 500 candidates directly from the database
-      const TOP_CANDIDATES = 500
+      // OPTIMIZATION: Reduce candidates to speed up queries (200 is enough for reranking)
+      const TOP_CANDIDATES = 200
       
       let imageEmbeddings: any[] = []
       
       try {
-        // Check if pgvector is available (vector column exists and is pgvector type, not JSON)
-        const pgvectorAvailable = await prisma.$queryRaw<[{ exists: boolean }]>`
-          SELECT EXISTS (
-            SELECT 1 
-            FROM information_schema.columns c
-            JOIN pg_type t ON t.oid = (
-              SELECT atttypid 
-              FROM pg_attribute 
-              WHERE attrelid = (
-                SELECT oid FROM pg_class WHERE relname = 'image_embeddings'
-              ) 
-              AND attname = 'vector'
-            )
-            WHERE c.table_name = 'image_embeddings' 
-            AND c.column_name = 'vector'
-            AND t.typname = 'vector'
-          ) as exists
-        `.catch(() => [{ exists: false }])
+        // OPTIMIZATION: Cache pgvector availability check (doesn't change during runtime)
+        const globalForPgvector = globalThis as unknown as { pgvectorAvailable?: boolean }
+        let pgvectorAvailable: { exists: boolean }[]
+        
+        if (globalForPgvector.pgvectorAvailable === undefined) {
+          pgvectorAvailable = await prisma.$queryRaw<[{ exists: boolean }]>`
+            SELECT EXISTS (
+              SELECT 1 
+              FROM information_schema.columns c
+              JOIN pg_type t ON t.oid = (
+                SELECT atttypid 
+                FROM pg_attribute 
+                WHERE attrelid = (
+                  SELECT oid FROM pg_class WHERE relname = 'image_embeddings'
+                ) 
+                AND attname = 'vector'
+              )
+              WHERE c.table_name = 'image_embeddings' 
+              AND c.column_name = 'vector'
+              AND t.typname = 'vector'
+            ) as exists
+          `.catch(() => [{ exists: false }])
+          globalForPgvector.pgvectorAvailable = pgvectorAvailable[0].exists
+        } else {
+          pgvectorAvailable = [{ exists: globalForPgvector.pgvectorAvailable }]
+        }
         
         if (pgvectorAvailable[0].exists) {
           // Use pgvector for fast ANN search
@@ -385,9 +393,9 @@ export async function GET(request: NextRequest) {
       scoredImages.sort((a, b) => b.baseScore - a.baseScore)
       const topCandidates = scoredImages // Already limited by pgvector query
       
-      // Load site data only for top candidates (reduces database queries significantly)
+      // OPTIMIZATION: Load site data in parallel with other queries
       const siteIds = new Set(topCandidates.map(img => img.siteId).filter(Boolean))
-      const sites = siteIds.size > 0 ? await (prisma.site.findMany as any)({
+      const sitesPromise = siteIds.size > 0 ? (prisma.site.findMany as any)({
         where: { id: { in: Array.from(siteIds) } },
         select: {
           id: true,
@@ -396,7 +404,8 @@ export async function GET(request: NextRequest) {
           url: true,
           author: true,
         },
-      }) : []
+      }) : Promise.resolve([])
+      const sites = await sitesPromise
       const topCandidatesSiteMap = new Map(sites.map((s: any) => [s.id, s]))
       
       // Build images array with site data for top candidates
@@ -458,7 +467,8 @@ export async function GET(request: NextRequest) {
       }
       
       // LIGHT RERANK: Apply very small tag-based adjustments (only to top K)
-      const TOP_K_FOR_RERANK = 200
+      // OPTIMIZATION: Reduce rerank size to speed up queries
+      const TOP_K_FOR_RERANK = 100
       const topK = ranked.slice(0, TOP_K_FOR_RERANK)
       const remaining = ranked.slice(TOP_K_FOR_RERANK)
       
@@ -516,11 +526,36 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      // 2. Load ImageTags for top K images
+      // OPTIMIZATION: Parallelize all database queries for top K images
       const topKImageIds = topK.map((r: any) => r.imageId)
-      const imageTags = await prisma.imageTag.findMany({
-        where: { imageId: { in: topKImageIds } },
-      })
+      
+      // Load all data in parallel
+      const [imageTags, topKImagesWithHub, popularityMetrics] = await Promise.all([
+        // 2. Load ImageTags
+        prisma.imageTag.findMany({
+          where: { imageId: { in: topKImageIds } },
+        }),
+        // 3. Load hub scores (with error handling)
+        (async () => {
+          try {
+            return await (prisma.image.findMany as any)({
+              where: { id: { in: topKImageIds } },
+              select: { id: true, hubScore: true, hubCount: true, hubAvgCosineSimilarity: true, hubAvgCosineSimilarityMargin: true },
+            })
+          } catch (error: any) {
+            console.warn(`[search] Failed to load hub scores: ${error.message}`)
+            return []
+          }
+        })(),
+        // 4. Get popularity metrics (with error handling)
+        getImagePopularityMetrics(topKImageIds, 20).catch(() => {
+          const emptyMetrics = new Map<string, { showCount: number; clickCount: number; ctr: number }>()
+          for (const imageId of topKImageIds) {
+            emptyMetrics.set(imageId, { showCount: 0, clickCount: 0, ctr: 0 })
+          }
+          return emptyMetrics
+        }),
+      ])
       
       // Group tags by imageId
       const tagsByImage = new Map<string, Map<string, number>>()
@@ -531,30 +566,19 @@ export async function GET(request: NextRequest) {
         tagsByImage.get(tag.imageId)!.set(tag.conceptId, tag.score)
       }
       
-      // 3. Load hub scores for top K images (with error handling)
+      // Build hub scores map
       const hubScoresByImage = new Map<string, { hubScore: number | null; hubCount: number | null; hubAvgCosineSimilarity: number | null; hubAvgCosineSimilarityMargin: number | null }>()
-      try {
-        // Try using Prisma's typed query first (use as any to bypass type checking for new columns)
-        const topKImagesWithHub = await (prisma.image.findMany as any)({
-          where: { id: { in: topKImageIds } },
-          select: { id: true, hubScore: true, hubCount: true, hubAvgCosineSimilarity: true, hubAvgCosineSimilarityMargin: true },
-        })
-        console.log(`[search] Loaded hub scores for ${topKImagesWithHub.length} images`)
-        let hubScoreCount = 0
-        for (const img of topKImagesWithHub) {
-          const hubScore = img.hubScore ?? null
-          const hubCount = img.hubCount ?? null
-          const hubAvgCosineSimilarity = img.hubAvgCosineSimilarity ?? null
-          const hubAvgCosineSimilarityMargin = img.hubAvgCosineSimilarityMargin ?? null
-          if (hubScore !== null) hubScoreCount++
-          hubScoresByImage.set(img.id, { hubScore, hubCount, hubAvgCosineSimilarity, hubAvgCosineSimilarityMargin })
-        }
-        console.log(`[search] Found ${hubScoreCount} images with non-null hub scores`)
-      } catch (error: any) {
-        // If hub columns don't exist or query fails, continue without hub scores
-        console.warn(`[search] Failed to load hub scores: ${error.message}`)
-        // If error mentions missing columns, it's okay - just continue without hub scores
+      console.log(`[search] Loaded hub scores for ${topKImagesWithHub.length} images`)
+      let hubScoreCount = 0
+      for (const img of topKImagesWithHub) {
+        const hubScore = img.hubScore ?? null
+        const hubCount = img.hubCount ?? null
+        const hubAvgCosineSimilarity = img.hubAvgCosineSimilarity ?? null
+        const hubAvgCosineSimilarityMargin = img.hubAvgCosineSimilarityMargin ?? null
+        if (hubScore !== null) hubScoreCount++
+        hubScoresByImage.set(img.id, { hubScore, hubCount, hubAvgCosineSimilarity, hubAvgCosineSimilarityMargin })
       }
+      console.log(`[search] Found ${hubScoreCount} images with non-null hub scores`)
       
       // Initialize with null values for images not found
       for (const imageId of topKImageIds) {
@@ -562,9 +586,6 @@ export async function GET(request: NextRequest) {
           hubScoresByImage.set(imageId, { hubScore: null, hubCount: null, hubAvgCosineSimilarity: null, hubAvgCosineSimilarityMargin: null })
         }
       }
-      
-      // 4. Get popularity metrics for top K images
-      const popularityMetrics = await getImagePopularityMetrics(topKImageIds, 20)
       
       // 4.5. Pre-compute opposite concept embeddings for slider logic (if sliders are set)
       const conceptEmbeddingMap = new Map<string, number[]>()
