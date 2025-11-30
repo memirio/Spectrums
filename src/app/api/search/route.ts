@@ -195,6 +195,8 @@ export async function GET(request: NextRequest) {
       const dim = queryVec.length
       
       // 2. Retrieve images with embeddings (filter by category if specified)
+      // OPTIMIZATION: Only load embedding vectors and minimal image data
+      // We'll load full site data only for top results
       console.log(`[search] Loading images with embeddings...`)
       const whereClause: any = { embedding: { isNot: null } }
       // Filter by category if specified and not 'all'
@@ -202,9 +204,32 @@ export async function GET(request: NextRequest) {
         whereClause.category = category
         console.log(`[search] Filtering by category: ${category}`)
       }
+      
+      // Load only what we need: id, category, siteId, url, and embedding vector
       const images = await (prisma.image.findMany as any)({
         where: whereClause,
-        include: { embedding: true, site: true },
+        select: {
+          id: true,
+          siteId: true,
+          url: true,
+          category: true,
+          embedding: {
+            select: {
+              vector: true,
+              model: true,
+              contentHash: true,
+            },
+          },
+          site: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              url: true,
+              author: true,
+            },
+          },
+        },
       })
       console.log(`[search] Loaded ${images.length} images${category && category !== 'all' ? ` (category: ${category})` : ''}`)
       
@@ -318,9 +343,23 @@ export async function GET(request: NextRequest) {
       const remaining = ranked.slice(TOP_K_FOR_RERANK)
       
       // 1. Find relevant concepts (string match only - simpler and more precise)
+      // OPTIMIZATION: Cache concepts in memory to avoid loading on every request
       // Query is already normalized to lowercase
       const queryTokens = q.split(/[\s,]+/).filter(Boolean)
-      const allConcepts = await prisma.concept.findMany()
+      
+      // Cache concepts in global scope (cleared on server restart)
+      const globalForConcepts = globalThis as unknown as { concepts?: any[] }
+      if (!globalForConcepts.concepts) {
+        console.log('[search] Loading concepts into cache...')
+        globalForConcepts.concepts = await prisma.concept.findMany({
+          select: {
+            id: true,
+            label: true,
+          },
+        })
+        console.log(`[search] Cached ${globalForConcepts.concepts.length} concepts`)
+      }
+      const allConcepts = globalForConcepts.concepts
       
       const relevantConceptIds = new Set<string>()
       for (const concept of allConcepts) {
@@ -410,7 +449,8 @@ export async function GET(request: NextRequest) {
       let conceptMapForSliders = new Map<string, any>()
       if (Object.keys(sliderPositions).length > 0) {
         const queryTokens = q.split(/[\s,]+/).filter(Boolean)
-        allConceptsForSliders = await prisma.concept.findMany()
+        // Use cached concepts (already loaded above)
+        allConceptsForSliders = allConcepts as any[]
         conceptMapForSliders = new Map(allConceptsForSliders.map((c: any) => [c.label.toLowerCase(), c]))
         
         for (const token of queryTokens) {

@@ -13,6 +13,35 @@ app.use(express.json({ limit: '10mb' }));
 const PORT = process.env.PORT || 3001;
 const API_KEY = process.env.EMBEDDING_SERVICE_API_KEY || 'change-me-in-production';
 
+// Pre-load the model on startup to avoid cold start delays
+let modelLoaded = false;
+let modelLoadPromise = null;
+
+async function preloadModel() {
+  if (modelLoaded) return;
+  if (modelLoadPromise) return modelLoadPromise;
+  
+  console.log('[embedding-service] Pre-loading CLIP model to avoid cold starts...');
+  modelLoadPromise = (async () => {
+    try {
+      const { embedTextBatch } = require('./embeddings.js');
+      // Load model by embedding a dummy text
+      await embedTextBatch(['warmup']);
+      modelLoaded = true;
+      console.log('[embedding-service] Model pre-loaded successfully');
+    } catch (error) {
+      console.error('[embedding-service] Failed to pre-load model:', error.message);
+      // Don't fail startup, just log the error
+    }
+  })();
+  return modelLoadPromise;
+}
+
+// Pre-load model on startup
+preloadModel().catch(err => {
+  console.error('[embedding-service] Error during model pre-load:', err);
+});
+
 // Simple auth middleware
 function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -48,10 +77,20 @@ app.post('/embed/text', async (req, res) => {
     
     console.log(`[embedding-service] Embedding ${texts.length} text(s)`);
     
+    // Ensure model is loaded (wait for pre-load if still in progress)
+    if (modelLoadPromise && !modelLoaded) {
+      console.log('[embedding-service] Waiting for model to finish loading...');
+      await modelLoadPromise;
+    }
+    
     // Use standalone embeddings module
     const { embedTextBatch } = require('./embeddings.js');
     
+    const startTime = Date.now();
     const embeddings = await embedTextBatch(texts);
+    const duration = Date.now() - startTime;
+    
+    console.log(`[embedding-service] Generated ${embeddings.length} embeddings in ${duration}ms`);
     
     res.json({
       embeddings,
