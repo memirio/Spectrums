@@ -1297,9 +1297,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         onSubmitClick={() => setShowSubmissionForm(true)}
       />
       
-      {/* Searchbar - At the top */}
-      <div className="bg-[#fbf9f4] border-b border-gray-300">
-        <div className="max-w-full mx-auto px-4 md:px-[52px] py-4">
+      {/* Searchbar - Sticky at the top */}
+      <div className="sticky top-0 bg-[#fbf9f4] z-50">
+        <div className="max-w-full mx-auto px-4 md:px-[52px] mt-4">
           {/* Selected concept chips - above search bar */}
           <div className="min-h-[60px] flex flex-wrap items-center gap-2 mb-2 relative z-20">
           {selectedConcepts.length > 0 && (
@@ -1341,83 +1341,82 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           )}
           </div>
 
-          <div className="border border-gray-300 rounded-md p-2 relative z-20">
-            <div className="flex flex-col gap-2">
-              <div className="flex-1 min-w-[220px] relative">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  onFocus={() => {
-                    setShowSuggestions(inputValue.length > 0 || conceptSuggestions.length > 0)
-                  }}
-                  onBlur={() => {
-                    setTimeout(() => {
-                      setShowSuggestions(false)
-                    }, 200)
-                  }}
-                  placeholder="Add search concepts (e.g., playful, 3d, minimalistic)"
-                  className="w-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
-                  id="search-input"
-                  style={{ height: '40px' }}
-                />
-                
-                {/* Autocomplete suggestions dropdown - show below input when at top */}
-                {showSuggestions && conceptSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-                    {conceptSuggestions.map((suggestion, index) => (
-                      <button
-                        key={`${suggestion.id}-${index}`}
-                        onClick={() => handleSuggestionSelect(suggestion)}
-                        className={`w-full px-3 py-2 text-left text-sm transition-colors ${
-                          selectedSuggestionIndex === index
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {suggestion.displayText || suggestion.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Fallback: show typed value if no suggestions but input has value */}
-                {showSuggestions && conceptSuggestions.length === 0 && inputValue.trim() && !selectedConcepts.includes(inputValue.trim()) && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                  <button
-                    onClick={() => addConcept(inputValue.trim(), true)} // Custom tag
-                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-                  >
-                    Add "{inputValue.trim()}"
-                  </button>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => {
-                  if (inputValue.trim()) {
-                    addConcept(inputValue.trim(), true) // Custom tag
-                  }
+          {/* Search field container - 52px tall */}
+          <div className="border border-gray-300 rounded-md relative z-20 flex items-center" style={{ height: '52px' }}>
+            <div className="flex-1 min-w-0 relative h-full">
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => {
+                  setShowSuggestions(inputValue.length > 0 || conceptSuggestions.length > 0)
                 }}
-                disabled={!inputValue.trim()}
-                className="bg-gray-900 text-white rounded-md hover:bg-gray-900 transition-colors disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center self-end"
-                style={{ width: '40px', height: '40px' }}
-                aria-label="Add concept"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+                onBlur={() => {
+                  setTimeout(() => {
+                    setShowSuggestions(false)
+                  }, 200)
+                }}
+                placeholder="Add search concepts (e.g., playful, 3d, minimalistic)"
+                className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
+                id="search-input"
+              />
+              
+              {/* Autocomplete suggestions dropdown - show below input when at top */}
+              {showSuggestions && conceptSuggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                  {conceptSuggestions.map((suggestion, index) => (
+                    <button
+                      key={`${suggestion.id}-${index}`}
+                      onClick={() => handleSuggestionSelect(suggestion)}
+                      className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                        selectedSuggestionIndex === index
+                          ? 'bg-gray-100 text-gray-900'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {suggestion.displayText || suggestion.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              
+              {/* Fallback: show typed value if no suggestions but input has value */}
+              {showSuggestions && conceptSuggestions.length === 0 && inputValue.trim() && !selectedConcepts.includes(inputValue.trim()) && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                <button
+                  onClick={() => addConcept(inputValue.trim(), true)} // Custom tag
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </button>
+                  Add "{inputValue.trim()}"
+                </button>
+                </div>
+              )}
             </div>
+            {/* Icon-only button - 32px tall */}
+            <button
+              onClick={() => {
+                if (inputValue.trim()) {
+                  addConcept(inputValue.trim(), true) // Custom tag
+                }
+              }}
+              disabled={!inputValue.trim()}
+              className="flex items-center justify-center mx-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ width: '32px', height: '32px' }}
+              aria-label="Add concept"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-5 h-5 text-black"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
