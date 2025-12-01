@@ -60,6 +60,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [addConceptSuggestions, setAddConceptSuggestions] = useState<ConceptSuggestion[]>([]) // Suggestions for Add Concept input
   const [addConceptSelectedIndex, setAddConceptSelectedIndex] = useState(-1) // Selected suggestion index
   const [addConceptInputRef, setAddConceptInputRef] = useState<HTMLInputElement | null>(null) // Ref for first input auto-focus
+  const [isConceptInputFocused, setIsConceptInputFocused] = useState(false) // Track if concept input is focused
   
   // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
@@ -171,18 +172,35 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             }
           }
           
-          // Update concept data with opposite labels
-          for (const [key, conceptInfo] of conceptMap.entries()) {
-            const oppositeLabels = conceptInfo.opposites.map(id => 
-              oppositeIdToLabel.get(id.toLowerCase()) || id
-            )
-            conceptMap.set(key, {
-              ...conceptInfo,
-              opposites: oppositeLabels
-            })
-          }
-          
-          setConceptData(conceptMap)
+          // Update concept data with opposite labels, but preserve custom opposites
+          setConceptData(prev => {
+            const newMap = new Map(prev)
+            for (const [key, conceptInfo] of conceptMap.entries()) {
+              // Check if this concept already has a custom opposite (stored as label, not ID)
+              const existingData = newMap.get(key)
+              if (existingData && existingData.opposites.length > 0) {
+                // Check if the opposite is a label (custom) or an ID (from API)
+                const firstOpposite = existingData.opposites[0]
+                // If it's not in the oppositeIdToLabel map, it's likely a custom label
+                const isCustomOpposite = !oppositeIdToLabel.has(firstOpposite.toLowerCase())
+                if (isCustomOpposite) {
+                  // Preserve custom opposite
+                  newMap.set(key, existingData)
+                  continue
+                }
+              }
+              
+              // Otherwise, use the fetched opposites
+              const oppositeLabels = conceptInfo.opposites.map(id => 
+                oppositeIdToLabel.get(id.toLowerCase()) || id
+              )
+              newMap.set(key, {
+                ...conceptInfo,
+                opposites: oppositeLabels
+              })
+            }
+            return newMap
+          })
         } catch (error) {
           console.error('Error fetching concept data:', error)
         }
@@ -2360,7 +2378,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
       {/* Add Concept Modal */}
       {showAddConceptModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-[0.08] z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Add Concept</h2>
@@ -2406,6 +2424,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                           setAddConceptSelectedIndex(-1)
                           // Auto-fill opposite
                           fetchOppositeForConcept(suggestion.label)
+                          // Force clear suggestions
+                          setTimeout(() => setAddConceptSuggestions([]), 0)
                         } else if (addConceptInputValue.trim()) {
                           // Check if typed value matches a suggestion
                           const trimmed = addConceptInputValue.trim()
@@ -2418,6 +2438,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                             setAddConceptSuggestions([])
                             setAddConceptSelectedIndex(-1)
                             fetchOppositeForConcept(exactMatch.label)
+                            setTimeout(() => setAddConceptSuggestions([]), 0)
                           }
                         }
                       } else if (e.key === 'ArrowDown') {
@@ -2428,32 +2449,48 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                       } else if (e.key === 'ArrowUp') {
                         e.preventDefault()
                         setAddConceptSelectedIndex(prev => prev > 0 ? prev - 1 : -1)
+                      } else if (e.key === 'Escape') {
+                        setAddConceptSuggestions([])
+                        setAddConceptSelectedIndex(-1)
                       }
                     }
                   }}
                   onFocus={() => {
+                    setIsConceptInputFocused(true)
                     // Show suggestions if there's input
                     if (addConceptInputValue.trim().length > 0) {
                       // Suggestions are already fetched via useEffect
                     }
                   }}
+                  onBlur={() => {
+                    // Delay to allow click events to fire first
+                    setTimeout(() => {
+                      setIsConceptInputFocused(false)
+                      setAddConceptSuggestions([])
+                    }, 200)
+                  }}
                   placeholder="e.g., Love, Minimalistic, Tech..."
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
                 />
                 
-                {/* Concept suggestions dropdown */}
-                {addConceptInputValue.trim().length > 0 && addConceptSuggestions.length > 0 && (
+                {/* Concept suggestions dropdown - only show if input has focus and suggestions exist */}
+                {addConceptInputValue.trim().length > 0 && addConceptSuggestions.length > 0 && isConceptInputFocused && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
                     {addConceptSuggestions.map((suggestion, index) => (
                       <button
                         key={`modal-concept-${suggestion.id}-${index}`}
                         onMouseDown={(e) => {
                           e.preventDefault() // Prevent input blur
+                          e.stopPropagation()
                           setAddConceptInputValue(suggestion.label)
                           setAddConceptSuggestions([])
                           setAddConceptSelectedIndex(-1)
                           // Auto-fill opposite
                           fetchOppositeForConcept(suggestion.label)
+                          // Force hide suggestions
+                          setTimeout(() => {
+                            setAddConceptSuggestions([])
+                          }, 0)
                         }}
                         className={`w-full px-3 py-2 text-left text-sm transition-colors ${
                           addConceptSelectedIndex === index
