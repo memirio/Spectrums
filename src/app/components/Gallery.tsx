@@ -60,6 +60,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [addConceptSuggestions, setAddConceptSuggestions] = useState<ConceptSuggestion[]>([]) // Suggestions for Add Concept input
   const [addConceptSelectedIndex, setAddConceptSelectedIndex] = useState(-1) // Selected suggestion index
   const [addConceptInputRef, setAddConceptInputRef] = useState<HTMLInputElement | null>(null) // Ref for first input auto-focus
+  const [addOppositeInputRef, setAddOppositeInputRef] = useState<HTMLInputElement | null>(null) // Ref for second input auto-focus
   const [isConceptInputFocused, setIsConceptInputFocused] = useState(false) // Track if concept input is focused
   
   // Legacy concept state (for backward compatibility with existing logic)
@@ -1176,12 +1177,23 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   const oppositeConcept = oppData.concepts.find((c: any) => c.id.toLowerCase() === oppositeId.toLowerCase())
                   if (oppositeConcept) {
                     setAddOppositeInputValue(oppositeConcept.label)
+                    // Auto-focus second input after setting opposite
+                    setTimeout(() => {
+                      if (addOppositeInputRef) {
+                        addOppositeInputRef.focus()
+                      }
+                    }, 100)
                   }
                 }
               })
               .catch(() => {
                 // If we can't find the label, use the ID as fallback
                 setAddOppositeInputValue(oppositeId)
+                setTimeout(() => {
+                  if (addOppositeInputRef) {
+                    addOppositeInputRef.focus()
+                  }
+                }, 100)
               })
           }
         }
@@ -2378,7 +2390,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
       {/* Add Concept Modal */}
       {showAddConceptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Add Concept</h2>
@@ -2419,11 +2431,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                         e.preventDefault()
                         if (addConceptSelectedIndex >= 0 && addConceptSelectedIndex < addConceptSuggestions.length) {
                           const suggestion = addConceptSuggestions[addConceptSelectedIndex]
-                          setAddConceptInputValue(suggestion.label)
+                          const conceptLabel = suggestion.label
+                          setAddConceptInputValue(conceptLabel)
                           setAddConceptSuggestions([])
                           setAddConceptSelectedIndex(-1)
-                          // Auto-fill opposite
-                          fetchOppositeForConcept(suggestion.label)
+                          // Auto-fill opposite and focus second input
+                          fetchOppositeForConcept(conceptLabel)
                           // Force clear suggestions
                           setTimeout(() => setAddConceptSuggestions([]), 0)
                         } else if (addConceptInputValue.trim()) {
@@ -2434,10 +2447,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                             s.id.toLowerCase() === trimmed.toLowerCase()
                           )
                           if (exactMatch) {
-                            setAddConceptInputValue(exactMatch.label)
+                            const conceptLabel = exactMatch.label
+                            setAddConceptInputValue(conceptLabel)
                             setAddConceptSuggestions([])
                             setAddConceptSelectedIndex(-1)
-                            fetchOppositeForConcept(exactMatch.label)
+                            fetchOppositeForConcept(conceptLabel)
                             setTimeout(() => setAddConceptSuggestions([]), 0)
                           }
                         }
@@ -2482,11 +2496,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                         onMouseDown={(e) => {
                           e.preventDefault() // Prevent input blur
                           e.stopPropagation()
-                          setAddConceptInputValue(suggestion.label)
+                          const conceptLabel = suggestion.label
+                          setAddConceptInputValue(conceptLabel)
                           setAddConceptSuggestions([])
                           setAddConceptSelectedIndex(-1)
-                          // Auto-fill opposite
-                          fetchOppositeForConcept(suggestion.label)
+                          // Auto-fill opposite and focus second input
+                          fetchOppositeForConcept(conceptLabel)
                           // Force hide suggestions
                           setTimeout(() => {
                             setAddConceptSuggestions([])
@@ -2508,9 +2523,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               {/* Second input - Opposite */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Opposite (optional)
+                  Opposite
                 </label>
                 <input
+                  ref={setAddOppositeInputRef}
                   type="text"
                   value={addOppositeInputValue}
                   onChange={(e) => setAddOppositeInputValue(e.target.value)}
