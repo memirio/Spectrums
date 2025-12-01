@@ -1231,10 +1231,33 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       // If no opposite provided, it's a custom concept (single-pole)
       if (!opposite) {
         setCustomConcepts(prev => new Set(prev).add(concept))
+      } else {
+        // Store custom opposite in conceptData so slider can use it
+        // Store the opposite label directly (not as ID) so it can be displayed immediately
+        setConceptData(prev => {
+          const newMap = new Map(prev)
+          const existingData = newMap.get(concept.toLowerCase()) || { id: concept.toLowerCase(), label: concept, opposites: [] }
+          newMap.set(concept.toLowerCase(), {
+            ...existingData,
+            opposites: [opposite] // Store the label directly for custom opposites
+          })
+          return newMap
+        })
       }
       setSliderPositions(prev => {
         const newMap = new Map(prev)
         newMap.set(concept, 1.0)
+        return newMap
+      })
+    } else if (opposite) {
+      // Concept already exists, but update the opposite if provided
+      setConceptData(prev => {
+        const newMap = new Map(prev)
+        const existingData = newMap.get(concept.toLowerCase()) || { id: concept.toLowerCase(), label: concept, opposites: [] }
+        newMap.set(concept.toLowerCase(), {
+          ...existingData,
+          opposites: [opposite] // Store the label directly for custom opposites
+        })
         return newMap
       })
     }
@@ -2337,7 +2360,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
       {/* Add Concept Modal */}
       {showAddConceptModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-[0.08] z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Add Concept</h2>
@@ -2370,10 +2393,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   value={addConceptInputValue}
                   onChange={(e) => {
                     setAddConceptInputValue(e.target.value)
-                    // Clear opposite when concept changes
-                    if (addOppositeInputValue) {
-                      setAddOppositeInputValue('')
-                    }
+                    // Don't clear opposite when concept changes - let user edit it
                   }}
                   onKeyDown={(e) => {
                     if (addConceptSuggestions.length > 0) {
@@ -2427,7 +2447,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                     {addConceptSuggestions.map((suggestion, index) => (
                       <button
                         key={`modal-concept-${suggestion.id}-${index}`}
-                        onClick={() => {
+                        onMouseDown={(e) => {
+                          e.preventDefault() // Prevent input blur
                           setAddConceptInputValue(suggestion.label)
                           setAddConceptSuggestions([])
                           setAddConceptSelectedIndex(-1)
