@@ -2249,15 +2249,15 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
         isMobile && isDrawerCollapsed ? 'w-full' : ''
       }`}>
-        {/* Header - Fixed at top */}
-        <div className="flex-shrink-0">
+        {/* Header - Scrolls with content */}
+        <div>
           <Header 
             onSubmitClick={() => setShowSubmissionForm(true)}
           />
         </div>
         
-        {/* Searchbar - Fixed below header */}
-        <div className="bg-[#fbf9f4] z-50 flex-shrink-0">
+        {/* Searchbar - Sticky at top */}
+        <div className="sticky top-0 bg-[#fbf9f4] z-50">
           <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
           {/* Search field container - 52px tall */}
           <div className="border border-gray-300 rounded-md relative z-20 flex items-center" style={{ height: '52px' }}>
