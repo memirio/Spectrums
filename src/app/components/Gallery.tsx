@@ -1632,11 +1632,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf9f4] flex">
-      {/* Left Drawer - Dynamic, max width 280px */}
+    <div className="h-screen bg-[#fbf9f4] flex overflow-hidden">
+      {/* Left Drawer - Dynamic, max width 280px - Fixed position */}
       <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out relative ${
         isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0'
-      } overflow-hidden flex flex-col`}>
+      } overflow-hidden flex flex-col h-full`}>
         {/* Logo and collapse button at top of drawer - sticky */}
         <div className="sticky top-0 z-50 bg-[#fbf9f4] p-4 md:p-6 border-b border-gray-300 flex items-center justify-between">
           <Link href="/" className="flex items-center">
@@ -2198,15 +2198,17 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         </div>
       </div>
 
-      {/* Right Content Area */}
-      <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
-        {/* Header - without logo (logo is now in drawer) */}
-        <Header 
-          onSubmitClick={() => setShowSubmissionForm(true)}
-        />
+      {/* Right Content Area - Fixed height, flex column */}
+      <div className="flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full">
+        {/* Header - Fixed at top */}
+        <div className="flex-shrink-0">
+          <Header 
+            onSubmitClick={() => setShowSubmissionForm(true)}
+          />
+        </div>
         
-        {/* Searchbar - Sticky at the top */}
-        <div className="sticky top-0 bg-[#fbf9f4] z-50">
+        {/* Searchbar - Fixed below header */}
+        <div className="bg-[#fbf9f4] z-50 flex-shrink-0">
           <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
           {/* Search field container - 52px tall */}
           <div className="border border-gray-300 rounded-md relative z-20 flex items-center" style={{ height: '52px' }}>
@@ -2251,14 +2253,15 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         </div>
       </div>
       
-      {/* Main Content and Panel Container */}
-      <div className="flex">
-        {/* Main Content - shifts when panel opens */}
-        <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
+      {/* Scrollable Gallery Content */}
+      <div className="flex-1 overflow-y-auto min-w-0">
+        {/* Main Content and Panel Container */}
+        <div className="flex">
+          {/* Main Content - shifts when panel opens */}
+          <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
 
-
-          {/* Gallery Grid */}
-          <main className="bg-transparent pb-8">
+            {/* Gallery Grid */}
+            <main className="bg-transparent pb-8">
             <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
