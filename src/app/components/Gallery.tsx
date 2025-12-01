@@ -79,6 +79,22 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [sliderVersion, setSliderVersion] = useState(0) // Version counter to trigger reordering when slider moves
   const [isDrawerOpen, setIsDrawerOpen] = useState(true) // Drawer open/closed state
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false) // Drawer collapsed state (80px vs 280px)
+  const [isMobile, setIsMobile] = useState(false) // Track if we're on mobile
+
+  // Detect mobile and set initial collapsed state
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768 // md breakpoint
+      setIsMobile(mobile)
+      if (mobile) {
+        setIsDrawerCollapsed(true) // Collapsed by default on mobile
+      }
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -1632,10 +1648,40 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
 
   return (
-    <div className="h-screen bg-[#fbf9f4] flex overflow-hidden">
-      {/* Left Drawer - Dynamic, max width 280px - Fixed position */}
-      <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out relative ${
-        isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0'
+    <div className="h-screen bg-[#fbf9f4] flex overflow-hidden relative">
+      {/* Mobile: Floating chevron button when collapsed */}
+      {isMobile && isDrawerCollapsed && (
+        <button
+          onClick={() => setIsDrawerCollapsed(false)}
+          className="fixed top-4 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md shadow-md text-gray-600 hover:text-gray-900 transition-colors md:hidden"
+          aria-label="Expand drawer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+
+      {/* Mobile backdrop when drawer is open */}
+      {isMobile && !isDrawerCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-30 z-30 md:hidden"
+          onClick={() => setIsDrawerCollapsed(true)}
+        />
+      )}
+
+      {/* Left Drawer - Dynamic, max width 280px - Fixed position on desktop, overlay on mobile */}
+      <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out ${
+        isMobile 
+          ? (isDrawerCollapsed ? 'hidden' : 'fixed left-0 top-0 z-40 w-[280px] h-full shadow-lg') 
+          : (isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0')
       } overflow-hidden flex flex-col h-full`}>
         {/* Logo and collapse button at top of drawer - sticky */}
         <div className="sticky top-0 z-50 bg-[#fbf9f4] p-4 md:p-6 border-b border-gray-300 flex items-center justify-between">
@@ -2198,8 +2244,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         </div>
       </div>
 
-      {/* Right Content Area - Fixed height, flex column */}
-      <div className="flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full">
+      {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
+      <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
+        isMobile && isDrawerCollapsed ? 'w-full' : ''
+      }`}>
         {/* Header - Fixed at top */}
         <div className="flex-shrink-0">
           <Header 
