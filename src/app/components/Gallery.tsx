@@ -2249,15 +2249,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
         isMobile && isDrawerCollapsed ? 'w-full' : ''
       }`}>
-        {/* Header - Scrolls with content */}
-        <div>
-          <Header 
-            onSubmitClick={() => setShowSubmissionForm(true)}
-          />
-        </div>
-        
         {/* Searchbar - Sticky at top */}
-        <div className="sticky top-0 bg-[#fbf9f4] z-50">
+        <div className="sticky top-0 bg-[#fbf9f4] z-50 flex-shrink-0">
           <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
           {/* Search field container - 52px tall */}
           <div className="border border-gray-300 rounded-md relative z-20 flex items-center" style={{ height: '52px' }}>
@@ -2304,6 +2297,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       
       {/* Scrollable Gallery Content */}
       <div className="flex-1 overflow-y-auto min-w-0">
+        {/* Header - Scrolls with content */}
+        <div>
+          <Header 
+            onSubmitClick={() => setShowSubmissionForm(true)}
+          />
+        </div>
         {/* Main Content and Panel Container */}
         <div className="flex">
           {/* Main Content - shifts when panel opens */}
