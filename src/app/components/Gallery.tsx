@@ -2802,8 +2802,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           </div>
           </div>
         </div>
+        </div>
+      {/* End of Main Content */}
       </div>
+      {/* End of Main Content and Panel Container */}
       </div>
+      {/* End of Scrollable Gallery Content */}
       </div>
     </div>
   )
