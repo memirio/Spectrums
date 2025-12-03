@@ -845,6 +845,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   const fetchSites = async () => {
     try {
+      console.log(`[FETCH DEBUG] fetchSites called with selectedConcepts:`, selectedConcepts)
       setLoading(true)
       
       // Build search query from selected concepts
@@ -857,13 +858,15 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         
         // Don't pass slider positions - we'll reorder client-side
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}`
+        console.log(`[FETCH DEBUG] Fetching from: ${searchUrl}`)
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          console.error('Failed response fetching search', response.status)
+          console.error('[FETCH DEBUG] Failed response fetching search', response.status)
           setSites([])
           return
         }
         const data = await response.json()
+        console.log(`[FETCH DEBUG] API returned ${data.sites?.length || 0} sites, ${data.images?.length || 0} images`)
         // Search API returns sites and images
         // Map images to sites for interaction tracking
         // Create a map of siteId -> best image for that site
@@ -904,7 +907,13 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Store results for each concept
         if (selectedConcepts.length === 1) {
           const concept = selectedConcepts[0]
-          setConceptResults(prev => new Map(prev).set(concept, deduplicatedSites))
+          console.log(`[FETCH DEBUG] Storing ${deduplicatedSites.length} sites for concept: "${concept}"`)
+          setConceptResults(prev => {
+            const newMap = new Map(prev)
+            newMap.set(concept, deduplicatedSites)
+            console.log(`[FETCH DEBUG] conceptResults keys after update:`, Array.from(newMap.keys()))
+            return newMap
+          })
           // Initialize last slider side
           const sliderPos = sliderPositions.get(concept) ?? 1.0
           setLastSliderSide(prev => new Map(prev).set(concept, sliderPos < 0.5 ? 'left' : 'right'))
@@ -1694,19 +1703,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
             aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              {isDrawerCollapsed ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              )}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 2C20.6569 2 22 3.34315 22 5V19C22 20.6569 20.6569 22 19 22H5C3.34315 22 2 20.6569 2 19V5C2 3.34315 3.34315 2 5 2H19ZM10 20H19C19.5523 20 20 19.5523 20 19V10H10V20ZM4 19C4 19.5523 4.44772 20 5 20H8V10H4V19ZM5 4C4.44772 4 4 4.44772 4 5V8H20V5C20 4.44772 19.5523 4 19 4H5Z" fill="currentColor"/>
             </svg>
           </button>
         </div>
@@ -1722,7 +1720,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             }}
             className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
           >
-            + Add vibes
+            Vibe filter
           </button>
           
           {/* Spectrum list */}
@@ -2593,7 +2591,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 disabled={!addConceptInputValue.trim()}
                 className="w-full px-4 py-2 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-md transition-colors text-sm font-medium"
               >
-                Create spectrum
+                Create filter
               </button>
             </div>
           </div>
