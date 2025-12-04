@@ -102,10 +102,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const inputRef = useRef<HTMLInputElement>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
-  useEffect(() => {
-    fetchSites()
-  }, [fetchSites])
-
   // Lazy loading: Update displayed sites when allSites or displayedCount changes
   useEffect(() => {
     setSites(allSites.slice(0, displayedCount))
