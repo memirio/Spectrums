@@ -1,4 +1,4 @@
-# Looma Image Processing Pipeline
+# Spectrums Image Processing Pipeline
 
 ## Overview
 

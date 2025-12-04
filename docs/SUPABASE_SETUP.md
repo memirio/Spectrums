@@ -21,7 +21,7 @@ This ensures you can restore your data if anything goes wrong during migration.
 1. Go to [supabase.com](https://supabase.com) and sign up/login
 2. Click "New Project"
 3. Fill in:
-   - **Name**: `looma` (or your preferred name)
+   - **Name**: `spectrums` (or your preferred name)
    - **Database Password**: Choose a strong password (save this!)
    - **Region**: Choose closest to you/your team
    - **Pricing Plan**: Free tier is fine for development

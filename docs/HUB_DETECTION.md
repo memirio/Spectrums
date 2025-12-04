@@ -95,7 +95,7 @@ To keep hub stats fresh as your dataset and queries change, run the script perio
 **Option 1: Cron job (Linux/Mac)**
 ```bash
 # Add to crontab (runs weekly on Sunday at 2 AM)
-0 2 * * 0 cd /path/to/Looma && npx tsx scripts/detect_hub_images.ts --clear
+0 2 * * 0 cd /path/to/Spectrums && npx tsx scripts/detect_hub_images.ts --clear
 ```
 
 **Option 2: GitHub Actions (if using GitHub)**

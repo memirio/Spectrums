@@ -41,7 +41,7 @@ git checkout -b feature/new-search
 git push origin feature/new-search
 
 # 3. Vercel automatically creates a preview deployment
-# → Preview URL: https://looma-git-feature-new-search.vercel.app
+# → Preview URL: https://spectrums-git-feature-new-search.vercel.app
 
 # 4. Create a Pull Request
 # → Vercel adds a comment with preview URL
@@ -133,8 +133,8 @@ feature/* → Preview
 Every branch and PR gets a unique preview URL:
 
 ```
-https://looma-git-feature-name.vercel.app
-https://looma-git-abc123.vercel.app
+https://spectrums-git-feature-name.vercel.app
+https://spectrums-git-abc123.vercel.app
 ```
 
 ### Benefits
