@@ -1187,11 +1187,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       } else {
         // No search query: show all sites (optionally filtered by category)
         // Initial fetch: limit 60, offset 0
+        console.log('[FETCH SITES] Entering else branch - no search query')
         const sitesUrl = category 
           ? `/api/sites?category=${encodeURIComponent(category)}&limit=60&offset=0`
           : '/api/sites?limit=60&offset=0'
+        console.log('[FETCH SITES] Fetching from URL:', sitesUrl)
         try {
           const response = await fetch(sitesUrl)
+          console.log('[FETCH SITES] Response received, status:', response.status, 'ok:', response.ok)
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}))
             console.error('Failed response fetching sites', response.status, errorData)
