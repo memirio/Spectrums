@@ -997,8 +997,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
+      console.log('[FETCH DEBUG] Query built:', JSON.stringify(query), 'trimmed:', JSON.stringify(query.trim()), 'truthy:', !!query.trim())
       
       if (query.trim()) {
+        console.log('[FETCH DEBUG] Entering IF branch - has search query')
         // Zero-shot search: rank images by cosine similarity
         // Pass category parameter: "website", "packaging", or "all" (or omit for "all")
         const categoryParam = category || 'all'
@@ -1223,9 +1225,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         }
       }
     } catch (error) {
-      console.error('Error fetching sites:', error)
+      console.error('[FETCH DEBUG] Error in fetchSites:', error)
       setSites([])
     } finally {
+      console.log('[FETCH DEBUG] fetchSites finally block - setting loading to false')
       setLoading(false)
     }
   }
