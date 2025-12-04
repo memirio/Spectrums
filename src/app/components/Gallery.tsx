@@ -1232,6 +1232,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }, [selectedConcepts, category])
 
+  // Initial fetch on mount
+  useEffect(() => {
+    fetchSites()
+  }, [fetchSites])
+
   // Main search input handler (simple text search)
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
