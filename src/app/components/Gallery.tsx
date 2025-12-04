@@ -39,6 +39,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [sites, setSites] = useState<Site[]>([])
   const [allSites, setAllSites] = useState<Site[]>([]) // Store all sites for lazy loading
   const [displayedCount, setDisplayedCount] = useState(50) // Number of sites to display initially
+  const [paginationOffset, setPaginationOffset] = useState(0) // Current API pagination offset
+  const [hasMoreResults, setHasMoreResults] = useState(false) // Whether there are more results to fetch
+  const [isLoadingMore, setIsLoadingMore] = useState(false) // Loading state for pagination
   // Main search (simple text search, no concepts)
   const [searchQuery, setSearchQuery] = useState('')
   
@@ -108,6 +111,110 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     setSites(allSites.slice(0, displayedCount))
   }, [allSites, displayedCount])
 
+  // Function to load more images from API
+  const loadMoreImages = async () => {
+    if (isLoadingMore || !hasMoreResults) {
+      return
+    }
+
+    setIsLoadingMore(true)
+    try {
+      const query = selectedConcepts.join(' ')
+      const categoryParam = category || 'all'
+      
+      let data: any
+      if (query.trim()) {
+        // Search query: use search API
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
+        const response = await fetch(searchUrl)
+        if (!response.ok) {
+          console.error('[LOAD MORE] Failed to fetch more images', response.status)
+          return
+        }
+        data = await response.json()
+        
+        // Map images to sites (extract site data from image.site)
+        const sitesWithImageIds = (data.images || []).map((image: any) => {
+          const site = image.site || {}
+          const siteCategory = image.site?.category || image.category || 'website'
+          return {
+            id: site.id || image.siteId,
+            title: site.title || '',
+            description: site.description || null,
+            url: site.url || image.siteUrl || '',
+            imageUrl: image.url || site.imageUrl || null,
+            author: site.author || null,
+            tags: [],
+            imageId: image.imageId || undefined,
+            category: siteCategory,
+            score: image.score || 0,
+          } as Site
+        })
+        
+        // Deduplicate by site ID
+        const siteMap = new Map<string, Site>()
+        for (const site of sitesWithImageIds) {
+          const existing = siteMap.get(site.id)
+          if (!existing || (site.score ?? 0) > (existing.score ?? 0)) {
+            siteMap.set(site.id, site)
+          }
+        }
+        const newSites = Array.from(siteMap.values())
+        
+        // Append new sites to existing ones
+        setAllSites(prev => {
+          const combined = [...prev, ...newSites]
+          // Remove duplicates by ID
+          const uniqueMap = new Map<string, Site>()
+          for (const site of combined) {
+            const existing = uniqueMap.get(site.id)
+            if (!existing || (site.score ?? 0) > (existing.score ?? 0)) {
+              uniqueMap.set(site.id, site)
+            }
+          }
+          return Array.from(uniqueMap.values()).sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+        })
+      } else {
+        // No search query: use sites API
+        const sitesUrl = categoryParam && categoryParam !== 'all'
+          ? `/api/sites?category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
+          : `/api/sites?limit=60&offset=${paginationOffset}`
+        const response = await fetch(sitesUrl)
+        if (!response.ok) {
+          console.error('[LOAD MORE] Failed to fetch more sites', response.status)
+          return
+        }
+        data = await response.json()
+        
+        // Append new sites to existing ones
+        const newSites = Array.isArray(data.sites) ? data.sites : []
+        setAllSites(prev => {
+          const combined = [...prev, ...newSites]
+          // Remove duplicates by ID
+          const uniqueMap = new Map<string, Site>()
+          for (const site of combined) {
+            const existing = uniqueMap.get(site.id)
+            if (!existing) {
+              uniqueMap.set(site.id, site)
+            }
+          }
+          return Array.from(uniqueMap.values())
+        })
+      }
+      
+      // Update pagination state
+      setHasMoreResults(data.hasMore || false)
+      setPaginationOffset(prev => prev + 60)
+      
+      // Show more sites (increment displayed count)
+      setDisplayedCount(prev => prev + 50)
+    } catch (error) {
+      console.error('[LOAD MORE] Error loading more images:', error)
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }
+
   // Intersection Observer for lazy loading - set up when element is rendered
   useEffect(() => {
     // Clean up previous observer
@@ -116,8 +223,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       observerRef.current = null
     }
 
-    // Only set up observer if we have more sites to load
-    if (displayedCount >= allSites.length) {
+    // Only set up observer if we have more results to load
+    if (!hasMoreResults || isLoadingMore) {
       return
     }
 
@@ -128,9 +235,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && displayedCount < allSites.length) {
-          // Load 50 more sites when user scrolls to bottom
-          setDisplayedCount((prev) => Math.min(prev + 50, allSites.length))
+        if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
+          // Load more images from API
+          loadMoreImages()
         }
       },
       { threshold: 0.1 }
@@ -145,7 +252,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         observerRef.current = null
       }
     }
-  }, [displayedCount, allSites.length])
+  }, [hasMoreResults, isLoadingMore, paginationOffset, selectedConcepts, category])
 
   // Fetch concept data with opposites when concepts change (not just when panel opens)
   // This ensures opposites are available for fetching opposite results
@@ -865,6 +972,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       console.log(`[FETCH DEBUG] fetchSites called with selectedConcepts:`, selectedConcepts)
       setLoading(true)
       
+      // Reset pagination state for new search
+      setPaginationOffset(0)
+      setHasMoreResults(false)
+      setIsLoadingMore(false)
+      
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
       
@@ -874,42 +986,40 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const categoryParam = category || 'all'
         
         // Don't pass slider positions - we'll reorder client-side
-        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}`
+        // Initial fetch: limit 60, offset 0
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=0`
         console.log(`[FETCH DEBUG] Fetching from: ${searchUrl}`)
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('[FETCH DEBUG] Failed response fetching search', response.status)
           setSites([])
+          setAllSites([])
           return
         }
         const data = await response.json()
-        console.log(`[FETCH DEBUG] API returned ${data.sites?.length || 0} sites, ${data.images?.length || 0} images`)
-        // Search API returns sites and images
-        // Map images to sites for interaction tracking
-        // Create a map of siteId -> best image for that site
-        const imageMap = new Map<string, any>()
-        for (const image of data.images || []) {
-          const siteId = image.siteId || image.site?.id
-          if (siteId) {
-            // Keep the image with highest score for each site
-            if (!imageMap.has(siteId) || (image.score || 0) > (imageMap.get(siteId)?.score || 0)) {
-              imageMap.set(siteId, image)
-            }
-          }
-        }
+        console.log(`[FETCH DEBUG] API returned ${data.images?.length || 0} images, hasMore: ${data.hasMore}`)
         
-        // Map sites to their corresponding images and include category info
-        const sitesWithImageIds = (data.sites || []).map((site: Site) => {
-          const image = imageMap.get(site.id)
-          // Get category from site object (already includes category from search API)
-          // or fallback to image data, or default to 'website'
-          const siteCategory = (site as any).category || image?.category || 'website'
+        // Update pagination state
+        setHasMoreResults(data.hasMore || false)
+        setPaginationOffset(60) // Next fetch will be at offset 60
+        
+        // Search API returns images with embedded site data
+        // Extract sites from images array
+        const sitesWithImageIds = (data.images || []).map((image: any) => {
+          const site = image.site || {}
+          const siteCategory = image.site?.category || image.category || 'website'
           return {
-            ...site,
-            imageId: image?.imageId || undefined,
-            category: siteCategory, // Include category for UI labeling (only shown in combined view)
-            score: image?.score || (site as any).score || 0, // Preserve similarity score
-          }
+            id: site.id || image.siteId,
+            title: site.title || '',
+            description: site.description || null,
+            url: site.url || image.siteUrl || '',
+            imageUrl: image.url || site.imageUrl || null,
+            author: site.author || null,
+            tags: [],
+            imageId: image.imageId || undefined,
+            category: siteCategory,
+            score: image.score || 0,
+          } as Site
         })
         // Deduplicate by site ID - keep the one with the highest score for each ID
         const siteMap = new Map<string, Site>()
@@ -1058,10 +1168,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Results will be reordered by the useEffect hook when sliderPositions change
       } else {
         // No search query: show all sites (optionally filtered by category)
-        // OPTIMIZATION: Limit initial load to 100 sites for faster page load
+        // Initial fetch: limit 60, offset 0
         const sitesUrl = category 
-          ? `/api/sites?category=${encodeURIComponent(category)}&limit=100`
-          : '/api/sites?limit=100'
+          ? `/api/sites?category=${encodeURIComponent(category)}&limit=60&offset=0`
+          : '/api/sites?limit=60&offset=0'
         try {
           const response = await fetch(sitesUrl)
           if (!response.ok) {
@@ -1069,11 +1179,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             console.error('Failed response fetching sites', response.status, errorData)
             setAllSites([])
             setDisplayedCount(50)
+            setHasMoreResults(false)
             return
           }
           const data = await response.json()
           setAllSites(Array.isArray(data.sites) ? data.sites : [])
           setDisplayedCount(50)
+          setHasMoreResults(data.hasMore || false)
+          setPaginationOffset(60) // Next fetch will be at offset 60
         } catch (error) {
           console.error('Error fetching sites:', error)
           setSites([])
@@ -2422,9 +2535,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 </div>
             ))}
             {/* Lazy loading trigger - load more when this becomes visible */}
-            {displayedCount < allSites.length && (
+            {hasMoreResults && (
               <div ref={loadMoreRef} className="col-span-full flex justify-center py-8">
-                <div className="text-gray-400 text-sm">Loading more...</div>
+                <div className="text-gray-400 text-sm">
+                  {isLoadingMore ? 'Loading more...' : 'Scroll for more'}
+                </div>
               </div>
             )}
           </div>

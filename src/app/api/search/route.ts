@@ -1080,7 +1080,20 @@ export async function GET(request: NextRequest) {
     }
     ranked.sort((a, b) => b.score - a.score)
 
-    return NextResponse.json({ query: expanded, images: ranked.slice(0, 1000) })
+    // Pagination: limit and offset
+    const limit = parseInt(searchParams.get('limit') || '60')
+    const offset = parseInt(searchParams.get('offset') || '0')
+    const paginated = ranked.slice(offset, offset + limit)
+    const hasMore = offset + limit < ranked.length
+
+    return NextResponse.json({ 
+      query: expanded, 
+      images: paginated,
+      total: ranked.length,
+      hasMore,
+      offset,
+      limit
+    })
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 })
   }
