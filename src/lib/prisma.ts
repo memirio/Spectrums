@@ -36,7 +36,7 @@ function getPrismaClient(): PrismaClient {
           max: 1, // One connection per serverless function invocation
           min: 0, // Don't keep idle connections
           idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
-          connectionTimeoutMillis: 3000, // Fail fast if can't connect (3s)
+          connectionTimeoutMillis: 5000, // Allow 5s for connection (increased from 3s for transient network delays)
           // For Transaction Pooler, connections are pooled at Supabase's end
           // We just need to ensure we don't leak connections
           // Add statement_timeout to prevent long-running queries from blocking
@@ -47,6 +47,20 @@ function getPrismaClient(): PrismaClient {
         // Handle pool errors gracefully
         globalForPrisma.pool.on('error', (err) => {
           console.error('[prisma] Pool error:', err.message)
+          console.error('[prisma] Pool error stack:', err.stack)
+        })
+        
+        // Log connection events for debugging
+        globalForPrisma.pool.on('connect', () => {
+          console.log('[prisma] New connection established')
+        })
+        
+        globalForPrisma.pool.on('acquire', () => {
+          console.log('[prisma] Connection acquired from pool')
+        })
+        
+        globalForPrisma.pool.on('remove', () => {
+          console.log('[prisma] Connection removed from pool')
         })
       } else {
         console.log('[prisma] Reusing existing connection pool')
