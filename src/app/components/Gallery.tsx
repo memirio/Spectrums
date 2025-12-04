@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import SubmissionForm from './SubmissionForm'
 import Header from './Header'
@@ -112,7 +112,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }, [allSites, displayedCount])
 
   // Function to load more images from API
-  const loadMoreImages = async () => {
+  const loadMoreImages = useCallback(async () => {
     if (isLoadingMore || !hasMoreResults) {
       return
     }
@@ -126,12 +126,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       if (query.trim()) {
         // Search query: use search API
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
+        console.log('[LOAD MORE] Fetching more search results:', searchUrl)
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('[LOAD MORE] Failed to fetch more images', response.status)
           return
         }
         data = await response.json()
+        console.log('[LOAD MORE] Received search data:', data.images?.length, 'images, hasMore:', data.hasMore)
         
         // Map images to sites (extract site data from image.site)
         const sitesWithImageIds = (data.images || []).map((image: any) => {
@@ -179,12 +181,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const sitesUrl = categoryParam && categoryParam !== 'all'
           ? `/api/sites?category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
           : `/api/sites?limit=60&offset=${paginationOffset}`
+        console.log('[LOAD MORE] Fetching more sites:', sitesUrl)
         const response = await fetch(sitesUrl)
         if (!response.ok) {
           console.error('[LOAD MORE] Failed to fetch more sites', response.status)
           return
         }
         data = await response.json()
+        console.log('[LOAD MORE] Received sites data:', data.sites?.length, 'sites, hasMore:', data.hasMore)
         
         // Append new sites to existing ones
         const newSites = Array.isArray(data.sites) ? data.sites : []
@@ -213,7 +217,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     } finally {
       setIsLoadingMore(false)
     }
-  }
+  }, [isLoadingMore, hasMoreResults, selectedConcepts, category, paginationOffset])
 
   // Intersection Observer for lazy loading - set up when element is rendered
   useEffect(() => {
@@ -230,12 +234,18 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
     const currentRef = loadMoreRef.current
     if (!currentRef) {
+      // Ref not available yet - element might not be rendered
+      // The effect will re-run when allSites.length changes
       return
     }
 
+    console.log('[INTERSECTION OBSERVER] Setting up observer for loadMoreRef')
+
     const observer = new IntersectionObserver(
       (entries) => {
+        console.log('[INTERSECTION OBSERVER] Intersection changed:', entries[0].isIntersecting, 'hasMoreResults:', hasMoreResults, 'isLoadingMore:', isLoadingMore)
         if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
+          console.log('[INTERSECTION OBSERVER] Triggering loadMoreImages')
           // Load more images from API
           loadMoreImages()
         }
@@ -252,7 +262,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         observerRef.current = null
       }
     }
-  }, [hasMoreResults, isLoadingMore, paginationOffset, selectedConcepts, category])
+  }, [hasMoreResults, isLoadingMore, loadMoreImages, allSites.length])
 
   // Fetch concept data with opposites when concepts change (not just when panel opens)
   // This ensures opposites are available for fetching opposite results
@@ -2536,7 +2546,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             ))}
             {/* Lazy loading trigger - load more when this becomes visible */}
             {hasMoreResults && (
-              <div ref={loadMoreRef} className="col-span-full flex justify-center py-8">
+              <div 
+                ref={loadMoreRef} 
+                className="col-span-full flex justify-center py-8"
+                data-testid="load-more-trigger"
+              >
                 <div className="text-gray-400 text-sm">
                   {isLoadingMore ? 'Loading more...' : 'Scroll for more'}
                 </div>
