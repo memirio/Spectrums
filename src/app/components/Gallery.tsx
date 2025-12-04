@@ -2598,7 +2598,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             {/* Skeleton loaders while loading more */}
             {isLoadingMore && (
               <>
-                {[...Array(6)].map((_, i) => (
+                {[...Array(9)].map((_, i) => (
                   <div key={`skeleton-${i}`}>
                     {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
                     <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
