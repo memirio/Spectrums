@@ -2588,7 +2588,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             ) : (
               <div className="col-span-full flex justify-center py-8">
                 <div className="text-gray-400 text-sm">
-                  {console.log('[RENDER] Load more element NOT rendered - hasMoreResults:', hasMoreResults)}
                   No more results
                 </div>
               </div>
