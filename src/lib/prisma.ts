@@ -63,9 +63,20 @@ function getPrismaClient(): PrismaClient {
   }
   
   // Fallback to default client (for local development or if adapter fails)
-  console.log('[prisma] Using default PrismaClient')
+  // But Prisma 7 requires adapter when using "client" engine type
+  // If DATABASE_URL is missing, throw a clear error
+  if (!dbUrl) {
+    console.error('[prisma] DATABASE_URL is missing!')
+    console.error('[prisma] Available env vars:', Object.keys(process.env).filter(k => k.includes('DATABASE')))
+    throw new Error('DATABASE_URL environment variable is required but not set. Please configure it in your Vercel environment variables.')
+  }
+  
+  console.log('[prisma] Using default PrismaClient (fallback)')
   console.log('[prisma] DATABASE_URL type:', typeof process.env.DATABASE_URL)
   console.log('[prisma] DATABASE_URL starts with:', dbUrl.substring(0, 30))
+  
+  // If we reach here, DATABASE_URL exists but doesn't start with postgresql://
+  // This shouldn't happen in production, but handle it gracefully
   return new PrismaClient({
     // log: ['query','error','warn'], // uncomment for debugging
   })
