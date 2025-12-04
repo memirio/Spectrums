@@ -221,6 +221,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   // Intersection Observer for lazy loading - set up when element is rendered
   useEffect(() => {
+    console.log('[INTERSECTION OBSERVER] Effect running - hasMoreResults:', hasMoreResults, 'isLoadingMore:', isLoadingMore, 'allSites.length:', allSites.length)
+    
     // Clean up previous observer
     if (observerRef.current) {
       observerRef.current.disconnect()
@@ -228,14 +230,19 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
 
     // Only set up observer if we have more results to load
-    if (!hasMoreResults || isLoadingMore) {
+    if (!hasMoreResults) {
+      console.log('[INTERSECTION OBSERVER] Skipping - hasMoreResults is false')
+      return
+    }
+    
+    if (isLoadingMore) {
+      console.log('[INTERSECTION OBSERVER] Skipping - already loading')
       return
     }
 
     const currentRef = loadMoreRef.current
     if (!currentRef) {
-      // Ref not available yet - element might not be rendered
-      // The effect will re-run when allSites.length changes
+      console.log('[INTERSECTION OBSERVER] Ref not available yet, will retry when element renders')
       return
     }
 
@@ -250,11 +257,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           loadMoreImages()
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '100px' }
     )
 
     observer.observe(currentRef)
     observerRef.current = observer
+    console.log('[INTERSECTION OBSERVER] Observer set up and observing element')
 
     return () => {
       if (observerRef.current) {
@@ -1193,9 +1201,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             return
           }
           const data = await response.json()
+          console.log('[FETCH SITES] Initial fetch:', data.sites?.length, 'sites, hasMore:', data.hasMore, 'total:', data.total)
           setAllSites(Array.isArray(data.sites) ? data.sites : [])
           setDisplayedCount(50)
-          setHasMoreResults(data.hasMore || false)
+          const hasMore = data.hasMore || false
+          console.log('[FETCH SITES] Setting hasMoreResults to:', hasMore)
+          setHasMoreResults(hasMore)
           setPaginationOffset(60) // Next fetch will be at offset 60
         } catch (error) {
           console.error('Error fetching sites:', error)
@@ -2545,7 +2556,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 </div>
             ))}
             {/* Lazy loading trigger - load more when this becomes visible */}
-            {hasMoreResults && (
+            {hasMoreResults ? (
               <div 
                 ref={loadMoreRef} 
                 className="col-span-full flex justify-center py-8"
@@ -2553,6 +2564,13 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               >
                 <div className="text-gray-400 text-sm">
                   {isLoadingMore ? 'Loading more...' : 'Scroll for more'}
+                </div>
+              </div>
+            ) : (
+              <div className="col-span-full flex justify-center py-8">
+                <div className="text-gray-400 text-sm">
+                  {console.log('[RENDER] Load more element NOT rendered - hasMoreResults:', hasMoreResults)}
+                  No more results
                 </div>
               </div>
             )}
