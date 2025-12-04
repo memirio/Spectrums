@@ -94,52 +94,85 @@ async function buildTestQueries(): Promise<string[]> {
 }
 
 /**
+ * Get total count of images with embeddings
+ */
+async function getImageCount(): Promise<number> {
+  return await prisma.image.count({
+    where: {
+      embedding: { isNot: null },
+    },
+  })
+}
+
+/**
  * Load all images with embeddings
+ * OPTIMIZED: Only fetch image IDs, not full vectors (use pgvector queries instead)
  */
 async function loadAllImagesWithEmbeddings(): Promise<ImageWithEmbedding[]> {
+  // OPTIMIZATION: Only fetch image IDs, not full vectors
+  // Vectors will be fetched via pgvector queries when needed
   const images = await prisma.image.findMany({
     where: {
       embedding: {
         isNot: null,
       },
     },
-    include: {
-      embedding: true,
+    select: {
+      id: true,
+      // Don't include embedding - we'll use pgvector queries instead
     },
   })
   
-  const imagesWithEmbeddings: ImageWithEmbedding[] = []
+  // Return minimal structure - embeddings will be fetched via pgvector when needed
+  // This reduces data transfer from ~3KB per image to ~50 bytes per image
+  return images.map(img => ({
+    id: img.id,
+    embedding: [] as number[], // Empty - will be fetched via pgvector query
+  }))
+}
+
+/**
+ * Get top N images using pgvector query
+ */
+async function getTopNImagesWithScoresPgvector(
+  queryEmbedding: number[],
+  topN: number = 40
+): Promise<Array<{ imageId: string; score: number }>> {
+  const queryVectorStr = '[' + queryEmbedding.join(',') + ']'
   
-  for (const img of images) {
-    if (img.embedding?.vector) {
-      const vector = img.embedding.vector as unknown as number[]
-      if (Array.isArray(vector) && vector.length > 0) {
-        imagesWithEmbeddings.push({
-          id: img.id,
-          embedding: vector,
-        })
-      }
-    }
+  const pgvectorQuery = `
+    SELECT 
+      ie."imageId",
+      1 - (ie.vector <=> $1::vector) as similarity
+    FROM "image_embeddings" ie
+    WHERE ie.vector IS NOT NULL
+    ORDER BY ie.vector <=> $1::vector
+    LIMIT $2
+  `
+  
+  try {
+    const results = await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, queryVectorStr, topN)
+    return results.map((row: any) => ({
+      imageId: row.imageId,
+      score: row.similarity,
+    }))
+  } catch (error: any) {
+    console.warn(`[hub-detection] pgvector query failed: ${error.message}`)
+    return []
   }
-  
-  return imagesWithEmbeddings
 }
 
 /**
  * Compute top N images for a query with their scores
+ * OPTIMIZED: Uses pgvector queries instead of loading all vectors
  */
-function getTopNImagesWithScores(
+async function getTopNImagesWithScores(
   queryEmbedding: number[],
-  images: ImageWithEmbedding[],
+  images: ImageWithEmbedding[] | null, // Can be null if using pgvector
   topN: number = 40
-): Array<{ imageId: string; score: number }> {
-  const scored = images.map((img: any) => ({
-    imageId: img.id,
-    score: cosine(queryEmbedding, img.embedding),
-  }))
-  
-  scored.sort((a, b) => b.score - a.score)
-  return scored.slice(0, topN)
+): Promise<Array<{ imageId: string; score: number }>> {
+  // Use pgvector query (much more efficient)
+  return await getTopNImagesWithScoresPgvector(queryEmbedding, topN)
 }
 
 /**
@@ -157,11 +190,11 @@ export async function detectHubImages(
   const queries = await buildTestQueries()
   console.log(`[hub-detection] Built ${queries.length} test queries`)
   
-  // 2. Load all images with embeddings
-  const images = await loadAllImagesWithEmbeddings()
-  console.log(`[hub-detection] Loaded ${images.length} images with embeddings`)
+  // 2. Get total image count (for statistics only - we use pgvector queries instead of loading all)
+  const totalImageCount = await getImageCount()
+  console.log(`[hub-detection] Total images with embeddings: ${totalImageCount} (using pgvector queries)`)
   
-  if (images.length === 0) {
+  if (totalImageCount === 0) {
     console.warn(`[hub-detection] No images with embeddings found`)
     return new Map()
   }
@@ -194,7 +227,7 @@ export async function detectHubImages(
         continue
       }
       
-      const topNImages = getTopNImagesWithScores(queryEmbedding, images, topN)
+      const topNImages = await getTopNImagesWithScores(queryEmbedding, null, topN)
       
       // Calculate average cosine similarity for this query's top N
       const queryAvgScore = topNImages.length > 0
@@ -221,7 +254,7 @@ export async function detectHubImages(
   console.log(`[hub-detection] Processed all ${queries.length} queries`)
   
   // Compute hub scores
-  const totalImages = images.length
+  const totalImages = totalImageCount
   const expectedHubScore = topN / totalImages
   const hubThreshold = expectedHubScore * thresholdMultiplier
   
@@ -301,15 +334,17 @@ export async function writeHubStatsToDatabase(
       try {
         // If hubScore is 0, clear hub status (below threshold)
         if (stats.hubScore === 0) {
-          await prisma.$executeRaw`
-            UPDATE images 
-            SET hubCount = NULL, 
-                hubScore = NULL,
-                hubAvgCosineSimilarity = NULL,
-                hubAvgCosineSimilarityMargin = NULL
-            WHERE id = ${imageId}
-          `.catch(async (error: any) => {
-            if (error.message.includes('hubAvgCosineSimilarity')) {
+          await prisma.image.update({
+            where: { id: imageId },
+            data: {
+              hubCount: null,
+              hubScore: null,
+              hubAvgCosineSimilarity: null,
+              hubAvgCosineSimilarityMargin: null,
+            },
+          }).catch(async (error: any) => {
+            // If new columns don't exist, update without them
+            if (error.message?.includes('hubAvgCosineSimilarity') || error.message?.includes('hubAvgCosineSimilarityMargin')) {
               await prisma.image.update({
                 where: { id: imageId },
                 data: {
@@ -323,15 +358,18 @@ export async function writeHubStatsToDatabase(
           })
         } else {
           // Above threshold - set hub stats
-          await prisma.$executeRaw`
-            UPDATE images 
-            SET hubCount = ${stats.hubCount}, 
-                hubScore = ${stats.hubScore},
-                hubAvgCosineSimilarity = ${stats.avgCosineSimilarity},
-                hubAvgCosineSimilarityMargin = ${stats.avgCosineSimilarityMargin}
-            WHERE id = ${imageId}
-          `.catch(async (error: any) => {
-            if (error.message.includes('hubAvgCosineSimilarity')) {
+          // Use Prisma update instead of raw SQL to avoid column name issues
+          await prisma.image.update({
+            where: { id: imageId },
+            data: {
+              hubCount: stats.hubCount,
+              hubScore: stats.hubScore,
+              hubAvgCosineSimilarity: stats.avgCosineSimilarity,
+              hubAvgCosineSimilarityMargin: stats.avgCosineSimilarityMargin,
+            },
+          }).catch(async (error: any) => {
+            // If new columns don't exist, update without them
+            if (error.message?.includes('hubAvgCosineSimilarity') || error.message?.includes('hubAvgCosineSimilarityMargin')) {
               await prisma.image.update({
                 where: { id: imageId },
                 data: {
@@ -356,7 +394,14 @@ export async function writeHubStatsToDatabase(
 
 /**
  * Incremental hub detection for specific image(s)
- * Only processes the specified images, not all images
+ * 
+ * IMPORTANT: This function:
+ * 1. Checks ALL images in the database (via pgvector queries) to see which appear in top N
+ * 2. Only computes hub stats for the specified NEW images
+ * 3. Stores results in the database (hubCount, hubScore, etc.) so they persist
+ * 4. Only runs when new images are added (triggered by image upload)
+ * 
+ * This ensures we don't miss any hubs while being efficient with data transfer.
  */
 export async function detectHubForImages(
   imageIds: string[],
@@ -401,11 +446,11 @@ export async function detectHubForImages(
   
   console.log(`[hub-detection] Loaded ${targetImageEmbeddings.length} target image(s) with embeddings`)
   
-  // 2. Load ALL images (needed to compute top N for each query)
-  const allImages = await loadAllImagesWithEmbeddings()
-  console.log(`[hub-detection] Loaded ${allImages.length} total images (for top N comparison)`)
+  // 2. Get total image count (for statistics only - we use pgvector queries instead of loading all)
+  const totalImageCount = await getImageCount()
+  console.log(`[hub-detection] Total images with embeddings: ${totalImageCount} (using pgvector queries)`)
   
-  if (allImages.length === 0) {
+  if (totalImageCount === 0) {
     console.warn(`[hub-detection] No images with embeddings found`)
     return new Map()
   }
@@ -442,8 +487,8 @@ export async function detectHubForImages(
         continue
       }
       
-      // Get top N images from ALL images (for comparison)
-      const topNImages = getTopNImagesWithScores(queryEmbedding, allImages, topN)
+      // Get top N images from ALL images (for comparison) - using pgvector
+      const topNImages = await getTopNImagesWithScores(queryEmbedding, null, topN)
       
       // Calculate average cosine similarity for this query's top N
       const queryAvgScore = topNImages.length > 0
@@ -468,8 +513,11 @@ export async function detectHubForImages(
   
   console.log(`[hub-detection] Processed all ${queries.length} queries`)
   
-  // 6. Compute hub scores for target images only
-  const totalImages = allImages.length
+  // 6. Use the total image count we already fetched earlier (for statistics)
+  // NOTE: pgvector queries check ALL images in the database via index scan,
+  // ensuring we don't miss any potential hubs. We don't load all vectors into memory,
+  // but the database efficiently scans all vectors to find top N matches.
+  const totalImages = totalImageCount
   const expectedHubScore = topN / totalImages
   const hubThreshold = expectedHubScore * thresholdMultiplier
   
@@ -541,6 +589,15 @@ export async function runHubDetection(
 
 /**
  * Run incremental hub detection for specific images and save to database
+ * 
+ * IMPORTANT: This function:
+ * 1. Checks ALL images in the database (via pgvector index scan) to identify hubs
+ * 2. Only computes hub stats for the specified NEW images
+ * 3. Stores results in database (hubCount, hubScore, hubAvgCosineSimilarity, hubAvgCosineSimilarityMargin)
+ * 4. Results persist - they are read from database during search, not recomputed
+ * 
+ * This is called automatically when new images are stored (via triggerHubDetectionForImages).
+ * Hub stats are stored alongside the image ID in the images table.
  */
 export async function runHubDetectionForImages(
   imageIds: string[],
@@ -549,6 +606,7 @@ export async function runHubDetectionForImages(
 ): Promise<void> {
   try {
     const hubStats = await detectHubForImages(imageIds, topN, thresholdMultiplier)
+    // Store hub stats in database - they persist and are used during search
     await writeHubStatsToDatabase(hubStats, false) // Don't clear existing, just update these images
     console.log(`[hub-detection] ✅ Incremental hub detection complete for ${imageIds.length} image(s)`)
   } catch (error: any) {

@@ -1260,7 +1260,8 @@
     "synonyms": [
       "entertainment",
       "adulting",
-      "lifestyle"
+      "lifestyle",
+      "Entertainment"
     ],
     "related": [
       "sensuality",
@@ -2020,7 +2021,8 @@
       "substitute",
       "variant",
       "option",
-      "choice"
+      "choice",
+      "Choice"
     ],
     "related": [
       "bohemian",
@@ -2469,7 +2471,8 @@
       "edged",
       "faceted",
       "defined",
-      "Triangular"
+      "Triangular",
+      "Minimalist"
     ],
     "related": [
       "minimalism",
@@ -6730,7 +6733,8 @@
       "campground",
       "campfire",
       "backcountry",
-      "glamping"
+      "glamping",
+      "Adventure"
     ],
     "related": [
       "nature",
@@ -6819,7 +6823,8 @@
       "untroubled",
       "easygoing",
       "blissful",
-      "playful"
+      "playful",
+      "Lighthearted"
     ],
     "related": [
       "whimsy",
@@ -12005,7 +12010,8 @@
       "designing",
       "crafting",
       "generating",
-      "developing"
+      "developing",
+      "Crafting"
     ],
     "related": [
       "innovation",
@@ -13922,7 +13928,8 @@
     "category": "Aesthetic / Formal",
     "synonyms": [
       "concentration",
-      "bulk"
+      "bulk",
+      "Compactness"
     ],
     "related": [
       "balance",
@@ -37016,7 +37023,8 @@
       "medium",
       "fabric",
       "texture",
-      "matter"
+      "matter",
+      "Tactility"
     ],
     "related": [
       "tactility",
@@ -41757,7 +41765,8 @@
       "supernatural",
       "extraterrestrial",
       "unearthly",
-      "transcendent"
+      "transcendent",
+      "Fantastical"
     ],
     "related": [
       "fantasy",
@@ -45362,7 +45371,8 @@
       "multiplication",
       "spread",
       "increase",
-      "growth"
+      "growth",
+      "Multiplicity"
     ],
     "related": [
       "diversity",
@@ -65378,6 +65388,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "burgundy",
+    "label": "Burgundy",
+    "synonyms": [],
+    "related": [
+      "carmine"
+    ],
+    "opposites": [],
+    "category": "Color & Tone"
+  },
+  {
     "id": "burnt",
     "label": "Burnt",
     "synonyms": [
@@ -65560,6 +65580,54 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "carmine",
+    "label": "Carmine",
+    "synonyms": [
+      "red",
+      "reddish",
+      "ruddy",
+      "cerise",
+      "cherry",
+      "crimson"
+    ],
+    "related": [
+      "crimson",
+      "burgundy",
+      "scarlet",
+      "ruby",
+      "sangria"
+    ],
+    "opposites": [
+      "Pale",
+      "Pastel"
+    ],
+    "category": "Color & Tone",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "cerise",
+    "label": "Cerise",
+    "synonyms": [
+      "carmine"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Color & Tone"
+  },
+  {
+    "id": "cherry",
+    "label": "Cherry",
+    "synonyms": [
+      "carmine"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Color & Tone"
   },
   {
     "id": "chromatic",
@@ -66101,6 +66169,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "crimson",
+    "label": "Crimson",
+    "synonyms": [
+      "carmine"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Color & Tone"
   },
   {
     "id": "cyberpunk",
@@ -71137,6 +71215,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "red",
+    "label": "Red",
+    "synonyms": [
+      "carmine"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Color & Tone"
+  },
+  {
+    "id": "reddish",
+    "label": "Reddish",
+    "synonyms": [
+      "carmine"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Color & Tone"
+  },
+  {
     "id": "repellent",
     "label": "repellent",
     "synonyms": [
@@ -71578,6 +71676,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "ruby",
+    "label": "Ruby",
+    "synonyms": [],
+    "related": [
+      "carmine"
+    ],
+    "opposites": [],
+    "category": "Color & Tone"
+  },
+  {
+    "id": "ruddy",
+    "label": "Ruddy",
+    "synonyms": [
+      "carmine"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Color & Tone"
+  },
+  {
     "id": "sameness",
     "label": "sameness",
     "synonyms": [
@@ -71664,6 +71782,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "sangria",
+    "label": "Sangria",
+    "synonyms": [],
+    "related": [
+      "carmine"
+    ],
+    "opposites": [],
+    "category": "Color & Tone"
   },
   {
     "id": "saturation",
@@ -71784,6 +71912,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "scarlet",
+    "label": "Scarlet",
+    "synonyms": [],
+    "related": [
+      "carmine"
+    ],
+    "opposites": [],
+    "category": "Color & Tone"
   },
   {
     "id": "screaming",
@@ -72327,7 +72465,8 @@
       "athletic",
       "sporting",
       "competition",
-      "Sport"
+      "Sport",
+      "Athletic"
     ],
     "related": [
       "energetic",
@@ -74685,6 +74824,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "biodegradable",
+    "label": "Biodegradable",
+    "synonyms": [],
+    "related": [
+      "eco-friendly"
+    ],
+    "opposites": [],
+    "category": "Design Style"
   },
   {
     "id": "biophilic",
@@ -77295,6 +77444,42 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "eco-design",
+    "label": "Eco-design",
+    "synonyms": [],
+    "related": [
+      "minimalist"
+    ],
+    "opposites": [
+      "Industrial",
+      "Mechanical",
+      "exploitative"
+    ],
+    "category": "Design Style",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "eco-friendly",
+    "label": "Eco-friendly",
+    "synonyms": [],
+    "related": [
+      "biodegradable",
+      "recyclable"
+    ],
+    "opposites": [
+      "Polluting",
+      "Harmful"
+    ],
+    "category": "Design Style",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "embraced",
     "label": "embraced",
     "synonyms": [
@@ -77568,6 +77753,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "exploitative",
+    "label": "Exploitative",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "eco-design"
+    ],
+    "category": "Design Style"
   },
   {
     "id": "faddish",
@@ -80358,7 +80553,8 @@
       "petite",
       "diminutive",
       "mini",
-      "compact"
+      "compact",
+      "Toy"
     ],
     "related": [
       "action",
@@ -80465,6 +80661,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "minimalist",
+    "label": "Minimalist",
+    "synonyms": [],
+    "related": [
+      "eco-design"
+    ],
+    "opposites": [],
+    "category": "Design Style"
   },
   {
     "id": "mono",
@@ -81648,6 +81854,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "recyclable",
+    "label": "Recyclable",
+    "synonyms": [],
+    "related": [
+      "eco-friendly"
+    ],
+    "opposites": [],
+    "category": "Design Style"
   },
   {
     "id": "regional",
@@ -86444,6 +86660,16 @@
     "category": "Design Technique"
   },
   {
+    "id": "cutting",
+    "label": "Cutting",
+    "synonyms": [],
+    "related": [
+      "die-cut"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "dazzling",
     "label": "dazzling",
     "synonyms": [
@@ -86663,6 +86889,25 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "die-cut",
+    "label": "Die-cut",
+    "synonyms": [],
+    "related": [
+      "stencil",
+      "perforation",
+      "cutting"
+    ],
+    "opposites": [
+      "Engraved",
+      "Embossed"
+    ],
+    "category": "Design Technique",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "digital",
@@ -91519,7 +91764,8 @@
     "id": "modelling",
     "label": "Modelling",
     "synonyms": [
-      "modeling"
+      "modeling",
+      "Lighting"
     ],
     "related": [
       "3d",
@@ -92718,6 +92964,16 @@
     "synonyms": [],
     "related": [
       "engraving"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
+    "id": "perforation",
+    "label": "Perforation",
+    "synonyms": [],
+    "related": [
+      "die-cut"
     ],
     "opposites": [],
     "category": "Design Technique"
@@ -94777,6 +95033,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "stencil",
+    "label": "Stencil",
+    "synonyms": [],
+    "related": [
+      "die-cut"
+    ],
+    "opposites": [],
+    "category": "Design Technique"
+  },
+  {
     "id": "stilted",
     "label": "Stilted",
     "synonyms": [
@@ -96632,6 +96898,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "activeness",
+    "label": "Activeness",
+    "synonyms": [
+      "invigoration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
   },
   {
     "id": "admiring",
@@ -98982,6 +99258,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "brio",
+    "label": "Brio",
+    "synonyms": [
+      "invigoration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "buoyancy",
     "label": "Buoyancy",
     "synonyms": [
@@ -100186,6 +100472,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "compaction",
+    "label": "Compaction",
+    "synonyms": [
+      "crunch"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "compassion",
     "label": "Compassion",
     "synonyms": [
@@ -100539,6 +100835,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "compression",
+    "label": "Compression",
+    "synonyms": [
+      "crunch"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
   },
   {
     "id": "confidence",
@@ -101155,6 +101461,36 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "crunch",
+    "label": "Crunch",
+    "synonyms": [
+      "situation",
+      "crush",
+      "compaction",
+      "compression"
+    ],
+    "related": [],
+    "opposites": [
+      "Softness",
+      "Smoothness"
+    ],
+    "category": "Feeling / Emotion",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "crush",
+    "label": "Crush",
+    "synonyms": [
+      "crunch"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
   },
   {
     "id": "curiosity",
@@ -104722,6 +105058,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "fatigue",
+    "label": "Fatigue",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "invigoration"
+    ],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "fear",
     "label": "fear",
     "synonyms": [
@@ -107412,6 +107758,29 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "invigoration",
+    "label": "Invigoration",
+    "synonyms": [
+      "spiritedness",
+      "brio",
+      "vivification",
+      "activeness"
+    ],
+    "related": [
+      "refreshment"
+    ],
+    "opposites": [
+      "Exhaustion",
+      "Lethargy",
+      "fatigue"
+    ],
+    "category": "Feeling / Emotion",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "isolated",
@@ -111165,6 +111534,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "refreshment",
+    "label": "Refreshment",
+    "synonyms": [],
+    "related": [
+      "invigoration"
+    ],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "rejecting",
     "label": "rejecting",
     "synonyms": [
@@ -113884,6 +114263,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "situation",
+    "label": "Situation",
+    "synonyms": [
+      "crunch"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "skillful",
     "label": "skillful",
     "synonyms": [
@@ -114218,6 +114607,16 @@
       "brand"
     ],
     "embeddingStrategy": "brand_style"
+  },
+  {
+    "id": "spiritedness",
+    "label": "Spiritedness",
+    "synonyms": [
+      "invigoration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
   },
   {
     "id": "stability",
@@ -117994,6 +118393,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "vivification",
+    "label": "Vivification",
+    "synonyms": [
+      "invigoration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Feeling / Emotion"
+  },
+  {
     "id": "volatile",
     "label": "volatile",
     "synonyms": [
@@ -119136,6 +119545,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "aggregation",
+    "label": "Aggregation",
+    "synonyms": [
+      "bundle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "align",
@@ -120405,6 +120824,26 @@
     "category": "Form & Structure"
   },
   {
+    "id": "bundle",
+    "label": "Bundle",
+    "synonyms": [
+      "package",
+      "packet",
+      "parcel",
+      "aggregation"
+    ],
+    "related": [],
+    "opposites": [
+      "Scatter",
+      "Disperse"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "canvas",
     "label": "Canvas",
     "synonyms": [
@@ -120923,6 +121362,16 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "columnation",
+    "label": "Columnation",
+    "synonyms": [
+      "stackability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "concave",
     "label": "Concave",
     "synonyms": [
@@ -121416,6 +121865,59 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "cubelike",
+    "label": "Cubelike",
+    "synonyms": [
+      "cubical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "cubic",
+    "label": "Cubic",
+    "synonyms": [
+      "cubical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "cubical",
+    "label": "Cubical",
+    "synonyms": [
+      "cubelike",
+      "cubiform",
+      "cuboid",
+      "cuboidal",
+      "cubic"
+    ],
+    "related": [
+      "tessellation"
+    ],
+    "opposites": [
+      "Spherical",
+      "Amorphous"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "cubiform",
+    "label": "Cubiform",
+    "synonyms": [
+      "cubical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "cubism",
     "label": "Cubism",
     "synonyms": [
@@ -121515,6 +122017,26 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "cuboid",
+    "label": "Cuboid",
+    "synonyms": [
+      "cubical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "cuboidal",
+    "label": "Cuboidal",
+    "synonyms": [
+      "cubical"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "curve",
@@ -125472,6 +125994,36 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "package",
+    "label": "Package",
+    "synonyms": [
+      "bundle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "packet",
+    "label": "Packet",
+    "synonyms": [
+      "bundle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
+    "id": "parcel",
+    "label": "Parcel",
+    "synonyms": [
+      "bundle"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "pathway",
     "label": "Pathway",
     "synonyms": [
@@ -127939,6 +128491,25 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "stackability",
+    "label": "Stackability",
+    "synonyms": [
+      "stacking",
+      "columnation",
+      "tiering"
+    ],
+    "related": [],
+    "opposites": [
+      "Fixed",
+      "Rigid"
+    ],
+    "category": "Form & Structure",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "stackable",
     "label": "Stackable",
     "synonyms": [
@@ -127957,6 +128528,16 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "stacking",
+    "label": "Stacking",
+    "synonyms": [
+      "stackability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "statuary",
@@ -128087,10 +128668,21 @@
     "category": "Form & Structure"
   },
   {
+    "id": "tessellation",
+    "label": "Tessellation",
+    "synonyms": [],
+    "related": [
+      "cubical"
+    ],
+    "opposites": [],
+    "category": "Form & Structure"
+  },
+  {
     "id": "tiered",
     "label": "Tiered",
     "synonyms": [
-      "tiereds"
+      "tiereds",
+      "Stacked"
     ],
     "related": [
       "accordion",
@@ -128118,6 +128710,16 @@
       "app"
     ],
     "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "tiering",
+    "label": "Tiering",
+    "synonyms": [
+      "stackability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Form & Structure"
   },
   {
     "id": "tiled",
@@ -129859,6 +130461,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "afters",
+    "label": "Afters",
+    "synonyms": [
+      "dessert"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "album",
     "label": "Album",
     "synonyms": [
@@ -130962,6 +131574,23 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "canning",
+    "label": "Canning",
+    "synonyms": [],
+    "related": [
+      "storage"
+    ],
+    "opposites": [
+      "Fresh",
+      "Unpackaged"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "casualdining",
     "label": "CasualDining",
     "synonyms": [
@@ -131124,6 +131753,16 @@
     "category": "Industry"
   },
   {
+    "id": "chemicals",
+    "label": "Chemicals",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "nutraceuticals"
+    ],
+    "category": "Industry"
+  },
+  {
     "id": "childcare",
     "label": "Childcare",
     "synonyms": [
@@ -131213,6 +131852,56 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "children-s",
+    "label": "Children's",
+    "synonyms": [
+      "juvenile",
+      "kid"
+    ],
+    "related": [
+      "creative"
+    ],
+    "opposites": [
+      "Adult",
+      "Mature"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "chocolate",
+    "label": "Chocolate",
+    "synonyms": [],
+    "related": [
+      "dessert"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "cider",
+    "label": "Cider",
+    "synonyms": [
+      "cyder",
+      "drink",
+      "drinkable",
+      "potable"
+    ],
+    "related": [],
+    "opposites": [
+      "Wine",
+      "Spirits"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "climate",
@@ -131699,12 +132388,32 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "course",
+    "label": "Course",
+    "synonyms": [
+      "dessert"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "coverage",
     "label": "Coverage",
     "synonyms": [
       "insurance"
     ],
     "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "creative",
+    "label": "Creative",
+    "synonyms": [],
+    "related": [
+      "children-s"
+    ],
     "opposites": [],
     "category": "Industry"
   },
@@ -131804,6 +132513,46 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "cyder",
+    "label": "Cyder",
+    "synonyms": [
+      "cider"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "dairy",
+    "label": "Dairy",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "dairy-alternative"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "dairy-alternative",
+    "label": "Dairy-alternative",
+    "synonyms": [
+      "plantbased",
+      "nondairy",
+      "vegan"
+    ],
+    "related": [],
+    "opposites": [
+      "Dairy",
+      "Animal-based",
+      "dairy"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "decaf",
@@ -132049,6 +132798,27 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "dessert",
+    "label": "Dessert",
+    "synonyms": [
+      "afters",
+      "course"
+    ],
+    "related": [
+      "pastry",
+      "chocolate"
+    ],
+    "opposites": [
+      "Main-course",
+      "Savory"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "detergent",
     "label": "Detergent",
     "synonyms": [],
@@ -132190,6 +132960,16 @@
     "category": "Industry"
   },
   {
+    "id": "dietary",
+    "label": "Dietary",
+    "synonyms": [
+      "nutraceuticals"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "discourse",
     "label": "Discourse",
     "synonyms": [],
@@ -132264,6 +133044,26 @@
     "label": "Dressings",
     "synonyms": [
       "condiments"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "drink",
+    "label": "Drink",
+    "synonyms": [
+      "cider"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "drinkable",
+    "label": "Drinkable",
+    "synonyms": [
+      "cider"
     ],
     "related": [],
     "opposites": [],
@@ -134263,10 +135063,30 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "juvenile",
+    "label": "Juvenile",
+    "synonyms": [
+      "children-s"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "keepsakes",
     "label": "Keepsakes",
     "synonyms": [
       "souvenirs"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "kid",
+    "label": "Kid",
+    "synonyms": [
+      "children-s"
     ],
     "related": [],
     "opposites": [],
@@ -134986,7 +135806,8 @@
     "label": "Merchandise",
     "synonyms": [
       "domain",
-      "whole"
+      "whole",
+      "Goods"
     ],
     "related": [
       "advertising",
@@ -135707,6 +136528,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "nondairy",
+    "label": "Nondairy",
+    "synonyms": [
+      "dairy-alternative"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "notebook",
     "label": "Notebook",
     "synonyms": [
@@ -135715,6 +136546,28 @@
     "related": [],
     "opposites": [],
     "category": "Industry"
+  },
+  {
+    "id": "nutraceuticals",
+    "label": "Nutraceuticals",
+    "synonyms": [
+      "dietary",
+      "supplement"
+    ],
+    "related": [
+      "vitamin"
+    ],
+    "opposites": [
+      "Junk Food",
+      "Fast Food",
+      "toxins",
+      "chemicals"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "nutrition",
@@ -135873,6 +136726,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "pastry",
+    "label": "Pastry",
+    "synonyms": [],
+    "related": [
+      "dessert"
+    ],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "payments",
@@ -136119,6 +136982,16 @@
     "category": "Industry"
   },
   {
+    "id": "plantbased",
+    "label": "Plantbased",
+    "synonyms": [
+      "dairy-alternative"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "planting",
     "label": "Planting",
     "synonyms": [
@@ -136179,6 +137052,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "potable",
+    "label": "Potable",
+    "synonyms": [
+      "cider"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "presentation",
@@ -137194,6 +138077,16 @@
     "embeddingStrategy": "brand_style"
   },
   {
+    "id": "storage",
+    "label": "Storage",
+    "synonyms": [],
+    "related": [
+      "canning"
+    ],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "store",
     "label": "Store",
     "synonyms": [
@@ -137323,6 +138216,16 @@
     "label": "Summits",
     "synonyms": [
       "conferences"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
+    "id": "supplement",
+    "label": "Supplement",
+    "synonyms": [
+      "nutraceuticals"
     ],
     "related": [],
     "opposites": [],
@@ -137473,7 +138376,8 @@
     "id": "tapers",
     "label": "Tapers",
     "synonyms": [
-      "candles"
+      "candles",
+      "Curves"
     ],
     "related": [],
     "opposites": [],
@@ -137571,7 +138475,8 @@
     "id": "therapeutic",
     "label": "Therapeutic",
     "synonyms": [
-      "pharmaceutical"
+      "pharmaceutical",
+      "Minimalist"
     ],
     "related": [],
     "opposites": [],
@@ -137658,6 +138563,16 @@
     "related": [],
     "opposites": [
       "nutrition"
+    ],
+    "category": "Industry"
+  },
+  {
+    "id": "toxins",
+    "label": "Toxins",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "nutraceuticals"
     ],
     "category": "Industry"
   },
@@ -137760,6 +138675,16 @@
     "category": "Industry"
   },
   {
+    "id": "vegan",
+    "label": "Vegan",
+    "synonyms": [
+      "dairy-alternative"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Industry"
+  },
+  {
     "id": "vinification",
     "label": "Vinification",
     "synonyms": [
@@ -137768,6 +138693,21 @@
     "related": [],
     "opposites": [],
     "category": "Industry"
+  },
+  {
+    "id": "vinyl",
+    "label": "Vinyl",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "Digital",
+      "Streaming"
+    ],
+    "category": "Industry",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "visuals",
@@ -137783,6 +138723,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "vitamin",
+    "label": "Vitamin",
+    "synonyms": [],
+    "related": [
+      "nutraceuticals"
+    ],
+    "opposites": [],
+    "category": "Industry"
   },
   {
     "id": "votives",
@@ -139070,6 +140020,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "appetisingness",
+    "label": "Appetisingness",
+    "synonyms": [
+      "juiciness"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "appetizingness",
+    "label": "Appetizingness",
+    "synonyms": [
+      "juiciness"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "aquatic",
     "label": "Aquatic",
     "synonyms": [
@@ -139522,6 +140492,27 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "avian",
+    "label": "Avian",
+    "synonyms": [
+      "birdlike",
+      "ornithological"
+    ],
+    "related": [
+      "feathered",
+      "winged"
+    ],
+    "opposites": [
+      "Terrestrial",
+      "Aquatic"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "awake",
     "label": "Awake",
     "synonyms": [
@@ -139963,6 +140954,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "biodegradability",
+    "label": "Biodegradability",
+    "synonyms": [],
+    "related": [
+      "recyclability"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "biomorphic",
     "label": "Biomorphic",
     "synonyms": [
@@ -140054,6 +141055,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "birdlike",
+    "label": "Birdlike",
+    "synonyms": [
+      "avian"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "blackout",
@@ -142322,6 +143333,50 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "crystallisation",
+    "label": "Crystallisation",
+    "synonyms": [
+      "crystallization"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "crystallization",
+    "label": "Crystallization",
+    "synonyms": [
+      "crystallisation",
+      "crystallizing",
+      "rock"
+    ],
+    "related": [
+      "fractals",
+      "translucence",
+      "geodes"
+    ],
+    "opposites": [
+      "Erosion",
+      "Dissolution",
+      "liquefaction"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "crystallizing",
+    "label": "Crystallizing",
+    "synonyms": [
+      "crystallization"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "culmination",
@@ -145301,6 +146356,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "exhaustion",
+    "label": "Exhaustion",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "recyclability"
+    ],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "expanse",
     "label": "Expanse",
     "synonyms": [
@@ -145559,6 +146624,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "feathered",
+    "label": "Feathered",
+    "synonyms": [],
+    "related": [
+      "avian"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "ferality",
@@ -146682,6 +147757,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "fractals",
+    "label": "Fractals",
+    "synonyms": [],
+    "related": [
+      "crystallization"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "fracture",
     "label": "Fracture",
     "synonyms": [
@@ -147051,6 +148136,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "geodes",
+    "label": "Geodes",
+    "synonyms": [],
+    "related": [
+      "crystallization"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "geology",
@@ -148435,6 +149530,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "juiciness",
+    "label": "Juiciness",
+    "synonyms": [
+      "succulence",
+      "appetizingness",
+      "appetisingness"
+    ],
+    "related": [],
+    "opposites": [
+      "Dryness",
+      "Aridity",
+      "parched"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "juicy",
     "label": "Juicy",
     "synonyms": [
@@ -148601,6 +149716,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "liquefaction",
+    "label": "Liquefaction",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "crystallization"
+    ],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "liquid",
@@ -150059,6 +151184,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "naturalness",
+    "label": "Naturalness",
+    "synonyms": [],
+    "related": [
+      "wholesomeness"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "nebula",
     "label": "Nebula",
     "synonyms": [
@@ -150644,6 +151779,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "ornithological",
+    "label": "Ornithological",
+    "synonyms": [
+      "avian"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
+    "id": "parched",
+    "label": "Parched",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "juiciness"
+    ],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "pattern",
@@ -151408,6 +152563,29 @@
     "category": "Natural / Metaphysical Concepts"
   },
   {
+    "id": "recyclability",
+    "label": "Recyclability",
+    "synonyms": [
+      "reusability",
+      "repurposability"
+    ],
+    "related": [
+      "biodegradability",
+      "upcycling",
+      "renewability"
+    ],
+    "opposites": [
+      "Disposability",
+      "Irreversibility",
+      "exhaustion"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "reduction",
     "label": "Reduction",
     "synonyms": [
@@ -151925,6 +153103,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "renewability",
+    "label": "Renewability",
+    "synonyms": [],
+    "related": [
+      "recyclability"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "renewal",
     "label": "Renewal",
     "synonyms": [
@@ -151961,6 +153149,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "repurposability",
+    "label": "Repurposability",
+    "synonyms": [
+      "recyclability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "resonance",
@@ -152037,6 +153235,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "reusability",
+    "label": "Reusability",
+    "synonyms": [
+      "recyclability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "revelation",
@@ -152124,6 +153332,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "rock",
+    "label": "Rock",
+    "synonyms": [
+      "crystallization"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "root",
@@ -153760,6 +154978,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "soundness",
+    "label": "Soundness",
+    "synonyms": [
+      "wholesomeness"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "spark",
     "label": "Spark",
     "synonyms": [
@@ -154769,6 +155997,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "succulence",
+    "label": "Succulence",
+    "synonyms": [
+      "juiciness"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "summit",
     "label": "summit",
     "synonyms": [
@@ -155731,6 +156969,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "translucence",
+    "label": "Translucence",
+    "synonyms": [],
+    "related": [
+      "crystallization"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
+  },
+  {
     "id": "transparency",
     "label": "Transparency",
     "synonyms": [
@@ -156263,6 +157511,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "upcycling",
+    "label": "Upcycling",
+    "synonyms": [],
+    "related": [
+      "recyclability"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "vacuum",
@@ -157243,6 +158501,25 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "wholesomeness",
+    "label": "Wholesomeness",
+    "synonyms": [
+      "soundness"
+    ],
+    "related": [
+      "naturalness"
+    ],
+    "opposites": [
+      "Artificiality",
+      "Synthetic"
+    ],
+    "category": "Natural / Metaphysical Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "wild",
     "label": "Wild",
     "synonyms": [
@@ -157462,6 +158739,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "winged",
+    "label": "Winged",
+    "synonyms": [],
+    "related": [
+      "avian"
+    ],
+    "opposites": [],
+    "category": "Natural / Metaphysical Concepts"
   },
   {
     "id": "wither",
@@ -158028,6 +159315,31 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "acceleration",
+    "label": "Acceleration",
+    "synonyms": [
+      "swiftness",
+      "fastness",
+      "quickening",
+      "speedup",
+      "speeding"
+    ],
+    "related": [
+      "dynamics"
+    ],
+    "opposites": [
+      "Stagnation",
+      "Slowness",
+      "Deceleration",
+      "deceleration"
+    ],
+    "category": "Philosophical / Existential Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
   },
   {
     "id": "aftermath",
@@ -160974,6 +162286,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "deceleration",
+    "label": "Deceleration",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "acceleration"
+    ],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "deconstruction",
     "label": "Deconstruction",
     "synonyms": [
@@ -162146,6 +163468,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "dynamics",
+    "label": "Dynamics",
+    "synonyms": [],
+    "related": [
+      "acceleration"
+    ],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "ebullience",
@@ -163821,6 +165153,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "fastness",
+    "label": "Fastness",
+    "synonyms": [
+      "acceleration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "finish",
@@ -165993,7 +167335,8 @@
       "enigmatic",
       "imprecise",
       "muting",
-      "uneasy"
+      "uneasy",
+      "Cleverness"
     ],
     "related": [
       "abundance",
@@ -169753,6 +171096,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "quickening",
+    "label": "Quickening",
+    "synonyms": [
+      "acceleration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "reality",
     "label": "Reality",
     "synonyms": [
@@ -171390,6 +172743,26 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "speeding",
+    "label": "Speeding",
+    "synonyms": [
+      "acceleration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
+    "id": "speedup",
+    "label": "Speedup",
+    "synonyms": [
+      "acceleration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
+  },
+  {
     "id": "squalor",
     "label": "squalor",
     "synonyms": [
@@ -171946,6 +173319,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "swiftness",
+    "label": "Swiftness",
+    "synonyms": [
+      "acceleration"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Philosophical / Existential Concepts"
   },
   {
     "id": "synchronicitic",
@@ -173417,6 +174800,29 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "accountability",
+    "label": "Accountability",
+    "synonyms": [
+      "answerability",
+      "answerableness",
+      "responsibility",
+      "responsibleness"
+    ],
+    "related": [
+      "responsibility"
+    ],
+    "opposites": [
+      "Negligence",
+      "Irresponsibility",
+      "irresponsibility"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "activity",
     "label": "Activity",
     "synonyms": [
@@ -173838,6 +175244,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "answerability",
+    "label": "Answerability",
+    "synonyms": [
+      "accountability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "answerableness",
+    "label": "Answerableness",
+    "synonyms": [
+      "accountability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "approval",
@@ -174711,6 +176137,36 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "capital",
+    "label": "Capital",
+    "synonyms": [],
+    "related": [
+      "capitalism"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "capitalism",
+    "label": "Capitalism",
+    "synonyms": [],
+    "related": [
+      "capital",
+      "commerce"
+    ],
+    "opposites": [
+      "Socialism",
+      "Communism",
+      "cooperative",
+      "egalitarian"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "care",
     "label": "Care",
     "synonyms": [
@@ -175272,6 +176728,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "commerce",
+    "label": "Commerce",
+    "synonyms": [],
+    "related": [
+      "capitalism"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "commodity",
@@ -176158,6 +177624,16 @@
     "embeddingStrategy": "website_style"
   },
   {
+    "id": "cooperative",
+    "label": "Cooperative",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "capitalism"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "corporate",
     "label": "Corporate",
     "synonyms": [
@@ -176602,6 +178078,16 @@
     "related": [],
     "opposites": [
       "trendiness"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "decadent",
+    "label": "Decadent",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "health-conscious"
     ],
     "category": "Social / Cultural Concepts"
   },
@@ -177788,6 +179274,21 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "eco-friendliness",
+    "label": "Eco-friendliness",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "Harmfulness",
+      "Neglect"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "ecology",
     "label": "Ecology",
     "synonyms": [
@@ -177940,6 +179441,16 @@
       "app"
     ],
     "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "egalitarian",
+    "label": "Egalitarian",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "capitalism"
+    ],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "elite",
@@ -180359,6 +181870,27 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "health-conscious",
+    "label": "Health-conscious",
+    "synonyms": [],
+    "related": [
+      "nourishing",
+      "nutritious",
+      "preventive"
+    ],
+    "opposites": [
+      "Negligence",
+      "Indifference",
+      "Unawareness",
+      "decadent"
+    ],
+    "category": "Social / Cultural Concepts",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "healthcare",
     "label": "Healthcare",
     "synonyms": [
@@ -182056,6 +183588,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "irresponsibility",
+    "label": "Irresponsibility",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "accountability"
+    ],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "isolation",
     "label": "Isolation",
     "synonyms": [
@@ -183668,6 +185210,16 @@
     "category": "Social / Cultural Concepts"
   },
   {
+    "id": "nourishing",
+    "label": "Nourishing",
+    "synonyms": [],
+    "related": [
+      "health-conscious"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "novelty",
     "label": "Novelty",
     "synonyms": [
@@ -183738,6 +185290,16 @@
       "website"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "nutritious",
+    "label": "Nutritious",
+    "synonyms": [],
+    "related": [
+      "health-conscious"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
   },
   {
     "id": "obsolete",
@@ -184571,6 +186133,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "preventive",
+    "label": "Preventive",
+    "synonyms": [],
+    "related": [
+      "health-conscious"
+    ],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "privacy",
     "label": "Privacy",
     "synonyms": [
@@ -185058,7 +186630,8 @@
       "relatable",
       "truth",
       "like",
-      "full"
+      "full",
+      "Cereal"
     ],
     "related": [
       "individual",
@@ -185706,10 +187279,30 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "responsibility",
+    "label": "Responsibility",
+    "synonyms": [
+      "accountability"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
     "id": "responsible",
     "label": "Responsible",
     "synonyms": [
       "eco-consciousness"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Social / Cultural Concepts"
+  },
+  {
+    "id": "responsibleness",
+    "label": "Responsibleness",
+    "synonyms": [
+      "accountability"
     ],
     "related": [],
     "opposites": [],
@@ -189924,6 +191517,28 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "cardboard",
+    "label": "Cardboard",
+    "synonyms": [
+      "flimsy",
+      "unlifelike"
+    ],
+    "related": [
+      "kraft"
+    ],
+    "opposites": [
+      "Plastic",
+      "Metal",
+      "metal",
+      "glass"
+    ],
+    "category": "Texture & Materiality",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
     "id": "ceramic",
     "label": "Ceramic",
     "synonyms": [
@@ -189956,6 +191571,16 @@
       "packaging"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "chartaceous",
+    "label": "Chartaceous",
+    "synonyms": [
+      "paperlike"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Texture & Materiality"
   },
   {
     "id": "chipped",
@@ -190311,7 +191936,8 @@
     "id": "crisp",
     "label": "Crisp",
     "synonyms": [
-      "crisps"
+      "crisps",
+      "Crispy"
     ],
     "related": [
       "acoustic",
@@ -190637,7 +192263,8 @@
     "id": "dot",
     "label": "Dot",
     "synonyms": [
-      "dots"
+      "dots",
+      "Disc"
     ],
     "related": [
       "acoustic",
@@ -191093,6 +192720,16 @@
     "embeddingStrategy": "packaging_style"
   },
   {
+    "id": "flimsy",
+    "label": "Flimsy",
+    "synonyms": [
+      "cardboard"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "fluid",
     "label": "Fluid",
     "synonyms": [
@@ -191537,6 +193174,16 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "glass",
+    "label": "Glass",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "cardboard"
+    ],
+    "category": "Texture & Materiality"
   },
   {
     "id": "glassy",
@@ -192297,6 +193944,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "kraft",
+    "label": "Kraft",
+    "synonyms": [],
+    "related": [
+      "cardboard"
+    ],
+    "opposites": [],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "layered",
     "label": "Layered",
     "synonyms": [
@@ -192587,6 +194244,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "metal",
+    "label": "Metal",
+    "synonyms": [],
+    "related": [],
+    "opposites": [
+      "cardboard"
+    ],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "metallic",
     "label": "Metallic",
     "synonyms": [
@@ -192813,6 +194480,35 @@
       "graphic-design"
     ],
     "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "paperlike",
+    "label": "Paperlike",
+    "synonyms": [
+      "chartaceous",
+      "papery",
+      "stuff"
+    ],
+    "related": [],
+    "opposites": [
+      "Metallic",
+      "Plastic"
+    ],
+    "category": "Texture & Materiality",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "papery",
+    "label": "Papery",
+    "synonyms": [
+      "paperlike"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Texture & Materiality"
   },
   {
     "id": "particle",
@@ -195545,6 +197241,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "stuff",
+    "label": "Stuff",
+    "synonyms": [
+      "paperlike"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Texture & Materiality"
+  },
+  {
     "id": "sturdy",
     "label": "sturdy",
     "synonyms": [
@@ -196255,6 +197961,16 @@
       "graphic-design"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "unlifelike",
+    "label": "Unlifelike",
+    "synonyms": [
+      "cardboard"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Texture & Materiality"
   },
   {
     "id": "untouched",
@@ -197280,7 +198996,8 @@
       "AIs",
       "Grain",
       "Air",
-      "Tech"
+      "Tech",
+      "Dairy"
     ],
     "related": [
       "modern",
@@ -202920,6 +204637,16 @@
     "embeddingStrategy": "generic"
   },
   {
+    "id": "radical",
+    "label": "Radical",
+    "synonyms": [
+      "revolutionary"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
+  },
+  {
     "id": "remote",
     "label": "remote",
     "synonyms": [
@@ -203002,6 +204729,36 @@
       "app"
     ],
     "embeddingStrategy": "website_style"
+  },
+  {
+    "id": "revolutionary",
+    "label": "Revolutionary",
+    "synonyms": [
+      "radical",
+      "revolutionist",
+      "subversive",
+      "subverter"
+    ],
+    "related": [],
+    "opposites": [
+      "Conventional",
+      "Traditional"
+    ],
+    "category": "Vibe / Mood",
+    "applicableCategories": [
+      "packaging"
+    ],
+    "embeddingStrategy": "packaging_style"
+  },
+  {
+    "id": "revolutionist",
+    "label": "Revolutionist",
+    "synonyms": [
+      "revolutionary"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
   },
   {
     "id": "rural",
@@ -203994,6 +205751,26 @@
       "branding"
     ],
     "embeddingStrategy": "generic"
+  },
+  {
+    "id": "subversive",
+    "label": "Subversive",
+    "synonyms": [
+      "revolutionary"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
+  },
+  {
+    "id": "subverter",
+    "label": "Subverter",
+    "synonyms": [
+      "revolutionary"
+    ],
+    "related": [],
+    "opposites": [],
+    "category": "Vibe / Mood"
   },
   {
     "id": "swift",

@@ -100,8 +100,15 @@ export async function tagImage(imageId: string): Promise<string[]> {
   const newlyCreatedConcepts = await createNewConceptsFromImage(image.id, buf, imageCategory);
   
   // STEP 2: Tag the image using pre-computed concept embeddings (fast hybrid approach)
+  // OPTIMIZATION: Only fetch concept IDs and embeddings (not other fields)
   const { TAG_CONFIG } = await import('@/lib/tagging-config');
-  const concepts = await prisma.concept.findMany();
+  const concepts = await prisma.concept.findMany({
+    select: {
+      id: true,
+      embedding: true,
+      // Don't fetch label, synonyms, related, opposites - not needed for tagging
+    },
+  });
   
   // Use pre-computed embeddings (fast approach)
   function cosineSimilarity(a: number[], b: number[]): number {
@@ -210,6 +217,209 @@ export async function tagImage(imageId: string): Promise<string[]> {
 }
 
 /**
+ * Tag image with existing concepts only (Pipeline 2.0)
+ * Does NOT generate new concepts - only tags with existing concepts
+ * This is faster and doesn't require Gemini/OpenAI API calls
+ */
+export async function tagImageWithoutNewConcepts(imageId: string): Promise<void> {
+  const image = await prisma.image.findUnique({ 
+    where: { id: imageId },
+    select: { id: true, url: true, category: true }
+  });
+  if (!image) return;
+  
+  // Fetch image buffer
+  const res = await fetch(image.url);
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${image.url}`);
+  const ab = await res.arrayBuffer();
+  const buf = Buffer.from(ab);
+
+  // Canonicalize to get contentHash (cheap operation)
+  const { hash: contentHash } = await canonicalizeImage(buf);
+  
+  // Check if embedding already exists for this image
+  const existingForImage = await prisma.imageEmbedding.findUnique({ 
+    where: { imageId: image.id } 
+  });
+  
+  // Check if embedding exists by contentHash (for reuse)
+  const existingByHash = await prisma.imageEmbedding.findFirst({ 
+    where: { contentHash: contentHash } as any 
+  });
+  
+  let ivec: number[];
+  if (existingForImage) {
+    // Embedding already exists for this image - reuse it
+    ivec = existingForImage.vector as unknown as number[];
+    // Update contentHash if needed (but don't violate unique constraint)
+    if (existingForImage.contentHash !== contentHash && !existingByHash) {
+      // Only update if no other image has this contentHash
+      await prisma.imageEmbedding.update({
+        where: { imageId: image.id },
+        data: { contentHash: contentHash } as any,
+      });
+    }
+  } else if (existingByHash) {
+    // Reuse existing embedding vector from another image (don't recompute)
+    ivec = existingByHash.vector as unknown as number[];
+    // Since contentHash is unique, we can't create a new record with same hash
+    // Instead, create without contentHash (or use a different approach)
+    // Actually, each image should have its own embedding record
+    // We'll create a new record but with null contentHash if hash already exists
+    try {
+      await prisma.imageEmbedding.create({
+        data: { 
+          imageId: image.id, 
+          model: existingByHash.model, 
+          vector: existingByHash.vector as any, 
+          contentHash: null // Set to null if hash already exists
+        } as any,
+      });
+    } catch (e: any) {
+      // If creation fails (e.g., imageId already exists), just update
+      await prisma.imageEmbedding.update({
+        where: { imageId: image.id },
+        data: { 
+          model: existingByHash.model,
+          vector: existingByHash.vector as any,
+        } as any,
+      });
+    }
+  } else {
+    // Compute new embedding (expensive operation)
+    const result = await embedImageFromBuffer(buf);
+    ivec = result.vector;
+    await prisma.imageEmbedding.upsert({
+      where: { imageId: image.id },
+      update: { 
+        model: 'clip-ViT-L/14', 
+        vector: ivec as unknown as any, 
+        contentHash: contentHash 
+      } as any,
+      create: { 
+        imageId: image.id, 
+        model: 'clip-ViT-L/14', 
+        vector: ivec as unknown as any, 
+        contentHash: contentHash 
+      } as any,
+    });
+  }
+
+  // Tag the image using pre-computed concept embeddings (existing concepts only)
+  // OPTIMIZATION: Only fetch concept IDs and embeddings (not other fields)
+  const { TAG_CONFIG } = await import('@/lib/tagging-config');
+  const concepts = await prisma.concept.findMany({
+    select: {
+      id: true,
+      embedding: true,
+      // Don't fetch label, synonyms, related, opposites - not needed for tagging
+    },
+  });
+  
+  // Use pre-computed embeddings (fast approach)
+  function cosineSimilarity(a: number[], b: number[]): number {
+    if (a.length !== b.length) return 0
+    let s = 0
+    for (let i = 0; i < a.length; i++) s += a[i] * b[i]
+    return s
+  }
+  
+  // Score all concepts (don't filter by MIN_SCORE yet - we need unfiltered list for fallback)
+  const allScored = concepts
+    .filter((c: any) => c.embedding && Array.isArray(c.embedding))
+    .map((c: any) => ({ 
+      conceptId: c.id, 
+      score: cosineSimilarity(ivec, (c.embedding as unknown as number[]) || []) 
+    }))
+    .sort((a: any, b: any) => b.score - a.score)
+  
+  // Filter to only scores above MIN_SCORE for main tagging logic
+  const scored = allScored.filter((s: any) => s.score >= TAG_CONFIG.MIN_SCORE)
+  
+  // Apply pragmatic tagging logic
+  const chosen: typeof allScored = []
+  const MIN_TAGS_PER_IMAGE = 8
+  const maxScore = scored.length > 0 ? scored[0].score : (allScored.length > 0 ? allScored[0].score : 0)
+  let prevScore = maxScore
+  
+  for (let i = 0; i < scored.length && chosen.length < TAG_CONFIG.MAX_K; i++) {
+    const current = scored[i]
+    
+    if (chosen.length === 0) {
+      chosen.push(current)
+      prevScore = current.score
+      continue
+    }
+    
+    // Check drop from previous score (consecutive drop)
+    const consecutiveDropPct = (prevScore - current.score) / prevScore
+    // Check drop from maximum score (total drop from top)
+    const totalDropPct = (maxScore - current.score) / maxScore
+    
+    // Stop if either:
+    // 1. Consecutive drop > 30% (significant gap between consecutive tags)
+    // 2. Total drop from max > 8% (we're getting far from the top score)
+    // Lowered to 8% to prevent hitting MAX_K when scores are tightly clustered
+    // Also add safety: stop if we're close to MAX_K (560+) and total drop > 3%
+    const isNearMaxK = chosen.length > 560 // 80% of MAX_K (700)
+    if (consecutiveDropPct > TAG_CONFIG.MIN_SCORE_DROP_PCT || totalDropPct > 0.08 || (isNearMaxK && totalDropPct > 0.03)) {
+      if (chosen.length < MIN_TAGS_PER_IMAGE) {
+        chosen.push(current)
+        prevScore = current.score
+      } else {
+        break
+      }
+    } else {
+      chosen.push(current)
+      prevScore = current.score
+    }
+  }
+  
+  // Fallback: ensure minimum tags (use allScored if scored is empty or insufficient)
+  if (chosen.length < MIN_TAGS_PER_IMAGE) {
+    const fallback = (scored.length >= MIN_TAGS_PER_IMAGE ? scored : allScored).slice(0, MIN_TAGS_PER_IMAGE)
+    const keep = new Set(chosen.map((c: any) => c.conceptId))
+    for (const f of fallback) {
+      if (!keep.has(f.conceptId)) {
+        chosen.push(f)
+        keep.add(f.conceptId)
+        if (chosen.length >= MIN_TAGS_PER_IMAGE) break
+      }
+    }
+  }
+  
+  const tagResults = chosen.sort((a: any, b: any) => b.score - a.score)
+  const chosenConceptIds = new Set(tagResults.map((t: any) => t.conceptId))
+
+  // Get existing tags to avoid duplicates
+  const existingTags = await prisma.imageTag.findMany({
+    where: { imageId: image.id },
+  })
+  const existingConceptIds = new Set(existingTags.map((t: any) => t.conceptId))
+
+  // Only create new tags (don't update or delete existing ones)
+  for (const t of tagResults) {
+    if (!existingConceptIds.has(t.conceptId)) {
+      await prisma.imageTag.create({
+        data: { imageId: image.id, conceptId: t.conceptId, score: t.score },
+      })
+    }
+  }
+  
+  // Trigger incremental hub detection for this image only (debounced, runs in background)
+  // This is much faster than processing all images
+  try {
+    const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
+    triggerHubDetectionForImages([image.id]).catch((err) => {
+      console.warn(`[tagImageWithoutNewConcepts] Failed to trigger hub detection: ${err.message}`)
+    })
+  } catch (hubError) {
+    // Non-fatal: hub detection is a background optimization
+    console.warn(`[tagImageWithoutNewConcepts] Failed to trigger hub detection:`, (hubError as Error)?.message)
+  }
+}
+
+/**
  * Create new abstract concepts from a single image using Gemini vision API
  * Creates at least one new concept per category from the 12 categories
  * This is truly generative - creates new concepts without looking at existing examples
@@ -273,47 +483,65 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
     }
   };
   
-  // Load existing concepts to avoid duplicates
-  const existingConcepts = await prisma.concept.findMany({
-    select: { id: true, label: true, synonyms: true, related: true }
-  });
-  const existingIds = new Set(existingConcepts.map((c: any) => c.id.toLowerCase()));
-  const existingLabels = new Set<string>(existingConcepts.map((c: any) => c.label.toLowerCase()));
-  
-  // Also collect all synonyms and related terms from existing concepts
-  const existingSynonyms = new Set<string>();
-  const existingRelated = new Set<string>();
-  for (const c of existingConcepts) {
-    const syns = (c.synonyms as unknown as string[]) || [];
-    const rels = (c.related as unknown as string[]) || [];
-    for (const syn of syns) {
-      existingSynonyms.add(syn.toLowerCase());
-    }
-    for (const rel of rels) {
-      existingRelated.add(rel.toLowerCase());
-    }
-  }
-  
-  // Load seed file
+  // OPTIMIZATION: Load seed file FIRST (contains all concept data including synonyms/related)
+  // This avoids fetching synonyms/related from database, saving ~40% data transfer per image
   let seedConcepts: any[] = [];
   try {
     const seedPath = path.join(process.cwd(), 'src', 'concepts', 'seed_concepts.json');
     const seedContent = await fs.readFile(seedPath, 'utf-8');
     seedConcepts = JSON.parse(seedContent);
-    
-    // Also check seed file for labels, synonyms, and related terms
-    for (const sc of seedConcepts) {
-      existingLabels.add((sc.label || '').toLowerCase());
-      for (const syn of (sc.synonyms || [])) {
-        existingSynonyms.add(String(syn).toLowerCase());
-      }
-      for (const rel of (sc.related || [])) {
-        existingRelated.add(String(rel).toLowerCase());
-      }
-    }
   } catch (e) {
     // If seed file not found, can't add new concepts
     return [];
+  }
+  
+  // OPTIMIZATION: Only fetch concept IDs and labels from database (for checking what exists in DB)
+  // Load synonyms/related from seed file instead (much smaller, already in memory)
+  const existingConceptsDb = await prisma.concept.findMany({
+    select: { id: true, label: true }
+    // Don't fetch synonyms/related - load from seed file instead
+  });
+  const existingIds = new Set(existingConceptsDb.map((c: any) => c.id.toLowerCase()));
+  const existingLabels = new Set<string>(existingConceptsDb.map((c: any) => c.label.toLowerCase()));
+  
+  // Collect all synonyms and related terms from seed file (not database - saves data transfer)
+  const existingSynonyms = new Set<string>();
+  const existingRelated = new Set<string>();
+  for (const sc of seedConcepts) {
+    existingLabels.add((sc.label || '').toLowerCase());
+    for (const syn of (sc.synonyms || [])) {
+      existingSynonyms.add(String(syn).toLowerCase());
+    }
+    for (const rel of (sc.related || [])) {
+      existingRelated.add(String(rel).toLowerCase());
+    }
+  }
+  
+  // Create combined existingConcepts array for matching logic (use seed file as primary source since it has full data)
+  // Merge database concepts with seed concepts, preferring seed file data when available
+  const existingConcepts: Array<{ id: string; label: string; synonyms?: string[]; related?: string[] }> = [];
+  const seedConceptMap = new Map(seedConcepts.map((sc: any) => [sc.id.toLowerCase(), sc]));
+  
+  // Add all seed concepts (they have full data)
+  for (const sc of seedConcepts) {
+    existingConcepts.push({
+      id: sc.id,
+      label: sc.label,
+      synonyms: sc.synonyms || [],
+      related: sc.related || [],
+    });
+  }
+  
+  // Add database concepts that aren't in seed file (shouldn't happen, but safety check)
+  for (const dbConcept of existingConceptsDb) {
+    if (!seedConceptMap.has(dbConcept.id.toLowerCase())) {
+      existingConcepts.push({
+        id: dbConcept.id,
+        label: dbConcept.label,
+        synonyms: [],
+        related: [],
+      });
+    }
   }
   
   // Helper function to check for exact matches only
@@ -497,14 +725,16 @@ export async function createNewConceptsFromImage(imageId: string, imageBuffer: B
         }
         
         // Also update in database
-        const dbConcept = existingConcepts.find((c: any) => c.id === existingMatch.id);
+        const dbConcept = existingConceptsDb.find((c: any) => c.id === existingMatch.id);
         if (dbConcept) {
-          const synonyms = ((dbConcept.synonyms as unknown as string[]) || []);
+          // Get synonyms from seed file (more reliable than database)
+          const seedConcept = seedConcepts.find((sc: any) => sc.id === existingMatch.id);
+          const synonyms = (seedConcept?.synonyms || []) as string[];
           if (!synonyms.includes(conceptLabel)) {
-            synonyms.push(conceptLabel);
+            const updatedSynonyms = [...synonyms, conceptLabel];
             await prisma.concept.update({
               where: { id: existingMatch.id },
-              data: { synonyms: synonyms as any }
+              data: { synonyms: updatedSynonyms as any }
             });
           }
         }
