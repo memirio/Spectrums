@@ -377,7 +377,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       controller.abort()
       clearTimeout(timer)
     }
-  }, [selectedConcepts, category])
+  }, [selectedConcepts, category, fetchSites])
   
   // Check if we need to fetch opposite results when slider crosses 50%
   useEffect(() => {
