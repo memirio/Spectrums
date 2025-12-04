@@ -2312,7 +2312,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(9)].map((_, i) => (
               <div key={i}>
                 {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
