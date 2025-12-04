@@ -97,6 +97,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }, [])
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const observerRef = useRef<IntersectionObserver | null>(null)
 
   useEffect(() => {
     fetchSites()
@@ -107,8 +108,24 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     setSites(allSites.slice(0, displayedCount))
   }, [allSites, displayedCount])
 
-  // Intersection Observer for lazy loading
+  // Intersection Observer for lazy loading - set up when element is rendered
   useEffect(() => {
+    // Clean up previous observer
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+      observerRef.current = null
+    }
+
+    // Only set up observer if we have more sites to load
+    if (displayedCount >= allSites.length) {
+      return
+    }
+
+    const currentRef = loadMoreRef.current
+    if (!currentRef) {
+      return
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && displayedCount < allSites.length) {
@@ -119,13 +136,13 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       { threshold: 0.1 }
     )
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current)
-    }
+    observer.observe(currentRef)
+    observerRef.current = observer
 
     return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current)
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+        observerRef.current = null
       }
     }
   }, [displayedCount, allSites.length])

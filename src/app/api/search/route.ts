@@ -92,6 +92,9 @@ async function getImagePopularityMetrics(
   }
 }
 
+// Increase timeout for vector search queries (can be slow without proper index)
+export const maxDuration = 60 // 60 seconds
+
 export async function GET(request: NextRequest) {
   try {
     console.log(`[search] Request received: ${request.url}`)
@@ -277,7 +280,11 @@ export async function GET(request: NextRequest) {
           pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector LIMIT $${queryParams.length + 1}`
           queryParams.push(TOP_CANDIDATES)
           
+          console.log(`[search] Executing pgvector query with ${queryParams.length} parameters...`)
+          const startTime = Date.now()
           const pgvectorResults = await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
+          const queryTime = Date.now() - startTime
+          console.log(`[search] pgvector query completed in ${queryTime}ms, returned ${pgvectorResults.length} results`)
           
           // Transform results to match expected format
           imageEmbeddings = pgvectorResults.map((row: any) => ({
@@ -1073,7 +1080,7 @@ export async function GET(request: NextRequest) {
     }
     ranked.sort((a, b) => b.score - a.score)
 
-    return NextResponse.json({ query: expanded, images: ranked.slice(0, 60) })
+    return NextResponse.json({ query: expanded, images: ranked.slice(0, 1000) })
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 })
   }
