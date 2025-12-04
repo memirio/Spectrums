@@ -303,8 +303,15 @@ export async function GET(request: NextRequest) {
       Array.from(resolvedRequired).every((req: any) => siteMatchesConcept(site, req))
     )
 
+    // Pagination for concepts branch
+    const limit = parseInt(searchParams.get('limit') || '60')
+    const offset = parseInt(searchParams.get('offset') || '0')
+    const totalCount = filteredSites.length
+    const paginatedSites = filteredSites.slice(offset, offset + limit)
+    const hasMore = offset + limit < totalCount
+
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
-    const fIds = filteredSites.map((s: any) => s.id)
+    const fIds = paginatedSites.map((s: any) => s.id)
     const fImages = fIds.length
       ? await (prisma.image as any).findMany({ where: { siteId: { in: fIds } }, orderBy: { id: 'desc' } })
       : []
@@ -318,12 +325,12 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      sites: filteredSites.map((site: any) => ({
+      sites: paginatedSites.map((site: any) => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
         category: categoryBySite.get(site.id) || 'website', // Include category from image
       })),
-      hasMore: offset + limit < totalCount,
+      hasMore,
       total: totalCount,
       offset,
       limit
