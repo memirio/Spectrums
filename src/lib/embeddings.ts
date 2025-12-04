@@ -114,6 +114,9 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   const embeddingServiceApiKey = process.env.EMBEDDING_SERVICE_API_KEY;
   
   if (embeddingServiceUrl) {
+    // Strip trailing slashes to avoid double slashes in URL
+    const baseUrl = embeddingServiceUrl.replace(/\/+$/, '');
+    
     // Retry logic: Railway might be slow on first request (cold start - model loading takes 10-30s)
     const maxRetries = 3; // Increased retries for cold starts
     let lastError: any = null;
@@ -126,7 +129,7 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
           console.log(`[embeddings] Retry attempt ${attempt}/${maxRetries} for embedding service (waiting ${delay}ms for cold start...)`);
           await new Promise(resolve => setTimeout(resolve, delay));
         } else {
-          console.log('[embeddings] Using external embedding service:', embeddingServiceUrl);
+          console.log('[embeddings] Using external embedding service:', baseUrl);
         }
         
         // Create AbortController for timeout (45s to allow for cold starts)
@@ -134,7 +137,7 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
         const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout for cold starts
         
         try {
-          const response = await fetch(`${embeddingServiceUrl}/embed/text`, {
+          const response = await fetch(`${baseUrl}/embed/text`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -147,6 +150,18 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
           clearTimeout(timeoutId);
           
           if (!response.ok) {
+            // 404 might mean wrong URL or service not deployed - check health endpoint first
+            if (response.status === 404 && attempt === 0) {
+              // Try health check to see if service exists
+              try {
+                const healthResponse = await fetch(`${baseUrl}/health`, { signal: controller.signal });
+                if (!healthResponse.ok) {
+                  throw new Error(`Embedding service health check failed: ${healthResponse.status}. Service may not be deployed or URL is incorrect.`);
+                }
+              } catch (healthError) {
+                throw new Error(`Embedding service not found at ${baseUrl}. Please verify EMBEDDING_SERVICE_URL is correct and the service is deployed.`);
+              }
+            }
             // 502 Bad Gateway often means service is starting up - retry with longer delay
             if (response.status === 502 && attempt < maxRetries) {
               console.warn(`[embeddings] Service returned 502 (likely cold start), will retry with longer delay...`);
@@ -167,7 +182,13 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
             throw new Error('Invalid response from embedding service');
           }
           
-          console.log(`[embeddings] Successfully got embeddings from external service (${data.embeddings.length} vectors)`);
+          // Verify dimension is 768 (CLIP dimension)
+          const dimension = data.embeddings[0]?.length;
+          if (dimension !== 768) {
+            throw new Error(`Embedding service returned wrong dimension: ${dimension} (expected 768 for CLIP)`);
+          }
+          
+          console.log(`[embeddings] Successfully got embeddings from external service (${data.embeddings.length} vectors, ${dimension}D)`);
           return data.embeddings;
         } catch (fetchError: any) {
           clearTimeout(timeoutId);
@@ -184,8 +205,8 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
         }
       } catch (error: any) {
         lastError = error;
-        // Don't retry on certain errors (auth, validation, etc.)
-        if (error.message?.includes('401') || error.message?.includes('400') || error.message?.includes('422')) {
+        // Don't retry on certain errors (auth, validation, 404 with health check, etc.)
+        if (error.message?.includes('401') || error.message?.includes('400') || error.message?.includes('422') || error.message?.includes('not found') || error.message?.includes('not deployed')) {
           throw error;
         }
         // Retry on network/timeout/502/503 errors
@@ -224,10 +245,15 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
     }
     return rows;
   } catch (error: any) {
-    // Last resort: OpenAI (but dimension mismatch with CLIP images)
-    console.warn('[embeddings] CLIP not available, falling back to OpenAI embeddings:', error.message);
-    const { embedTextBatchOpenAI } = await import('./embeddings-openai');
-    return embedTextBatchOpenAI(texts);
+    // CRITICAL: Do NOT fall back to OpenAI embeddings - they are 1536 dimensions
+    // but the database has 768-dim CLIP embeddings. This causes dimension mismatch errors.
+    // Instead, throw an error so the user knows the Railway service is required.
+    const errorMessage = embeddingServiceUrl 
+      ? `Embedding service failed and CLIP is not available in this environment. Please ensure your Railway embedding service at ${embeddingServiceUrl} is running and accessible. Error: ${error.message}`
+      : `CLIP embeddings are required (768 dimensions) but not available in this environment. Please set EMBEDDING_SERVICE_URL to your Railway embedding service URL. Error: ${error.message}`;
+    
+    console.error('[embeddings] CRITICAL: Cannot generate CLIP embeddings:', errorMessage);
+    throw new Error(errorMessage);
   }
 }
 
