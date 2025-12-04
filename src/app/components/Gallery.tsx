@@ -238,8 +238,29 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
     const currentRef = loadMoreRef.current
     if (!currentRef) {
-      console.log('[INTERSECTION OBSERVER] Ref not available yet, will retry when element renders')
-      return
+      console.log('[INTERSECTION OBSERVER] Ref not available yet, will retry in next render')
+      // Retry after a short delay to allow React to render the element
+      const timeoutId = setTimeout(() => {
+        if (loadMoreRef.current && hasMoreResults && !isLoadingMore) {
+          console.log('[INTERSECTION OBSERVER] Retrying observer setup after delay')
+          const retryRef = loadMoreRef.current
+          if (retryRef && observerRef.current === null) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                console.log('[INTERSECTION OBSERVER] Intersection changed:', entries[0].isIntersecting, 'hasMoreResults:', hasMoreResults, 'isLoadingMore:', isLoadingMore)
+                if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
+                  console.log('[INTERSECTION OBSERVER] Triggering loadMoreImages')
+                  loadMoreImages()
+                }
+              },
+              { threshold: 0.1 }
+            )
+            observer.observe(retryRef)
+            observerRef.current = observer
+          }
+        }
+      }, 100)
+      return () => clearTimeout(timeoutId)
     }
 
     console.log('[INTERSECTION OBSERVER] Setting up observer for loadMoreRef')
