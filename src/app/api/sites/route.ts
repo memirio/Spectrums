@@ -6,7 +6,7 @@ import natural from 'natural'
 // Lazy load transformers to avoid native library issues in serverless
 // import { pipeline } from '@xenova/transformers'
 import sharp from 'sharp'
-import { enqueueTaggingJob } from '@/jobs/tagging'
+import { enqueueTaggingJob, tagImageWithoutNewConcepts } from '@/jobs/tagging'
 // Lazy load embeddings to avoid native library issues in serverless
 // import { embedImageFromBuffer, canonicalizeImage } from '@/lib/embeddings'
 
@@ -615,7 +615,6 @@ export async function POST(request: NextRequest) {
               console.log(`[sites] Pipeline 2.0: Tagging image ${image.id} with existing concepts only (no concept generation)...`)
               
               try {
-                const { tagImageWithoutNewConcepts } = await import('@/jobs/tagging')
                 await tagImageWithoutNewConcepts(image.id)
                 console.log(`[sites] ✅ Pipeline 2.0: Tagged image ${image.id} with existing concepts only`)
               } catch (tagError) {
