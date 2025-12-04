@@ -1201,11 +1201,17 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             return
           }
           const data = await response.json()
-          console.log('[FETCH SITES] Initial fetch:', data.sites?.length, 'sites, hasMore:', data.hasMore, 'total:', data.total)
+          console.log('[FETCH SITES] API Response:', JSON.stringify({ 
+            sitesCount: data.sites?.length, 
+            hasMore: data.hasMore, 
+            total: data.total,
+            offset: data.offset,
+            limit: data.limit 
+          }))
           setAllSites(Array.isArray(data.sites) ? data.sites : [])
           setDisplayedCount(50)
-          const hasMore = data.hasMore || false
-          console.log('[FETCH SITES] Setting hasMoreResults to:', hasMore)
+          const hasMore = data.hasMore === true // Explicitly check for true
+          console.log('[FETCH SITES] Setting hasMoreResults to:', hasMore, '(from data.hasMore:', data.hasMore, ')')
           setHasMoreResults(hasMore)
           setPaginationOffset(60) // Next fetch will be at offset 60
         } catch (error) {
