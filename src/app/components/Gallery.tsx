@@ -122,14 +122,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       if (query.trim()) {
         // Search query: use search API
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
-        console.log('[LOAD MORE] Fetching more search results:', searchUrl)
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          console.error('[LOAD MORE] Failed to fetch more images', response.status)
+          console.error('Failed to fetch more images', response.status)
           return
         }
         data = await response.json()
-        console.log('[LOAD MORE] Received search data:', data.images?.length, 'images, hasMore:', data.hasMore)
         
         // Map images to sites (extract site data from image.site)
         const sitesWithImageIds = (data.images || []).map((image: any) => {
@@ -177,14 +175,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const sitesUrl = categoryParam && categoryParam !== 'all'
           ? `/api/sites?category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
           : `/api/sites?limit=60&offset=${paginationOffset}`
-        console.log('[LOAD MORE] Fetching more sites:', sitesUrl)
         const response = await fetch(sitesUrl)
         if (!response.ok) {
-          console.error('[LOAD MORE] Failed to fetch more sites', response.status)
+          console.error('Failed to fetch more sites', response.status)
           return
         }
         data = await response.json()
-        console.log('[LOAD MORE] Received sites data:', data.sites?.length, 'sites, hasMore:', data.hasMore)
         
         // Append new sites to existing ones
         const newSites = Array.isArray(data.sites) ? data.sites : []
@@ -209,7 +205,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       // Show more sites (increment displayed count)
       setDisplayedCount(prev => prev + 50)
     } catch (error) {
-      console.error('[LOAD MORE] Error loading more images:', error)
+      console.error('Error loading more images:', error)
     } finally {
       setIsLoadingMore(false)
     }
@@ -217,8 +213,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   // Intersection Observer for lazy loading - set up when element is rendered
   useEffect(() => {
-    console.log('[INTERSECTION OBSERVER] Effect running - hasMoreResults:', hasMoreResults, 'isLoadingMore:', isLoadingMore, 'allSites.length:', allSites.length)
-    
     // Clean up previous observer
     if (observerRef.current) {
       observerRef.current.disconnect()
@@ -226,30 +220,20 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
 
     // Only set up observer if we have more results to load
-    if (!hasMoreResults) {
-      console.log('[INTERSECTION OBSERVER] Skipping - hasMoreResults is false')
-      return
-    }
-    
-    if (isLoadingMore) {
-      console.log('[INTERSECTION OBSERVER] Skipping - already loading')
+    if (!hasMoreResults || isLoadingMore) {
       return
     }
 
     const currentRef = loadMoreRef.current
     if (!currentRef) {
-      console.log('[INTERSECTION OBSERVER] Ref not available yet, will retry in next render')
       // Retry after a short delay to allow React to render the element
       const timeoutId = setTimeout(() => {
         if (loadMoreRef.current && hasMoreResults && !isLoadingMore) {
-          console.log('[INTERSECTION OBSERVER] Retrying observer setup after delay')
           const retryRef = loadMoreRef.current
           if (retryRef && observerRef.current === null) {
             const observer = new IntersectionObserver(
               (entries) => {
-                console.log('[INTERSECTION OBSERVER] Intersection changed:', entries[0].isIntersecting, 'hasMoreResults:', hasMoreResults, 'isLoadingMore:', isLoadingMore)
                 if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
-                  console.log('[INTERSECTION OBSERVER] Triggering loadMoreImages')
                   loadMoreImages()
                 }
               },
@@ -263,14 +247,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       return () => clearTimeout(timeoutId)
     }
 
-    console.log('[INTERSECTION OBSERVER] Setting up observer for loadMoreRef')
-
     const observer = new IntersectionObserver(
       (entries) => {
-        console.log('[INTERSECTION OBSERVER] Intersection changed:', entries[0].isIntersecting, 'hasMoreResults:', hasMoreResults, 'isLoadingMore:', isLoadingMore)
         if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
-          console.log('[INTERSECTION OBSERVER] Triggering loadMoreImages')
-          // Load more images from API
           loadMoreImages()
         }
       },
@@ -279,7 +258,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
     observer.observe(currentRef)
     observerRef.current = observer
-    console.log('[INTERSECTION OBSERVER] Observer set up and observing element')
 
     return () => {
       if (observerRef.current) {
@@ -401,10 +379,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   
   // Reorder results client-side when slider moves (without refetching)
   useEffect(() => {
-    console.log(`[STOP DEBUG] useEffect triggered - sliderVersion: ${sliderVersion}`)
-    
     if (selectedConcepts.length === 0) {
-      console.log(`[STOP DEBUG] No concepts selected, returning`)
       return
     }
     
@@ -456,11 +431,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       const conceptResultSet = conceptResults.get(concept) || []
       const oppositeResultSet = oppositeResults.get(concept) || []
       
-      console.log(`[STOP DEBUG] Concept: ${concept}, sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%)`)
-      console.log(`[STOP DEBUG] conceptResultSet.length: ${conceptResultSet.length}, oppositeResultSet.length: ${oppositeResultSet.length}`)
-      
       if (conceptResultSet.length === 0 && oppositeResultSet.length === 0) {
-        console.log(`[STOP DEBUG] No results available, returning`)
         return
       }
       
@@ -491,15 +462,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       // Ensure stopNumber is in valid range [1, 10]
       stopNumber = Math.max(1, Math.min(10, stopNumber))
       
-      console.log(`[STOP DEBUG] Calculated stopNumber: ${stopNumber} from sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%)`)
-      if (clampedPos === 1.0) {
-        console.log(`[STOP DEBUG] Edge case: position is exactly 1.0, using stop 10`)
-      } else {
-        console.log(`[STOP DEBUG] Calculation: Math.floor(${clampedPos.toFixed(3)} * 10) + 1 = ${Math.floor(clampedPos * 10)} + 1 = ${stopNumber}`)
-      }
-      
       if (sliderPos > 0.5) {
-        console.log(`[STOP DEBUG] RIGHT SIDE (sliderPos ${sliderPos.toFixed(3)} > 0.5) - Using concept results`)
         // Slider towards concept (right side) - Stops 6-10 (50-100%)
         const conceptTiers = calculateTiers(conceptResultSet)
         // Tiers are already sorted by score (descending), so just copy them
@@ -514,11 +477,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const t9 = [...conceptTiers.tier9]
         const t10 = [...conceptTiers.tier10]
         
-        console.log(`[TIER DEBUG] Concept tiers - t1: ${t1.length}, t2: ${t2.length}, t3: ${t3.length}, t4: ${t4.length}, t5: ${t5.length}, t6: ${t6.length}, t7: ${t7.length}, t8: ${t8.length}, t9: ${t9.length}, t10: ${t10.length}`)
-        console.log(`[TIER DEBUG] First 3 tier1 IDs: ${t1.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-        console.log(`[TIER DEBUG] First 3 tier2 IDs: ${t2.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-        console.log(`[TIER DEBUG] First 3 tier5 IDs: ${t5.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-        
         // Right side: Stops 6-10 (51-100%) - each stop prioritizes a different 10% tier for smooth transitions
         // Stop 10 (100%): Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (best matches first)
         // Stop 9 (90%): Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (next tier first)
@@ -526,33 +484,21 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Stop 7 (70%): Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3
         // Stop 6 (60%): Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4
         if (stopNumber === 10) {
-          console.log(`[STOP DEBUG] STOP 10 EXECUTED - Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (best matches first)`)
           orderedResults = [...t1, ...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10]
         } else if (stopNumber === 9) {
-          console.log(`[STOP DEBUG] STOP 9 EXECUTED - Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first)`)
           orderedResults = [...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1]
-          console.log(`[ORDER DEBUG] Stop 9 - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
         } else if (stopNumber === 8) {
-          console.log(`[STOP DEBUG] STOP 8 EXECUTED - Tier 3, 4, 5, 6, 7, 8, 9, 10, 1, 2 (tier 3 first)`)
           orderedResults = [...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2]
         } else if (stopNumber === 7) {
-          console.log(`[STOP DEBUG] STOP 7 EXECUTED - Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 (tier 4 first)`)
           orderedResults = [...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3]
-          console.log(`[ORDER DEBUG] Stop 7 - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
         } else {
           // Stop 6
-          console.log(`[STOP DEBUG] STOP 6 EXECUTED - Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first)`)
           orderedResults = [...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3, ...t4]
         }
-        console.log(`[STOP DEBUG] Right side orderedResults.length: ${orderedResults.length}`)
-        console.log(`[STOP DEBUG] First 10 IDs: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-        console.log(`[STOP DEBUG] First 10 scores: ${orderedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
       } else {
         // sliderPos <= 0.5
-        console.log(`[STOP DEBUG] LEFT SIDE (sliderPos ${sliderPos.toFixed(3)} <= 0.5) - Using opposite results`)
         // Slider towards opposite (left side) - Stops 1-5 (0-50%)
         if (oppositeResultSet.length === 0) {
-          console.log(`[STOP DEBUG] Opposite results NOT loaded - using concept results with varied ordering`)
           // If opposite not loaded, show concept results but still vary the ordering
           const conceptTiersNoOpp = calculateTiers(conceptResultSet)
           const t1NoOpp = [...conceptTiersNoOpp.tier1]
@@ -566,8 +512,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           const t9NoOpp = [...conceptTiersNoOpp.tier9]
           const t10NoOpp = [...conceptTiersNoOpp.tier10]
           
-          console.log(`[TIER DEBUG] Concept tiers (no opposite) - t1: ${t1NoOpp.length}, t2: ${t2NoOpp.length}, t3: ${t3NoOpp.length}, t4: ${t4NoOpp.length}, t5: ${t5NoOpp.length}, t6: ${t6NoOpp.length}, t7: ${t7NoOpp.length}, t8: ${t8NoOpp.length}, t9: ${t9NoOpp.length}, t10: ${t10NoOpp.length}`)
-          
           // Left side without opposite: use concept results with reverse tier ordering (tier 5 down to tier 1)
           // Same pattern as stops 6-10 but in reverse, using concept results as fallback
           // Stop 5 (50%): Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first)
@@ -576,29 +520,18 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           // Stop 2 (20%): Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first)
           // Stop 1 (0%): Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - best matches)
           if (stopNumber === 1) {
-            console.log(`[STOP DEBUG] STOP 1 EXECUTED (no opposite) - Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - best matches)`)
             orderedResults = [...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp]
           } else if (stopNumber === 2) {
-            console.log(`[STOP DEBUG] STOP 2 EXECUTED (no opposite) - Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first)`)
             orderedResults = [...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp]
-            console.log(`[ORDER DEBUG] Stop 2 (no opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else if (stopNumber === 3) {
-            console.log(`[STOP DEBUG] STOP 3 EXECUTED (no opposite) - Tier 3, 4, 5, 6, 7, 8, 9, 10, 1, 2 (tier 3 first)`)
             orderedResults = [...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp]
           } else if (stopNumber === 4) {
-            console.log(`[STOP DEBUG] STOP 4 EXECUTED (no opposite) - Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 (tier 4 first)`)
             orderedResults = [...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp]
-            console.log(`[ORDER DEBUG] Stop 4 (no opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else {
             // Stop 5
-            console.log(`[STOP DEBUG] STOP 5 EXECUTED (no opposite) - Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first)`)
             orderedResults = [...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp]
           }
-          console.log(`[STOP DEBUG] Left side (no opposite) orderedResults.length: ${orderedResults.length}`)
-          console.log(`[STOP DEBUG] First 10 IDs: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-          console.log(`[STOP DEBUG] First 10 scores: ${orderedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
         } else {
-          console.log(`[STOP DEBUG] Opposite results loaded - using opposite results`)
           const oppositeTiers = calculateTiers(oppositeResultSet)
           // For opposite, tiers are sorted descending (best opposite first)
           // We want to show worst opposite matches first to emphasize the "opposite" effect
@@ -613,10 +546,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           const t9Opp = [...oppositeTiers.tier9]
           const t10Opp = [...oppositeTiers.tier10] // Worst opposite matches (most like concept)
           
-          console.log(`[TIER DEBUG] Opposite tiers - t1: ${t1Opp.length}, t2: ${t2Opp.length}, t3: ${t3Opp.length}, t4: ${t4Opp.length}, t5: ${t5Opp.length}, t6: ${t6Opp.length}, t7: ${t7Opp.length}, t8: ${t8Opp.length}, t9: ${t9Opp.length}, t10: ${t10Opp.length}`)
-          console.log(`[TIER DEBUG] First 3 tier1 opposite IDs: ${t1Opp.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-          console.log(`[TIER DEBUG] First 3 tier10 opposite IDs: ${t10Opp.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-          
           // Left side: Stops 1-5 (0-50%) - with opposite results using 10 tiers, in reverse order
           // Same logic as stops 6-10 but for opposite concept, going from tier 5 down to tier 1
           // Stop 5 (50%): Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first - opposite concept)
@@ -625,32 +554,19 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           // Stop 2 (20%): Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first - opposite concept)
           // Stop 1 (0%): Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - opposite concept, best opposite matches)
           if (stopNumber === 1) {
-            console.log(`[STOP DEBUG] STOP 1 EXECUTED (with opposite) - Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - best opposite matches)`)
             orderedResults = [...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp]
           } else if (stopNumber === 2) {
-            console.log(`[STOP DEBUG] STOP 2 EXECUTED (with opposite) - Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first - opposite concept)`)
             orderedResults = [...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp]
-            console.log(`[ORDER DEBUG] Stop 2 (with opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else if (stopNumber === 3) {
-            console.log(`[STOP DEBUG] STOP 3 EXECUTED (with opposite) - Tier 3, 4, 5, 6, 7, 8, 9, 10, 1, 2 (tier 3 first - opposite concept)`)
             orderedResults = [...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp]
           } else if (stopNumber === 4) {
-            console.log(`[STOP DEBUG] STOP 4 EXECUTED (with opposite) - Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 (tier 4 first - opposite concept)`)
             orderedResults = [...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp]
-            console.log(`[ORDER DEBUG] Stop 4 (with opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else {
             // Stop 5
-            console.log(`[STOP DEBUG] STOP 5 EXECUTED (with opposite) - Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first - opposite concept)`)
             orderedResults = [...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp]
           }
-          console.log(`[STOP DEBUG] Left side (with opposite) orderedResults.length: ${orderedResults.length}`)
-          console.log(`[STOP DEBUG] First 10 IDs: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-          console.log(`[STOP DEBUG] First 10 scores: ${orderedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
         }
       }
-      
-      console.log(`[STOP DEBUG] Final orderedResults.length before deduplication: ${orderedResults.length}`)
-      console.log(`[STOP DEBUG] First 10 IDs before deduplication: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
       
       // Deduplicate results by site ID before setting
       // IMPORTANT: Use Array.from with a new array to ensure React detects the change
@@ -658,36 +574,20 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         new Map(orderedResults.map(site => [site.id, site])).values()
       )
       
-      console.log(`[DEDUP DEBUG] Stop ${stopNumber} - Before dedup: ${orderedResults.length}, After dedup: ${deduplicatedResults.length}`)
-      if (orderedResults.length !== deduplicatedResults.length) {
-        console.log(`[DEDUP DEBUG] Duplicates found! Duplicate IDs: ${orderedResults.length - deduplicatedResults.length} duplicates removed`)
-        const allIds = orderedResults.map(s => s.id)
-        const uniqueIds = new Set(allIds)
-        const duplicates = allIds.filter((id, index) => allIds.indexOf(id) !== index)
-        console.log(`[DEDUP DEBUG] Duplicate IDs: ${[...new Set(duplicates)].map(id => id.substring(0, 8)).join(', ')}`)
-      }
-      
-      // Log the first 10 IDs to verify ordering is different
-      console.log(`[FINAL DEBUG] Stop ${stopNumber} - First 10 site IDs after deduplication: ${deduplicatedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-      console.log(`[FINAL DEBUG] Stop ${stopNumber} - First 10 site scores: ${deduplicatedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
-      
       // Only set sites if we have results
       // Create a completely new array reference to force React to re-render
       if (deduplicatedResults.length > 0) {
         const newSitesArray = [...deduplicatedResults] // Create new array reference
-        console.log(`[FINAL DEBUG] Stop ${stopNumber} - Setting ${newSitesArray.length} sites, first ID: ${newSitesArray[0]?.id.substring(0, 8)}`)
         setAllSites(newSitesArray)
         setDisplayedCount(50)
       } else if (conceptResultSet.length > 0) {
         // Fallback: if reordering produced no results, use original concept results
         const fallbackArray = [...conceptResultSet].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-        console.log(`[FINAL DEBUG] Using fallback, first ID: ${fallbackArray[0]?.id.substring(0, 8)}`)
         setAllSites(fallbackArray)
         setDisplayedCount(50)
       }
     } else {
       // Multiple concepts: apply slider-based ranking for each concept, then combine
-      console.log(`[MULTI DEBUG] Processing ${selectedConcepts.length} concepts`)
       
       // Step 1: For each concept, calculate its tier-based ordering based on slider position
       const conceptOrderedResults = new Map<string, Site[]>() // concept -> ordered results
@@ -995,23 +895,17 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   const fetchSites = useCallback(async () => {
     try {
-      console.log(`[FETCH DEBUG] fetchSites called with selectedConcepts:`, selectedConcepts)
-      console.log(`[FETCH DEBUG] About to set loading state`)
       setLoading(true)
-      console.log(`[FETCH DEBUG] Loading state set, about to reset pagination`)
       
       // Reset pagination state for new search
       setPaginationOffset(0)
       setHasMoreResults(false)
       setIsLoadingMore(false)
-      console.log(`[FETCH DEBUG] Pagination reset complete`)
       
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
-      console.log('[FETCH DEBUG] Query built:', JSON.stringify(query), 'trimmed:', JSON.stringify(query.trim()), 'truthy:', !!query.trim())
       
       if (query.trim()) {
-        console.log('[FETCH DEBUG] Entering IF branch - has search query')
         // Zero-shot search: rank images by cosine similarity
         // Pass category parameter: "website", "packaging", or "all" (or omit for "all")
         const categoryParam = category || 'all'
@@ -1019,16 +913,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Don't pass slider positions - we'll reorder client-side
         // Initial fetch: limit 60, offset 0
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=0`
-        console.log(`[FETCH DEBUG] Fetching from: ${searchUrl}`)
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          console.error('[FETCH DEBUG] Failed response fetching search', response.status)
+          console.error('Failed response fetching search', response.status)
           setSites([])
           setAllSites([])
           return
         }
         const data = await response.json()
-        console.log(`[FETCH DEBUG] API returned ${data.images?.length || 0} images, hasMore: ${data.hasMore}`)
         
         // Update pagination state
         setHasMoreResults(data.hasMore || false)
@@ -1065,11 +957,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Store results for each concept
         if (selectedConcepts.length === 1) {
           const concept = selectedConcepts[0]
-          console.log(`[FETCH DEBUG] Storing ${deduplicatedSites.length} sites for concept: "${concept}"`)
           setConceptResults(prev => {
             const newMap = new Map(prev)
             newMap.set(concept, deduplicatedSites)
-            console.log(`[FETCH DEBUG] conceptResults keys after update:`, Array.from(newMap.keys()))
             return newMap
           })
           // Initialize last slider side
@@ -1087,20 +977,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           
           // ALWAYS fetch opposite results upfront so both sides work immediately
           const conceptInfo = conceptData.get(concept.toLowerCase())
-          console.log(`[OPPOSITE DEBUG] Concept info for ${concept}:`, conceptInfo)
           const opposites = conceptInfo?.opposites || []
-          console.log(`[OPPOSITE DEBUG] Opposites for ${concept}:`, opposites)
           if (opposites.length > 0) {
             const firstOpposite = opposites[0]
-            console.log(`[OPPOSITE DEBUG] Fetching opposite immediately for ${concept}: ${firstOpposite}`)
             // Fetch opposite immediately, don't wait for slider to cross 50%
             fetchOppositeResults(concept, firstOpposite, categoryParam)
-          } else {
-            console.log(`[OPPOSITE DEBUG] No opposites found for ${concept}`)
           }
         } else {
           // Multiple concepts: fetch results for each concept individually
-          console.log(`[MULTI FETCH] Fetching results for ${selectedConcepts.length} concepts individually`)
           
           const conceptResultsMap = new Map<string, Site[]>()
           const fetchPromises: Promise<void>[] = []
@@ -1111,7 +995,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 const conceptSearchUrl = `/api/search?q=${encodeURIComponent(concept.trim())}&category=${encodeURIComponent(categoryParam)}`
                 const conceptResponse = await fetch(conceptSearchUrl)
                 if (!conceptResponse.ok) {
-                  console.error(`[MULTI FETCH] Failed to fetch results for concept "${concept}":`, conceptResponse.status)
+                  console.error(`Failed to fetch results for concept "${concept}":`, conceptResponse.status)
                   return
                 }
                 const conceptData = await conceptResponse.json()
@@ -1149,7 +1033,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 const deduplicatedConceptSites = Array.from(conceptSiteMap.values())
                 
                 conceptResultsMap.set(concept, deduplicatedConceptSites)
-                console.log(`[MULTI FETCH] Fetched ${deduplicatedConceptSites.length} results for concept "${concept}"`)
                 
                 // Initialize last slider side
                 const sliderPos = sliderPositions.get(concept) ?? 1.0
@@ -1159,7 +1042,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 // Note: conceptData is fetched separately, so opposites will be fetched
                 // when conceptData is available via checkAndFetchOpposites
               } catch (error) {
-                console.error(`[MULTI FETCH] Error fetching results for concept "${concept}":`, error)
+                console.error(`Error fetching results for concept "${concept}":`, error)
               }
             })()
             
@@ -1200,14 +1083,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       } else {
         // No search query: show all sites (optionally filtered by category)
         // Initial fetch: limit 60, offset 0
-        console.log('[FETCH SITES] Entering else branch - no search query')
         const sitesUrl = category 
           ? `/api/sites?category=${encodeURIComponent(category)}&limit=60&offset=0`
           : '/api/sites?limit=60&offset=0'
-        console.log('[FETCH SITES] Fetching from URL:', sitesUrl)
         try {
           const response = await fetch(sitesUrl)
-          console.log('[FETCH SITES] Response received, status:', response.status, 'ok:', response.ok)
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}))
             console.error('Failed response fetching sites', response.status, errorData)
@@ -1217,17 +1097,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             return
           }
           const data = await response.json()
-          console.log('[FETCH SITES] API Response:', JSON.stringify({ 
-            sitesCount: data.sites?.length, 
-            hasMore: data.hasMore, 
-            total: data.total,
-            offset: data.offset,
-            limit: data.limit 
-          }))
           setAllSites(Array.isArray(data.sites) ? data.sites : [])
           setDisplayedCount(50)
           const hasMore = data.hasMore === true // Explicitly check for true
-          console.log('[FETCH SITES] Setting hasMoreResults to:', hasMore, '(from data.hasMore:', data.hasMore, ')')
           setHasMoreResults(hasMore)
           setPaginationOffset(60) // Next fetch will be at offset 60
         } catch (error) {
@@ -1236,10 +1108,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         }
       }
     } catch (error) {
-      console.error('[FETCH DEBUG] Error in fetchSites:', error)
+      console.error('Error in fetchSites:', error)
       setSites([])
     } finally {
-      console.log('[FETCH DEBUG] fetchSites finally block - setting loading to false')
       setLoading(false)
     }
   }, [selectedConcepts, category])
