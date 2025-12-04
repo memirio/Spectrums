@@ -94,41 +94,43 @@ export async function tagNewConceptsOnAllImages(newConceptIds: string[]): Promis
 
   console.log(`[tag-new-concepts] Embedded ${conceptEmbeddings.size} new concept(s)`)
 
-  // Get all active images with embeddings
-  // Use a simpler query to avoid Prisma type issues
-  const sites = await prisma.site.findMany({
+  // OPTIMIZATION: Only fetch image IDs, URLs, and embedding vectors
+  // Filter to only images that match their site's imageUrl (the main image for each site)
+  const imagesWithEmbeddings = await prisma.image.findMany({
     where: {
-      imageUrl: { not: null },
+      embedding: { isNot: null },
+      site: {
+        imageUrl: { not: null },
+      },
     },
-    include: {
-      images: {
-        where: {
-          embedding: { isNot: null },
+    select: {
+      id: true,
+      url: true,
+      embedding: {
+        select: {
+          vector: true,
         },
-        include: {
-          embedding: true,
+      },
+      site: {
+        select: {
+          imageUrl: true,
         },
       },
     },
   })
   
-  // Filter out images without URLs in JavaScript (simpler than Prisma query)
-  for (const site of sites) {
-    site.images = site.images.filter((img: any) => img.url != null)
-  }
-
+  // Filter to only images that match their site's imageUrl (the main image)
   const images: Array<{ id: string; embedding: { vector: any } }> = []
-  for (const site of sites) {
-    if (site.imageUrl) {
-      const image = site.images.find((img: any) => img.url === site.imageUrl && img.embedding)
-      if (image && image.embedding) {
-        images.push({
-          id: image.id,
-          embedding: image.embedding,
-        })
-      }
+  for (const img of imagesWithEmbeddings) {
+    if (img.embedding?.vector && img.url === img.site?.imageUrl) {
+      images.push({
+        id: img.id,
+        embedding: img.embedding,
+      })
     }
   }
+  
+  // Images are already filtered and structured above
 
   console.log(`[tag-new-concepts] Processing ${images.length} existing images...`)
 

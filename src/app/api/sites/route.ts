@@ -6,7 +6,7 @@ import natural from 'natural'
 // Lazy load transformers to avoid native library issues in serverless
 // import { pipeline } from '@xenova/transformers'
 import sharp from 'sharp'
-import { enqueueTaggingJob } from '@/jobs/tagging'
+import { enqueueTaggingJob, tagImageWithoutNewConcepts } from '@/jobs/tagging'
 // Lazy load embeddings to avoid native library issues in serverless
 // import { embedImageFromBuffer, canonicalizeImage } from '@/lib/embeddings'
 
@@ -160,14 +160,20 @@ export async function GET(request: NextRequest) {
       // OPTIMIZATION: Limit initial load to improve performance
       // Return all sites if no concepts specified
       // Note: tags relationship is legacy/unused - we use Concepts/ImageTags instead
-      const limit = parseInt(searchParams.get('limit') || '100') // Default 100, allow override
+      const limit = parseInt(searchParams.get('limit') || '60') // Default 60 for pagination
+      const offset = parseInt(searchParams.get('offset') || '0') // Pagination offset
       const sites = await prisma.site.findMany({
         where: whereClause,
         orderBy: {
           createdAt: 'desc'
         },
-        take: limit, // Limit results for faster initial load
+        take: limit,
+        skip: offset,
       })
+      
+      // Check if there are more results
+      const totalCount = await prisma.site.count({ where: whereClause })
+      const hasMore = offset + limit < totalCount
 
       // Fetch first images for these sites as a fallback when site.imageUrl is null
       const fetchedSiteIds = sites.map((s: any) => s.id)
@@ -207,7 +213,11 @@ export async function GET(request: NextRequest) {
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
           imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
           category: categoryBySite.get(site.id) || 'website', // Include category from image
-        }))
+        })),
+        hasMore,
+        total: totalCount,
+        offset,
+        limit
       })
     }
 
@@ -293,8 +303,15 @@ export async function GET(request: NextRequest) {
       Array.from(resolvedRequired).every((req: any) => siteMatchesConcept(site, req))
     )
 
+    // Pagination for concepts branch
+    const limit = parseInt(searchParams.get('limit') || '60')
+    const offset = parseInt(searchParams.get('offset') || '0')
+    const totalCount = filteredSites.length
+    const paginatedSites = filteredSites.slice(offset, offset + limit)
+    const hasMore = offset + limit < totalCount
+
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
-    const fIds = filteredSites.map((s: any) => s.id)
+    const fIds = paginatedSites.map((s: any) => s.id)
     const fImages = fIds.length
       ? await (prisma.image as any).findMany({ where: { siteId: { in: fIds } }, orderBy: { id: 'desc' } })
       : []
@@ -308,11 +325,15 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      sites: filteredSites.map((site: any) => ({
+      sites: paginatedSites.map((site: any) => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
         category: categoryBySite.get(site.id) || 'website', // Include category from image
-      }))
+      })),
+      hasMore,
+      total: totalCount,
+      offset,
+      limit
     })
   } catch (error: any) {
     console.error('[sites] Error fetching sites:', error)
@@ -349,10 +370,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, description, url, imageUrl, author, tags, category } = body
+    const { title, description, url, imageUrl, author, tags, category, skipConceptGeneration } = body
     // Default to "website" for backward compatibility
     // This is the "category knob" - one pipeline, different categories
     const imageCategory = category || 'website'
+    // Pipeline 2.0: Skip concept generation (only tag with existing concepts)
+    const usePipeline2 = skipConceptGeneration === true
 
     // If no imageUrl provided, try to generate one via the screenshot-service
     let finalImageUrl: string | null = imageUrl ?? null
@@ -456,11 +479,7 @@ export async function POST(request: NextRequest) {
       },
       include: {
         images: true,
-        tags: {
-          include: {
-            tag: true
-          }
-        }
+        // tags relationship is legacy/unused - we use Concepts/ImageTags instead
       }
     })
 
@@ -591,58 +610,71 @@ export async function POST(request: NextRequest) {
           
           // Only proceed with tagging if we have an embedding
           if (ivec) {
-            // HYBRID APPROACH: Generate new concepts for this site, then tag appropriately
-            console.log(`[sites] Generating new concepts and tagging image ${image.id}...`)
-            
-            // Check existing concepts BEFORE generating new ones
-            const existingConceptIdsBefore = new Set(
-              (await prisma.concept.findMany({ select: { id: true } })).map((c: any) => c.id)
-            )
-            
-            let newlyCreatedConceptIds: string[] = []
-            try {
-              const { tagImage } = await import('@/jobs/tagging')
+            if (usePipeline2) {
+              // PIPELINE 2.0: Tag with existing concepts only (no concept generation)
+              console.log(`[sites] Pipeline 2.0: Tagging image ${image.id} with existing concepts only (no concept generation)...`)
               
-              // STEP 1: Generate new concepts for this site only
-              // tagImage will:
-              // - Generate new concepts from the image (Gemini/OpenAI fallback)
-              // - Check if concepts already exist (skips duplicates, merges synonyms)
-              // - Tag the new site with all existing concepts (using pre-computed embeddings - fast!)
-              // - Return IDs of ONLY truly newly created concepts (not duplicates/merges)
-              newlyCreatedConceptIds = await tagImage(image.id)
-              console.log(`[sites] tagImage completed for image ${image.id}`)
-              
-              if (newlyCreatedConceptIds.length > 0) {
-                console.log(`[sites] Generated ${newlyCreatedConceptIds.length} new concept(s): ${newlyCreatedConceptIds.join(', ')}`)
-              }
-            } catch (tagError) {
-              // Non-fatal: logging warning but not failing the request
-              console.warn(`[sites] tagImage failed for image ${image.id}:`, (tagError as Error)?.message)
-            }
-            
-            // STEP 2: If new concepts were created, tag all existing images with only these new concepts
-            // (tagImage already tagged the new site with all concepts, including the new ones)
-            if (newlyCreatedConceptIds.length > 0) {
               try {
-                // Filter to only concepts that didn't exist before (safety check)
-                const trulyNewConceptIds = newlyCreatedConceptIds.filter((id: any) => !existingConceptIdsBefore.has(id))
-                
-                if (trulyNewConceptIds.length > 0) {
-                  // New concepts that didn't exist before - tag all sites with only these new concepts
-                  console.log(`[sites] Tagging all existing images with ${trulyNewConceptIds.length} new concept(s)...`)
-                  const { tagNewConceptsOnAllImages } = await import('@/jobs/tag-new-concepts-on-all')
-                  await tagNewConceptsOnAllImages(trulyNewConceptIds)
-                  console.log(`[sites] ✅ Tagged ${trulyNewConceptIds.length} new concept(s) on all existing images (kept existing tags)`)
-                } else {
-                  // All returned concepts already existed (shouldn't happen, but safety check)
-                  console.log(`[sites] All concepts already existed - new site already tagged with them`)
-                }
-              } catch (tagAllError) {
+                await tagImageWithoutNewConcepts(image.id)
+                console.log(`[sites] ✅ Pipeline 2.0: Tagged image ${image.id} with existing concepts only`)
+              } catch (tagError) {
                 // Non-fatal: logging warning but not failing the request
-                console.warn(`[sites] Failed to tag new concepts on all images:`, (tagAllError as Error)?.message)
+                console.warn(`[sites] Pipeline 2.0: tagImageWithoutNewConcepts failed for image ${image.id}:`, (tagError as Error)?.message)
               }
             } else {
-              console.log(`[sites] No new concepts generated - new site tagged with existing concepts only`)
+              // PIPELINE 1.0: HYBRID APPROACH - Generate new concepts for this site, then tag appropriately
+              console.log(`[sites] Pipeline 1.0: Generating new concepts and tagging image ${image.id}...`)
+              
+              // Check existing concepts BEFORE generating new ones
+              const existingConceptIdsBefore = new Set(
+                (await prisma.concept.findMany({ select: { id: true } })).map((c: any) => c.id)
+              )
+              
+              let newlyCreatedConceptIds: string[] = []
+              try {
+                const { tagImage } = await import('@/jobs/tagging')
+                
+                // STEP 1: Generate new concepts for this site only
+                // tagImage will:
+                // - Generate new concepts from the image (Gemini/OpenAI fallback)
+                // - Check if concepts already exist (skips duplicates, merges synonyms)
+                // - Tag the new site with all existing concepts (using pre-computed embeddings - fast!)
+                // - Return IDs of ONLY truly newly created concepts (not duplicates/merges)
+                newlyCreatedConceptIds = await tagImage(image.id)
+                console.log(`[sites] tagImage completed for image ${image.id}`)
+                
+                if (newlyCreatedConceptIds.length > 0) {
+                  console.log(`[sites] Generated ${newlyCreatedConceptIds.length} new concept(s): ${newlyCreatedConceptIds.join(', ')}`)
+                }
+              } catch (tagError) {
+                // Non-fatal: logging warning but not failing the request
+                console.warn(`[sites] tagImage failed for image ${image.id}:`, (tagError as Error)?.message)
+              }
+              
+              // STEP 2: If new concepts were created, tag all existing images with only these new concepts
+              // (tagImage already tagged the new site with all concepts, including the new ones)
+              if (newlyCreatedConceptIds.length > 0) {
+                try {
+                  // Filter to only concepts that didn't exist before (safety check)
+                  const trulyNewConceptIds = newlyCreatedConceptIds.filter((id: any) => !existingConceptIdsBefore.has(id))
+                  
+                  if (trulyNewConceptIds.length > 0) {
+                    // New concepts that didn't exist before - tag all sites with only these new concepts
+                    console.log(`[sites] Tagging all existing images with ${trulyNewConceptIds.length} new concept(s)...`)
+                    const { tagNewConceptsOnAllImages } = await import('@/jobs/tag-new-concepts-on-all')
+                    await tagNewConceptsOnAllImages(trulyNewConceptIds)
+                    console.log(`[sites] ✅ Tagged ${trulyNewConceptIds.length} new concept(s) on all existing images (kept existing tags)`)
+                  } else {
+                    // All returned concepts already existed (shouldn't happen, but safety check)
+                    console.log(`[sites] All concepts already existed - new site already tagged with them`)
+                  }
+                } catch (tagAllError) {
+                  // Non-fatal: logging warning but not failing the request
+                  console.warn(`[sites] Failed to tag new concepts on all images:`, (tagAllError as Error)?.message)
+                }
+              } else {
+                console.log(`[sites] No new concepts generated - new site tagged with existing concepts only`)
+              }
             }
             
             // STEP 3: Trigger incremental hub detection for this image only (debounced, runs in background)
@@ -678,10 +710,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       site
     })
-  } catch (error) {
-    console.error('Error creating site:', error)
+  } catch (error: any) {
+    console.error('[sites] Error creating site:', error)
+    const errorMessage = error?.message || 'Unknown error'
+    const errorDetails = process.env.NODE_ENV === 'development' ? error?.stack : undefined
     return NextResponse.json(
-      { error: 'Failed to create site' },
+      { 
+        error: 'Failed to create site',
+        message: errorMessage,
+        details: errorDetails
+      },
       { status: 500 }
     )
   }

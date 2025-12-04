@@ -190,25 +190,33 @@ IMPORTANT:
     // Convert buffer to base64 for OpenAI API
     const base64Image = imageBuffer.toString('base64');
     
-    const response = await client.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: prompt },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64Image}`,
-              },
-            },
-          ],
-        },
-      ],
-      max_tokens: 4000,
-      temperature: 0.7,
+    // Add timeout wrapper (60 seconds for OpenAI)
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('OpenAI request timeout after 60s')), 60000);
     });
+    
+    const response = await Promise.race([
+      client.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: prompt },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:${mimeType};base64,${base64Image}`,
+                },
+              },
+            ],
+          },
+        ],
+        max_tokens: 4000,
+        temperature: 0.7,
+      }),
+      timeoutPromise
+    ]);
 
     const text = response.choices[0]?.message?.content;
     if (!text) {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import SubmissionForm from './SubmissionForm'
 import Header from './Header'
@@ -39,6 +39,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const [sites, setSites] = useState<Site[]>([])
   const [allSites, setAllSites] = useState<Site[]>([]) // Store all sites for lazy loading
   const [displayedCount, setDisplayedCount] = useState(50) // Number of sites to display initially
+  const [paginationOffset, setPaginationOffset] = useState(0) // Current API pagination offset
+  const [hasMoreResults, setHasMoreResults] = useState(false) // Whether there are more results to fetch
+  const [isLoadingMore, setIsLoadingMore] = useState(false) // Loading state for pagination
   // Main search (simple text search, no concepts)
   const [searchQuery, setSearchQuery] = useState('')
   
@@ -97,38 +100,172 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }, [])
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    fetchSites()
-  }, [])
+  const observerRef = useRef<IntersectionObserver | null>(null)
 
   // Lazy loading: Update displayed sites when allSites or displayedCount changes
   useEffect(() => {
     setSites(allSites.slice(0, displayedCount))
   }, [allSites, displayedCount])
 
-  // Intersection Observer for lazy loading
+  // Function to load more images from API
+  const loadMoreImages = useCallback(async () => {
+    if (isLoadingMore || !hasMoreResults) {
+      return
+    }
+
+    setIsLoadingMore(true)
+    try {
+      const query = selectedConcepts.join(' ')
+      const categoryParam = category || 'all'
+      
+      let data: any
+      if (query.trim()) {
+        // Search query: use search API
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
+        const response = await fetch(searchUrl)
+        if (!response.ok) {
+          console.error('Failed to fetch more images', response.status)
+          return
+        }
+        data = await response.json()
+        
+        // Map images to sites (extract site data from image.site)
+        const sitesWithImageIds = (data.images || []).map((image: any) => {
+          const site = image.site || {}
+          const siteCategory = image.site?.category || image.category || 'website'
+          return {
+            id: site.id || image.siteId,
+            title: site.title || '',
+            description: site.description || null,
+            url: site.url || image.siteUrl || '',
+            imageUrl: image.url || site.imageUrl || null,
+            author: site.author || null,
+            tags: [],
+            imageId: image.imageId || undefined,
+            category: siteCategory,
+            score: image.score || 0,
+          } as Site
+        })
+        
+        // Deduplicate by site ID
+        const siteMap = new Map<string, Site>()
+        for (const site of sitesWithImageIds) {
+          const existing = siteMap.get(site.id)
+          if (!existing || (site.score ?? 0) > (existing.score ?? 0)) {
+            siteMap.set(site.id, site)
+          }
+        }
+        const newSites = Array.from(siteMap.values())
+        
+        // Append new sites to existing ones
+        setAllSites(prev => {
+          const combined = [...prev, ...newSites]
+          // Remove duplicates by ID
+          const uniqueMap = new Map<string, Site>()
+          for (const site of combined) {
+            const existing = uniqueMap.get(site.id)
+            if (!existing || (site.score ?? 0) > (existing.score ?? 0)) {
+              uniqueMap.set(site.id, site)
+            }
+          }
+          return Array.from(uniqueMap.values()).sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+        })
+      } else {
+        // No search query: use sites API
+        const sitesUrl = categoryParam && categoryParam !== 'all'
+          ? `/api/sites?category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
+          : `/api/sites?limit=60&offset=${paginationOffset}`
+        const response = await fetch(sitesUrl)
+        if (!response.ok) {
+          console.error('Failed to fetch more sites', response.status)
+          return
+        }
+        data = await response.json()
+        
+        // Append new sites to existing ones
+        const newSites = Array.isArray(data.sites) ? data.sites : []
+        setAllSites(prev => {
+          const combined = [...prev, ...newSites]
+          // Remove duplicates by ID
+          const uniqueMap = new Map<string, Site>()
+          for (const site of combined) {
+            const existing = uniqueMap.get(site.id)
+            if (!existing) {
+              uniqueMap.set(site.id, site)
+            }
+          }
+          return Array.from(uniqueMap.values())
+        })
+      }
+      
+      // Update pagination state
+      setHasMoreResults(data.hasMore || false)
+      setPaginationOffset(prev => prev + 60)
+      
+      // Show more sites (increment displayed count)
+      setDisplayedCount(prev => prev + 50)
+    } catch (error) {
+      console.error('Error loading more images:', error)
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [isLoadingMore, hasMoreResults, selectedConcepts, category, paginationOffset])
+
+  // Intersection Observer for lazy loading - set up when element is rendered
   useEffect(() => {
+    // Clean up previous observer
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+      observerRef.current = null
+    }
+
+    // Only set up observer if we have more results to load
+    if (!hasMoreResults || isLoadingMore) {
+      return
+    }
+
+    const currentRef = loadMoreRef.current
+    if (!currentRef) {
+      // Retry after a short delay to allow React to render the element
+      const timeoutId = setTimeout(() => {
+        if (loadMoreRef.current && hasMoreResults && !isLoadingMore) {
+          const retryRef = loadMoreRef.current
+          if (retryRef && observerRef.current === null) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
+                  loadMoreImages()
+                }
+              },
+              { threshold: 0.1 }
+            )
+            observer.observe(retryRef)
+            observerRef.current = observer
+          }
+        }
+      }, 100)
+      return () => clearTimeout(timeoutId)
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && displayedCount < allSites.length) {
-          // Load 50 more sites when user scrolls to bottom
-          setDisplayedCount((prev) => Math.min(prev + 50, allSites.length))
+        if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
+          loadMoreImages()
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '100px' }
     )
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current)
-    }
+    observer.observe(currentRef)
+    observerRef.current = observer
 
     return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current)
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+        observerRef.current = null
       }
     }
-  }, [displayedCount, allSites.length])
+  }, [hasMoreResults, isLoadingMore, loadMoreImages, allSites.length])
 
   // Fetch concept data with opposites when concepts change (not just when panel opens)
   // This ensures opposites are available for fetching opposite results
@@ -226,16 +363,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }, [selectedConcepts, customConcepts]) // Fetch when concepts change, not just when panel opens
 
   // Fetch sites when concepts or category change (but not when slider moves)
-  useEffect(() => {
-    const controller = new AbortController()
-    const timer = setTimeout(() => {
-      fetchSites()
-    }, 300)
-    return () => {
-      controller.abort()
-      clearTimeout(timer)
-    }
-  }, [selectedConcepts, category])
+  // Moved to after fetchSites declaration
   
   // Check if we need to fetch opposite results when slider crosses 50%
   useEffect(() => {
@@ -251,10 +379,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   
   // Reorder results client-side when slider moves (without refetching)
   useEffect(() => {
-    console.log(`[STOP DEBUG] useEffect triggered - sliderVersion: ${sliderVersion}`)
-    
     if (selectedConcepts.length === 0) {
-      console.log(`[STOP DEBUG] No concepts selected, returning`)
       return
     }
     
@@ -306,11 +431,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       const conceptResultSet = conceptResults.get(concept) || []
       const oppositeResultSet = oppositeResults.get(concept) || []
       
-      console.log(`[STOP DEBUG] Concept: ${concept}, sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%)`)
-      console.log(`[STOP DEBUG] conceptResultSet.length: ${conceptResultSet.length}, oppositeResultSet.length: ${oppositeResultSet.length}`)
-      
       if (conceptResultSet.length === 0 && oppositeResultSet.length === 0) {
-        console.log(`[STOP DEBUG] No results available, returning`)
         return
       }
       
@@ -341,15 +462,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       // Ensure stopNumber is in valid range [1, 10]
       stopNumber = Math.max(1, Math.min(10, stopNumber))
       
-      console.log(`[STOP DEBUG] Calculated stopNumber: ${stopNumber} from sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%)`)
-      if (clampedPos === 1.0) {
-        console.log(`[STOP DEBUG] Edge case: position is exactly 1.0, using stop 10`)
-      } else {
-        console.log(`[STOP DEBUG] Calculation: Math.floor(${clampedPos.toFixed(3)} * 10) + 1 = ${Math.floor(clampedPos * 10)} + 1 = ${stopNumber}`)
-      }
-      
       if (sliderPos > 0.5) {
-        console.log(`[STOP DEBUG] RIGHT SIDE (sliderPos ${sliderPos.toFixed(3)} > 0.5) - Using concept results`)
         // Slider towards concept (right side) - Stops 6-10 (50-100%)
         const conceptTiers = calculateTiers(conceptResultSet)
         // Tiers are already sorted by score (descending), so just copy them
@@ -364,11 +477,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const t9 = [...conceptTiers.tier9]
         const t10 = [...conceptTiers.tier10]
         
-        console.log(`[TIER DEBUG] Concept tiers - t1: ${t1.length}, t2: ${t2.length}, t3: ${t3.length}, t4: ${t4.length}, t5: ${t5.length}, t6: ${t6.length}, t7: ${t7.length}, t8: ${t8.length}, t9: ${t9.length}, t10: ${t10.length}`)
-        console.log(`[TIER DEBUG] First 3 tier1 IDs: ${t1.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-        console.log(`[TIER DEBUG] First 3 tier2 IDs: ${t2.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-        console.log(`[TIER DEBUG] First 3 tier5 IDs: ${t5.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-        
         // Right side: Stops 6-10 (51-100%) - each stop prioritizes a different 10% tier for smooth transitions
         // Stop 10 (100%): Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (best matches first)
         // Stop 9 (90%): Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (next tier first)
@@ -376,33 +484,21 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Stop 7 (70%): Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3
         // Stop 6 (60%): Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4
         if (stopNumber === 10) {
-          console.log(`[STOP DEBUG] STOP 10 EXECUTED - Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (best matches first)`)
           orderedResults = [...t1, ...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10]
         } else if (stopNumber === 9) {
-          console.log(`[STOP DEBUG] STOP 9 EXECUTED - Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first)`)
           orderedResults = [...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1]
-          console.log(`[ORDER DEBUG] Stop 9 - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
         } else if (stopNumber === 8) {
-          console.log(`[STOP DEBUG] STOP 8 EXECUTED - Tier 3, 4, 5, 6, 7, 8, 9, 10, 1, 2 (tier 3 first)`)
           orderedResults = [...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2]
         } else if (stopNumber === 7) {
-          console.log(`[STOP DEBUG] STOP 7 EXECUTED - Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 (tier 4 first)`)
           orderedResults = [...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3]
-          console.log(`[ORDER DEBUG] Stop 7 - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
         } else {
           // Stop 6
-          console.log(`[STOP DEBUG] STOP 6 EXECUTED - Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first)`)
           orderedResults = [...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3, ...t4]
         }
-        console.log(`[STOP DEBUG] Right side orderedResults.length: ${orderedResults.length}`)
-        console.log(`[STOP DEBUG] First 10 IDs: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-        console.log(`[STOP DEBUG] First 10 scores: ${orderedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
       } else {
         // sliderPos <= 0.5
-        console.log(`[STOP DEBUG] LEFT SIDE (sliderPos ${sliderPos.toFixed(3)} <= 0.5) - Using opposite results`)
         // Slider towards opposite (left side) - Stops 1-5 (0-50%)
         if (oppositeResultSet.length === 0) {
-          console.log(`[STOP DEBUG] Opposite results NOT loaded - using concept results with varied ordering`)
           // If opposite not loaded, show concept results but still vary the ordering
           const conceptTiersNoOpp = calculateTiers(conceptResultSet)
           const t1NoOpp = [...conceptTiersNoOpp.tier1]
@@ -416,8 +512,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           const t9NoOpp = [...conceptTiersNoOpp.tier9]
           const t10NoOpp = [...conceptTiersNoOpp.tier10]
           
-          console.log(`[TIER DEBUG] Concept tiers (no opposite) - t1: ${t1NoOpp.length}, t2: ${t2NoOpp.length}, t3: ${t3NoOpp.length}, t4: ${t4NoOpp.length}, t5: ${t5NoOpp.length}, t6: ${t6NoOpp.length}, t7: ${t7NoOpp.length}, t8: ${t8NoOpp.length}, t9: ${t9NoOpp.length}, t10: ${t10NoOpp.length}`)
-          
           // Left side without opposite: use concept results with reverse tier ordering (tier 5 down to tier 1)
           // Same pattern as stops 6-10 but in reverse, using concept results as fallback
           // Stop 5 (50%): Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first)
@@ -426,29 +520,18 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           // Stop 2 (20%): Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first)
           // Stop 1 (0%): Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - best matches)
           if (stopNumber === 1) {
-            console.log(`[STOP DEBUG] STOP 1 EXECUTED (no opposite) - Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - best matches)`)
             orderedResults = [...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp]
           } else if (stopNumber === 2) {
-            console.log(`[STOP DEBUG] STOP 2 EXECUTED (no opposite) - Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first)`)
             orderedResults = [...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp]
-            console.log(`[ORDER DEBUG] Stop 2 (no opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else if (stopNumber === 3) {
-            console.log(`[STOP DEBUG] STOP 3 EXECUTED (no opposite) - Tier 3, 4, 5, 6, 7, 8, 9, 10, 1, 2 (tier 3 first)`)
             orderedResults = [...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp]
           } else if (stopNumber === 4) {
-            console.log(`[STOP DEBUG] STOP 4 EXECUTED (no opposite) - Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 (tier 4 first)`)
             orderedResults = [...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp]
-            console.log(`[ORDER DEBUG] Stop 4 (no opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else {
             // Stop 5
-            console.log(`[STOP DEBUG] STOP 5 EXECUTED (no opposite) - Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first)`)
             orderedResults = [...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp]
           }
-          console.log(`[STOP DEBUG] Left side (no opposite) orderedResults.length: ${orderedResults.length}`)
-          console.log(`[STOP DEBUG] First 10 IDs: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-          console.log(`[STOP DEBUG] First 10 scores: ${orderedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
         } else {
-          console.log(`[STOP DEBUG] Opposite results loaded - using opposite results`)
           const oppositeTiers = calculateTiers(oppositeResultSet)
           // For opposite, tiers are sorted descending (best opposite first)
           // We want to show worst opposite matches first to emphasize the "opposite" effect
@@ -463,10 +546,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           const t9Opp = [...oppositeTiers.tier9]
           const t10Opp = [...oppositeTiers.tier10] // Worst opposite matches (most like concept)
           
-          console.log(`[TIER DEBUG] Opposite tiers - t1: ${t1Opp.length}, t2: ${t2Opp.length}, t3: ${t3Opp.length}, t4: ${t4Opp.length}, t5: ${t5Opp.length}, t6: ${t6Opp.length}, t7: ${t7Opp.length}, t8: ${t8Opp.length}, t9: ${t9Opp.length}, t10: ${t10Opp.length}`)
-          console.log(`[TIER DEBUG] First 3 tier1 opposite IDs: ${t1Opp.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-          console.log(`[TIER DEBUG] First 3 tier10 opposite IDs: ${t10Opp.slice(0, 3).map(s => s.id.substring(0, 8)).join(', ')}`)
-          
           // Left side: Stops 1-5 (0-50%) - with opposite results using 10 tiers, in reverse order
           // Same logic as stops 6-10 but for opposite concept, going from tier 5 down to tier 1
           // Stop 5 (50%): Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first - opposite concept)
@@ -475,32 +554,19 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           // Stop 2 (20%): Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first - opposite concept)
           // Stop 1 (0%): Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - opposite concept, best opposite matches)
           if (stopNumber === 1) {
-            console.log(`[STOP DEBUG] STOP 1 EXECUTED (with opposite) - Tier 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (tier 1 first - best opposite matches)`)
             orderedResults = [...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp]
           } else if (stopNumber === 2) {
-            console.log(`[STOP DEBUG] STOP 2 EXECUTED (with opposite) - Tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 1 (tier 2 first - opposite concept)`)
             orderedResults = [...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp]
-            console.log(`[ORDER DEBUG] Stop 2 (with opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else if (stopNumber === 3) {
-            console.log(`[STOP DEBUG] STOP 3 EXECUTED (with opposite) - Tier 3, 4, 5, 6, 7, 8, 9, 10, 1, 2 (tier 3 first - opposite concept)`)
             orderedResults = [...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp]
           } else if (stopNumber === 4) {
-            console.log(`[STOP DEBUG] STOP 4 EXECUTED (with opposite) - Tier 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 (tier 4 first - opposite concept)`)
             orderedResults = [...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp]
-            console.log(`[ORDER DEBUG] Stop 4 (with opp) - First 5 IDs: ${orderedResults.slice(0, 5).map(s => s.id.substring(0, 8)).join(', ')}`)
           } else {
             // Stop 5
-            console.log(`[STOP DEBUG] STOP 5 EXECUTED (with opposite) - Tier 5, 6, 7, 8, 9, 10, 1, 2, 3, 4 (tier 5 first - opposite concept)`)
             orderedResults = [...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp]
           }
-          console.log(`[STOP DEBUG] Left side (with opposite) orderedResults.length: ${orderedResults.length}`)
-          console.log(`[STOP DEBUG] First 10 IDs: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-          console.log(`[STOP DEBUG] First 10 scores: ${orderedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
         }
       }
-      
-      console.log(`[STOP DEBUG] Final orderedResults.length before deduplication: ${orderedResults.length}`)
-      console.log(`[STOP DEBUG] First 10 IDs before deduplication: ${orderedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
       
       // Deduplicate results by site ID before setting
       // IMPORTANT: Use Array.from with a new array to ensure React detects the change
@@ -508,36 +574,20 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         new Map(orderedResults.map(site => [site.id, site])).values()
       )
       
-      console.log(`[DEDUP DEBUG] Stop ${stopNumber} - Before dedup: ${orderedResults.length}, After dedup: ${deduplicatedResults.length}`)
-      if (orderedResults.length !== deduplicatedResults.length) {
-        console.log(`[DEDUP DEBUG] Duplicates found! Duplicate IDs: ${orderedResults.length - deduplicatedResults.length} duplicates removed`)
-        const allIds = orderedResults.map(s => s.id)
-        const uniqueIds = new Set(allIds)
-        const duplicates = allIds.filter((id, index) => allIds.indexOf(id) !== index)
-        console.log(`[DEDUP DEBUG] Duplicate IDs: ${[...new Set(duplicates)].map(id => id.substring(0, 8)).join(', ')}`)
-      }
-      
-      // Log the first 10 IDs to verify ordering is different
-      console.log(`[FINAL DEBUG] Stop ${stopNumber} - First 10 site IDs after deduplication: ${deduplicatedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
-      console.log(`[FINAL DEBUG] Stop ${stopNumber} - First 10 site scores: ${deduplicatedResults.slice(0, 10).map(s => (s.score ?? 0).toFixed(3)).join(', ')}`)
-      
       // Only set sites if we have results
       // Create a completely new array reference to force React to re-render
       if (deduplicatedResults.length > 0) {
         const newSitesArray = [...deduplicatedResults] // Create new array reference
-        console.log(`[FINAL DEBUG] Stop ${stopNumber} - Setting ${newSitesArray.length} sites, first ID: ${newSitesArray[0]?.id.substring(0, 8)}`)
         setAllSites(newSitesArray)
         setDisplayedCount(50)
       } else if (conceptResultSet.length > 0) {
         // Fallback: if reordering produced no results, use original concept results
         const fallbackArray = [...conceptResultSet].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-        console.log(`[FINAL DEBUG] Using fallback, first ID: ${fallbackArray[0]?.id.substring(0, 8)}`)
         setAllSites(fallbackArray)
         setDisplayedCount(50)
       }
     } else {
       // Multiple concepts: apply slider-based ranking for each concept, then combine
-      console.log(`[MULTI DEBUG] Processing ${selectedConcepts.length} concepts`)
       
       // Step 1: For each concept, calculate its tier-based ordering based on slider position
       const conceptOrderedResults = new Map<string, Site[]>() // concept -> ordered results
@@ -843,10 +893,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }
 
-  const fetchSites = async () => {
+  const fetchSites = useCallback(async () => {
     try {
-      console.log(`[FETCH DEBUG] fetchSites called with selectedConcepts:`, selectedConcepts)
       setLoading(true)
+      
+      // Reset pagination state for new search
+      setPaginationOffset(0)
+      setHasMoreResults(false)
+      setIsLoadingMore(false)
       
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
@@ -857,42 +911,38 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const categoryParam = category || 'all'
         
         // Don't pass slider positions - we'll reorder client-side
-        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}`
-        console.log(`[FETCH DEBUG] Fetching from: ${searchUrl}`)
+        // Initial fetch: limit 60, offset 0
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=0`
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          console.error('[FETCH DEBUG] Failed response fetching search', response.status)
+          console.error('Failed response fetching search', response.status)
           setSites([])
+          setAllSites([])
           return
         }
         const data = await response.json()
-        console.log(`[FETCH DEBUG] API returned ${data.sites?.length || 0} sites, ${data.images?.length || 0} images`)
-        // Search API returns sites and images
-        // Map images to sites for interaction tracking
-        // Create a map of siteId -> best image for that site
-        const imageMap = new Map<string, any>()
-        for (const image of data.images || []) {
-          const siteId = image.siteId || image.site?.id
-          if (siteId) {
-            // Keep the image with highest score for each site
-            if (!imageMap.has(siteId) || (image.score || 0) > (imageMap.get(siteId)?.score || 0)) {
-              imageMap.set(siteId, image)
-            }
-          }
-        }
         
-        // Map sites to their corresponding images and include category info
-        const sitesWithImageIds = (data.sites || []).map((site: Site) => {
-          const image = imageMap.get(site.id)
-          // Get category from site object (already includes category from search API)
-          // or fallback to image data, or default to 'website'
-          const siteCategory = (site as any).category || image?.category || 'website'
+        // Update pagination state
+        setHasMoreResults(data.hasMore || false)
+        setPaginationOffset(60) // Next fetch will be at offset 60
+        
+        // Search API returns images with embedded site data
+        // Extract sites from images array
+        const sitesWithImageIds = (data.images || []).map((image: any) => {
+          const site = image.site || {}
+          const siteCategory = image.site?.category || image.category || 'website'
           return {
-            ...site,
-            imageId: image?.imageId || undefined,
-            category: siteCategory, // Include category for UI labeling (only shown in combined view)
-            score: image?.score || (site as any).score || 0, // Preserve similarity score
-          }
+            id: site.id || image.siteId,
+            title: site.title || '',
+            description: site.description || null,
+            url: site.url || image.siteUrl || '',
+            imageUrl: image.url || site.imageUrl || null,
+            author: site.author || null,
+            tags: [],
+            imageId: image.imageId || undefined,
+            category: siteCategory,
+            score: image.score || 0,
+          } as Site
         })
         // Deduplicate by site ID - keep the one with the highest score for each ID
         const siteMap = new Map<string, Site>()
@@ -907,11 +957,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Store results for each concept
         if (selectedConcepts.length === 1) {
           const concept = selectedConcepts[0]
-          console.log(`[FETCH DEBUG] Storing ${deduplicatedSites.length} sites for concept: "${concept}"`)
           setConceptResults(prev => {
             const newMap = new Map(prev)
             newMap.set(concept, deduplicatedSites)
-            console.log(`[FETCH DEBUG] conceptResults keys after update:`, Array.from(newMap.keys()))
             return newMap
           })
           // Initialize last slider side
@@ -929,20 +977,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           
           // ALWAYS fetch opposite results upfront so both sides work immediately
           const conceptInfo = conceptData.get(concept.toLowerCase())
-          console.log(`[OPPOSITE DEBUG] Concept info for ${concept}:`, conceptInfo)
           const opposites = conceptInfo?.opposites || []
-          console.log(`[OPPOSITE DEBUG] Opposites for ${concept}:`, opposites)
           if (opposites.length > 0) {
             const firstOpposite = opposites[0]
-            console.log(`[OPPOSITE DEBUG] Fetching opposite immediately for ${concept}: ${firstOpposite}`)
             // Fetch opposite immediately, don't wait for slider to cross 50%
             fetchOppositeResults(concept, firstOpposite, categoryParam)
-          } else {
-            console.log(`[OPPOSITE DEBUG] No opposites found for ${concept}`)
           }
         } else {
           // Multiple concepts: fetch results for each concept individually
-          console.log(`[MULTI FETCH] Fetching results for ${selectedConcepts.length} concepts individually`)
           
           const conceptResultsMap = new Map<string, Site[]>()
           const fetchPromises: Promise<void>[] = []
@@ -953,7 +995,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 const conceptSearchUrl = `/api/search?q=${encodeURIComponent(concept.trim())}&category=${encodeURIComponent(categoryParam)}`
                 const conceptResponse = await fetch(conceptSearchUrl)
                 if (!conceptResponse.ok) {
-                  console.error(`[MULTI FETCH] Failed to fetch results for concept "${concept}":`, conceptResponse.status)
+                  console.error(`Failed to fetch results for concept "${concept}":`, conceptResponse.status)
                   return
                 }
                 const conceptData = await conceptResponse.json()
@@ -991,7 +1033,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 const deduplicatedConceptSites = Array.from(conceptSiteMap.values())
                 
                 conceptResultsMap.set(concept, deduplicatedConceptSites)
-                console.log(`[MULTI FETCH] Fetched ${deduplicatedConceptSites.length} results for concept "${concept}"`)
                 
                 // Initialize last slider side
                 const sliderPos = sliderPositions.get(concept) ?? 1.0
@@ -1001,7 +1042,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                 // Note: conceptData is fetched separately, so opposites will be fetched
                 // when conceptData is available via checkAndFetchOpposites
               } catch (error) {
-                console.error(`[MULTI FETCH] Error fetching results for concept "${concept}":`, error)
+                console.error(`Error fetching results for concept "${concept}":`, error)
               }
             })()
             
@@ -1041,10 +1082,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Results will be reordered by the useEffect hook when sliderPositions change
       } else {
         // No search query: show all sites (optionally filtered by category)
-        // OPTIMIZATION: Limit initial load to 100 sites for faster page load
+        // Initial fetch: limit 60, offset 0
         const sitesUrl = category 
-          ? `/api/sites?category=${encodeURIComponent(category)}&limit=100`
-          : '/api/sites?limit=100'
+          ? `/api/sites?category=${encodeURIComponent(category)}&limit=60&offset=0`
+          : '/api/sites?limit=60&offset=0'
         try {
           const response = await fetch(sitesUrl)
           if (!response.ok) {
@@ -1052,23 +1093,44 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             console.error('Failed response fetching sites', response.status, errorData)
             setAllSites([])
             setDisplayedCount(50)
+            setHasMoreResults(false)
             return
           }
           const data = await response.json()
           setAllSites(Array.isArray(data.sites) ? data.sites : [])
           setDisplayedCount(50)
+          const hasMore = data.hasMore === true // Explicitly check for true
+          setHasMoreResults(hasMore)
+          setPaginationOffset(60) // Next fetch will be at offset 60
         } catch (error) {
           console.error('Error fetching sites:', error)
           setSites([])
         }
       }
     } catch (error) {
-      console.error('Error fetching sites:', error)
+      console.error('Error in fetchSites:', error)
       setSites([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedConcepts, category])
+
+  // Fetch sites when concepts or category change (but not when slider moves)
+  useEffect(() => {
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      fetchSites()
+    }, 300)
+    return () => {
+      controller.abort()
+      clearTimeout(timer)
+    }
+  }, [selectedConcepts, category, fetchSites])
+
+  // Initial fetch on mount
+  useEffect(() => {
+    fetchSites()
+  }, [fetchSites])
 
   // Main search input handler (simple text search)
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -2312,7 +2374,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(9)].map((_, i) => (
               <div key={i}>
                 {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
@@ -2404,10 +2466,48 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   </div>
                 </div>
             ))}
+            {/* Skeleton loaders while loading more */}
+            {isLoadingMore && (
+              <>
+                {[...Array(9)].map((_, i) => (
+                  <div key={`skeleton-${i}`}>
+                    {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
+                    <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
+                      <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
+                    </div>
+                    {/* Text section skeleton - matches py-2 structure */}
+                    <div className="py-2">
+                      <div className="flex items-center justify-between gap-2">
+                        {/* Title skeleton - flex-1, text-xs size */}
+                        <div className="relative h-3 bg-[#e8e8e4] rounded flex-1 overflow-hidden">
+                          <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
+                        </div>
+                        {/* Category badge skeleton - matches badge size */}
+                        <div className="relative h-5 w-16 bg-[#e8e8e4] rounded overflow-hidden">
+                          <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
             {/* Lazy loading trigger - load more when this becomes visible */}
-            {displayedCount < allSites.length && (
-              <div ref={loadMoreRef} className="col-span-full flex justify-center py-8">
-                <div className="text-gray-400 text-sm">Loading more...</div>
+            {hasMoreResults ? (
+              <div 
+                ref={loadMoreRef} 
+                className="col-span-full flex justify-center py-8"
+                data-testid="load-more-trigger"
+              >
+                <div className="text-gray-400 text-sm">
+                  Scroll for more
+                </div>
+              </div>
+            ) : (
+              <div className="col-span-full flex justify-center py-8">
+                <div className="text-gray-400 text-sm">
+                  No more results
+                </div>
               </div>
             )}
           </div>
