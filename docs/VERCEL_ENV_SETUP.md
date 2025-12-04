@@ -7,7 +7,7 @@ This guide shows you exactly how to add environment variables to your Vercel dep
 ### Step 1: Navigate to Environment Variables
 
 1. Go to [vercel.com/dashboard](https://vercel.com/dashboard)
-2. Click on your **Looma** project
+2. Click on your **Spectrums** project
 3. Click **Settings** in the top navigation
 4. Click **Environment Variables** in the left sidebar
 
@@ -103,14 +103,14 @@ vercel login
 ### Step 3: Link Your Project
 
 ```bash
-cd /path/to/Looma
+cd /path/to/Spectrums
 vercel link
 ```
 
 This will:
 - Ask you to select your Vercel account
 - Ask if you want to link to an existing project (select **Yes**)
-- List your projects (select **Looma**)
+- List your projects (select **Spectrums**)
 
 ### Step 4: Add Environment Variables
 

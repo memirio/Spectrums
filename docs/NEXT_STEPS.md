@@ -1,6 +1,6 @@
 # Next Steps: Deploy to Vercel
 
-Follow these steps in order to deploy Looma to your domain.
+Follow these steps in order to deploy Spectrums to your domain.
 
 ## Step 1: Connect Your Repository to Vercel
 
@@ -14,7 +14,7 @@ Follow these steps in order to deploy Looma to your domain.
    - Click **"Add New Project"** button
    - Click **"Import Git Repository"**
    - Connect your GitHub/GitLab/Bitbucket account (if not already connected)
-   - Select your **Looma** repository
+   - Select your **Spectrums** repository
 
 3. **Configure Project**
    - **Framework Preset**: Should auto-detect "Next.js" ✅
@@ -39,14 +39,14 @@ npm i -g vercel
 vercel login
 
 # 3. Link your project
-cd /path/to/Looma
+cd /path/to/Spectrums
 vercel link
 
 # Follow prompts:
 # - Set up and deploy? Yes
 # - Which scope? (select your account)
 # - Link to existing project? No (first time)
-# - Project name? looma (or your choice)
+# - Project name? spectrums (or your choice)
 # - Directory? ./
 # - Override settings? No
 
@@ -105,7 +105,7 @@ vercel --prod
 
 2. **Add Your Domain**
    - Click **"Add"** button
-   - Enter your domain (e.g., `looma.com` or `www.looma.com`)
+   - Enter your domain (e.g., `spectrums.com` or `www.spectrums.com`)
    - Click **"Add"**
 
 3. **Configure DNS**
@@ -132,7 +132,7 @@ vercel --prod
 
 ### Checklist
 
-- [ ] **Site loads**: Visit your domain, see the Looma homepage
+- [ ] **Site loads**: Visit your domain, see the Spectrums homepage
 - [ ] **HTTPS works**: Check for padlock icon (SSL certificate)
 - [ ] **Search works**: Try searching for "playful" or "3d"
 - [ ] **Images load**: Check that images from Supabase Storage display

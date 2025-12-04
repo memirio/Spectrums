@@ -381,7 +381,7 @@ export async function POST(request: NextRequest) {
     let finalImageUrl: string | null = imageUrl ?? null
     if (!finalImageUrl && typeof url === 'string' && /^https?:\/\//.test(url)) {
       const svcBase = process.env.SCREENSHOT_API_URL || 'http://localhost:3001'
-      const idemKey = `looma-${Buffer.from(url).toString('base64').slice(0, 24)}`
+      const idemKey = `spectrums-${Buffer.from(url).toString('base64').slice(0, 24)}`
       try {
         const enqueue = await fetch(`${svcBase}/api/screenshot`, {
           method: 'POST',
