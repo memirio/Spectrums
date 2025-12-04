@@ -104,7 +104,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   useEffect(() => {
     fetchSites()
-  }, [])
+  }, [fetchSites])
 
   // Lazy loading: Update displayed sites when allSites or displayedCount changes
   useEffect(() => {
@@ -985,7 +985,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }
 
-  const fetchSites = async () => {
+  const fetchSites = useCallback(async () => {
     try {
       console.log(`[FETCH DEBUG] fetchSites called with selectedConcepts:`, selectedConcepts)
       console.log(`[FETCH DEBUG] About to set loading state`)
@@ -1234,7 +1234,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       console.log('[FETCH DEBUG] fetchSites finally block - setting loading to false')
       setLoading(false)
     }
-  }
+  }, [selectedConcepts, category])
 
   // Main search input handler (simple text search)
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
