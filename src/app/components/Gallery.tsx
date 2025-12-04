@@ -988,12 +988,15 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   const fetchSites = async () => {
     try {
       console.log(`[FETCH DEBUG] fetchSites called with selectedConcepts:`, selectedConcepts)
+      console.log(`[FETCH DEBUG] About to set loading state`)
       setLoading(true)
+      console.log(`[FETCH DEBUG] Loading state set, about to reset pagination`)
       
       // Reset pagination state for new search
       setPaginationOffset(0)
       setHasMoreResults(false)
       setIsLoadingMore(false)
+      console.log(`[FETCH DEBUG] Pagination reset complete`)
       
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
