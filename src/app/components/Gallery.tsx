@@ -364,16 +364,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }, [selectedConcepts, customConcepts]) // Fetch when concepts change, not just when panel opens
 
   // Fetch sites when concepts or category change (but not when slider moves)
-  useEffect(() => {
-    const controller = new AbortController()
-    const timer = setTimeout(() => {
-      fetchSites()
-    }, 300)
-    return () => {
-      controller.abort()
-      clearTimeout(timer)
-    }
-  }, [selectedConcepts, category, fetchSites])
+  // Moved to after fetchSites declaration
   
   // Check if we need to fetch opposite results when slider crosses 50%
   useEffect(() => {
@@ -1231,6 +1222,18 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       setLoading(false)
     }
   }, [selectedConcepts, category])
+
+  // Fetch sites when concepts or category change (but not when slider moves)
+  useEffect(() => {
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      fetchSites()
+    }, 300)
+    return () => {
+      controller.abort()
+      clearTimeout(timer)
+    }
+  }, [selectedConcepts, category, fetchSites])
 
   // Initial fetch on mount
   useEffect(() => {
