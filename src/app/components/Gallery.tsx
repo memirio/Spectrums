@@ -35,37 +35,6 @@ interface GalleryProps {
   category?: string // Optional category filter (e.g., 'packaging', 'website', 'app')
 }
 
-// Helper function to safely parse JSON responses
-async function safeJsonParse(response: Response): Promise<any> {
-  // Clone response so we can read it multiple times if needed
-  const clonedResponse = response.clone()
-  const contentType = response.headers.get('content-type')
-  
-  if (!contentType || !contentType.includes('application/json')) {
-    const text = await clonedResponse.text()
-    throw new Error(`Response is not JSON (content-type: ${contentType}): ${text.substring(0, 200)}`)
-  }
-  
-  try {
-    const text = await response.text()
-    if (!text || text.trim().startsWith('<')) {
-      throw new Error(`Response appears to be HTML: ${text.substring(0, 200)}`)
-    }
-    return JSON.parse(text)
-  } catch (error: any) {
-    if (error.message && error.message.includes('HTML')) {
-      throw error
-    }
-    // Try to get the text from cloned response if original failed
-    try {
-      const text = await clonedResponse.text()
-      throw new Error(`Failed to parse JSON: ${error.message || error}. Response: ${text.substring(0, 200)}`)
-    } catch {
-      throw new Error(`Failed to parse JSON: ${error.message || error}`)
-    }
-  }
-}
-
 export default function Gallery({ category }: GalleryProps = {} as GalleryProps) {
   const [sites, setSites] = useState<Site[]>([])
   const [allSites, setAllSites] = useState<Site[]>([]) // Store all sites for lazy loading
@@ -155,21 +124,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          const contentType = response.headers.get('content-type')
-          if (contentType && contentType.includes('application/json')) {
-            try {
-              const errorData = await response.json()
-              console.error('Failed to fetch more images', response.status, errorData)
-            } catch (e) {
-              console.error('Failed to fetch more images', response.status)
-            }
-          } else {
-            const text = await response.text()
-            console.error('Failed to fetch more images (HTML response)', response.status, text.substring(0, 200))
-          }
+          console.error('Failed to fetch more images', response.status)
           return
         }
-        data = await safeJsonParse(response)
+        data = await response.json()
         
         // Map images to sites (extract site data from image.site)
         const sitesWithImageIds = (data.images || []).map((image: any) => {
@@ -219,15 +177,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           : `/api/sites?limit=60&offset=${paginationOffset}`
         const response = await fetch(sitesUrl)
         if (!response.ok) {
-          try {
-            const errorData = await safeJsonParse(response)
-            console.error('Failed to fetch more sites', response.status, errorData)
-          } catch (e: any) {
-            console.error('Failed to fetch more sites', response.status, e.message)
-          }
+          console.error('Failed to fetch more sites', response.status)
           return
         }
-        data = await safeJsonParse(response)
+        data = await response.json()
         
         // Append new sites to existing ones
         const newSites = Array.isArray(data.sites) ? data.sites : []
@@ -334,7 +287,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             try {
               const response = await fetch(`/api/concepts?q=${encodeURIComponent(conceptLabel)}`)
               if (response.ok) {
-                const data = await safeJsonParse(response)
+                const data = await response.json()
                 if (Array.isArray(data.concepts) && data.concepts.length > 0) {
                   const concept = data.concepts.find((c: any) => c.label.toLowerCase() === conceptLabel.toLowerCase())
                   if (concept) {
@@ -359,7 +312,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             try {
               const response = await fetch(`/api/concepts?q=${encodeURIComponent(oppositeId)}`)
               if (response.ok) {
-                const data = await safeJsonParse(response)
+                const data = await response.json()
                 if (Array.isArray(data.concepts) && data.concepts.length > 0) {
                   const concept = data.concepts.find((c: any) => c.id.toLowerCase() === oppositeId.toLowerCase())
                   if (concept) {
@@ -828,7 +781,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         ))
         return
       }
-      const data = await safeJsonParse(response)
+      const data = await response.json()
       setSpectrums(prev => prev.map(s => 
         s.id === spectrumId 
           ? { ...s, conceptSuggestions: Array.isArray(data.concepts) ? data.concepts : [], selectedSuggestionIndex: -1, showSuggestions: true }
@@ -852,7 +805,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       const response = await fetch(searchUrl)
       console.log(`[OPPOSITE DEBUG] Fetch response status: ${response.status}`)
       if (response.ok) {
-        const data = await safeJsonParse(response)
+        const data = await response.json()
         console.log(`[OPPOSITE DEBUG] Fetched ${data.sites?.length || 0} sites for opposite`)
         const imageMap = new Map<string, any>()
         for (const image of data.images || []) {
@@ -962,17 +915,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=0`
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          try {
-            const errorData = await safeJsonParse(response)
-            console.error('Failed response fetching search', response.status, errorData)
-          } catch (e: any) {
-            console.error('Failed response fetching search', response.status, e.message)
-          }
+          console.error('Failed response fetching search', response.status)
           setSites([])
           setAllSites([])
           return
         }
-        const data = await safeJsonParse(response)
+        const data = await response.json()
         
         // Update pagination state
         setHasMoreResults(data.hasMore || false)
@@ -1050,7 +998,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   console.error(`Failed to fetch results for concept "${concept}":`, conceptResponse.status)
                   return
                 }
-                const conceptData = await safeJsonParse(conceptResponse)
+                const conceptData = await conceptResponse.json()
                 
                 // Map images to sites (same logic as single concept)
                 const conceptImageMap = new Map<string, any>()
@@ -1162,7 +1110,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             setHasMoreResults(false)
             return
           }
-          const data = await safeJsonParse(response)
+          const data = await response.json()
           setAllSites(Array.isArray(data.sites) ? data.sites : [])
           setDisplayedCount(50)
           const hasMore = data.hasMore === true // Explicitly check for true
@@ -1296,7 +1244,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
           setAddConceptSuggestions([])
           return
         }
-        const data = await safeJsonParse(response)
+        const data = await response.json()
         setAddConceptSuggestions(Array.isArray(data.concepts) ? data.concepts : [])
         setAddConceptSelectedIndex(-1)
       } catch (error: any) {
@@ -1316,7 +1264,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   // Function to fetch and set opposite for a concept
   const fetchOppositeForConcept = (conceptLabel: string) => {
     fetch(`/api/concepts?q=${encodeURIComponent(conceptLabel)}`)
-      .then(res => safeJsonParse(res))
+      .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.concepts) && data.concepts.length > 0) {
           const concept = data.concepts.find((c: any) => c.label.toLowerCase() === conceptLabel.toLowerCase())
@@ -1324,7 +1272,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             // Fetch the label for the first opposite
             const oppositeId = concept.opposites[0]
             fetch(`/api/concepts?q=${encodeURIComponent(oppositeId)}`)
-              .then(res => safeJsonParse(res))
+              .then(res => res.json())
               .then(oppData => {
                 if (Array.isArray(oppData.concepts) && oppData.concepts.length > 0) {
                   const oppositeConcept = oppData.concepts.find((c: any) => c.id.toLowerCase() === oppositeId.toLowerCase())
@@ -2480,21 +2428,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                               alt={site.title}
                               className="w-full h-full object-cover object-top"
                               loading="lazy"
-                              crossOrigin="anonymous"
-                              referrerPolicy="no-referrer"
                               onError={(e) => {
-                                // Log error for debugging
-                                console.error('Image failed to load:', {
-                                  url: site.imageUrl,
-                                  siteId: site.id,
-                                  siteTitle: site.title
-                                });
-                                // Hide failed image, placeholder background will show
+                                // Silently hide failed images
                                 e.currentTarget.style.display = 'none';
-                              }}
-                              onLoad={() => {
-                                // Image loaded successfully
-                                console.log('Image loaded:', site.imageUrl);
                               }}
                             />
                           ) : (
