@@ -2415,20 +2415,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                               className="w-full h-full object-cover object-top"
                               loading="lazy"
                               onError={(e) => {
-                                // Log all image load errors for debugging
-                                console.error('Image failed to load:', {
-                                  url: site.imageUrl,
-                                  siteId: site.id,
-                                  siteTitle: site.title,
-                                  error: e
-                                });
+                                // Silently hide failed images
                                 e.currentTarget.style.display = 'none';
-                              }}
-                              onLoad={() => {
-                                // Log successful loads for debugging (can remove later)
-                                if (process.env.NODE_ENV === 'development') {
-                                  console.log('Image loaded successfully:', site.imageUrl);
-                                }
                               }}
                             />
                           ) : (
