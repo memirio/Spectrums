@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import SubmissionForm from './SubmissionForm'
 import Header from './Header'
 
@@ -2407,20 +2408,25 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                          className="block"
                          onClick={() => handleSiteClick(site)}
                        >
-                         <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                         <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
                           {site.imageUrl ? (
-                            <img
+                            <Image
                               src={site.imageUrl}
                               alt={site.title}
-                              className="w-full h-full object-cover object-top"
-                              loading="lazy"
+                              fill
+                              className="object-cover object-top"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              unoptimized
                               onError={(e) => {
-                                // Silently hide failed images
-                                e.currentTarget.style.display = 'none';
+                                // Hide failed image, placeholder background will show
+                                const target = e.target as HTMLImageElement;
+                                if (target) {
+                                  target.style.display = 'none';
+                                }
                               }}
                             />
                           ) : (
-                            <div className="h-full bg-gray-200 flex items-center justify-center">
+                            <div className="h-full bg-gray-200 flex items-center justify-center absolute inset-0">
                               <span className="text-gray-400">No image</span>
                             </div>
                           )}
