@@ -1,11 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Header from '../components/Header'
 import SubmissionForm from '../components/SubmissionForm'
+import CreateAccountMessageModal from '../components/CreateAccountMessageModal'
 
 export default function TypographyPage() {
+  const router = useRouter()
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
+  const [showCreateAccountMessage, setShowCreateAccountMessage] = useState(false)
 
   const handleSubmissionSuccess = () => {
     // Could refresh data or show success message
@@ -15,7 +19,10 @@ export default function TypographyPage() {
   return (
     <div className="min-h-screen bg-[#fbf9f4]">
       {/* Header */}
-      <Header onSubmitClick={() => setShowSubmissionForm(true)} />
+      <Header 
+        onSubmitClick={() => setShowSubmissionForm(true)}
+        onLoginClick={() => router.push('/login')}
+      />
 
       {/* Content */}
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
@@ -29,6 +36,21 @@ export default function TypographyPage() {
         <SubmissionForm
           onClose={() => setShowSubmissionForm(false)}
           onSuccess={handleSubmissionSuccess}
+          onLoginClick={() => {
+            setShowSubmissionForm(false)
+            router.push('/login')
+          }}
+          onCreateAccountClick={() => {
+            setShowSubmissionForm(false)
+            setShowCreateAccountMessage(true)
+          }}
+        />
+      )}
+
+      {/* Create Account Message Modal */}
+      {showCreateAccountMessage && (
+        <CreateAccountMessageModal
+          onClose={() => setShowCreateAccountMessage(false)}
         />
       )}
     </div>

@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import SubmissionForm from './SubmissionForm'
+import CreateAccountMessageModal from './CreateAccountMessageModal'
 import Header from './Header'
 import Navigation from './Navigation'
+import { useRouter } from 'next/navigation'
 
 interface Tag {
   id: string
@@ -38,6 +40,8 @@ interface GalleryProps {
 }
 
 export default function Gallery({ category, onCategoryChange }: GalleryProps = {} as GalleryProps) {
+  const router = useRouter()
+  
   // Helper function to capitalize first letter
   const capitalizeFirst = (str: string) => {
     if (!str) return str
@@ -74,6 +78,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
   const [customConcepts, setCustomConcepts] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
+  const [showCreateAccountMessage, setShowCreateAccountMessage] = useState(false)
   const [clickStartTimes, setClickStartTimes] = useState<Map<string, number>>(new Map())
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [conceptData, setConceptData] = useState<Map<string, { id: string; label: string; opposites: string[] }>>(new Map())
@@ -1707,7 +1712,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
       {isMobile && isDrawerCollapsed && (
         <button
           onClick={() => setIsDrawerCollapsed(false)}
-          className="fixed top-4 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-gray-900 transition-colors md:hidden"
+          className="fixed top-4 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] transition-colors md:hidden cursor-pointer"
           aria-label="Expand drawer"
         >
           <svg
@@ -1745,7 +1750,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
           </Link>
           <button
             onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
-            className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
+            className="p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
             aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1762,9 +1767,9 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
               setShowAddConceptModal(true)
               setAddConceptInputValue('')
             }}
-            className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
+            className="w-full mb-4 px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors text-sm font-medium cursor-pointer"
           >
-            Vibe filter
+            + Vibe filter
           </button>
           
           {/* Spectrum list */}
@@ -1817,10 +1822,10 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
                             <button
                               key={`${spectrum.id}-${suggestion.id}-${index}`}
                               onClick={() => handleSpectrumConceptSelect(spectrum.id, suggestion)}
-                              className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                              className={`w-full px-3 py-2 text-left text-sm transition-colors cursor-pointer ${
                                 spectrum.selectedSuggestionIndex === index
                                   ? 'bg-gray-100 text-gray-900'
-                                  : 'text-gray-700 hover:bg-gray-50'
+                                  : 'text-gray-700 hover:bg-[#f5f3ed]'
                               }`}
                             >
                               {suggestion.displayText || suggestion.label}
@@ -2283,7 +2288,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
                   {spectrum.concept && (
                     <button
                       onClick={() => removeSpectrum(spectrum.id)}
-                      className="absolute top-2 right-2 p-1 hover:bg-[#ede9e0] rounded transition-colors"
+                      className="absolute top-2 right-2 p-1 hover:bg-[#ddd5c8] rounded transition-colors cursor-pointer"
                       aria-label="Remove filter"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2308,6 +2313,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
           <div className="sticky top-0 bg-[#fbf9f4] z-50">
             <Header 
               onSubmitClick={() => setShowSubmissionForm(true)}
+              onLoginClick={() => router.push('/login')}
               searchQuery={searchQuery}
               onSearchInputChange={handleSearchInputChange}
               onSearchKeyDown={handleSearchKeyDown}
@@ -2480,6 +2486,21 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
         <SubmissionForm
           onClose={() => setShowSubmissionForm(false)}
           onSuccess={handleSubmissionSuccess}
+          onLoginClick={() => {
+            setShowSubmissionForm(false)
+            router.push('/login')
+          }}
+          onCreateAccountClick={() => {
+            setShowSubmissionForm(false)
+            setShowCreateAccountMessage(true)
+          }}
+        />
+      )}
+
+      {/* Create Account Message Modal */}
+      {showCreateAccountMessage && (
+        <CreateAccountMessageModal
+          onClose={() => setShowCreateAccountMessage(false)}
         />
       )}
 
@@ -2494,7 +2515,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
                   setShowAddConceptModal(false)
                   setAddConceptInputValue('')
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2531,7 +2552,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
               <button
                 onClick={handleCreateSpectrum}
                 disabled={!addConceptInputValue.trim()}
-                className="w-full px-4 py-2 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-md transition-colors text-sm font-medium"
+                className="w-full px-4 py-2 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-300 cursor-pointer disabled:cursor-not-allowed text-white rounded-md transition-colors text-sm font-medium"
               >
                 Create filter
               </button>
@@ -2551,7 +2572,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
               <h2 className="text-lg font-semibold text-gray-900">Concept Spectrum</h2>
             <button
               onClick={() => setIsPanelOpen(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
               aria-label="Close panel"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
