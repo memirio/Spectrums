@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -71,10 +71,10 @@ model SiteTag {
 
 model Image {
   id        String   @id @default(cuid())
-  siteId    String?  // Optional: for website images linked to sites
-  sourceUrl String?  // Optional: for packaging/other assets without a site (e.g., direct image URL)
+  siteId    String? // Optional: for website images linked to sites
+  sourceUrl String? // Optional: for packaging/other assets without a site (e.g., direct image URL)
   category  String   @default("website") // "website", "packaging", "app", "fonts", "graphic-design", "branding", etc. (flexible string, not enum)
-  url       String   // The actual image/asset URL
+  url       String // The actual image/asset URL
   width     Int?
   height    Int?
   bytes     Int?
@@ -84,19 +84,21 @@ model Image {
 
   // Relations for tagging system
   embedding ImageEmbedding? // One-to-one: CLIP embedding for this asset (same model/dimensionality for all categories)
-  tags      ImageTag[]      // Many-to-many: concept tags applied to this asset
+  tags      ImageTag[] // Many-to-many: concept tags applied to this asset
 
   // Hub detection stats (computed by detect_hub_images.ts)
-  hubCount                    Int?    // Number of queries where image appears in top N
-  hubScore                    Float?  // Fraction of queries where image appears (hubCount / totalQueries)
-  hubAvgCosineSimilarity      Float?  // Average cosine similarity across all queries where image appears
-  hubAvgCosineSimilarityMargin Float?  // Average margin above query average (how much higher than average)
+  hubCount                     Int? // Number of queries where image appears in top N
+  hubScore                     Float? // Fraction of queries where image appears (hubCount / totalQueries)
+  hubAvgCosineSimilarity       Float? // Average cosine similarity across all queries where image appears
+  hubAvgCosineSimilarityMargin Float? // Average margin above query average (how much higher than average)
 
   // Relations for interaction tracking
   interactions UserInteraction[]
 
   @@unique([siteId, url], name: "siteId_url")
   @@index([category]) // Index for fast filtering by category
+  @@index([siteId]) // Index for fast filtering by siteId
+  @@index([siteId, category]) // Composite index for category + siteId queries
   @@map("images")
 }
 
@@ -106,8 +108,8 @@ model Image {
 model ImageEmbedding {
   id          String   @id @default(cuid())
   imageId     String   @unique // FK to Image (the unified asset)
-  model       String   // CLIP model identifier (e.g., "openai/clip-vit-base-patch32")
-  vector      Json     // Store as normalized float array (same dimensionality for all categories)
+  model       String // CLIP model identifier (e.g., "openai/clip-vit-base-patch32")
+  vector      Json // Store as normalized float array (same dimensionality for all categories)
   contentHash String?  @unique // SHA-256 of canonical PNG (nullable for migration)
   createdAt   DateTime @default(now())
   image       Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
@@ -146,7 +148,7 @@ model QueryExpansion {
   term       String
   expansion  String
   source     String // 'groq' | 'curated' (previously 'gemini')
-  category   String  @default("global") // Category ('global' for website/default, 'packaging', etc.) for category-specific expansions
+  category   String   @default("global") // Category ('global' for website/default, 'packaging', etc.) for category-specific expansions
   model      String? // 'llama-3.3-70b-versatile', etc.
   createdAt  DateTime @default(now())
   lastUsedAt DateTime @default(now())
