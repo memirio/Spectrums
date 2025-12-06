@@ -30,54 +30,23 @@ function getPrismaClient(): PrismaClient {
       // Transaction Pooler handles the actual pooling at Supabase's end
       // Each Vercel function invocation gets its own pool, which is fine because
       // Transaction Pooler can handle many concurrent connections
-      
-      // Vercel-specific: Connection establishment takes longer due to:
-      // - Cold starts (function initialization)
-      // - Network latency between Vercel and Supabase
-      // - Connection pool initialization
-      // Increase timeout for Vercel environments (detected by VERCEL env var)
-      // Increased to 15s to handle cold starts and network latency more reliably
-      const isVercel = !!process.env.VERCEL
-      const connectionTimeout = isVercel ? 15000 : 5000 // 15s on Vercel, 5s locally
-      
       if (!globalForPrisma.pool) {
         globalForPrisma.pool = new Pool({
           connectionString: dbUrl,
-          // Allow multiple concurrent queries within a single function invocation
-          // Transaction Pooler handles the actual pooling at Supabase's end
-          // We need more than 1 to handle parallel queries (e.g., multiple category expansions)
-          max: isVercel ? 5 : 2, // More connections on Vercel for parallel queries
+          max: 1, // One connection per serverless function invocation
           min: 0, // Don't keep idle connections
-          idleTimeoutMillis: 30000, // Keep connections longer (30s) to reduce reconnection overhead
-          connectionTimeoutMillis: connectionTimeout, // Longer timeout on Vercel for cold starts + network latency
+          idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
+          connectionTimeoutMillis: 3000, // Fail fast if can't connect (3s)
           // For Transaction Pooler, connections are pooled at Supabase's end
           // We just need to ensure we don't leak connections
           // Add statement_timeout to prevent long-running queries from blocking
-          // Reduced to 20s to leave buffer for Vercel's 30s timeout
-          statement_timeout: 20000, // 20s max query time (Vercel timeout is 30s)
-          // Keep connections alive to reduce reconnection overhead
-          keepAlive: true,
-          keepAliveInitialDelayMillis: 10000,
+          statement_timeout: 25000, // 25s max query time (Vercel timeout is 30s)
         })
-        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'}, timeout: ${connectionTimeout}ms, Vercel: ${isVercel})`)
+        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'})`)
         
         // Handle pool errors gracefully
         globalForPrisma.pool.on('error', (err) => {
           console.error('[prisma] Pool error:', err.message)
-          console.error('[prisma] Pool error stack:', err.stack)
-        })
-        
-        // Log connection events for debugging
-        globalForPrisma.pool.on('connect', () => {
-          console.log('[prisma] New connection established')
-        })
-        
-        globalForPrisma.pool.on('acquire', () => {
-          console.log('[prisma] Connection acquired from pool')
-        })
-        
-        globalForPrisma.pool.on('remove', () => {
-          console.log('[prisma] Connection removed from pool')
         })
       } else {
         console.log('[prisma] Reusing existing connection pool')
