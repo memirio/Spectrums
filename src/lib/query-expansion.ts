@@ -302,9 +302,10 @@ async function getGroqExpansionsFromDb(term: string, category?: string | null): 
         return []
       }
       
-      // Use case-insensitive comparison (LOWER) to ensure we find expansions regardless of how they were stored
+      // Use direct comparison (terms are stored in lowercase) to use the index
+      // The index is on (term, source, category), so this query will be fast
       const expansions = await (prisma.$queryRawUnsafe as any)(
-        `SELECT "expansion" FROM "query_expansions" WHERE LOWER("term") = $1 AND "source" = $2 AND "category" = $3 ORDER BY "createdAt" DESC`,
+        `SELECT "expansion" FROM "query_expansions" WHERE "term" = $1 AND "source" = $2 AND "category" = $3 ORDER BY "createdAt" DESC`,
         normalizedTerm,
         'groq',
         normalizedCategory

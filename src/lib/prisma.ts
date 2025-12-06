@@ -43,7 +43,10 @@ function getPrismaClient(): PrismaClient {
       if (!globalForPrisma.pool) {
         globalForPrisma.pool = new Pool({
           connectionString: dbUrl,
-          max: 1, // One connection per serverless function invocation
+          // Allow multiple concurrent queries within a single function invocation
+          // Transaction Pooler handles the actual pooling at Supabase's end
+          // We need more than 1 to handle parallel queries (e.g., multiple category expansions)
+          max: isVercel ? 5 : 2, // More connections on Vercel for parallel queries
           min: 0, // Don't keep idle connections
           idleTimeoutMillis: 30000, // Keep connections longer (30s) to reduce reconnection overhead
           connectionTimeoutMillis: connectionTimeout, // Longer timeout on Vercel for cold starts + network latency
