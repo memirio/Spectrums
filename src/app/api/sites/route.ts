@@ -164,9 +164,10 @@ export async function GET(request: NextRequest) {
       const offset = parseInt(searchParams.get('offset') || '0') // Pagination offset
       const sites = await prisma.site.findMany({
         where: whereClause,
-        orderBy: {
-          createdAt: 'desc'
-        },
+        orderBy: [
+          { createdAt: 'desc' },
+          { id: 'asc' }
+        ],
         take: limit,
         skip: offset,
       })
@@ -248,7 +249,10 @@ export async function GET(request: NextRequest) {
 
     // Fetch sites (no tags - we use Concepts/ImageTags instead)
     const sites = await prisma.site.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { createdAt: 'desc' },
+        { id: 'asc' }
+      ],
     })
 
     // Fetch image tags (concepts) for all sites
