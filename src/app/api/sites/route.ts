@@ -138,73 +138,98 @@ export async function GET(request: NextRequest) {
     
     // Return all sites if no concepts specified (null or empty string)
     if (!concepts || !concepts.trim()) {
-      // Build where clause for sites based on category
-      let whereClause: any = {}
-      
-      // If category is specified, filter sites that have images with that category
-      if (category) {
-        // Use raw SQL query as workaround for Prisma schema sync issue
-        // PostgreSQL uses $1, $2, etc. instead of ? placeholders
-        const sitesWithCategoryImages = await (prisma.$queryRawUnsafe as any)(
-          `SELECT DISTINCT "siteId" FROM "images" WHERE "category" = $1 AND "siteId" IS NOT NULL`,
-          category
-        )
-        const siteIds = (sitesWithCategoryImages as any[]).map((row: any) => row.siteId).filter(Boolean)
-        if (siteIds.length === 0) {
-          // No sites with images in this category
-          return NextResponse.json({ sites: [] })
-        }
-        whereClause.id = { in: siteIds }
-      }
-      
       // OPTIMIZATION: Limit initial load to improve performance
       // Return all sites if no concepts specified
       // Note: tags relationship is legacy/unused - we use Concepts/ImageTags instead
       const limit = parseInt(searchParams.get('limit') || '60') // Default 60 for pagination
       const offset = parseInt(searchParams.get('offset') || '0') // Pagination offset
-      const sites = await prisma.site.findMany({
-        where: whereClause,
-        orderBy: [
-          { createdAt: 'desc' },
-          { id: 'asc' }
-        ],
-        take: limit,
-        skip: offset,
-      })
       
-      // Check if there are more results
-      const totalCount = await prisma.site.count({ where: whereClause })
-      const hasMore = offset + limit < totalCount
+      let sites: any[] = []
+      let hasMore = false
+      let totalCount = 0
+      
+      // If category is specified, use a LATERAL JOIN for efficient first-image-per-site lookup
+      if (category) {
+        // Use LATERAL JOIN to get the first image for each site efficiently
+        // This is much faster than DISTINCT ON because it uses indexes properly
+        const result = await (prisma.$queryRawUnsafe as any)(
+          `SELECT 
+            s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt",
+            i."url" as "firstImageUrl", i."category" as "imageCategory"
+          FROM "sites" s
+          INNER JOIN LATERAL (
+            SELECT "url", "category"
+            FROM "images"
+            WHERE "siteId" = s."id" AND "category" = $1
+            ORDER BY "id" DESC
+            LIMIT 1
+          ) i ON true
+          ORDER BY s."createdAt" DESC, s."id" ASC
+          LIMIT $2 OFFSET $3`,
+          category,
+          limit + 1, // Fetch one extra to check if there are more
+          offset
+        )
+        
+        // Check if there are more results
+        hasMore = result.length > limit
+        sites = hasMore ? result.slice(0, limit) : result
+        
+        // Map results to include imageUrl from the JOIN
+        sites = sites.map((row: any) => ({
+          id: row.id,
+          title: row.title,
+          description: row.description,
+          url: row.url,
+          imageUrl: row.firstImageUrl || row.imageUrl || null,
+          author: row.author,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+          category: row.imageCategory || 'website'
+        }))
+        
+        totalCount = sites.length // Approximate count, avoid expensive COUNT query
+      } else {
+        // No category filter - use standard Prisma query
+        sites = await prisma.site.findMany({
+          orderBy: [
+            { createdAt: 'desc' },
+            { id: 'asc' }
+          ],
+          take: limit + 1, // Fetch one extra to check if there are more
+          skip: offset,
+        })
+        
+        // Check if there are more results
+        hasMore = sites.length > limit
+        sites = hasMore ? sites.slice(0, limit) : sites
+        totalCount = sites.length // Approximate count, avoid expensive COUNT query
+      }
 
       // Fetch first images for these sites as a fallback when site.imageUrl is null
-      const fetchedSiteIds = sites.map((s: any) => s.id)
-      let images: any[] = []
-      if (fetchedSiteIds.length > 0) {
-        if (category) {
-          // Use raw SQL query as workaround for Prisma schema sync issue
-          // PostgreSQL uses $1, $2, etc. instead of ? placeholders
+      // OPTIMIZATION: Only fetch images if we didn't already get them from the JOIN query
+      let firstImageBySite = new Map<string, string>()
+      let categoryBySite = new Map<string, string>()
+      
+      if (!category) {
+        // Use LATERAL JOIN to efficiently get first image per site in a single query
+        const fetchedSiteIds = sites.map((s: any) => s.id)
+        if (fetchedSiteIds.length > 0) {
+          // Use LATERAL JOIN with window function for efficient first-image-per-site lookup
+          // This is much faster than IN clause with ORDER BY
           const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
-          images = await (prisma.$queryRawUnsafe as any)(
-            `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) AND "category" = $${fetchedSiteIds.length + 1} ORDER BY "id" DESC`,
-            ...fetchedSiteIds,
-            category
-          )
-        } else {
-          // Use raw SQL query to avoid Prisma schema sync issues
-          // PostgreSQL uses $1, $2, etc. instead of ? placeholders
-          const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
-          images = await (prisma.$queryRawUnsafe as any)(
-            `SELECT * FROM "images" WHERE "siteId" IN (${placeholders}) ORDER BY "id" DESC`,
+          const images = await (prisma.$queryRawUnsafe as any)(
+            `SELECT DISTINCT ON ("siteId") "siteId", "url", "category"
+             FROM "images"
+             WHERE "siteId" IN (${placeholders}) AND "siteId" IS NOT NULL
+             ORDER BY "siteId", "id" DESC`,
             ...fetchedSiteIds
           )
-        }
-      }
-      const firstImageBySite = new Map<string, string>()
-      const categoryBySite = new Map<string, string>()
-      for (const img of images as any[]) {
-        if (!firstImageBySite.has(img.siteId)) {
-          firstImageBySite.set(img.siteId, img.url)
-          categoryBySite.set(img.siteId, (img.category || 'website'))
+          
+          for (const img of images as any[]) {
+            firstImageBySite.set(img.siteId, img.url)
+            categoryBySite.set(img.siteId, (img.category || 'website'))
+          }
         }
       }
 
@@ -213,7 +238,7 @@ export async function GET(request: NextRequest) {
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
           imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
-          category: categoryBySite.get(site.id) || 'website', // Include category from image
+          category: categoryBySite.get(site.id) || site.category || 'website', // Include category from image
         })),
         hasMore,
         total: totalCount,
