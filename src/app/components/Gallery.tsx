@@ -2437,7 +2437,11 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                           }, 'image/png')
                                         }
                                         img.onerror = reject
-                                        img.src = site.imageUrl
+                                        if (site.imageUrl) {
+                                          img.src = site.imageUrl
+                                        } else {
+                                          reject(new Error('No image URL'))
+                                        }
                                       })
                                     }
                                     
