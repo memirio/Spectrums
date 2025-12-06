@@ -39,8 +39,35 @@ interface GalleryProps {
   onCategoryChange?: (category: string | undefined) => void // Callback for category changes
 }
 
-export default function Gallery({ category, onCategoryChange }: GalleryProps = {} as GalleryProps) {
+export default function Gallery({ category: categoryProp, onCategoryChange }: GalleryProps = {} as GalleryProps) {
   const router = useRouter()
+  
+  // Internal category state if not provided via props
+  const [internalCategory, setInternalCategory] = useState<string | undefined>(categoryProp)
+  
+  // Sync internal category with prop when prop changes
+  useEffect(() => {
+    if (categoryProp !== undefined) {
+      setInternalCategory(categoryProp)
+    }
+  }, [categoryProp])
+  
+  // Use prop category if provided, otherwise use internal state
+  const category = categoryProp !== undefined ? categoryProp : internalCategory
+  
+  // Handle category changes
+  const handleCategoryChange = (newCategory: string | undefined) => {
+    if (onCategoryChange) {
+      onCategoryChange(newCategory)
+    } else {
+      setInternalCategory(newCategory)
+    }
+    // Reset sites and pagination when category changes
+    setSites([])
+    setAllSites([])
+    setPaginationOffset(0)
+    setDisplayedCount(50)
+  }
   
   // Helper function to capitalize first letter
   const capitalizeFirst = (str: string) => {
@@ -91,6 +118,8 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
   const [isDrawerOpen, setIsDrawerOpen] = useState(true) // Drawer open/closed state
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false) // Drawer collapsed state (80px vs 280px)
   const [isMobile, setIsMobile] = useState(false) // Track if we're on mobile
+  const [copiedImageId, setCopiedImageId] = useState<string | null>(null) // Track which image was copied
+  const [hoveredLikeButtonId, setHoveredLikeButtonId] = useState<string | null>(null) // Track which like button is being hovered
 
   // Detect mobile and set initial collapsed state
   useEffect(() => {
@@ -1297,40 +1326,10 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
     const inputValue = addConceptInputValue
     setAddConceptInputValue('')
     
-    // Generate semantic extensions for all categories BEFORE adding the concept
-    // This ensures extensions are ready when the search is triggered
-    // Wait for the response before proceeding to avoid race conditions
-    try {
-      const categories = ['website', 'packaging', 'brand', 'fonts', 'apps']
-      const response = await fetch('/api/generate-vibe-extensions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vibe: concept,
-          categories: categories
-        }),
-      })
-
-      if (!response.ok) {
-        console.error('[vibe-filter] Failed to generate extensions:', response.statusText)
-        // Continue anyway - extensions will be generated on-the-fly during search
-      } else {
-        const data = await response.json()
-        console.log('[vibe-filter] Generated extensions:', data.extensionsByCategory)
-        // Check if we got any valid extensions
-        const hasExtensions = Object.values(data.extensionsByCategory || {}).some((exts: any) => Array.isArray(exts) && exts.length > 0)
-        if (!hasExtensions) {
-          console.warn('[vibe-filter] No extensions were generated, but continuing anyway')
-        }
-      }
-    } catch (error: any) {
-      console.error('[vibe-filter] Error generating extensions:', error.message)
-      // Continue anyway - extensions will be generated on-the-fly during search
-    }
+    // Extensions will be generated on-the-fly during search
+    // No need to pre-generate them - the search API handles this automatically
     
-    // Now add the concept and trigger search (extensions are ready or will be generated on-the-fly)
+    // Now add the concept and trigger search (extensions will be generated on-the-fly)
     console.log('[vibe-filter] Adding concept to selectedConcepts:', concept)
     // Create spectrum (single-pole, no opposite)
     const newSpectrum: Spectrum = {
@@ -2333,7 +2332,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
             <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
               {/* Tabs - Above gallery images */}
               <div className="mb-4 pb-3">
-                <Navigation activeCategory={category} onCategoryChange={onCategoryChange || (() => {})} />
+                <Navigation activeCategory={category} onCategoryChange={handleCategoryChange} />
               </div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2362,15 +2361,8 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
         ) : sites.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sites.map((site, index) => (
-                     <div key={`${site.id}-${index}`}>
-                       <a
-                         href={site.url}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="block"
-                         onClick={() => handleSiteClick(site)}
-                       >
-                         <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
+                     <div key={`${site.id}-${index}`} className="group">
+                       <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
                           {site.imageUrl ? (
                             <img
                               src={site.imageUrl}
@@ -2387,8 +2379,139 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
                               <span className="text-gray-400">No image</span>
                             </div>
                           )}
+                          {/* Scrim overlay - appears on hover */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                          {/* Action buttons container - appears on hover */}
+                          <div className="absolute top-2 left-2 right-2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                            {/* External link button - far left */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                window.open(site.url, '_blank', 'noopener,noreferrer')
+                              }}
+                              className="p-2 hover:bg-black/20 rounded-md transition-opacity cursor-pointer"
+                              aria-label="Open link"
+                            >
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21.7704 17.6484C21.7704 18.2006 21.3225 18.6482 20.7704 18.6484C20.2181 18.6485 19.7705 18.2007 19.7704 17.6484L19.7695 6.41309L5.47649 20.707C5.08596 21.0976 4.45295 21.0976 4.06242 20.707C3.6719 20.3165 3.6719 19.6835 4.06242 19.293L18.3554 5H7.12199C6.56971 5 6.12199 4.55228 6.12199 4C6.12199 3.44772 6.56971 3 7.12199 3H20.7695C21.3217 3 21.7694 3.44773 21.7695 4L21.7704 17.6484Z" fill="white"/>
+                              </svg>
+                            </button>
+                            {/* Copy and Bookmark buttons container - right side */}
+                            <div className="flex">
+                              {/* Copy button */}
+                              <button
+                                onClick={async (e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  
+                                  if (!site.imageUrl) return
+                                  
+                                  try {
+                                    // Fetch the image as a blob
+                                    const response = await fetch(site.imageUrl)
+                                    const blob = await response.blob()
+                                    
+                                    // Convert to PNG if needed (Clipboard API doesn't support WebP)
+                                    let imageBlob = blob
+                                    if (blob.type === 'image/webp' || !blob.type.startsWith('image/')) {
+                                      // Convert to PNG using canvas
+                                      const img = new Image()
+                                      img.crossOrigin = 'anonymous'
+                                      
+                                      const canvas = document.createElement('canvas')
+                                      const ctx = canvas.getContext('2d')
+                                      
+                                      await new Promise((resolve, reject) => {
+                                        img.onload = () => {
+                                          canvas.width = img.width
+                                          canvas.height = img.height
+                                          ctx?.drawImage(img, 0, 0)
+                                          canvas.toBlob((blob) => {
+                                            if (blob) {
+                                              imageBlob = blob
+                                              resolve(blob)
+                                            } else {
+                                              reject(new Error('Failed to convert image'))
+                                            }
+                                          }, 'image/png')
+                                        }
+                                        img.onerror = reject
+                                        img.src = site.imageUrl
+                                      })
+                                    }
+                                    
+                                    // Create a ClipboardItem with the image blob (use PNG or original type)
+                                    const clipboardItem = new ClipboardItem({
+                                      'image/png': imageBlob
+                                    })
+                                    
+                                    // Copy to clipboard
+                                    await navigator.clipboard.write([clipboardItem])
+                                    
+                                    // Show success message
+                                    setCopiedImageId(site.id || `${site.imageId}-${index}`)
+                                    setTimeout(() => {
+                                      setCopiedImageId(null)
+                                    }, 2000)
+                                  } catch (error) {
+                                    console.error('Failed to copy image:', error)
+                                    // Fallback: copy the image URL as text
+                                    navigator.clipboard.writeText(site.imageUrl || site.url || '')
+                                    
+                                    // Show success message even for fallback
+                                    setCopiedImageId(site.id || `${site.imageId}-${index}`)
+                                    setTimeout(() => {
+                                      setCopiedImageId(null)
+                                    }, 2000)
+                                  }
+                                }}
+                                className="p-2 hover:bg-black/20 rounded-md transition-opacity cursor-pointer"
+                                aria-label="Copy image"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M21 11C21 10.4477 20.5523 10 20 10H11C10.4477 10 10 10.4477 10 11V20C10 20.5523 10.4477 21 11 21H20C20.5523 21 21 20.5523 21 20V11ZM14 5V4C14 3.73478 13.8946 3.48051 13.707 3.29297C13.5195 3.10543 13.2652 3 13 3H4C3.73478 3 3.48051 3.10543 3.29297 3.29297C3.10543 3.48051 3 3.73478 3 4V13C3 13.2652 3.10543 13.5195 3.29297 13.707C3.48051 13.8946 3.73478 14 4 14H5C5.55228 14 6 14.4477 6 15C6 15.5523 5.55228 16 5 16H4C3.20435 16 2.44152 15.6837 1.87891 15.1211C1.3163 14.5585 1 13.7956 1 13V4C1 3.20435 1.3163 2.44152 1.87891 1.87891C2.44152 1.3163 3.20435 1 4 1H13C13.7956 1 14.5585 1.3163 15.1211 1.87891C15.6837 2.44152 16 3.20435 16 4V5C16 5.55228 15.5523 6 15 6C14.4477 6 14 5.55228 14 5ZM23 20C23 21.6569 21.6569 23 20 23H11C9.34315 23 8 21.6569 8 20V11C8 9.34315 9.34315 8 11 8H20C21.6569 8 23 9.34315 23 11V20Z" fill="white"/>
+                                </svg>
+                              </button>
+                              {/* Bookmark/Save button - far right */}
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  router.push('/login')
+                                }}
+                                onMouseEnter={() => {
+                                  setHoveredLikeButtonId(site.id || `${site.imageId}-${index}`)
+                                }}
+                                onMouseLeave={() => {
+                                  setHoveredLikeButtonId(null)
+                                }}
+                                className="p-2 hover:bg-black/20 rounded-md transition-opacity cursor-pointer"
+                                aria-label="Save to collection"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M18 5C18 4.73478 17.8946 4.48051 17.707 4.29297C17.5195 4.10543 17.2652 4 17 4H7C6.73478 4 6.48051 4.10543 6.29297 4.29297C6.10543 4.48051 6 4.73478 6 5V19.0566L11.4189 15.1865L11.5547 15.1045C11.8817 14.9418 12.277 14.9693 12.5811 15.1865L18 19.0566V5ZM20 21C20 21.3745 19.791 21.7182 19.458 21.8896C19.1249 22.0611 18.7238 22.0312 18.4189 21.8135L12 17.2285L5.58105 21.8135C5.27624 22.0312 4.87506 22.0611 4.54199 21.8896C4.209 21.7182 4 21.3745 4 21V5C4 4.20435 4.3163 3.44152 4.87891 2.87891C5.44152 2.3163 6.20435 2 7 2H17C17.7956 2 18.5585 2.3163 19.1211 2.87891C19.6837 3.44152 20 4.20435 20 5V21Z" fill="white"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          {/* Copy success message */}
+                          {copiedImageId === (site.id || `${site.imageId}-${index}`) && (
+                            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                              <div className="bg-black/60 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Copied to clipboard
+                              </div>
+                            </div>
+                          )}
+                          {/* Like button hover message */}
+                          {hoveredLikeButtonId === (site.id || `${site.imageId}-${index}`) && (
+                            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                              <div className="bg-black/60 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Login to save to collection
+                              </div>
+                            </div>
+                          )}
                          </div>
-                       </a>
                   <div className="py-2">
                     <div className="flex items-center justify-between gap-2">
                       <a
