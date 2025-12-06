@@ -1364,7 +1364,7 @@ export async function GET(request: NextRequest) {
         return b.score - a.score
       }
       // Secondary sort by image ID for deterministic ordering when scores are equal
-      return (a.id || '').localeCompare(b.id || '')
+      return (a.imageId || '').localeCompare(b.imageId || '')
     })
 
     // Pagination: limit and offset
