@@ -1263,7 +1263,7 @@ export async function GET(request: NextRequest) {
           return scoreB - scoreA
         }
         // Always use secondary sort by imageId for deterministic ordering
-        return (a.imageId || a.id || '').localeCompare(b.imageId || b.id || '')
+        return (a.imageId || '').localeCompare(b.imageId || '')
       })
       
       // Log search impressions for learned reranker training
