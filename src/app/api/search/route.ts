@@ -1,10 +1,137 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { embedTextBatch } from '@/lib/embeddings'
+import { embedTextBatch, meanVec, l2norm } from '@/lib/embeddings'
 import { prisma } from '@/lib/prisma'
-import { hasOppositeTags } from '@/lib/concept-opposites'
 import { isAbstractQuery, expandAbstractQuery, expandAndEmbedQuery, getExpansionEmbeddings, poolMax, poolSoftmax } from '@/lib/query-expansion'
 import { logSearchImpressions, type SearchImpression } from '@/lib/interaction-logger'
 import { getCachedSearchResults, cacheSearchResults } from '@/lib/search-cache'
+import OpenAI from 'openai'
+
+// Category-specific API keys for vibe extensions
+function getGroqClientForCategory(category: string): OpenAI {
+  let apiKey: string | undefined
+  
+  if (category === 'packaging') {
+    apiKey = process.env.GROQ_API_KEY_PACKAGING
+  } else if (category === 'brand') {
+    apiKey = process.env.GROQ_API_KEY_BRAND
+  } else {
+    apiKey = process.env.GROQ_API_KEY
+  }
+  
+  if (!apiKey) {
+    throw new Error(`API key is required for category "${category}"`)
+  }
+  
+  return new OpenAI({
+    apiKey,
+    baseURL: 'https://api.groq.com/openai/v1'
+  })
+}
+
+// Category descriptions for context
+const CATEGORY_CONTEXTS: Record<string, string> = {
+  'packaging': 'product packaging, labels, boxes, containers, and physical product design',
+  'website': 'web pages, interfaces, layouts, and digital design',
+  'brand': 'logos, brand identity, visual identity systems, and brand guidelines',
+  'fonts': 'typography, font design, letterforms, and text styling',
+  'apps': 'mobile apps, app interfaces, and application design',
+  'all': 'general design across all categories'
+}
+
+// In-memory cache for vibe extensions (key: `${vibe.toLowerCase()}:${category}`)
+// Also cache embeddings to ensure consistent rankings
+const globalForVibeExtensions = globalThis as unknown as {
+  vibeExtensionsCache: Map<string, string[]>
+  vibeEmbeddingsCache: Map<string, number[]> // Cache embeddings: key is `${vibe.toLowerCase()}:${category}`
+}
+
+if (!globalForVibeExtensions.vibeExtensionsCache) {
+  globalForVibeExtensions.vibeExtensionsCache = new Map()
+}
+if (!globalForVibeExtensions.vibeEmbeddingsCache) {
+  globalForVibeExtensions.vibeEmbeddingsCache = new Map()
+}
+
+// Generate vibe extensions for a single category (cached to ensure consistent results)
+async function generateVibeExtensionsForCategory(vibe: string, category: string): Promise<string[]> {
+  // Check cache first
+  const cacheKey = `${vibe.toLowerCase()}:${category}`
+  const cached = globalForVibeExtensions.vibeExtensionsCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+  
+  const categoryContext = CATEGORY_CONTEXTS[category] || 'design in this category'
+  const client = getGroqClientForCategory(category)
+  
+  const prompt = `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
+
+The extension must be a single comma-separated string with exactly these 7 elements in order:
+1. Style (e.g., "3D website design", "romantic packaging design")
+2. Color (e.g., "pastel gradients", "soft pink and rose tones")
+3. Typography (e.g., "clean sans-serif typography", "elegant script typography")
+4. Composition (e.g., "spacious layout", "centered label composition")
+5-7. Three UI elements (e.g., "floating elements", "soft shadows", "abstract 3D shapes")
+
+Examples:
+- ["3D website design, pastel gradients, clean sans-serif typography, spacious layout, floating elements, soft shadows, abstract 3D shapes"]
+- ["romantic packaging design, soft pink and rose tones, elegant script typography, centered label composition, embossed textures, foil stamping, delicate floral patterns"]
+
+You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.8
+    })
+
+    const text = completion.choices[0]?.message?.content || ''
+    
+    // Parse JSON from response
+    let jsonText = text.trim()
+    if (jsonText.startsWith('```json')) {
+      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
+    } else if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '')
+    }
+    
+    const parsed = JSON.parse(jsonText)
+    
+    // Handle both array and object formats
+    let extensions: string[]
+    if (Array.isArray(parsed)) {
+      extensions = parsed
+    } else if (parsed.extensions && Array.isArray(parsed.extensions)) {
+      extensions = parsed.extensions
+    } else {
+      throw new Error(`Expected array of extensions, got: ${typeof parsed}`)
+    }
+    
+    // Normalize: trim, filter empty, ensure strings, take first one only
+    const normalized = extensions
+      .map((item: any) => typeof item === 'string' ? item.trim() : String(item).trim())
+      .filter((s: string) => s.length > 0)
+      .slice(0, 1) // Take only the first extension
+    
+    const result = normalized.length > 0 ? normalized : []
+    
+    // Cache the result for future use (ensures consistent rankings when switching tabs)
+    if (result.length > 0) {
+      globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, result)
+    }
+    
+    return result
+  } catch (error: any) {
+    console.error(`[search] Error generating vibe extensions for category "${category}":`, error.message)
+    return []
+  }
+}
 
 function cosine(a: number[], b: number[]): number {
   const len = Math.min(a.length, b.length)
@@ -60,22 +187,28 @@ async function getImagePopularityMetrics(
     })
 
     // Build maps for quick lookup
+    // IMPORTANT: Sort impressions and clicks by imageId to ensure deterministic Map building
+    const sortedImpressions = [...impressions].sort((a, b) => (a.imageId || '').localeCompare(b.imageId || ''))
+    const sortedClicks = [...clicks].sort((a, b) => (a.imageId || '').localeCompare(b.imageId || ''))
+    
     const impressionMap = new Map<string, number>()
-    for (const imp of impressions) {
+    for (const imp of sortedImpressions) {
       impressionMap.set(imp.imageId, imp._count.id)
     }
 
     const clickMap = new Map<string, number>()
-    for (const click of clicks) {
+    for (const click of sortedClicks) {
       clickMap.set(click.imageId, click._count.id)
     }
 
-    // Build result map
+    // Build result map in sorted order to ensure deterministic Map building
+    const sortedImageIds = [...imageIds].sort()
     const metrics = new Map<string, { showCount: number; clickCount: number; ctr: number }>()
-    for (const imageId of imageIds) {
+    for (const imageId of sortedImageIds) {
       const showCount = impressionMap.get(imageId) || 0
       const clickCount = clickMap.get(imageId) || 0
-      const ctr = showCount > 0 ? clickCount / showCount : 0
+      // Round CTR to 6 decimal places to ensure deterministic calculations
+      const ctr = showCount > 0 ? Math.round((clickCount / showCount) * 1000000) / 1000000 : 0
 
       metrics.set(imageId, { showCount, clickCount, ctr })
     }
@@ -96,9 +229,8 @@ async function getImagePopularityMetrics(
 export const maxDuration = 60 // 60 seconds
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
   try {
-    console.log(`[search] Request received: ${request.url}`)
-    const { searchParams } = new URL(request.url)
     const rawQuery = searchParams.get('q') || ''
     // Normalize query to lowercase for case-insensitive search
     const q = rawQuery.trim().toLowerCase()
@@ -112,15 +244,12 @@ export async function GET(request: NextRequest) {
     if (slidersParam) {
       try {
         sliderPositions = JSON.parse(slidersParam)
-        console.log(`[search] Slider positions:`, sliderPositions)
       } catch (e) {
         console.warn('[search] Failed to parse slider positions:', e)
       }
     }
     
     if (!q) return NextResponse.json({ images: [] })
-    
-    console.log(`[search] Processing query: "${q}" (original: "${rawQuery.trim()}"), category: ${category || 'all'}, sliders: ${Object.keys(sliderPositions).length > 0 ? JSON.stringify(sliderPositions) : 'none'}`)
 
     if (zeroShot) {
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
@@ -137,25 +266,88 @@ export async function GET(request: NextRequest) {
         isAbstract = isAbstractQuery(q)
       } else {
         // For queries with more than 2 words, skip expansion
-        console.log(`[search] Query has ${wordCount} words (>2), skipping expansion and using exact query`)
         isAbstract = false
       }
       
       const usePooling = searchParams.get('pooling') || 'softmax' // 'max' or 'softmax', default 'softmax'
       const poolingTemp = parseFloat(searchParams.get('pooling_temp') || '0.05')
       
-      console.log(`[search] Query "${q}" wordCount: ${wordCount}, useExpansion: ${useExpansion}, isAbstract: ${isAbstract}, pooling: ${usePooling}`)
       
       let queryVec: number[] | null = null
       let expansionEmbeddings: number[][] | null = null
       const isExpanded = isAbstract && useExpansion
       
-      if (isExpanded) {
+      // Generate vibe filter extensions for all categories if this looks like a vibe filter
+      // Single-word queries are treated as vibe filters (no abstract detection needed)
+      // Extensions are generated immediately, not stored
+      const vibeExtensionsByCategory: Record<string, number[][]> = {}
+      
+      // For single-word queries, always generate vibe extensions
+      // This is simpler and more reliable than abstract detection
+      if (wordCount === 1) {
+        const vibeWord = q.trim()
+        try {
+          // Generate extensions for all categories in parallel
+          const categoriesToGenerate = ['website', 'packaging', 'brand', 'fonts', 'apps']
+          const extensionPromises = categoriesToGenerate.map(async (cat) => {
+            try {
+              // Check if embedding is already cached
+              const embeddingCacheKey = `${vibeWord.toLowerCase()}:${cat}`
+              const cachedEmbedding = globalForVibeExtensions.vibeEmbeddingsCache.get(embeddingCacheKey)
+              if (cachedEmbedding) {
+                return { category: cat, embedding: cachedEmbedding }
+              }
+              
+              const extensions = await generateVibeExtensionsForCategory(vibeWord, cat)
+              if (extensions.length > 0) {
+                // Take only the first extension (single string per category)
+                const extension = extensions[0]
+                const [embedding] = await embedTextBatch([extension])
+                // L2-normalize the embedding
+                const normalizedEmbedding = l2norm(embedding)
+                
+                // Cache the normalized embedding
+                globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
+                
+                return { category: cat, embedding: normalizedEmbedding }
+              }
+              return { category: cat, embedding: null }
+            } catch (error: any) {
+              console.warn(`[search] Failed to generate vibe extensions for category "${cat}":`, error.message)
+              return { category: cat, embedding: null }
+            }
+          })
+          
+          const results = await Promise.all(extensionPromises)
+          for (const result of results) {
+            if (result.embedding) {
+              // Store as array with single embedding for compatibility with scoring logic
+              vibeExtensionsByCategory[result.category] = [result.embedding]
+            }
+          }
+        } catch (error: any) {
+          console.warn(`[search] Failed to generate vibe extensions:`, error.message)
+        }
+      }
+      
+      const hasVibeExtensions = Object.keys(vibeExtensionsByCategory).length > 0
+      
+      if (hasVibeExtensions) {
+        // Set expansionEmbeddings to null - we'll compute per-category in scoring
+        expansionEmbeddings = null
+        // Use category-specific extension for pgvector search when category filter is active
+        // This ensures we retrieve the best candidates for the selected category
+        // If category is 'all' or null, use website extension as default
+        const categoryForQuery = category && category !== 'all' ? category : 'website'
+        const queryEmbedding = vibeExtensionsByCategory[categoryForQuery]?.[0] || 
+                               vibeExtensionsByCategory['website']?.[0] ||
+                               Object.values(vibeExtensionsByCategory)[0]?.[0] ||
+                               (await embedTextBatch([q]))[0]
+        queryVec = queryEmbedding
+      } else if (isExpanded) {
         // Use max/softmax pooling for expansions (OR semantics)
-        console.log(`[search] Using expansion embeddings with ${usePooling} pooling`)
         // When category is 'all', generate expansions for all categories
         if (category === 'all') {
-          console.log(`[search] Category is 'all' - generating expansions for all categories`)
           // Generate expansions for all categories in parallel (non-blocking)
           const allCategories = ['website', 'packaging', 'brand']
           Promise.all(
@@ -176,11 +368,6 @@ export async function GET(request: NextRequest) {
         queryVec = await expandAndEmbedQuery(q)
       } else {
         // Direct embedding for concrete queries or queries with >2 words
-        if (!useExpansion) {
-          console.log(`[search] Using direct embedding for multi-word query (${wordCount} words)`)
-        } else {
-          console.log(`[search] Using direct embedding for concrete term`)
-        }
         try {
           const [vec] = await embedTextBatch([q])
           queryVec = vec
@@ -201,24 +388,22 @@ export async function GET(request: NextRequest) {
       // 2. Retrieve images with embeddings (filter by category if specified)
       // OPTIMIZATION: Only load embedding vectors and minimal image data
       // We'll load full site data only for top results
-      console.log(`[search] Loading images with embeddings...`)
       const whereClause: any = { embedding: { isNot: null } }
       // Filter by category if specified and not 'all'
       if (category && category !== 'all') {
         whereClause.category = category
-        console.log(`[search] Filtering by category: ${category}`)
       }
       
       // OPTIMIZATION: Use pgvector for fast approximate nearest neighbor search
       // This dramatically reduces computation by only loading top K candidates
-      console.log(`[search] Using pgvector for similarity search...`)
       
       // Convert query vector to pgvector format
       const queryVectorStr = '[' + queryVec!.join(',') + ']'
       
       // Use pgvector similarity search (cosine distance: 1 - cosine similarity)
-      // OPTIMIZATION: Reduce candidates to speed up queries (100 is enough for reranking)
-      const TOP_CANDIDATES = 100
+      // IMPORTANT: When using vibe extensions, we need more candidates because scoring uses category-specific extensions
+      // which can reorder items. We need enough candidates to ensure items that rank in top 100 after reordering are included.
+      const TOP_CANDIDATES = hasVibeExtensions ? 200 : 100
       
       let imageEmbeddings: any[] = []
       
@@ -228,23 +413,27 @@ export async function GET(request: NextRequest) {
         let pgvectorAvailable: { exists: boolean }[]
         
         if (globalForPgvector.pgvectorAvailable === undefined) {
-          pgvectorAvailable = await prisma.$queryRaw<[{ exists: boolean }]>`
-            SELECT EXISTS (
-              SELECT 1 
-              FROM information_schema.columns c
-              JOIN pg_type t ON t.oid = (
-                SELECT atttypid 
-                FROM pg_attribute 
-                WHERE attrelid = (
-                  SELECT oid FROM pg_class WHERE relname = 'image_embeddings'
-                ) 
-                AND attname = 'vector'
-              )
-              WHERE c.table_name = 'image_embeddings' 
-              AND c.column_name = 'vector'
-              AND t.typname = 'vector'
-            ) as exists
-          `.catch(() => [{ exists: false }])
+          try {
+            pgvectorAvailable = await prisma.$queryRaw<[{ exists: boolean }]>`
+              SELECT EXISTS (
+                SELECT 1 
+                FROM information_schema.columns c
+                JOIN pg_type t ON t.oid = (
+                  SELECT atttypid 
+                  FROM pg_attribute 
+                  WHERE attrelid = (
+                    SELECT oid FROM pg_class WHERE relname = 'image_embeddings'
+                  ) 
+                  AND attname = 'vector'
+                )
+                WHERE c.table_name = 'image_embeddings' 
+                AND c.column_name = 'vector'
+                AND t.typname = 'vector'
+              ) as exists
+            `
+          } catch (error) {
+            pgvectorAvailable = [{ exists: false }]
+          }
           globalForPgvector.pgvectorAvailable = pgvectorAvailable[0].exists
         } else {
           pgvectorAvailable = [{ exists: globalForPgvector.pgvectorAvailable }]
@@ -252,8 +441,6 @@ export async function GET(request: NextRequest) {
         
         if (pgvectorAvailable[0].exists) {
           // Use pgvector for fast ANN search
-          console.log(`[search] pgvector available - using fast similarity search`)
-          
           // Build query with parameterized category filter
           let pgvectorQuery = `
             SELECT 
@@ -277,20 +464,30 @@ export async function GET(request: NextRequest) {
             queryParams.push(category)
           }
           
-          pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector LIMIT $${queryParams.length + 1}`
+          pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC LIMIT $${queryParams.length + 1}`
           queryParams.push(TOP_CANDIDATES)
           
-          console.log(`[search] Executing pgvector query with ${queryParams.length} parameters...`)
-          const startTime = Date.now()
           const pgvectorResults = await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
-          const queryTime = Date.now() - startTime
-          console.log(`[search] pgvector query completed in ${queryTime}ms, returned ${pgvectorResults.length} results`)
           
           // Transform results to match expected format
-          imageEmbeddings = pgvectorResults.map((row: any) => ({
+          // pgvector returns vectors as strings or arrays - normalize to array
+          imageEmbeddings = pgvectorResults.map((row: any) => {
+            let vector = row.vector
+            // pgvector might return vector as string "[1,2,3]" or as array
+            if (typeof vector === 'string') {
+              try {
+                vector = JSON.parse(vector)
+              } catch (e) {
+                vector = []
+              }
+            } else if (!Array.isArray(vector)) {
+              // Try to convert to array if it's array-like
+              vector = Array.from(vector || [])
+            }
+            return {
             imageId: row.imageId,
             model: row.model,
-            vector: row.vector, // pgvector returns as array-like
+              vector: vector, // Normalized to array
             image: {
               id: row.id,
               siteId: row.siteId,
@@ -298,12 +495,14 @@ export async function GET(request: NextRequest) {
               category: row.category || 'website',
             },
             similarity: row.similarity, // Pre-computed similarity
-          }))
+            }
+          })
           
-          console.log(`[search] Loaded ${imageEmbeddings.length} top candidates via pgvector${category && category !== 'all' ? ` (category: ${category})` : ''}`)
+          if (imageEmbeddings.length === 0) {
+            console.warn(`[search] WARNING: pgvector returned 0 images! This might indicate a problem with the query vector or database.`)
+          }
         } else {
           // Fallback to loading all embeddings (old method)
-          console.log(`[search] pgvector not available - falling back to full scan`)
           imageEmbeddings = await (prisma.imageEmbedding.findMany as any)({
             where: {
               image: whereClause,
@@ -322,7 +521,6 @@ export async function GET(request: NextRequest) {
               },
             },
           })
-          console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings${category && category !== 'all' ? ` (category: ${category})` : ''}`)
         }
       } catch (error: any) {
         // If pgvector query fails, fallback to old method
@@ -345,7 +543,6 @@ export async function GET(request: NextRequest) {
             },
           },
         })
-        console.log(`[search] Loaded ${imageEmbeddings.length} image embeddings (fallback)`)
       }
       
       // OPTIMIZATION: Use pre-computed similarity if available (pgvector), otherwise compute
@@ -362,11 +559,51 @@ export async function GET(request: NextRequest) {
       // Pre-compute query vector length for optimization
       const queryVecArray = queryVec!
       
+      let dimensionMismatchCount = 0
+      
       for (const emb of imageEmbeddings as any[]) {
         let baseScore: number
+        const imageCategory = emb.image.category || 'website'
         
-        // If similarity is pre-computed (pgvector), use it
-        if (emb.similarity !== undefined) {
+        // If we have vibe extensions by category, use category-specific extension
+        // IMPORTANT: Always recompute score with category-specific extension, even if pgvector similarity exists
+        // We MUST ignore pgvector's pre-computed similarity when using vibe extensions
+        if (hasVibeExtensions) {
+          // Always recompute with category-specific extension - ignore pgvector similarity
+          if (vibeExtensionsByCategory[imageCategory] && vibeExtensionsByCategory[imageCategory].length > 0) {
+            const categoryExtension = vibeExtensionsByCategory[imageCategory][0] // Single embedding per category
+            const ivec = (emb.vector as unknown as number[]) || []
+            if (ivec.length !== dim) {
+              dimensionMismatchCount++
+              if (dimensionMismatchCount <= 3) {
+                console.warn(`[search] Dimension mismatch: ivec.length=${ivec.length}, dim=${dim}, category=${imageCategory}`)
+              }
+              continue
+            }
+            
+            // Compute similarity using category-specific extension (single cosine similarity)
+            // Round to ensure deterministic scoring
+            baseScore = Math.round(cosine(categoryExtension, ivec) * 1000000) / 1000000
+          } else {
+            // Vibe extensions exist but not for this category - use default category extension
+            // Use default category extension instead of queryVec
+            const defaultCategory = category && category !== 'all' ? category : 'website'
+            const defaultExtension = vibeExtensionsByCategory[defaultCategory]?.[0] || vibeExtensionsByCategory['website']?.[0]
+            if (defaultExtension) {
+              const ivec = (emb.vector as unknown as number[]) || []
+              if (ivec.length !== dim) continue
+              // Round to ensure deterministic scoring
+              baseScore = Math.round(cosine(defaultExtension, ivec) * 1000000) / 1000000
+            } else {
+              // Fallback to query vector if no default extension available
+              const ivec = (emb.vector as unknown as number[]) || []
+              if (ivec.length !== dim) continue
+              // Round to ensure deterministic scoring
+              baseScore = Math.round(cosine(queryVecArray, ivec) * 1000000) / 1000000
+            }
+          }
+        } else if (emb.similarity !== undefined && !hasVibeExtensions) {
+          // If similarity is pre-computed (pgvector) and we're not using vibe extensions, use it
           baseScore = emb.similarity
         } else {
           // Otherwise compute cosine similarity (fallback)
@@ -381,7 +618,8 @@ export async function GET(request: NextRequest) {
               baseScore = poolSoftmax(expansionScores, poolingTemp)
             }
           } else {
-            baseScore = cosine(queryVecArray, ivec)
+            // Round to ensure deterministic scoring
+            baseScore = Math.round(cosine(queryVecArray, ivec) * 1000000) / 1000000
           }
         }
         
@@ -389,7 +627,7 @@ export async function GET(request: NextRequest) {
           id: emb.image.id,
           siteId: emb.image.siteId,
           url: emb.image.url,
-          category: emb.image.category || 'website',
+          category: imageCategory,
           score: baseScore,
           baseScore,
           embedding: { vector: emb.vector, model: emb.model },
@@ -397,7 +635,26 @@ export async function GET(request: NextRequest) {
       }
       
       // Sort by score (pgvector results are already sorted, but we sort anyway for consistency)
-      scoredImages.sort((a, b) => b.baseScore - a.baseScore)
+      // Use secondary sort by ID for deterministic ordering when scores are equal
+      scoredImages.sort((a, b) => {
+        // Use very tight threshold to ensure deterministic ordering
+        if (Math.abs(b.baseScore - a.baseScore) > 0.000001) {
+          return b.baseScore - a.baseScore
+        }
+        // Secondary sort by image ID for deterministic ordering
+        return (a.id || '').localeCompare(b.id || '')
+      })
+      
+      if (scoredImages.length === 0 && imageEmbeddings.length > 0) {
+        console.error(`[search] ERROR: ${imageEmbeddings.length} embeddings loaded but 0 scored!`)
+        console.error(`[search] Sample embedding:`, {
+          hasVector: !!imageEmbeddings[0]?.vector,
+          vectorType: typeof imageEmbeddings[0]?.vector,
+          vectorLength: Array.isArray(imageEmbeddings[0]?.vector) ? imageEmbeddings[0]?.vector.length : 'not array',
+          imageCategory: imageEmbeddings[0]?.image?.category,
+          dim: dim
+        })
+      }
       const topCandidates = scoredImages // Already limited by pgvector query
       
       // OPTIMIZATION: Load site data in parallel with other queries
@@ -411,6 +668,7 @@ export async function GET(request: NextRequest) {
           url: true,
           author: true,
         },
+        orderBy: { id: 'asc' }, // Deterministic ordering
       }) : Promise.resolve([])
       const sites = await sitesPromise
       const topCandidatesSiteMap = new Map(sites.map((s: any) => [s.id, s]))
@@ -421,7 +679,9 @@ export async function GET(request: NextRequest) {
         site: topCandidatesSiteMap.get(img.siteId || '') || null,
       }))
       
-      console.log(`[search] Processed ${images.length} top candidates (out of ${scoredImages.length} total)`)
+      if (scoredImages.length === 0) {
+        console.warn(`[search] WARNING: No images were scored! Check if imageEmbeddings were loaded correctly.`)
+      }
       
       // 3. CLIP-FIRST: Rank by cosine similarity (already computed above)
       // Convert scored images to ranked format
@@ -443,6 +703,16 @@ export async function GET(request: NextRequest) {
           category: img.category || 'website',
         } : null,
       }))
+      
+      // Ensure ranked is sorted by score (with deterministic secondary sort)
+      ranked.sort((a: any, b: any) => {
+        // Use very tight threshold to ensure deterministic ordering
+        if (Math.abs(b.score - a.score) > 0.000001) {
+          return b.score - a.score
+        }
+        // Secondary sort by image ID for deterministic ordering
+        return (a.imageId || '').localeCompare(b.imageId || '')
+      })
       
       // OPTIMIZATION: Don't add remaining candidates - we already have enough (TOP_CANDIDATES = 200)
       // This reduces data transfer and processing time
@@ -478,7 +748,6 @@ export async function GET(request: NextRequest) {
       // Include embeddings and opposites for slider logic
       const globalForConcepts = globalThis as unknown as { concepts?: any[] }
       if (!globalForConcepts.concepts) {
-        console.log('[search] Loading concepts into cache...')
         globalForConcepts.concepts = await prisma.concept.findMany({
           select: {
             id: true,
@@ -487,7 +756,6 @@ export async function GET(request: NextRequest) {
             opposites: true,
           },
         })
-        console.log(`[search] Cached ${globalForConcepts.concepts.length} concepts`)
       }
       const allConcepts = globalForConcepts.concepts
       
@@ -524,27 +792,25 @@ export async function GET(request: NextRequest) {
       }
       
       // OPTIMIZATION: Parallelize all database queries for top K images
-      const topKImageIds = topK.map((r: any) => r.imageId)
+      // Sort imageIds to ensure deterministic order for database queries
+      const topKImageIds = topK.map((r: any) => r.imageId).sort()
       
       // Load all data in parallel
-      const [imageTags, topKImagesWithHub, popularityMetrics] = await Promise.all([
-        // 2. Load ImageTags
-        prisma.imageTag.findMany({
-          where: { imageId: { in: topKImageIds } },
-        }),
-        // 3. Load hub scores (with error handling)
+      const [topKImagesWithHub, popularityMetrics] = await Promise.all([
+        // 2. Load hub scores (with error handling)
         (async () => {
           try {
             return await (prisma.image.findMany as any)({
               where: { id: { in: topKImageIds } },
               select: { id: true, hubScore: true, hubCount: true, hubAvgCosineSimilarity: true, hubAvgCosineSimilarityMargin: true },
+              orderBy: { id: 'asc' }, // Deterministic ordering
             })
           } catch (error: any) {
             console.warn(`[search] Failed to load hub scores: ${error.message}`)
             return []
           }
         })(),
-        // 4. Get popularity metrics (with error handling)
+        // 3. Get popularity metrics (with error handling)
         getImagePopularityMetrics(topKImageIds, 20).catch(() => {
           const emptyMetrics = new Map<string, { showCount: number; clickCount: number; ctr: number }>()
           for (const imageId of topKImageIds) {
@@ -554,20 +820,12 @@ export async function GET(request: NextRequest) {
         }),
       ])
       
-      // Group tags by imageId
-      const tagsByImage = new Map<string, Map<string, number>>()
-      for (const tag of imageTags) {
-        if (!tagsByImage.has(tag.imageId)) {
-          tagsByImage.set(tag.imageId, new Map())
-        }
-        tagsByImage.get(tag.imageId)!.set(tag.conceptId, tag.score)
-      }
-      
       // Build hub scores map
+      // IMPORTANT: Sort by imageId to ensure deterministic Map building
+      const sortedHubImages = [...topKImagesWithHub].sort((a, b) => (a.id || '').localeCompare(b.id || ''))
       const hubScoresByImage = new Map<string, { hubScore: number | null; hubCount: number | null; hubAvgCosineSimilarity: number | null; hubAvgCosineSimilarityMargin: number | null }>()
-      console.log(`[search] Loaded hub scores for ${topKImagesWithHub.length} images`)
       let hubScoreCount = 0
-      for (const img of topKImagesWithHub) {
+      for (const img of sortedHubImages) {
         const hubScore = img.hubScore ?? null
         const hubCount = img.hubCount ?? null
         const hubAvgCosineSimilarity = img.hubAvgCosineSimilarity ?? null
@@ -575,10 +833,10 @@ export async function GET(request: NextRequest) {
         if (hubScore !== null) hubScoreCount++
         hubScoresByImage.set(img.id, { hubScore, hubCount, hubAvgCosineSimilarity, hubAvgCosineSimilarityMargin })
       }
-      console.log(`[search] Found ${hubScoreCount} images with non-null hub scores`)
       
-      // Initialize with null values for images not found
-      for (const imageId of topKImageIds) {
+      // Initialize with null values for images not found (in sorted order for consistency)
+      const sortedImageIds = [...topKImageIds].sort()
+      for (const imageId of sortedImageIds) {
         if (!hubScoresByImage.has(imageId)) {
           hubScoresByImage.set(imageId, { hubScore: null, hubCount: null, hubAvgCosineSimilarity: null, hubAvgCosineSimilarityMargin: null })
         }
@@ -639,45 +897,32 @@ export async function GET(request: NextRequest) {
                 conceptEmbeddingMap.set(token.toLowerCase(), oppositeEmbedding)
                 conceptEmbeddingMap.set(concept.label.toLowerCase(), oppositeEmbedding)
                 conceptEmbeddingMap.set(concept.id.toLowerCase(), oppositeEmbedding)
-                console.log(`[search] Loaded opposite embedding for "${token}" -> "${oppositeConcept.label}" (${oppositeEmbedding.length} dim)`)
-              } else {
-                console.log(`[search] Opposite concept "${oppositeConcept.label}" has invalid embedding (length: ${oppositeEmbedding.length}, expected: ${dim})`)
               }
-            } else {
-              console.log(`[search] Opposite concept with ID "${firstOppositeId}" not found`)
             }
-          } else {
-            console.log(`[search] Concept "${concept.label}" has no opposites`)
           }
         }
-        
-        console.log(`[search] Loaded ${conceptEmbeddingMap.size} opposite embeddings for slider logic`)
       }
       
       // 5. Apply very light boosts/penalties (tag-based) + slider adjustments
-      const reranked = topK.map((item: any) => {
-        const imageTags = tagsByImage.get(item.imageId) || new Map()
+      // IMPORTANT: Sort topK deterministically by score (with imageId as tiebreaker) BEFORE processing
+      // This ensures that items are processed in a consistent order, preventing non-deterministic calculations
+      const sortedTopK = [...topK].sort((a: any, b: any) => {
+        // Primary sort by score (descending)
+        const scoreA = a.score ?? a.baseScore ?? 0
+        const scoreB = b.score ?? b.baseScore ?? 0
+        if (Math.abs(scoreB - scoreA) > 0.000001) {
+          return scoreB - scoreA
+        }
+        // Secondary sort by imageId for deterministic ordering
+        const idA = a.imageId || a.id || ''
+        const idB = b.imageId || b.id || ''
+        return idA.localeCompare(idB)
+      })
+      const reranked = sortedTopK.map((item: any) => {
         let boost = 0
         let penalty = 0
         
-        // Very light boosts: 0.01 * tagScore (much lighter - only 1% of tag score)
-        // This ensures boosts are minimal relative to base CLIP scores
-        for (const conceptId of relevantConceptIds) {
-          const tagScore = imageTags.get(conceptId)
-          if (tagScore !== undefined) {
-            boost += 0.01 * tagScore  // Minimal boost (1% of tag score)
-          }
-        }
-        
-        // Very light penalties: 0.002 * tagScore (reduced from 0.005)
-        for (const oppId of oppositeConceptIds) {
-          const tagScore = imageTags.get(oppId)
-          if (tagScore !== undefined) {
-            penalty += 0.002 * tagScore  // Reduced penalty (0.2% of tag score, down from 0.5%)
-          }
-        }
-        
-        // 5. Apply popularity/ubiquity penalty (hub effect)
+        // Apply popularity/ubiquity penalty (hub effect)
         // Penalize images that appear frequently but are rarely clicked
         const metrics = popularityMetrics.get(item.imageId)
         let popularityPenalty = 0
@@ -691,9 +936,10 @@ export async function GET(request: NextRequest) {
           if (showCount >= 5 && ctr < 0.1) {
             // Penalty formula: (showCount / 100) * (0.1 - ctr) * 0.1
             // This gives a small penalty that scales with ubiquity and low CTR
+            // Round intermediate calculations to ensure deterministic results
             const ubiquityFactor = Math.min(showCount / 100, 1.0) // Cap at 1.0
             const lowCtrFactor = (0.1 - ctr) / 0.1 // 0 to 1, higher for lower CTR
-            popularityPenalty = ubiquityFactor * lowCtrFactor * 0.1 // Max penalty of 0.1
+            popularityPenalty = Math.round((ubiquityFactor * lowCtrFactor * 0.1) * 1000000) / 1000000 // Max penalty of 0.1, rounded
           }
         }
         
@@ -740,33 +986,46 @@ export async function GET(request: NextRequest) {
             
             // Ensure multiplier doesn't go below 0.5 (max 50% reduction)
             hubPenaltyMultiplier = Math.max(0.5, hubPenaltyMultiplier)
-            
-            console.log(`[search] Hub penalty applied: imageId=${item.imageId.substring(0, 12)}..., hubScore=${hubScore.toFixed(4)}, margin=${avgCosineSimilarityMargin.toFixed(4)}, absolutePenalty=${absolutePenalty.toFixed(4)}, penaltyPct=${(penaltyPercentage * 100).toFixed(1)}%, multiplier=${hubPenaltyMultiplier.toFixed(3)}, baseScore=${item.baseScore.toFixed(4)}`)
           }
         }
         
         // Apply hub penalty directly to baseScore (cosine similarity)
         // This ensures high semantic similarity can still rank well
-        const adjustedBaseScore = item.baseScore * hubPenaltyMultiplier
+        // IMPORTANT: When using vibe extensions, similarity is the primary signal, so reduce hub penalty impact
+        // Round intermediate values to ensure deterministic calculations
+        let adjustedBaseScore: number
+        if (hasVibeExtensions) {
+          // For vibe extensions, reduce hub penalty impact (apply 50% of penalty) to preserve similarity ranking
+          const reducedHubPenaltyMultiplier = hubPenaltyMultiplier < 1.0 ? 
+            Math.max(0.95, 1.0 - ((1.0 - hubPenaltyMultiplier) * 0.5)) : 1.0
+          adjustedBaseScore = Math.round((item.baseScore * reducedHubPenaltyMultiplier) * 1000000) / 1000000
+        } else {
+          adjustedBaseScore = Math.round((item.baseScore * hubPenaltyMultiplier) * 1000000) / 1000000
+        }
         
         // Calculate base final score
-        let finalScore = adjustedBaseScore + boost - penalty - popularityPenalty
+        // IMPORTANT: When using vibe extensions, baseScore is the similarity to the category-specific extension
+        // This should be the PRIMARY ranking factor. Penalties should be minimal to preserve similarity-based ranking.
+        // For vibe extensions, reduce or disable popularity penalty to ensure similarity is the dominant factor
+        let finalScore: number
+        if (hasVibeExtensions) {
+          // When using vibe extensions, similarity to the category extension is the primary signal
+          // Apply minimal penalties (10% of normal) to preserve similarity ranking
+          const reducedPopularityPenalty = popularityPenalty * 0.1
+          finalScore = Math.round((adjustedBaseScore + boost - penalty - reducedPopularityPenalty) * 1000000) / 1000000
+        } else {
+          // For non-vibe extensions, use full penalty (original behavior)
+          finalScore = Math.round((adjustedBaseScore + boost - penalty - popularityPenalty) * 1000000) / 1000000
+        }
         
         // Apply slider-based ranking logic if sliders are set
         if (Object.keys(sliderPositions).length > 0 && allConceptsForSliders.length > 0) {
           const queryTokens = q.split(/[\s,]+/).filter(Boolean)
           
-          // Debug: log first time we enter slider logic
-          if (Math.random() < 0.1) {
-            console.log(`[search] SLIDER LOGIC ACTIVE: query="${q}", tokens=${queryTokens.join(',')}, sliderKeys=${Object.keys(sliderPositions).join(',')}`)
-          }
-          
           const img = images.find((img: any) => img.id === item.imageId) as any
           if (img) {
             const ivec = (img.embedding?.vector as unknown as number[]) || []
             if (ivec.length === dim) {
-              const imageTagsMap = tagsByImage.get(item.imageId) || new Map()
-              
               for (const token of queryTokens) {
                 // Try to find slider position by token (exact match) or by concept label/id
                 let sliderPos = sliderPositions[token]
@@ -806,8 +1065,6 @@ export async function GET(request: NextRequest) {
                 const concept = conceptMapForSliders.get(token.toLowerCase())
                 if (!concept) continue
                 
-                const hasConceptTag = imageTagsMap.has(concept.id.toLowerCase())
-                
                 if (sliderPos > 0.5) {
                   // Slider between 0.51 and 1.0: Towards Concept A
                   // At 1.0: Normal ranking (best Concept A matches first)
@@ -819,7 +1076,8 @@ export async function GET(request: NextRequest) {
                   const invertedScore = scoreRange - finalScore
                   
                   // Blend: at 1.0 use normal, at 0.51 use fully inverted
-                  finalScore = finalScore * (1 - reverseFactor) + invertedScore * reverseFactor
+                  // Round to ensure deterministic calculations
+                  finalScore = Math.round((finalScore * (1 - reverseFactor) + invertedScore * reverseFactor) * 1000000) / 1000000
                 } else if (sliderPos < 0.5) {
                   // Slider between 0 and 0.49: Towards opposite
                   // At 0.0: Normal ranking for opposite (best opposite matches first)
@@ -863,23 +1121,8 @@ export async function GET(request: NextRequest) {
                       // Now blend between original score and the opposite score
                       // At 0.0: Use 100% opposite score (normal opposite ranking)
                       // At 0.49: Use mostly opposite score (but reversed)
-                      finalScore = finalScore * (1 - oppositeFactor) + blendedOppositeScore * oppositeFactor
-                    } else {
-                      // Fallback: use tag-based approach
-                      const firstOppositeId = opposites[0].toLowerCase()
-                      const hasOppositeTag = imageTagsMap.has(firstOppositeId)
-                      
-                      // At 0.0: Boost opposite tags (normal opposite ranking)
-                      // At 0.49: We want reverse, so reduce opposite tags
-                      const reverseOppositeTagFactor = sliderPos / 0.5 // 0 at 0.0, 0.98 at 0.49
-                      
-                      if (hasOppositeTag) {
-                        // Boost for normal, reduce for reverse
-                        finalScore += oppositeFactor * 0.5 * (1 - reverseOppositeTagFactor * 2)
-                      } else if (hasConceptTag) {
-                        // Reduce original concept tags
-                        finalScore -= oppositeFactor * 0.4
-                      }
+                      // Round to ensure deterministic calculations
+                      finalScore = Math.round((finalScore * (1 - oppositeFactor) + blendedOppositeScore * oppositeFactor) * 1000000) / 1000000
                     }
                   }
                 }
@@ -889,15 +1132,13 @@ export async function GET(request: NextRequest) {
           }
         }
         
-        // Debug: Log top results with significant hub penalties
-        if (hubPenaltyMultiplier < 1.0) {
-          const penaltyAmount = item.baseScore - adjustedBaseScore
-          console.log(`[search] Significant hub penalty: site="${item.site?.title?.substring(0, 40)}", base=${item.baseScore.toFixed(4)}, hub=${hubData?.hubScore?.toFixed(4)}, multiplier=${hubPenaltyMultiplier.toFixed(3)}, adjustedBase=${adjustedBaseScore.toFixed(4)}, penalty=${penaltyAmount.toFixed(4)}, final=${finalScore.toFixed(4)}`)
-        }
+        // Round finalScore to 4 decimal places to ensure deterministic ordering
+        // This groups items with very similar scores together while maintaining more precision
+        const roundedFinalScore = Math.round(finalScore * 10000) / 10000
         
         return {
           ...item,
-          score: finalScore,
+          score: roundedFinalScore, // Rounded to 3 decimal places for deterministic ordering
           baseScore: item.baseScore, // Original cosine similarity
           adjustedBaseScore, // Cosine similarity after hub penalty multiplier
           boost,
@@ -910,52 +1151,62 @@ export async function GET(request: NextRequest) {
         }
       })
       
-      // Rerank by finalScore
+      // Rerank by finalScore (with deterministic secondary sort for consistent rankings)
+      // IMPORTANT: Always use imageId as tiebreaker to ensure completely deterministic ordering
+      // This prevents any floating-point precision differences from causing non-deterministic results
       reranked.sort((a: any, b: any) => {
-        if (Math.abs(a.score - b.score) > 0.0001) {
-          return b.score - a.score
+        // Round scores to 4 decimal places to eliminate floating-point precision differences
+        const scoreA = Math.round((a.score ?? 0) * 10000) / 10000
+        const scoreB = Math.round((b.score ?? 0) * 10000) / 10000
+        
+        // Primary sort by rounded score (descending)
+        const scoreDiff = scoreB - scoreA
+        // Use a threshold to group items with very similar scores
+        // Items with scores within 0.0001 will be sorted by imageId for deterministic ordering
+        if (Math.abs(scoreDiff) > 0.0001) {
+          return scoreDiff
         }
-        return 0
+        // Always use secondary sort by image ID for deterministic ordering
+        // This ensures consistent results even when rounded scores are very close
+        const idA = a.imageId || a.id || ''
+        const idB = b.imageId || b.id || ''
+        return idA.localeCompare(idB)
+      })
+      
+      // Also sort remaining results deterministically (by baseScore, then imageId)
+      remaining.sort((a: any, b: any) => {
+        // Use extremely tight threshold to catch all floating-point differences
+        if (Math.abs(b.baseScore - a.baseScore) > 1e-10) {
+          return b.baseScore - a.baseScore
+        }
+        // Always use secondary sort by image ID for deterministic ordering
+        return (a.imageId || '').localeCompare(b.imageId || '')
       })
       
       // Combine reranked top K with remaining results
-      const finalRanked = [...reranked, ...remaining]
+      // Ensure finalRanked is sorted deterministically
+      // Note: reranked items have 'score' (finalScore), remaining items have 'baseScore'
+      const finalRanked = [...reranked, ...remaining].sort((a: any, b: any) => {
+        // Use score if available (reranked items), otherwise use baseScore (remaining items)
+        // Round scores to 4 decimal places to eliminate floating-point precision differences
+        const scoreA = Math.round((a.score ?? a.baseScore ?? 0) * 10000) / 10000
+        const scoreB = Math.round((b.score ?? b.baseScore ?? 0) * 10000) / 10000
+        
+        // Primary sort by rounded score
+        if (scoreB !== scoreA) {
+          return scoreB - scoreA
+        }
+        // Always use secondary sort by imageId for deterministic ordering
+        return (a.imageId || a.id || '').localeCompare(b.imageId || b.id || '')
+      })
       
       // Log search impressions for learned reranker training
       // Only log top 20 results to avoid excessive logging
       const topResultsForLogging = finalRanked.slice(0, 20)
       const impressions: SearchImpression[] = topResultsForLogging.map((item: any, index: number) => {
         const position = index + 1
-        const imageTags = tagsByImage.get(item.imageId) || new Map()
         
-        // Extract tag features
-        const tagScores: number[] = []
-        let maxTagScore = 0
-        let sumTagScores = 0
-        let directMatchCount = 0
-        let synonymMatchCount = 0
-        let relatedMatchCount = 0
-        
-        for (const conceptId of relevantConceptIds) {
-          const tagScore = imageTags.get(conceptId)
-          if (tagScore !== undefined) {
-            tagScores.push(tagScore)
-            maxTagScore = Math.max(maxTagScore, tagScore)
-            sumTagScores += tagScore
-            directMatchCount++
-          }
-        }
-        
-        // Extract opposite tag features
-        let maxOppositeTagScore = 0
-        let sumOppositeTagScores = 0
-        for (const oppId of oppositeConceptIds) {
-          const tagScore = imageTags.get(oppId)
-          if (tagScore !== undefined) {
-            maxOppositeTagScore = Math.max(maxOppositeTagScore, tagScore)
-            sumOppositeTagScores += tagScore
-          }
-        }
+        // No tag features (image tags removed from this build)
         
         // Get hub features for this image
         const hubData = hubScoresByImage.get(item.imageId)
@@ -975,13 +1226,14 @@ export async function GET(request: NextRequest) {
           tagFeatures: {
             cosineSimilarity: item.baseScore,
             cosineSimilaritySquared: item.baseScore * item.baseScore,
-            maxTagScore,
-            sumTagScores,
-            directMatchCount,
-            synonymMatchCount, // TODO: Calculate if needed
-            relatedMatchCount, // TODO: Calculate if needed
-            maxOppositeTagScore,
-            sumOppositeTagScores,
+            // Tag features removed (image tags not used in this build)
+            maxTagScore: 0,
+            sumTagScores: 0,
+            directMatchCount: 0,
+            synonymMatchCount: 0,
+            relatedMatchCount: 0,
+            maxOppositeTagScore: 0,
+            sumOppositeTagScores: 0,
           },
           popularityFeatures: item.popularityMetrics || {
             showCount: 0,
@@ -1014,15 +1266,42 @@ export async function GET(request: NextRequest) {
         }
       }
       // Sort by score (descending) to maintain ranking
+      // Use secondary sort by site ID for deterministic ordering when scores are equal
       const uniqueSites = Array.from(siteMap.values())
-        .sort((a: any, b: any) => b.score - a.score)
+        .sort((a: any, b: any) => {
+          // Use very tight threshold to ensure deterministic ordering
+          if (Math.abs(b.score - a.score) > 0.000001) {
+            return b.score - a.score
+          }
+          // Secondary sort by site ID for deterministic ordering
+          return (a.site?.id || '').localeCompare(b.site?.id || '')
+        })
         .map((item: any) => item.site)
       
       // OPTIMIZATION: Return only top results (pagination will be added later)
       // Limit results to improve response time and reduce data transfer
       const MAX_RESULTS = 100 // Return top 100 results initially
+      
+      // Log first 5 images from finalRanked before limiting
+      if (finalRanked.length > 0) {
+        const first5 = finalRanked.slice(0, 5).map((r: any) => ({
+          imageId: r.imageId?.substring(0, 12) || 'unknown',
+          score: (r.score ?? r.baseScore ?? 0).toFixed(6),
+          siteId: r.site?.id?.substring(0, 12) || 'unknown'
+        }))
+      }
+      
       const limitedSites = uniqueSites.slice(0, MAX_RESULTS)
       const limitedImages = finalRanked.slice(0, MAX_RESULTS)
+      
+      // Log first 5 images being returned
+      if (limitedImages.length > 0) {
+        const first5 = limitedImages.slice(0, 5).map((r: any) => ({
+          imageId: r.imageId?.substring(0, 12) || 'unknown',
+          score: (r.score ?? r.baseScore ?? 0).toFixed(6),
+          siteId: r.site?.id?.substring(0, 12) || 'unknown'
+        }))
+      }
       
       const results = { 
         query: q, 
@@ -1078,7 +1357,15 @@ export async function GET(request: NextRequest) {
       }
       ranked.push({ imageId: img.id, siteId: (img as any).siteId, url: (img as any).url, score })
     }
-    ranked.sort((a, b) => b.score - a.score)
+    // Sort by score with deterministic secondary sort
+    ranked.sort((a, b) => {
+      // Use very tight threshold to ensure deterministic ordering
+      if (Math.abs(b.score - a.score) > 0.000001) {
+        return b.score - a.score
+      }
+      // Secondary sort by image ID for deterministic ordering when scores are equal
+      return (a.id || '').localeCompare(b.id || '')
+    })
 
     // Pagination: limit and offset
     const limit = parseInt(searchParams.get('limit') || '60')
@@ -1095,7 +1382,14 @@ export async function GET(request: NextRequest) {
       limit
     })
   } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message || e) }, { status: 500 })
+    console.error(`[search] ERROR in search API:`, e)
+    console.error(`[search] Error stack:`, e?.stack)
+    const errorQuery = request.url ? new URL(request.url).searchParams.get('q') || '' : ''
+    return NextResponse.json({ 
+      error: String(e?.message || e),
+      images: [],
+      query: errorQuery
+    }, { status: 500 })
   }
 }
 

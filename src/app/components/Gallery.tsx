@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import SubmissionForm from './SubmissionForm'
 import Header from './Header'
+import Navigation from './Navigation'
 
 interface Tag {
   id: string
@@ -33,9 +34,16 @@ interface ConceptSuggestion {
 
 interface GalleryProps {
   category?: string // Optional category filter (e.g., 'packaging', 'website', 'app')
+  onCategoryChange?: (category: string | undefined) => void // Callback for category changes
 }
 
-export default function Gallery({ category }: GalleryProps = {} as GalleryProps) {
+export default function Gallery({ category, onCategoryChange }: GalleryProps = {} as GalleryProps) {
+  // Helper function to capitalize first letter
+  const capitalizeFirst = (str: string) => {
+    if (!str) return str
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+  }
+  
   const [sites, setSites] = useState<Site[]>([])
   const [allSites, setAllSites] = useState<Site[]>([]) // Store all sites for lazy loading
   const [displayedCount, setDisplayedCount] = useState(50) // Number of sites to display initially
@@ -58,13 +66,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
   const [spectrums, setSpectrums] = useState<Spectrum[]>([])
   const [showAddConceptModal, setShowAddConceptModal] = useState(false) // Track if "Add Concept" modal is open
-  const [addConceptInputValue, setAddConceptInputValue] = useState('') // Track the value of the first input (concept)
-  const [addOppositeInputValue, setAddOppositeInputValue] = useState('') // Track the value of the second input (opposite)
-  const [addConceptSuggestions, setAddConceptSuggestions] = useState<ConceptSuggestion[]>([]) // Suggestions for Add Concept input
-  const [addConceptSelectedIndex, setAddConceptSelectedIndex] = useState(-1) // Selected suggestion index
-  const [addConceptInputRef, setAddConceptInputRef] = useState<HTMLInputElement | null>(null) // Ref for first input auto-focus
-  const [addOppositeInputRef, setAddOppositeInputRef] = useState<HTMLInputElement | null>(null) // Ref for second input auto-focus
-  const [isConceptInputFocused, setIsConceptInputFocused] = useState(false) // Track if concept input is focused
+  const [addConceptInputValue, setAddConceptInputValue] = useState('') // Track the value of the concept input
+  const [addConceptInputRef, setAddConceptInputRef] = useState<HTMLInputElement | null>(null) // Ref for input auto-focus
   
   // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
@@ -231,14 +234,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         if (loadMoreRef.current && hasMoreResults && !isLoadingMore) {
           const retryRef = loadMoreRef.current
           if (retryRef && observerRef.current === null) {
-            const observer = new IntersectionObserver(
-              (entries) => {
+    const observer = new IntersectionObserver(
+      (entries) => {
                 if (entries[0].isIntersecting && hasMoreResults && !isLoadingMore) {
                   loadMoreImages()
-                }
-              },
-              { threshold: 0.1 }
-            )
+        }
+      },
+      { threshold: 0.1 }
+    )
             observer.observe(retryRef)
             observerRef.current = observer
           }
@@ -894,6 +897,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
 
   const fetchSites = useCallback(async () => {
+    console.log('[fetchSites] Called with selectedConcepts:', selectedConcepts, 'category:', category)
     try {
       setLoading(true)
       
@@ -913,14 +917,32 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         // Don't pass slider positions - we'll reorder client-side
         // Initial fetch: limit 60, offset 0
         const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=0`
+        console.log('[fetchSites] Fetching search URL:', searchUrl)
         const response = await fetch(searchUrl)
         if (!response.ok) {
-          console.error('Failed response fetching search', response.status)
+          console.error('[fetchSites] Failed response fetching search', response.status, response.statusText)
+          const errorText = await response.text().catch(() => '')
+          console.error('[fetchSites] Error response:', errorText.substring(0, 200))
           setSites([])
           setAllSites([])
           return
         }
         const data = await response.json()
+        console.log('[fetchSites] Search response received:', { 
+          imageCount: data.images?.length || 0, 
+          hasMore: data.hasMore,
+          query: query.trim(),
+          error: data.error,
+          total: data.total
+        })
+        
+        if (data.error) {
+          console.error('[fetchSites] API returned error:', data.error)
+        }
+        
+        if (data.images && data.images.length === 0 && !data.error) {
+          console.warn('[fetchSites] WARNING: Search returned 0 images but no error. This might indicate a problem with the search API.')
+        }
         
         // Update pagination state
         setHasMoreResults(data.hasMore || false)
@@ -1089,15 +1111,33 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         try {
           const response = await fetch(sitesUrl)
           if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}))
+            // Check if response is JSON before parsing
+            const contentType = response.headers.get('content-type')
+            let errorData = {}
+            if (contentType && contentType.includes('application/json')) {
+              try {
+                errorData = await response.json()
+              } catch (e) {
+                // Response is not JSON, might be HTML error page
+                const text = await response.text()
+                console.error('Failed response fetching sites (non-JSON)', response.status, text.substring(0, 200))
+              }
+            } else {
+              const text = await response.text()
+              console.error('Failed response fetching sites (HTML)', response.status, text.substring(0, 200))
+            }
             console.error('Failed response fetching sites', response.status, errorData)
             setAllSites([])
+            setSites([])
             setDisplayedCount(50)
             setHasMoreResults(false)
             return
           }
           const data = await response.json()
-          setAllSites(Array.isArray(data.sites) ? data.sites : [])
+          const sites = Array.isArray(data.sites) ? data.sites : []
+          console.log('[fetchSites] Loaded default sites (no filters):', sites.length, 'sites')
+          setAllSites(sites)
+          setSites(sites.slice(0, 50)) // Show first 50 immediately
           setDisplayedCount(50)
           const hasMore = data.hasMore === true // Explicitly check for true
           setHasMoreResults(hasMore)
@@ -1105,6 +1145,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         } catch (error) {
           console.error('Error fetching sites:', error)
           setSites([])
+          setAllSites([])
         }
       }
     } catch (error) {
@@ -1117,8 +1158,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
 
   // Fetch sites when concepts or category change (but not when slider moves)
   useEffect(() => {
+    console.log('[useEffect] selectedConcepts or category changed, scheduling fetchSites in 300ms. selectedConcepts:', selectedConcepts, 'category:', category)
     const controller = new AbortController()
     const timer = setTimeout(() => {
+      console.log('[useEffect] Timer fired, calling fetchSites')
       fetchSites()
     }, 300)
     return () => {
@@ -1211,92 +1254,8 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     }
   }, [spectrums.map(s => s.inputValue).join(',')])
 
-  // Debounce concept suggestions for Add Concept input
-  useEffect(() => {
-    const trimmed = addConceptInputValue.trim()
-    if (!trimmed || trimmed.length < 1) {
-      setAddConceptSuggestions([])
-      setAddConceptSelectedIndex(-1)
-      return
-    }
-
-    const controller = new AbortController()
-    const timer = setTimeout(async () => {
-      try {
-        const response = await fetch(`/api/concepts?q=${encodeURIComponent(trimmed)}`, {
-          signal: controller.signal,
-        })
-        if (!response.ok) {
-          setAddConceptSuggestions([])
-          return
-        }
-        const data = await response.json()
-        setAddConceptSuggestions(Array.isArray(data.concepts) ? data.concepts : [])
-        setAddConceptSelectedIndex(-1)
-      } catch (error: any) {
-        if (error.name !== 'AbortError') {
-          console.error('Error fetching concept suggestions:', error)
-        }
-        setAddConceptSuggestions([])
-      }
-    }, 250)
-
-    return () => {
-      controller.abort()
-      clearTimeout(timer)
-    }
-  }, [addConceptInputValue])
 
   // Function to fetch and set opposite for a concept
-  const fetchOppositeForConcept = (conceptLabel: string) => {
-    fetch(`/api/concepts?q=${encodeURIComponent(conceptLabel)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data.concepts) && data.concepts.length > 0) {
-          const concept = data.concepts.find((c: any) => c.label.toLowerCase() === conceptLabel.toLowerCase())
-          if (concept && concept.opposites && concept.opposites.length > 0) {
-            // Fetch the label for the first opposite
-            const oppositeId = concept.opposites[0]
-            fetch(`/api/concepts?q=${encodeURIComponent(oppositeId)}`)
-              .then(res => res.json())
-              .then(oppData => {
-                if (Array.isArray(oppData.concepts) && oppData.concepts.length > 0) {
-                  const oppositeConcept = oppData.concepts.find((c: any) => c.id.toLowerCase() === oppositeId.toLowerCase())
-                  if (oppositeConcept) {
-                    setAddOppositeInputValue(oppositeConcept.label)
-                    // Auto-focus second input after setting opposite
-                    setTimeout(() => {
-                      if (addOppositeInputRef) {
-                        addOppositeInputRef.focus()
-                      }
-                    }, 100)
-                  }
-                }
-              })
-              .catch(() => {
-                // If we can't find the label, use the ID as fallback
-                setAddOppositeInputValue(oppositeId)
-                setTimeout(() => {
-                  if (addOppositeInputRef) {
-                    addOppositeInputRef.focus()
-                  }
-                }, 100)
-              })
-          }
-        }
-      })
-      .catch(() => {
-        // Ignore errors
-      })
-  }
-
-  // Auto-fill opposite when concept is selected from suggestions (via arrow keys + Enter)
-  useEffect(() => {
-    if (addConceptSelectedIndex >= 0 && addConceptSelectedIndex < addConceptSuggestions.length) {
-      const selectedSuggestion = addConceptSuggestions[addConceptSelectedIndex]
-      fetchOppositeForConcept(selectedSuggestion.label)
-    }
-  }, [addConceptSelectedIndex, addConceptSuggestions])
 
   // Auto-focus first input when modal opens
   useEffect(() => {
@@ -1323,13 +1282,52 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
   }
 
   // Handle creating spectrum from modal
-  const handleCreateSpectrum = () => {
+  const handleCreateSpectrum = async () => {
     const concept = addConceptInputValue.trim()
-    const opposite = addOppositeInputValue.trim()
     
     if (!concept) return
     
-    // Create spectrum - if opposite is provided, it's a two-pole slider, otherwise single-pole
+    // Close modal immediately
+    setShowAddConceptModal(false)
+    const inputValue = addConceptInputValue
+    setAddConceptInputValue('')
+    
+    // Generate semantic extensions for all categories BEFORE adding the concept
+    // This ensures extensions are ready when the search is triggered
+    // Wait for the response before proceeding to avoid race conditions
+    try {
+      const categories = ['website', 'packaging', 'brand', 'fonts', 'apps']
+      const response = await fetch('/api/generate-vibe-extensions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          vibe: concept,
+          categories: categories
+        }),
+      })
+
+      if (!response.ok) {
+        console.error('[vibe-filter] Failed to generate extensions:', response.statusText)
+        // Continue anyway - extensions will be generated on-the-fly during search
+      } else {
+        const data = await response.json()
+        console.log('[vibe-filter] Generated extensions:', data.extensionsByCategory)
+        // Check if we got any valid extensions
+        const hasExtensions = Object.values(data.extensionsByCategory || {}).some((exts: any) => Array.isArray(exts) && exts.length > 0)
+        if (!hasExtensions) {
+          console.warn('[vibe-filter] No extensions were generated, but continuing anyway')
+        }
+      }
+    } catch (error: any) {
+      console.error('[vibe-filter] Error generating extensions:', error.message)
+      // Continue anyway - extensions will be generated on-the-fly during search
+    }
+    
+    // Now add the concept and trigger search (extensions are ready or will be generated on-the-fly)
+    console.log('[vibe-filter] Adding concept to selectedConcepts:', concept)
+    // Create spectrum (single-pole, no opposite)
     const newSpectrum: Spectrum = {
       id: `spectrum-${Date.now()}`,
       concept: concept,
@@ -1344,47 +1342,22 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
     setSpectrums(prev => [...prev, newSpectrum])
     
     if (!selectedConcepts.includes(concept)) {
-      setSelectedConcepts(prev => [...prev, concept])
-      // If no opposite provided, it's a custom concept (single-pole)
-      if (!opposite) {
-        setCustomConcepts(prev => new Set(prev).add(concept))
-      } else {
-        // Store custom opposite in conceptData so slider can use it
-        // Store the opposite label directly (not as ID) so it can be displayed immediately
-        setConceptData(prev => {
-          const newMap = new Map(prev)
-          const existingData = newMap.get(concept.toLowerCase()) || { id: concept.toLowerCase(), label: concept, opposites: [] }
-          newMap.set(concept.toLowerCase(), {
-            ...existingData,
-            opposites: [opposite] // Store the label directly for custom opposites
-          })
-          return newMap
-        })
-      }
+      console.log('[vibe-filter] Adding concept to selectedConcepts:', concept, 'Current selectedConcepts:', selectedConcepts)
+      setSelectedConcepts(prev => {
+        const updated = [...prev, concept]
+        console.log('[vibe-filter] Updated selectedConcepts:', updated)
+        return updated
+      })
+      setCustomConcepts(prev => new Set(prev).add(concept))
       setSliderPositions(prev => {
         const newMap = new Map(prev)
         newMap.set(concept, 1.0)
         return newMap
       })
-    } else if (opposite) {
-      // Concept already exists, but update the opposite if provided
-      setConceptData(prev => {
-        const newMap = new Map(prev)
-        const existingData = newMap.get(concept.toLowerCase()) || { id: concept.toLowerCase(), label: concept, opposites: [] }
-        newMap.set(concept.toLowerCase(), {
-          ...existingData,
-          opposites: [opposite] // Store the label directly for custom opposites
-        })
-        return newMap
-      })
+      console.log('[vibe-filter] Concept added successfully, search should trigger in 300ms')
+    } else {
+      console.log('[vibe-filter] Concept already in selectedConcepts, skipping')
     }
-    
-    // Close modal and reset
-    setShowAddConceptModal(false)
-    setAddConceptInputValue('')
-    setAddOppositeInputValue('')
-    setAddConceptSuggestions([])
-    setAddConceptSelectedIndex(-1)
   }
 
   // Remove a spectrum from the drawer
@@ -1394,11 +1367,21 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       // Also remove from selectedConcepts if it was added
       const spectrum = prev.find(s => s.id === spectrumId)
       if (spectrum && spectrum.concept) {
-        setSelectedConcepts(prevConcepts => prevConcepts.filter(c => c !== spectrum.concept))
+        console.log('[vibe-filter] Removing concept:', spectrum.concept)
+        setSelectedConcepts(prevConcepts => {
+          const updated = prevConcepts.filter(c => c !== spectrum.concept)
+          console.log('[vibe-filter] Updated selectedConcepts after removal:', updated)
+          return updated
+        })
         setCustomConcepts(prevCustom => {
           const next = new Set(prevCustom)
           next.delete(spectrum.concept)
           return next
+        })
+        setSliderPositions(prev => {
+          const newMap = new Map(prev)
+          newMap.delete(spectrum.concept)
+          return newMap
         })
       }
       return filtered
@@ -1778,7 +1761,6 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             onClick={() => {
               setShowAddConceptModal(true)
               setAddConceptInputValue('')
-              setAddOppositeInputValue('')
             }}
             className="w-full mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors text-sm font-medium"
           >
@@ -1798,7 +1780,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
               )
               
               return (
-                <div key={spectrum.id} className="space-y-2">
+                <div key={spectrum.id} className="relative space-y-2 bg-[#f5f3ed] rounded-lg p-4 pb-6">
                   {/* Spectrum input field with concept suggestions - only show if isInputVisible */}
                   {spectrum.isInputVisible && (
                     <div className="relative">
@@ -1855,11 +1837,19 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                       {/* Skeleton loader while slider is loading */}
                       {isSliderLoading ? (
                         <div className="space-y-2">
-                          {/* Skeleton for labels */}
-                          <div className="flex items-center justify-between px-1 mb-4">
-                            <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
-                            <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
-                          </div>
+                          {/* Skeleton for labels - match the actual filter layout */}
+                          {customConcepts.has(spectrum.concept) ? (
+                            // Single-pole skeleton (centered label)
+                            <div className="flex items-center justify-center px-1 mb-6 pt-2">
+                              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                            </div>
+                          ) : (
+                            // Two-pole skeleton (labels on opposite ends)
+                            <div className="flex items-center justify-between px-1 mb-6 pt-2">
+                              <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                              <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                            </div>
+                          )}
                           {/* Skeleton for slider */}
                           <div className="flex items-center justify-center">
                             <div className="w-full h-1 bg-gray-200 rounded-full relative">
@@ -1873,9 +1863,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                       {customConcepts.has(spectrum.concept) ? (
                         // Single-pole slider for custom queries
                         <>
-                          {/* Label on top, right side only */}
-                          <div className="flex items-center justify-end px-1 mb-4">
-                            <span className="text-xs text-gray-700 truncate">{spectrum.concept}</span>
+                          {/* Label on top, centered */}
+                          <div className="flex items-center justify-center px-1 mb-6 pt-2">
+                            <span className="text-sm font-medium text-gray-700 truncate">{capitalizeFirst(spectrum.concept)}</span>
                           </div>
                           {/* Single-pole slider (only right half) */}
                           <div className="flex items-center justify-center">
@@ -2082,9 +2072,9 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                         // Two-pole slider for concepts with opposites
                         <>
                           {/* Labels on top, opposite ends */}
-                          <div className="flex items-center justify-between px-1 mb-4">
-                            <span className="text-xs text-gray-700 truncate flex-1 text-left pr-2">{firstOpposite}</span>
-                            <span className="text-xs text-gray-700 truncate flex-1 text-right pl-2">{spectrum.concept}</span>
+                          <div className="flex items-center justify-between px-1 mb-6 pt-2">
+                            <span className="text-sm font-medium text-gray-700 truncate flex-1 text-left pr-2">{capitalizeFirst(firstOpposite)}</span>
+                            <span className="text-sm font-medium text-gray-700 truncate flex-1 text-right pl-2">{capitalizeFirst(spectrum.concept)}</span>
                           </div>
                           {/* Slider */}
                           <div className="flex items-center justify-center">
@@ -2293,9 +2283,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   {spectrum.concept && (
                     <button
                       onClick={() => removeSpectrum(spectrum.id)}
-                      className="text-xs text-gray-500 hover:text-gray-700"
+                      className="absolute top-2 right-2 p-1 hover:bg-[#ede9e0] rounded transition-colors"
+                      aria-label="Remove filter"
                     >
-                      Remove
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.2929 5.29289C17.6834 4.90237 18.3164 4.90237 18.707 5.29289C19.0975 5.68342 19.0975 6.31643 18.707 6.70696L13.414 11.9999L18.707 17.2929C19.0975 17.6834 19.0975 18.3164 18.707 18.707C18.3164 19.0975 17.6834 19.0975 17.2929 18.707L11.9999 13.414L6.70696 18.707C6.31643 19.0975 5.68342 19.0975 5.29289 18.707C4.90237 18.3164 4.90237 17.6834 5.29289 17.2929L10.5859 11.9999L5.29289 6.70696C4.90237 6.31643 4.90237 5.68342 5.29289 5.29289C5.68342 4.90237 6.31643 4.90237 6.70696 5.29289L11.9999 10.5859L17.2929 5.29289Z" fill="currentColor" className="text-gray-600"/>
+                      </svg>
                     </button>
                   )}
                 </div>
@@ -2311,57 +2304,17 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
       }`}>
         {/* Scrollable Gallery Content */}
         <div className="flex-1 overflow-y-auto min-w-0">
-          {/* Header - Scrolls with content */}
-          <div>
+          {/* Header with search bar - Sticky at top */}
+          <div className="sticky top-0 bg-[#fbf9f4] z-50">
             <Header 
               onSubmitClick={() => setShowSubmissionForm(true)}
+              searchQuery={searchQuery}
+              onSearchInputChange={handleSearchInputChange}
+              onSearchKeyDown={handleSearchKeyDown}
+              onSearchSubmit={handleSearchSubmit}
+              onClearSearch={clearSearchQuery}
+              searchInputRef={inputRef}
             />
-          </div>
-          
-          {/* Searchbar - Sticky below header */}
-          <div className="sticky top-0 bg-[#fbf9f4] z-50">
-            <div className="max-w-full mx-auto px-4 md:px-[52px] pt-4 pb-6">
-            {/* Search field container - 52px tall */}
-            <div className="border border-gray-300 rounded-md relative z-20 flex items-center" style={{ height: '52px' }}>
-              <div className="flex-1 min-w-0 relative h-full">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchInputChange}
-                  onKeyDown={handleSearchKeyDown}
-                  placeholder="Search for anything..."
-                  className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
-                  id="search-input"
-                />
-              </div>
-              {/* Icon-only button - 32px tall - shows X when query exists, search icon otherwise */}
-              {searchQuery.trim() ? (
-                <button
-                  onClick={clearSearchQuery}
-                  className="flex items-center justify-center mx-2 transition-colors hover:opacity-70"
-                  style={{ width: '32px', height: '32px' }}
-                  aria-label="Clear search"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              ) : (
-                <button
-                  onClick={handleSearchSubmit}
-                  disabled={!searchQuery.trim()}
-                  className="flex items-center justify-center mx-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                  style={{ width: '32px', height: '32px' }}
-                  aria-label="Search"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11 2C15.9706 2 20 6.02944 20 11C20 13.125 19.2619 15.0766 18.0303 16.6162L21.7051 20.291C22.0955 20.6815 22.0956 21.3146 21.7051 21.7051C21.3146 22.0956 20.6815 22.0955 20.291 21.7051L16.6162 18.0303C15.0766 19.2619 13.125 20 11 20C6.02944 20 2 15.9706 2 11C2 6.02944 6.02944 2 11 2ZM11 4C7.13401 4 4 7.13401 4 11C4 14.866 7.13401 18 11 18C12.8873 18 14.5985 17.2514 15.8574 16.0371C15.8831 16.0039 15.911 15.9719 15.9414 15.9414C15.9719 15.911 16.0039 15.8831 16.0371 15.8574C17.2514 14.5985 18 12.8873 18 11C18 7.13401 14.866 4 11 4Z" fill="black"/>
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
         </div>
         
         {/* Main Content and Panel Container */}
@@ -2372,6 +2325,10 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
             {/* Gallery Grid */}
             <main className="bg-transparent pb-8">
             <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
+              {/* Tabs - Above gallery images */}
+              <div className="mb-4 pb-3">
+                <Navigation activeCategory={category} onCategoryChange={onCategoryChange || (() => {})} />
+              </div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(9)].map((_, i) => (
@@ -2407,7 +2364,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                          className="block"
                          onClick={() => handleSiteClick(site)}
                        >
-                         <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                         <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
                           {site.imageUrl ? (
                             <img
                               src={site.imageUrl}
@@ -2415,24 +2372,12 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                               className="w-full h-full object-cover object-top"
                               loading="lazy"
                               onError={(e) => {
-                                // Log all image load errors for debugging
-                                console.error('Image failed to load:', {
-                                  url: site.imageUrl,
-                                  siteId: site.id,
-                                  siteTitle: site.title,
-                                  error: e
-                                });
+                                // Silently hide failed images
                                 e.currentTarget.style.display = 'none';
-                              }}
-                              onLoad={() => {
-                                // Log successful loads for debugging (can remove later)
-                                if (process.env.NODE_ENV === 'development') {
-                                  console.log('Image loaded successfully:', site.imageUrl);
-                                }
                               }}
                             />
                           ) : (
-                            <div className="h-full bg-gray-200 flex items-center justify-center">
+                            <div className="h-full bg-gray-200 flex items-center justify-center absolute inset-0">
                               <span className="text-gray-400">No image</span>
                             </div>
                           )}
@@ -2543,14 +2488,11 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Add vibes</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Vibe filter</h2>
               <button
                 onClick={() => {
                   setShowAddConceptModal(false)
                   setAddConceptInputValue('')
-                  setAddOppositeInputValue('')
-                  setAddConceptSuggestions([])
-                  setAddConceptSelectedIndex(-1)
                 }}
                 className="text-gray-400 hover:text-gray-600"
                 aria-label="Close modal"
@@ -2573,52 +2515,14 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   value={addConceptInputValue}
                   onChange={(e) => {
                     setAddConceptInputValue(e.target.value)
-                    // Don't clear opposite when concept changes - let user edit it
                   }}
                   onKeyDown={(e) => {
-                    if (addConceptSuggestions.length > 0) {
                       if (e.key === 'Enter') {
                         e.preventDefault()
-                        if (addConceptSelectedIndex >= 0 && addConceptSelectedIndex < addConceptSuggestions.length) {
-                          const suggestion = addConceptSuggestions[addConceptSelectedIndex]
-                          const conceptLabel = suggestion.label
-                          setAddConceptInputValue(conceptLabel)
-                          setAddConceptSuggestions([])
-                          setAddConceptSelectedIndex(-1)
-                          // Auto-fill opposite and focus second input
-                          fetchOppositeForConcept(conceptLabel)
-                          // Force clear suggestions
-                          setTimeout(() => setAddConceptSuggestions([]), 0)
-                        } else if (addConceptInputValue.trim()) {
-                          // Check if typed value matches a suggestion
-                          const trimmed = addConceptInputValue.trim()
-                          const exactMatch = addConceptSuggestions.find((s: ConceptSuggestion) => 
-                            s.label.toLowerCase() === trimmed.toLowerCase() || 
-                            s.id.toLowerCase() === trimmed.toLowerCase()
-                          )
-                          if (exactMatch) {
-                            const conceptLabel = exactMatch.label
-                            setAddConceptInputValue(conceptLabel)
-                            setAddConceptSuggestions([])
-                            setAddConceptSelectedIndex(-1)
-                            fetchOppositeForConcept(conceptLabel)
-                            setTimeout(() => setAddConceptSuggestions([]), 0)
-                          }
-                        }
-                      } else if (e.key === 'ArrowDown') {
-                        e.preventDefault()
-                        setAddConceptSelectedIndex(prev => 
-                          prev < addConceptSuggestions.length - 1 ? prev + 1 : prev
-                        )
-                      } else if (e.key === 'ArrowUp') {
-                        e.preventDefault()
-                        setAddConceptSelectedIndex(prev => prev > 0 ? prev - 1 : -1)
-                      } else if (e.key === 'Escape') {
-                        setAddConceptSuggestions([])
-                        setAddConceptSelectedIndex(-1)
-                      }
+                      handleCreateSpectrum()
                     }
                   }}
+<<<<<<< HEAD
                   onFocus={() => {
                     setIsConceptInputFocused(true)
                     // Show suggestions if there's input
@@ -2680,7 +2584,7 @@ export default function Gallery({ category }: GalleryProps = {} as GalleryProps)
                   type="text"
                   value={addOppositeInputValue}
                   onChange={(e) => setAddOppositeInputValue(e.target.value)}
-                  placeholder="e.g., Hate, Maximalistic, Analog..."
+                  placeholder="e.g., Romantic, Minimalistic, Techy..."
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
                 />
               </div>

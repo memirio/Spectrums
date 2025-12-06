@@ -1,36 +1,36 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+interface NavigationProps {
+  activeCategory: string | undefined
+  onCategoryChange: (category: string | undefined) => void
+}
 
-export default function Navigation() {
-  const pathname = usePathname()
-
+export default function Navigation({ activeCategory, onCategoryChange }: NavigationProps) {
 const navItems = [
-  { href: '/all', label: 'All' },
-  { href: '/webb', label: 'Webb' },
-  { href: '/fonts', label: 'Fonts' },
-  { href: '/apps', label: 'Apps' },
-  { href: '/packaging', label: 'Packaging' },
-  { href: '/brand', label: 'Brand' },
+    { category: undefined, label: 'All' },
+    { category: 'website', label: 'Webb' },
+    { category: 'fonts', label: 'Fonts' },
+    { category: 'apps', label: 'Apps' },
+    { category: 'packaging', label: 'Packaging' },
+    { category: 'brand', label: 'Brand' },
 ]
 
   return (
-    <nav className="flex items-center justify-center gap-3 md:gap-6 flex-wrap">
+    <nav className="flex items-center justify-start gap-3 md:gap-6 flex-wrap">
       {navItems.map((item) => {
-        const isActive = pathname === item.href || (item.href === '/all' && pathname === '/')
+        const isActive = activeCategory === item.category
         return (
-          <Link
-            key={item.href}
-            href={item.href}
+          <button
+            key={item.category || 'all'}
+            onClick={() => onCategoryChange(item.category)}
             className={`text-xs md:text-sm font-medium transition-colors px-2 py-1 ${
               isActive
-                ? 'text-gray-900'
+                ? 'text-gray-900 border-b border-gray-900'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             {item.label}
-          </Link>
+          </button>
         )
       })}
     </nav>
