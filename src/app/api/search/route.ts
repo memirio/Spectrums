@@ -54,12 +54,41 @@ if (!globalForVibeExtensions.vibeEmbeddingsCache) {
 
 // Generate vibe extensions for a single category (cached to ensure consistent results)
 async function generateVibeExtensionsForCategory(vibe: string, category: string): Promise<string[]> {
-  // Check cache first
-  const cacheKey = `${vibe.toLowerCase()}:${category}`
+  const vibeLower = vibe.toLowerCase()
+  const cacheKey = `${vibeLower}:${category}`
+  
+  // Check in-memory cache first (fastest)
   const cached = globalForVibeExtensions.vibeExtensionsCache.get(cacheKey)
   if (cached) {
+    console.log(`[vibe-cache] In-memory cache HIT for ${cacheKey}`)
     return cached
   }
+  
+  // Check database cache (persists across serverless invocations)
+  try {
+    const dbCache = await prisma.queryExpansion.findMany({
+      where: {
+        term: vibeLower,
+        category: category,
+        source: 'groq',
+        model: 'llama-3.3-70b-versatile'
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 1
+    })
+    
+    if (dbCache.length > 0 && dbCache[0].expansion) {
+      const extensions = [dbCache[0].expansion]
+      // Populate in-memory cache for faster access
+      globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, extensions)
+      console.log(`[vibe-cache] Database cache HIT for ${cacheKey}`)
+      return extensions
+    }
+  } catch (error: any) {
+    console.warn(`[vibe-cache] Database cache check failed for ${cacheKey}:`, error.message)
+  }
+  
+  console.log(`[vibe-cache] Cache MISS for ${cacheKey} (cache size: ${globalForVibeExtensions.vibeExtensionsCache.size}), generating...`)
   
   const categoryContext = CATEGORY_CONTEXTS[category] || 'design in this category'
   const client = getGroqClientForCategory(category)
@@ -123,7 +152,37 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
     
     // Cache the result for future use (ensures consistent rankings when switching tabs)
     if (result.length > 0) {
+      // Store in in-memory cache (fast)
       globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, result)
+      
+      // Store in database cache (persists across serverless invocations)
+      try {
+        const extension = result[0]
+        await prisma.queryExpansion.upsert({
+          where: {
+            term_expansion_source_category: {
+              term: vibeLower,
+              expansion: extension,
+              source: 'groq',
+              category: category
+            }
+          },
+          update: {
+            lastUsedAt: new Date(),
+            model: 'llama-3.3-70b-versatile'
+          },
+          create: {
+            term: vibeLower,
+            expansion: extension,
+            source: 'groq',
+            category: category,
+            model: 'llama-3.3-70b-versatile'
+          }
+        })
+        console.log(`[vibe-cache] Stored in database cache: ${cacheKey}`)
+      } catch (error: any) {
+        console.warn(`[vibe-cache] Failed to store in database cache for ${cacheKey}:`, error.message)
+      }
     }
     
     return result
@@ -295,8 +354,10 @@ export async function GET(request: NextRequest) {
               const embeddingCacheKey = `${vibeWord.toLowerCase()}:${cat}`
               const cachedEmbedding = globalForVibeExtensions.vibeEmbeddingsCache.get(embeddingCacheKey)
               if (cachedEmbedding) {
+                console.log(`[vibe-cache] Embedding cache HIT for ${embeddingCacheKey}`)
                 return { category: cat, embedding: cachedEmbedding }
               }
+              console.log(`[vibe-cache] Embedding cache MISS for ${embeddingCacheKey} (cache size: ${globalForVibeExtensions.vibeEmbeddingsCache.size})`)
               
               const extensions = await generateVibeExtensionsForCategory(vibeWord, cat)
               if (extensions.length > 0) {
