@@ -2522,68 +2522,6 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
                       handleCreateSpectrum()
                     }
                   }}
-<<<<<<< HEAD
-                  onFocus={() => {
-                    setIsConceptInputFocused(true)
-                    // Show suggestions if there's input
-                    if (addConceptInputValue.trim().length > 0) {
-                      // Suggestions are already fetched via useEffect
-                    }
-                  }}
-                  onBlur={() => {
-                    // Delay to allow click events to fire first
-                    setTimeout(() => {
-                      setIsConceptInputFocused(false)
-                      setAddConceptSuggestions([])
-                    }, 200)
-                  }}
-                  placeholder="e.g., Love, Minimalistic, Tech..."
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
-                />
-                
-                {/* Concept suggestions dropdown - only show if input has focus and suggestions exist */}
-                {addConceptInputValue.trim().length > 0 && addConceptSuggestions.length > 0 && isConceptInputFocused && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-                    {addConceptSuggestions.map((suggestion, index) => (
-                      <button
-                        key={`modal-concept-${suggestion.id}-${index}`}
-                        onMouseDown={(e) => {
-                          e.preventDefault() // Prevent input blur
-                          e.stopPropagation()
-                          const conceptLabel = suggestion.label
-                          setAddConceptInputValue(conceptLabel)
-                          setAddConceptSuggestions([])
-                          setAddConceptSelectedIndex(-1)
-                          // Auto-fill opposite and focus second input
-                          fetchOppositeForConcept(conceptLabel)
-                          // Force hide suggestions
-                          setTimeout(() => {
-                            setAddConceptSuggestions([])
-                          }, 0)
-                        }}
-                        className={`w-full px-3 py-2 text-left text-sm transition-colors ${
-                          addConceptSelectedIndex === index
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {suggestion.displayText || suggestion.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              {/* Second input - Opposite vibe */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Opposite vibe
-                </label>
-                <input
-                  ref={setAddOppositeInputRef}
-                  type="text"
-                  value={addOppositeInputValue}
-                  onChange={(e) => setAddOppositeInputValue(e.target.value)}
                   placeholder="e.g., Romantic, Minimalistic, Techy..."
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
                 />
