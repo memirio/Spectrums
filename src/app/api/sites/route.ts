@@ -212,23 +212,25 @@ export async function GET(request: NextRequest) {
       let categoryBySite = new Map<string, string>()
       
       if (!category) {
-        // Use LATERAL JOIN to efficiently get first image per site in a single query
+        // Simple query matching working branch approach
         const fetchedSiteIds = sites.map((s: any) => s.id)
         if (fetchedSiteIds.length > 0) {
-          // Use LATERAL JOIN with window function for efficient first-image-per-site lookup
-          // This is much faster than IN clause with ORDER BY
+          // Use simple IN query - let database handle it efficiently with indexes
           const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
           const images = await (prisma.$queryRawUnsafe as any)(
-            `SELECT DISTINCT ON ("siteId") "siteId", "url", "category"
+            `SELECT "siteId", "url", "category"
              FROM "images"
              WHERE "siteId" IN (${placeholders}) AND "siteId" IS NOT NULL
-             ORDER BY "siteId", "id" DESC`,
+             ORDER BY "id" DESC`,
             ...fetchedSiteIds
           )
           
+          // Filter to first image per site in JavaScript (simpler than DISTINCT ON)
           for (const img of images as any[]) {
-            firstImageBySite.set(img.siteId, img.url)
-            categoryBySite.set(img.siteId, (img.category || 'website'))
+            if (!firstImageBySite.has(img.siteId)) {
+              firstImageBySite.set(img.siteId, img.url)
+              categoryBySite.set(img.siteId, (img.category || 'website'))
+            }
           }
         }
       }
