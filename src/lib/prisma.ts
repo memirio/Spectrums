@@ -30,19 +30,30 @@ function getPrismaClient(): PrismaClient {
       // Transaction Pooler handles the actual pooling at Supabase's end
       // Each Vercel function invocation gets its own pool, which is fine because
       // Transaction Pooler can handle many concurrent connections
+      
+      // Vercel-specific: Connection establishment takes longer due to:
+      // - Cold starts (function initialization)
+      // - Network latency between Vercel and Supabase
+      // - Connection pool initialization
+      // Increase timeout for Vercel environments (detected by VERCEL env var)
+      // Increased to 15s to handle cold starts and network latency more reliably
+      const isVercel = !!process.env.VERCEL
+      const connectionTimeout = isVercel ? 15000 : 5000 // 15s on Vercel, 5s locally
+      
       if (!globalForPrisma.pool) {
         globalForPrisma.pool = new Pool({
           connectionString: dbUrl,
           max: 1, // One connection per serverless function invocation
           min: 0, // Don't keep idle connections
           idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
-          connectionTimeoutMillis: 5000, // Allow 5s for connection (increased from 3s for transient network delays)
+          connectionTimeoutMillis: connectionTimeout, // Longer timeout on Vercel for cold starts + network latency
           // For Transaction Pooler, connections are pooled at Supabase's end
           // We just need to ensure we don't leak connections
           // Add statement_timeout to prevent long-running queries from blocking
-          statement_timeout: 25000, // 25s max query time (Vercel timeout is 30s)
+          // Reduced to 20s to leave buffer for Vercel's 30s timeout
+          statement_timeout: 20000, // 20s max query time (Vercel timeout is 30s)
         })
-        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'})`)
+        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'}, timeout: ${connectionTimeout}ms, Vercel: ${isVercel})`)
         
         // Handle pool errors gracefully
         globalForPrisma.pool.on('error', (err) => {

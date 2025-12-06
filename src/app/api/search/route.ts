@@ -12,14 +12,19 @@ function getGroqClientForCategory(category: string): OpenAI {
   
   if (category === 'packaging') {
     apiKey = process.env.GROQ_API_KEY_PACKAGING
-  } else if (category === 'brand') {
+  } else if (category === 'brand' || category === 'branding') {
     apiKey = process.env.GROQ_API_KEY_BRAND
   } else {
     apiKey = process.env.GROQ_API_KEY
   }
   
+  // Fallback to default key if category-specific key is not available
   if (!apiKey) {
-    throw new Error(`API key is required for category "${category}"`)
+    apiKey = process.env.GROQ_API_KEY
+  }
+  
+  if (!apiKey) {
+    throw new Error(`API key is required for category "${category}". Please set GROQ_API_KEY or category-specific keys (GROQ_API_KEY_PACKAGING, GROQ_API_KEY_BRAND) in your environment variables.`)
   }
   
   return new OpenAI({
