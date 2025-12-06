@@ -18,7 +18,12 @@ Spectrums is a web application that lets users discover great website designs by
 - **Concept Spectrum**: Interactive slider system to explore the spectrum between concepts and their opposites, with 10-tier ranking for fine-grained control
 - **Submission form**: Easy site submission with automatic screenshot generation
 - **Hub detection**: Automatically detects and penalizes "hub" images that appear too frequently in search results
-- **Performance optimized**: Parallel database queries, result caching, and optimized search algorithms
+- **Performance optimized**: 
+  - Database-level query filtering (no in-memory processing)
+  - Optimized LATERAL JOINs for efficient first-image-per-site lookups
+  - Composite indexes on `siteId` and `category` for fast filtering
+  - Connection pooling and reuse for reduced latency
+  - Result caching and optimized search algorithms
 
 ## Tech Stack
 
@@ -134,13 +139,38 @@ For production deployments, we use Supabase PostgreSQL with pgvector for fast ve
    DATABASE_URL="postgresql://postgres:your-password@aws-REGION.pooler.supabase.com:6543/postgres"
    ```
 5. **Run migrations**:
+   
+   **For new databases:**
    ```bash
-   npx prisma migrate deploy
+   npm run migrate:deploy
    ```
+   
+   **For existing databases** (if you get "database schema is not empty" error):
+   ```bash
+   # First, baseline existing migrations
+   npx tsx scripts/baseline-migrations.ts
+   
+   # Then apply any new migrations
+   npm run migrate:deploy
+   ```
+   
+   **Check migration status:**
+   ```bash
+   npm run migrate:status
+   ```
+
 6. **Migrate embeddings to pgvector** (one-time):
    ```bash
    npx tsx scripts/migrate_embeddings_to_pgvector.ts
    ```
+
+**Available migration commands:**
+- `npm run migrate:deploy` - Apply pending migrations (production-safe)
+- `npm run migrate:status` - Check which migrations are applied
+- `npm run migrate:apply` - Run migration script with error handling
+- `npx tsx scripts/baseline-migrations.ts` - Baseline migrations for existing databases
+
+**Note**: Migrations are handled manually and are not run automatically during builds. This ensures better control and prevents build failures.
 
 See [docs/SUPABASE_QUICKSTART.md](docs/SUPABASE_QUICKSTART.md) and [docs/PGVECTOR_SETUP.md](docs/PGVECTOR_SETUP.md) for detailed instructions.
 
@@ -864,6 +894,10 @@ See [Production Pipeline (Add Photo Pipeline)](#5-production-pipeline-add-photo-
 
 **Performance Optimizations:**
 - **pgvector ANN search**: 10-100x faster than linear scan
+- **Database-level filtering**: Queries filter at database level using SQL JOINs and GROUP BY, avoiding in-memory processing
+- **LATERAL JOINs**: Efficient first-image-per-site lookups using PostgreSQL LATERAL JOINs
+- **Composite indexes**: Indexes on `siteId` and `(siteId, category)` for fast filtering
+- **Connection pooling**: Reuses database connections to reduce latency (especially important on Vercel)
 - **Lazy loading**: Frontend loads 50 sites initially, then 50 more as user scrolls
 - **Parallel queries**: Database queries run in parallel instead of sequentially
 - **Result caching**: Search results cached for 5 minutes (via `search-cache.ts`)
