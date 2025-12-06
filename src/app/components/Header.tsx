@@ -10,7 +10,7 @@ interface HeaderProps {
   onSearchKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
   onSearchSubmit?: () => void
   onClearSearch?: () => void
-  searchInputRef?: RefObject<HTMLInputElement>
+  searchInputRef?: RefObject<HTMLInputElement | null>
 }
 
 export default function Header({ 
