@@ -2506,23 +2506,27 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
 
       {/* Add vibes Modal */}
       {showAddConceptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}>
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Vibe filter</h2>
-              <button
-                onClick={() => {
-                  setShowAddConceptModal(false)
-                  setAddConceptInputValue('')
-                }}
-                className="text-gray-400 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
-                aria-label="Close modal"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="relative mb-6">
+                <button
+                  onClick={() => {
+                    setShowAddConceptModal(false)
+                    setAddConceptInputValue('')
+                  }}
+                  className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Vibe filter</h2>
+              </div>
             
             <div className="space-y-4">
               {/* First input - Vibe */}
@@ -2556,6 +2560,7 @@ export default function Gallery({ category, onCategoryChange }: GalleryProps = {
               >
                 Create filter
               </button>
+            </div>
             </div>
           </div>
         </div>
