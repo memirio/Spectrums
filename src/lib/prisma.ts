@@ -45,13 +45,16 @@ function getPrismaClient(): PrismaClient {
           connectionString: dbUrl,
           max: 1, // One connection per serverless function invocation
           min: 0, // Don't keep idle connections
-          idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
+          idleTimeoutMillis: 30000, // Keep connections longer (30s) to reduce reconnection overhead
           connectionTimeoutMillis: connectionTimeout, // Longer timeout on Vercel for cold starts + network latency
           // For Transaction Pooler, connections are pooled at Supabase's end
           // We just need to ensure we don't leak connections
           // Add statement_timeout to prevent long-running queries from blocking
           // Reduced to 20s to leave buffer for Vercel's 30s timeout
           statement_timeout: 20000, // 20s max query time (Vercel timeout is 30s)
+          // Keep connections alive to reduce reconnection overhead
+          keepAlive: true,
+          keepAliveInitialDelayMillis: 10000,
         })
         console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'}, timeout: ${connectionTimeout}ms, Vercel: ${isVercel})`)
         

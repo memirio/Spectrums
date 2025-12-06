@@ -253,96 +253,92 @@ export async function GET(request: NextRequest) {
       .map((c: string) => c.trim().toLowerCase())
       .filter(Boolean)
 
-    // Fetch all tags for intelligent matching
-    const allTags = await prisma.tag.findMany()
-    const tagNames = allTags.map((t: any) => t.name)
-
-    // Resolve each input concept to canonical tag names using intelligent matching
-    const resolvedRequired = new Set<string>()
-    
-    for (const concept of conceptList) {
-      // Try to find the best match using our intelligent matching
-      const bestMatch = await findBestMatch(concept, tagNames)
-      
-      if (bestMatch) {
-        resolvedRequired.add(bestMatch.toLowerCase())
-      } else {
-        // If no match found, use the original concept (fallback)
-        resolvedRequired.add(concept)
-      }
-    }
-
-    // Fetch sites (no tags - we use Concepts/ImageTags instead)
-    const sites = await prisma.site.findMany({
-      orderBy: [
-        { createdAt: 'desc' },
-        { id: 'asc' }
-      ],
+    // OPTIMIZATION: Use database queries instead of loading everything into memory
+    // Find concept IDs that match the search terms (fuzzy match on label)
+    const conceptMatches = await prisma.concept.findMany({
+      where: {
+        OR: conceptList.map(term => ({
+          OR: [
+            { label: { contains: term, mode: 'insensitive' } },
+            { id: { contains: term, mode: 'insensitive' } }
+          ]
+        }))
+      },
+      select: { id: true, label: true }
     })
-
-    // Fetch image tags (concepts) for all sites
-    const siteIds = sites.map((s: any) => s.id)
-    const imageTags = siteIds.length > 0 
-      ? await prisma.imageTag.findMany({
-          where: { 
-            image: { 
-              siteId: { in: siteIds } 
-            } 
-          },
-          include: {
-            concept: true,
-            image: {
-              select: { siteId: true }
-            }
-          }
-        })
-      : []
     
-    // Build a map of siteId -> concept names
-    const siteConcepts = new Map<string, Set<string>>()
-    for (const it of imageTags) {
-      const siteId = it.image.siteId
-      if (!siteId) continue // Skip if siteId is null
-      if (!siteConcepts.has(siteId)) {
-        siteConcepts.set(siteId, new Set())
+    const matchedConceptIds = new Set(conceptMatches.map(c => c.id))
+    const matchedConceptLabels = new Set(conceptMatches.map(c => c.label.toLowerCase()))
+    
+    // Also check for exact matches in concept list
+    for (const term of conceptList) {
+      const exactMatch = await prisma.concept.findFirst({
+        where: {
+          OR: [
+            { label: { equals: term, mode: 'insensitive' } },
+            { id: { equals: term, mode: 'insensitive' } }
+          ]
+        },
+        select: { id: true }
+      })
+      if (exactMatch) {
+        matchedConceptIds.add(exactMatch.id)
       }
-      siteConcepts.get(siteId)!.add(normalize(it.concept.label))
     }
 
-    // Build a helper to check if a site satisfies a concept via image tags (concepts) or textual content
-    const siteMatchesConcept = (site: any, concept: string): boolean => {
-      // Check image tags (concepts)
-      const siteConceptNames = Array.from(siteConcepts.get(site.id) || [])
-      if (siteConceptNames.some((t: string) => normalize(t) === concept)) return true
-
-      // Also check title/description heuristically
-      const haystack = normalize(`${site.title} ${site.description ?? ''}`)
-      if (haystack.includes(concept)) return true
-      // Fuzzy token check against words in haystack
-      const words = haystack.split(/[^a-z0-9]+/).filter(Boolean)
-      const conceptStem = stem(concept)
-      for (const w of words) {
-        if (stem(w) === conceptStem) return true
-        if (leven(concept, w) <= 2) return true
-      }
-      return false
-    }
-
-    const filteredSites = sites.filter((site: any) =>
-      Array.from(resolvedRequired).every((req: any) => siteMatchesConcept(site, req))
-    )
-
-    // Pagination for concepts branch
+    // OPTIMIZATION: Use database query to find sites that have images with matching concepts
+    // This filters at the database level instead of loading everything
     const limit = parseInt(searchParams.get('limit') || '60')
     const offset = parseInt(searchParams.get('offset') || '0')
-    const totalCount = filteredSites.length
-    const paginatedSites = filteredSites.slice(offset, offset + limit)
-    const hasMore = offset + limit < totalCount
+    
+    if (matchedConceptIds.size === 0) {
+      // No matching concepts found, return empty result
+      return NextResponse.json({
+        sites: [],
+        hasMore: false,
+        total: 0,
+        offset,
+        limit
+      })
+    }
+
+    // Find distinct sites that have images tagged with ALL the matched concepts
+    // Use a subquery to ensure sites have images with ALL concepts (AND logic)
+    const conceptIdsArray = Array.from(matchedConceptIds)
+    const placeholders = conceptIdsArray.map((_, i) => `$${i + 1}`).join(',')
+    const requiredCount = conceptIdsArray.length
+    const limitParam = limit + 1 // Fetch one extra to check hasMore
+    
+    // Query: Find sites where ALL concepts are present in image tags
+    // This uses a GROUP BY with HAVING COUNT(DISTINCT conceptId) = number of concepts
+    const sitesWithAllConcepts = await (prisma.$queryRawUnsafe as any)(
+      `SELECT DISTINCT s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
+       FROM "sites" s
+       INNER JOIN "images" i ON s."id" = i."siteId"
+       INNER JOIN "image_tags" it ON i."id" = it."imageId"
+       WHERE it."conceptId" IN (${placeholders})
+       GROUP BY s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
+       HAVING COUNT(DISTINCT it."conceptId") = $${conceptIdsArray.length + 1}
+       ORDER BY s."createdAt" DESC, s."id" ASC
+       LIMIT $${conceptIdsArray.length + 2} OFFSET $${conceptIdsArray.length + 3}`,
+      ...conceptIdsArray,
+      requiredCount,
+      limitParam,
+      offset
+    )
+
+    const hasMore = sitesWithAllConcepts.length > limit
+    const paginatedSites = hasMore ? sitesWithAllConcepts.slice(0, limit) : sitesWithAllConcepts
+    const totalCount = paginatedSites.length // Approximate, avoid expensive COUNT
 
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
     const fIds = paginatedSites.map((s: any) => s.id)
     const fImages = fIds.length
-      ? await (prisma.image as any).findMany({ where: { siteId: { in: fIds } }, orderBy: { id: 'desc' } })
+      ? await (prisma.image as any).findMany({ 
+          where: { siteId: { in: fIds } }, 
+          orderBy: { id: 'desc' },
+          select: { siteId: true, url: true, category: true }
+        })
       : []
     const firstImageBySite = new Map<string, string>()
     const categoryBySite = new Map<string, string>()
