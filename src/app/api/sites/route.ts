@@ -212,8 +212,11 @@ export async function GET(request: NextRequest) {
         perf.start('api.sites.GET.queryWithoutCategory', { limit, offset })
         
         // No category filter - use standard Prisma query
+        perf.start('api.sites.GET.queryWithoutCategory.connection')
+        const connectionStart = performance.now()
         sites = await perf.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
-          return await prisma.site.findMany({
+          const queryStart = performance.now()
+          const result = await prisma.site.findMany({
             orderBy: [
               { createdAt: 'desc' },
               { id: 'asc' }
@@ -221,7 +224,16 @@ export async function GET(request: NextRequest) {
             take: limit + 1, // Fetch one extra to check if there are more
             skip: offset,
           })
+          const queryEnd = performance.now()
+          perf.end('api.sites.GET.queryWithoutCategory.findMany', { 
+            limit, 
+            offset,
+            queryExecutionTime: queryEnd - queryStart,
+            connectionTime: queryStart - connectionStart,
+          })
+          return result
         }, { limit, offset })
+        perf.end('api.sites.GET.queryWithoutCategory.connection')
         
         perf.end('api.sites.GET.queryWithoutCategory', { sitesCount: sites.length })
         
