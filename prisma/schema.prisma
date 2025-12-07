@@ -96,6 +96,9 @@ model Image {
 
   // Relations for interaction tracking
   interactions UserInteraction[]
+  
+  // Relations for saved images
+  savedBy SavedImage[]
 
   @@unique([siteId, url], name: "siteId_url")
   @@index([category]) // Index for fast filtering by category
@@ -183,4 +186,35 @@ model UserInteraction {
   @@index([timestamp])
   @@index([query, clicked])
   @@map("user_interactions")
+}
+
+// User authentication and accounts
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String?  @unique
+  password  String // Hashed password
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User's saved images
+  savedImages SavedImage[]
+
+  @@map("users")
+}
+
+// User's saved images (bookmarks/collections)
+model SavedImage {
+  id        String   @id @default(cuid())
+  userId    String
+  imageId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image Image @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, imageId], name: "userId_imageId") // Prevent duplicate saves
+  @@index([userId])
+  @@index([imageId])
+  @@map("saved_images")
 }

@@ -1,12 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import CreateAccountMessageModal from '../components/CreateAccountMessageModal'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showCreateAccountMessage, setShowCreateAccountMessage] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/app/all'
 
   return (
     <div className="min-h-screen bg-[#fbf9f4]">
@@ -44,13 +51,44 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
           <div className="flex flex-col gap-3 mt-6">
             <button
               type="button"
-              onClick={() => {}}
-              className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors cursor-pointer"
+              onClick={async () => {
+                setIsLoading(true)
+                setError('')
+                
+                try {
+                  const result = await signIn('credentials', {
+                    username,
+                    password,
+                    redirect: false,
+                  })
+
+                  if (result?.error) {
+                    setError('Invalid username or password')
+                  } else if (result?.ok) {
+                    // Redirect to callback URL or app home
+                    router.push(callbackUrl)
+                    router.refresh()
+                  }
+                } catch (err: any) {
+                  setError('An error occurred. Please try again.')
+                  console.error('[login] Error:', err)
+                } finally {
+                  setIsLoading(false)
+                }
+              }}
+              disabled={isLoading || !username || !password}
+              className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login
+              {isLoading ? 'Logging in...' : 'Login'}
             </button>
             <button
               type="button"
