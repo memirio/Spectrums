@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getPerformanceLogger } from '@/lib/performance-logger'
 import { embedTextBatch, meanVec, l2norm } from '@/lib/embeddings'
 import { prisma } from '@/lib/prisma'
 import { isAbstractQuery, expandAbstractQuery, expandAndEmbedQuery, getExpansionEmbeddings, poolMax, poolSoftmax } from '@/lib/query-expansion'
@@ -293,8 +294,16 @@ async function getImagePopularityMetrics(
 export const maxDuration = 60 // 60 seconds
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
+  const perf = getPerformanceLogger()
+  perf.clear() // Clear previous metrics for this request
+  
   try {
+    perf.start('api.search.GET', {
+      url: request.url,
+      timestamp: new Date().toISOString(),
+    })
+
+    const { searchParams } = new URL(request.url)
     const rawQuery = searchParams.get('q') || ''
     // Normalize query to lowercase for case-insensitive search
     const q = rawQuery.trim().toLowerCase()
@@ -313,13 +322,19 @@ export async function GET(request: NextRequest) {
       }
     }
     
-    if (!q) return NextResponse.json({ images: [] })
+    if (!q) {
+      perf.end('api.search.GET')
+      return NextResponse.json({ images: [], _performance: perf.getSummary() })
+    }
 
     if (zeroShot) {
+      perf.start('api.search.GET.zeroShot', { q, category })
+      
       // CLIP-FIRST RETRIEVAL: Primary semantic signal
       // 1. Compute query embedding (with expansion for abstract terms)
       // Query is already normalized to lowercase
       
+      perf.start('api.search.GET.zeroShot.analyzeQuery')
       // Count words in query
       const wordCount = q.trim().split(/\s+/).filter((w: string) => w.length > 0).length
       const useExpansion = wordCount <= 2 // Only use expansion for queries with 2 words or less
@@ -327,11 +342,14 @@ export async function GET(request: NextRequest) {
       let isAbstract = false
       if (useExpansion) {
         // Only check if abstract if query is 2 words or less
-        isAbstract = isAbstractQuery(q)
+        isAbstract = perf.measureSync('api.search.GET.zeroShot.analyzeQuery.isAbstract', () => {
+          return isAbstractQuery(q)
+        })
       } else {
         // For queries with more than 2 words, skip expansion
         isAbstract = false
       }
+      perf.end('api.search.GET.zeroShot.analyzeQuery', { wordCount, useExpansion, isAbstract })
       
       const usePooling = searchParams.get('pooling') || 'softmax' // 'max' or 'softmax', default 'softmax'
       const poolingTemp = parseFloat(searchParams.get('pooling_temp') || '0.05')
@@ -349,36 +367,48 @@ export async function GET(request: NextRequest) {
       // For single-word queries, always generate vibe extensions
       // This is simpler and more reliable than abstract detection
       if (wordCount === 1) {
+        perf.start('api.search.GET.zeroShot.generateVibeExtensions', { vibeWord: q.trim() })
         const vibeWord = q.trim()
         try {
           // Generate extensions for all categories in parallel
           const categoriesToGenerate = ['website', 'packaging', 'brand', 'fonts', 'apps']
           const extensionPromises = categoriesToGenerate.map(async (cat) => {
             try {
+              perf.start(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`)
               // Check if embedding is already cached
               const embeddingCacheKey = `${vibeWord.toLowerCase()}:${cat}`
               const cachedEmbedding = globalForVibeExtensions.vibeEmbeddingsCache.get(embeddingCacheKey)
               if (cachedEmbedding) {
                 console.log(`[vibe-cache] Embedding cache HIT for ${embeddingCacheKey}`)
+                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: true })
                 return { category: cat, embedding: cachedEmbedding }
               }
               console.log(`[vibe-cache] Embedding cache MISS for ${embeddingCacheKey} (cache size: ${globalForVibeExtensions.vibeEmbeddingsCache.size})`)
               
-              const extensions = await generateVibeExtensionsForCategory(vibeWord, cat)
+              const extensions = await perf.measure(`api.search.GET.zeroShot.generateVibeExtensions.${cat}.groq`, async () => {
+                return await generateVibeExtensionsForCategory(vibeWord, cat)
+              })
               if (extensions.length > 0) {
                 // Take only the first extension (single string per category)
                 const extension = extensions[0]
-                const [embedding] = await embedTextBatch([extension])
+                const [embedding] = await perf.measure(`api.search.GET.zeroShot.generateVibeExtensions.${cat}.embed`, async () => {
+                  return await embedTextBatch([extension])
+                })
                 // L2-normalize the embedding
-                const normalizedEmbedding = l2norm(embedding)
+                const normalizedEmbedding = perf.measureSync(`api.search.GET.zeroShot.generateVibeExtensions.${cat}.normalize`, () => {
+                  return l2norm(embedding)
+                })
                 
                 // Cache the normalized embedding
                 globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
                 
+                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: false })
                 return { category: cat, embedding: normalizedEmbedding }
               }
+              perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { noExtensions: true })
               return { category: cat, embedding: null }
             } catch (error: any) {
+              perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { error: error.message })
               console.warn(`[search] Failed to generate vibe extensions for category "${cat}":`, error.message)
               return { category: cat, embedding: null }
             }
@@ -391,7 +421,11 @@ export async function GET(request: NextRequest) {
               vibeExtensionsByCategory[result.category] = [result.embedding]
             }
           }
+          perf.end('api.search.GET.zeroShot.generateVibeExtensions', { 
+            categoriesGenerated: Object.keys(vibeExtensionsByCategory).length 
+          })
         } catch (error: any) {
+          perf.end('api.search.GET.zeroShot.generateVibeExtensions', { error: error.message })
           console.warn(`[search] Failed to generate vibe extensions:`, error.message)
         }
       }
@@ -405,11 +439,15 @@ export async function GET(request: NextRequest) {
         // This ensures we retrieve the best candidates for the selected category
         // If category is 'all' or null, use website extension as default
         const categoryForQuery = category && category !== 'all' ? category : 'website'
+        perf.start('api.search.GET.zeroShot.getQueryEmbedding')
         const queryEmbedding = vibeExtensionsByCategory[categoryForQuery]?.[0] || 
                                vibeExtensionsByCategory['website']?.[0] ||
                                Object.values(vibeExtensionsByCategory)[0]?.[0] ||
-                               (await embedTextBatch([q]))[0]
+                               (await perf.measure('api.search.GET.zeroShot.getQueryEmbedding.embedFallback', async () => {
+                                 return await embedTextBatch([q])
+                               }))[0]
         queryVec = queryEmbedding
+        perf.end('api.search.GET.zeroShot.getQueryEmbedding', { hasVibeExtension: !!vibeExtensionsByCategory[categoryForQuery]?.[0] })
       } else if (isExpanded) {
         // Use max/softmax pooling for expansions (OR semantics)
         // When category is 'all', generate expansions for all categories
@@ -434,16 +472,22 @@ export async function GET(request: NextRequest) {
         queryVec = await expandAndEmbedQuery(q)
       } else {
         // Direct embedding for concrete queries or queries with >2 words
+        perf.start('api.search.GET.zeroShot.embedQuery')
         try {
-          const [vec] = await embedTextBatch([q])
+          const [vec] = await perf.measure('api.search.GET.zeroShot.embedQuery.embedTextBatch', async () => {
+            return await embedTextBatch([q])
+          })
           queryVec = vec
+          perf.end('api.search.GET.zeroShot.embedQuery')
         } catch (error: any) {
+          perf.end('api.search.GET.zeroShot.embedQuery', { error: error.message })
           console.error('[search] Failed to embed query:', error.message)
           return NextResponse.json(
             { 
               error: 'Search temporarily unavailable',
               message: 'Embedding service is not available in this environment. Please try again later.',
-              details: process.env.NODE_ENV === 'development' ? error.message : undefined
+              details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+              _performance: perf.getSummary(),
             },
             { status: 503 }
           )
@@ -533,7 +577,11 @@ export async function GET(request: NextRequest) {
           pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC LIMIT $${queryParams.length + 1}`
           queryParams.push(TOP_CANDIDATES)
           
-          const pgvectorResults = await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
+          perf.start('api.search.GET.zeroShot.pgvectorQuery', { topCandidates: TOP_CANDIDATES, category })
+          const pgvectorResults = await perf.measure('api.search.GET.zeroShot.pgvectorQuery.execute', async () => {
+            return await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
+          }, { topCandidates: TOP_CANDIDATES, category })
+          perf.end('api.search.GET.zeroShot.pgvectorQuery', { resultCount: pgvectorResults.length })
           
           // Transform results to match expected format
           // pgvector returns vectors as strings or arrays - normalize to array
@@ -970,21 +1018,30 @@ export async function GET(request: NextRequest) {
       }
       
       // 5. Apply very light boosts/penalties (tag-based) + slider adjustments
+      perf.start('api.search.GET.zeroShot.rerank', { topKCount: topK.length })
+      
       // IMPORTANT: Sort topK deterministically by score (with imageId as tiebreaker) BEFORE processing
       // This ensures that items are processed in a consistent order, preventing non-deterministic calculations
-      const sortedTopK = [...topK].sort((a: any, b: any) => {
-        // Primary sort by score (descending)
-        const scoreA = a.score ?? a.baseScore ?? 0
-        const scoreB = b.score ?? b.baseScore ?? 0
-        if (Math.abs(scoreB - scoreA) > 0.000001) {
-          return scoreB - scoreA
-        }
-        // Secondary sort by imageId for deterministic ordering
-        const idA = a.imageId || a.id || ''
-        const idB = b.imageId || b.id || ''
-        return idA.localeCompare(idB)
+      perf.start('api.search.GET.zeroShot.rerank.sort')
+      const sortedTopK = perf.measureSync('api.search.GET.zeroShot.rerank.sort.topK', () => {
+        return [...topK].sort((a: any, b: any) => {
+          // Primary sort by score (descending)
+          const scoreA = a.score ?? a.baseScore ?? 0
+          const scoreB = b.score ?? b.baseScore ?? 0
+          if (Math.abs(scoreB - scoreA) > 0.000001) {
+            return scoreB - scoreA
+          }
+          // Secondary sort by imageId for deterministic ordering
+          const idA = a.imageId || a.id || ''
+          const idB = b.imageId || b.id || ''
+          return idA.localeCompare(idB)
+        })
       })
-      const reranked = sortedTopK.map((item: any) => {
+      perf.end('api.search.GET.zeroShot.rerank.sort')
+      
+      perf.start('api.search.GET.zeroShot.rerank.calculateScores')
+      const reranked = perf.measureSync('api.search.GET.zeroShot.rerank.calculateScores.map', () => {
+        return sortedTopK.map((item: any) => {
         let boost = 0
         let penalty = 0
         
@@ -1215,12 +1272,16 @@ export async function GET(request: NextRequest) {
           hubScore: hubData?.hubScore || null,
           hubCount: hubData?.hubCount || null,
         }
+        })
       })
+      perf.end('api.search.GET.zeroShot.rerank.calculateScores', { rerankedCount: reranked.length })
       
       // Rerank by finalScore (with deterministic secondary sort for consistent rankings)
+      perf.start('api.search.GET.zeroShot.rerank.finalSort')
       // IMPORTANT: Always use imageId as tiebreaker to ensure completely deterministic ordering
       // This prevents any floating-point precision differences from causing non-deterministic results
-      reranked.sort((a: any, b: any) => {
+      perf.measureSync('api.search.GET.zeroShot.rerank.finalSort.sort', () => {
+        reranked.sort((a: any, b: any) => {
         // Round scores to 4 decimal places to eliminate floating-point precision differences
         const scoreA = Math.round((a.score ?? 0) * 10000) / 10000
         const scoreB = Math.round((b.score ?? 0) * 10000) / 10000
@@ -1237,22 +1298,30 @@ export async function GET(request: NextRequest) {
         const idA = a.imageId || a.id || ''
         const idB = b.imageId || b.id || ''
         return idA.localeCompare(idB)
+        })
       })
+      perf.end('api.search.GET.zeroShot.rerank.finalSort')
       
       // Also sort remaining results deterministically (by baseScore, then imageId)
-      remaining.sort((a: any, b: any) => {
+      perf.start('api.search.GET.zeroShot.rerank.sortRemaining')
+      perf.measureSync('api.search.GET.zeroShot.rerank.sortRemaining.sort', () => {
+        remaining.sort((a: any, b: any) => {
         // Use extremely tight threshold to catch all floating-point differences
         if (Math.abs(b.baseScore - a.baseScore) > 1e-10) {
           return b.baseScore - a.baseScore
         }
         // Always use secondary sort by image ID for deterministic ordering
         return (a.imageId || '').localeCompare(b.imageId || '')
+        })
       })
+      perf.end('api.search.GET.zeroShot.rerank.sortRemaining')
       
       // Combine reranked top K with remaining results
+      perf.start('api.search.GET.zeroShot.combineResults')
       // Ensure finalRanked is sorted deterministically
       // Note: reranked items have 'score' (finalScore), remaining items have 'baseScore'
-      const finalRanked = [...reranked, ...remaining].sort((a: any, b: any) => {
+      const finalRanked = perf.measureSync('api.search.GET.zeroShot.combineResults.sort', () => {
+        return [...reranked, ...remaining].sort((a: any, b: any) => {
         // Use score if available (reranked items), otherwise use baseScore (remaining items)
         // Round scores to 4 decimal places to eliminate floating-point precision differences
         const scoreA = Math.round((a.score ?? a.baseScore ?? 0) * 10000) / 10000
@@ -1264,7 +1333,10 @@ export async function GET(request: NextRequest) {
         }
         // Always use secondary sort by imageId for deterministic ordering
         return (a.imageId || '').localeCompare(b.imageId || '')
+        })
       })
+      perf.end('api.search.GET.zeroShot.combineResults', { finalRankedCount: finalRanked.length })
+      perf.end('api.search.GET.zeroShot.rerank')
       
       // Log search impressions for learned reranker training
       // Only log top 20 results to avoid excessive logging
@@ -1369,17 +1441,32 @@ export async function GET(request: NextRequest) {
         }))
       }
       
+      perf.start('api.search.GET.zeroShot.serializeResponse')
       const results = { 
         query: q, 
         sites: limitedSites,
         images: limitedImages,
         total: finalRanked.length, // Include total for pagination
+        _performance: perf.getSummary(), // Include performance data
       }
+      perf.end('api.search.GET.zeroShot.serializeResponse', { 
+        responseSize: JSON.stringify(results).length,
+        sitesCount: limitedSites.length,
+        imagesCount: limitedImages.length,
+      })
       
       // Cache results (skip for debug mode)
       if (!debug && q) {
+        perf.start('api.search.GET.zeroShot.cacheResults')
         cacheSearchResults(q, category, 100, 0, results)
+        perf.end('api.search.GET.zeroShot.cacheResults')
       }
+      
+      perf.end('api.search.GET.zeroShot')
+      perf.end('api.search.GET', { totalDuration: perf.getMetrics().reduce((sum, m) => sum + m.duration, 0) })
+      
+      // Log performance report
+      console.log('\n' + perf.getReport())
       
       return NextResponse.json(results)
     }

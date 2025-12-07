@@ -9,6 +9,7 @@ import sharp from 'sharp'
 import { enqueueTaggingJob, tagImageWithoutNewConcepts } from '@/jobs/tagging'
 // Lazy load embeddings to avoid native library issues in serverless
 // import { embedImageFromBuffer, canonicalizeImage } from '@/lib/embeddings'
+import { getPerformanceLogger } from '@/lib/performance-logger'
 
 // prisma imported from singleton
 
@@ -131,13 +132,23 @@ async function findBestMatch(input: string, candidates: string[], maxDistance = 
 }
 
 export async function GET(request: NextRequest) {
+  const perf = getPerformanceLogger()
+  perf.clear() // Clear previous metrics for this request
+  
   try {
+    perf.start('api.sites.GET', {
+      url: request.url,
+      timestamp: new Date().toISOString(),
+    })
+
     const { searchParams } = new URL(request.url)
     const concepts = searchParams.get('concepts')
     const category = searchParams.get('category') // Optional category filter
     
     // Return all sites if no concepts specified (null or empty string)
     if (!concepts || !concepts.trim()) {
+      perf.start('api.sites.GET.noConcepts')
+      
       // OPTIMIZATION: Limit initial load to improve performance
       // Return all sites if no concepts specified
       // Note: tags relationship is legacy/unused - we use Concepts/ImageTags instead
@@ -150,27 +161,34 @@ export async function GET(request: NextRequest) {
       
       // If category is specified, use a LATERAL JOIN for efficient first-image-per-site lookup
       if (category) {
+        perf.start('api.sites.GET.queryWithCategory', { category, limit, offset })
+        
         // Use LATERAL JOIN to get the first image for each site efficiently
         // This is much faster than DISTINCT ON because it uses indexes properly
-        const result = await (prisma.$queryRawUnsafe as any)(
-          `SELECT 
-            s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt",
-            i."url" as "firstImageUrl", i."category" as "imageCategory"
-          FROM "sites" s
-          INNER JOIN LATERAL (
-            SELECT "url", "category"
-            FROM "images"
-            WHERE "siteId" = s."id" AND "category" = $1
-            ORDER BY "id" DESC
-            LIMIT 1
-          ) i ON true
-          ORDER BY s."createdAt" DESC, s."id" ASC
-          LIMIT $2 OFFSET $3`,
-          category,
-          limit + 1, // Fetch one extra to check if there are more
-          offset
-        )
+        const result = await perf.measure('api.sites.GET.queryWithCategory.lateralJoin', async () => {
+          return await (prisma.$queryRawUnsafe as any)(
+            `SELECT 
+              s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt",
+              i."url" as "firstImageUrl", i."category" as "imageCategory"
+            FROM "sites" s
+            INNER JOIN LATERAL (
+              SELECT "url", "category"
+              FROM "images"
+              WHERE "siteId" = s."id" AND "category" = $1
+              ORDER BY "id" DESC
+              LIMIT 1
+            ) i ON true
+            ORDER BY s."createdAt" DESC, s."id" ASC
+            LIMIT $2 OFFSET $3`,
+            category,
+            limit + 1, // Fetch one extra to check if there are more
+            offset
+          )
+        }, { category, limit, offset })
         
+        perf.end('api.sites.GET.queryWithCategory', { resultCount: result.length })
+        
+        perf.start('api.sites.GET.processResults')
         // Check if there are more results
         hasMore = result.length > limit
         sites = hasMore ? result.slice(0, limit) : result
@@ -187,22 +205,32 @@ export async function GET(request: NextRequest) {
           updatedAt: row.updatedAt,
           category: row.imageCategory || 'website'
         }))
+        perf.end('api.sites.GET.processResults', { sitesCount: sites.length })
         
         totalCount = sites.length // Approximate count, avoid expensive COUNT query
       } else {
-        // No category filter - use standard Prisma query
-        sites = await prisma.site.findMany({
-          orderBy: [
-            { createdAt: 'desc' },
-            { id: 'asc' }
-          ],
-          take: limit + 1, // Fetch one extra to check if there are more
-          skip: offset,
-        })
+        perf.start('api.sites.GET.queryWithoutCategory', { limit, offset })
         
+        // No category filter - use standard Prisma query
+        sites = await perf.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
+          return await prisma.site.findMany({
+            orderBy: [
+              { createdAt: 'desc' },
+              { id: 'asc' }
+            ],
+            take: limit + 1, // Fetch one extra to check if there are more
+            skip: offset,
+          })
+        }, { limit, offset })
+        
+        perf.end('api.sites.GET.queryWithoutCategory', { sitesCount: sites.length })
+        
+        perf.start('api.sites.GET.processResults')
         // Check if there are more results
         hasMore = sites.length > limit
         sites = hasMore ? sites.slice(0, limit) : sites
+        perf.end('api.sites.GET.processResults', { sitesCount: sites.length })
+        
         totalCount = sites.length // Approximate count, avoid expensive COUNT query
       }
 
@@ -212,19 +240,24 @@ export async function GET(request: NextRequest) {
       let categoryBySite = new Map<string, string>()
       
       if (!category) {
+        perf.start('api.sites.GET.fetchImages', { siteCount: sites.length })
+        
         // Simple query matching working branch approach
         const fetchedSiteIds = sites.map((s: any) => s.id)
         if (fetchedSiteIds.length > 0) {
           // Use simple IN query - let database handle it efficiently with indexes
           const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
-          const images = await (prisma.$queryRawUnsafe as any)(
-            `SELECT "siteId", "url", "category"
-             FROM "images"
-             WHERE "siteId" IN (${placeholders}) AND "siteId" IS NOT NULL
-             ORDER BY "id" DESC`,
-            ...fetchedSiteIds
-          )
+          const images = await perf.measure('api.sites.GET.fetchImages.query', async () => {
+            return await (prisma.$queryRawUnsafe as any)(
+              `SELECT "siteId", "url", "category"
+               FROM "images"
+               WHERE "siteId" IN (${placeholders}) AND "siteId" IS NOT NULL
+               ORDER BY "id" DESC`,
+              ...fetchedSiteIds
+            )
+          }, { siteIdsCount: fetchedSiteIds.length })
           
+          perf.start('api.sites.GET.fetchImages.process')
           // Filter to first image per site in JavaScript (simpler than DISTINCT ON)
           for (const img of images as any[]) {
             if (!firstImageBySite.has(img.siteId)) {
@@ -232,10 +265,13 @@ export async function GET(request: NextRequest) {
               categoryBySite.set(img.siteId, (img.category || 'website'))
             }
           }
+          perf.end('api.sites.GET.fetchImages.process', { imagesCount: images.length })
         }
+        perf.end('api.sites.GET.fetchImages')
       }
 
-      return NextResponse.json({
+      perf.start('api.sites.GET.serializeResponse')
+      const responseData = {
         sites: sites.map((site: any) => ({
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
@@ -245,48 +281,70 @@ export async function GET(request: NextRequest) {
         hasMore,
         total: totalCount,
         offset,
-        limit
-      })
+        limit,
+        _performance: perf.getSummary(), // Include performance data in response
+      }
+      perf.end('api.sites.GET.serializeResponse', { responseSize: JSON.stringify(responseData).length })
+      
+      perf.end('api.sites.GET.noConcepts')
+      perf.end('api.sites.GET', { totalDuration: perf.getMetrics().reduce((sum, m) => sum + m.duration, 0) })
+
+      // Log performance report
+      console.log('\n' + perf.getReport())
+      
+      return NextResponse.json(responseData)
     }
 
+    perf.start('api.sites.GET.withConcepts', { concepts })
+    
     // Parse concepts from query string (comma-separated)
+    perf.start('api.sites.GET.withConcepts.parse')
     const conceptList = concepts
       .split(',')
       .map((c: string) => c.trim().toLowerCase())
       .filter(Boolean)
+    perf.end('api.sites.GET.withConcepts.parse', { conceptCount: conceptList.length })
 
     // OPTIMIZATION: Use database queries instead of loading everything into memory
     // Find concept IDs that match the search terms (fuzzy match on label)
-    const conceptMatches = await prisma.concept.findMany({
-      where: {
-        OR: conceptList.map(term => ({
-          OR: [
-            { label: { contains: term, mode: 'insensitive' } },
-            { id: { contains: term, mode: 'insensitive' } }
-          ]
-        }))
-      },
-      select: { id: true, label: true }
-    })
+    perf.start('api.sites.GET.withConcepts.findConcepts')
+    const conceptMatches = await perf.measure('api.sites.GET.withConcepts.findConcepts.findMany', async () => {
+      return await prisma.concept.findMany({
+        where: {
+          OR: conceptList.map(term => ({
+            OR: [
+              { label: { contains: term, mode: 'insensitive' } },
+              { id: { contains: term, mode: 'insensitive' } }
+            ]
+          }))
+        },
+        select: { id: true, label: true }
+      })
+    }, { conceptListCount: conceptList.length })
     
     const matchedConceptIds = new Set(conceptMatches.map(c => c.id))
     const matchedConceptLabels = new Set(conceptMatches.map(c => c.label.toLowerCase()))
+    perf.end('api.sites.GET.withConcepts.findConcepts', { matchedCount: matchedConceptIds.size })
     
     // Also check for exact matches in concept list
+    perf.start('api.sites.GET.withConcepts.findExactMatches')
     for (const term of conceptList) {
-      const exactMatch = await prisma.concept.findFirst({
-        where: {
-          OR: [
-            { label: { equals: term, mode: 'insensitive' } },
-            { id: { equals: term, mode: 'insensitive' } }
-          ]
-        },
-        select: { id: true }
+      await perf.measure(`api.sites.GET.withConcepts.findExactMatches.${term}`, async () => {
+        const exactMatch = await prisma.concept.findFirst({
+          where: {
+            OR: [
+              { label: { equals: term, mode: 'insensitive' } },
+              { id: { equals: term, mode: 'insensitive' } }
+            ]
+          },
+          select: { id: true }
+        })
+        if (exactMatch) {
+          matchedConceptIds.add(exactMatch.id)
+        }
       })
-      if (exactMatch) {
-        matchedConceptIds.add(exactMatch.id)
-      }
     }
+    perf.end('api.sites.GET.withConcepts.findExactMatches', { finalMatchedCount: matchedConceptIds.size })
 
     // OPTIMIZATION: Use database query to find sites that have images with matching concepts
     // This filters at the database level instead of loading everything
@@ -295,12 +353,16 @@ export async function GET(request: NextRequest) {
     
     if (matchedConceptIds.size === 0) {
       // No matching concepts found, return empty result
+      perf.end('api.sites.GET.withConcepts')
+      perf.end('api.sites.GET')
+      console.log('\n' + perf.getReport())
       return NextResponse.json({
         sites: [],
         hasMore: false,
         total: 0,
         offset,
-        limit
+        limit,
+        _performance: perf.getSummary(),
       })
     }
 
@@ -311,37 +373,47 @@ export async function GET(request: NextRequest) {
     const requiredCount = conceptIdsArray.length
     const limitParam = limit + 1 // Fetch one extra to check hasMore
     
+    perf.start('api.sites.GET.withConcepts.querySites', { conceptIdsCount: conceptIdsArray.length, limit, offset })
     // Query: Find sites where ALL concepts are present in image tags
     // This uses a GROUP BY with HAVING COUNT(DISTINCT conceptId) = number of concepts
-    const sitesWithAllConcepts = await (prisma.$queryRawUnsafe as any)(
-      `SELECT DISTINCT s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
-       FROM "sites" s
-       INNER JOIN "images" i ON s."id" = i."siteId"
-       INNER JOIN "image_tags" it ON i."id" = it."imageId"
-       WHERE it."conceptId" IN (${placeholders})
-       GROUP BY s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
-       HAVING COUNT(DISTINCT it."conceptId") = $${conceptIdsArray.length + 1}
-       ORDER BY s."createdAt" DESC, s."id" ASC
-       LIMIT $${conceptIdsArray.length + 2} OFFSET $${conceptIdsArray.length + 3}`,
-      ...conceptIdsArray,
-      requiredCount,
-      limitParam,
-      offset
-    )
+    const sitesWithAllConcepts = await perf.measure('api.sites.GET.withConcepts.querySites.rawQuery', async () => {
+      return await (prisma.$queryRawUnsafe as any)(
+        `SELECT DISTINCT s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
+         FROM "sites" s
+         INNER JOIN "images" i ON s."id" = i."siteId"
+         INNER JOIN "image_tags" it ON i."id" = it."imageId"
+         WHERE it."conceptId" IN (${placeholders})
+         GROUP BY s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
+         HAVING COUNT(DISTINCT it."conceptId") = $${conceptIdsArray.length + 1}
+         ORDER BY s."createdAt" DESC, s."id" ASC
+         LIMIT $${conceptIdsArray.length + 2} OFFSET $${conceptIdsArray.length + 3}`,
+        ...conceptIdsArray,
+        requiredCount,
+        limitParam,
+        offset
+      )
+    }, { conceptIdsCount: conceptIdsArray.length, limit, offset })
+    perf.end('api.sites.GET.withConcepts.querySites', { sitesCount: sitesWithAllConcepts.length })
 
+    perf.start('api.sites.GET.withConcepts.paginate')
     const hasMore = sitesWithAllConcepts.length > limit
     const paginatedSites = hasMore ? sitesWithAllConcepts.slice(0, limit) : sitesWithAllConcepts
     const totalCount = paginatedSites.length // Approximate, avoid expensive COUNT
+    perf.end('api.sites.GET.withConcepts.paginate', { paginatedCount: paginatedSites.length })
 
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
+    perf.start('api.sites.GET.withConcepts.fetchImages')
     const fIds = paginatedSites.map((s: any) => s.id)
     const fImages = fIds.length
-      ? await (prisma.image as any).findMany({ 
-          where: { siteId: { in: fIds } }, 
-          orderBy: { id: 'desc' },
-          select: { siteId: true, url: true, category: true }
-        })
+      ? await perf.measure('api.sites.GET.withConcepts.fetchImages.findMany', async () => {
+          return await (prisma.image as any).findMany({ 
+            where: { siteId: { in: fIds } }, 
+            orderBy: { id: 'desc' },
+            select: { siteId: true, url: true, category: true }
+          })
+        }, { siteIdsCount: fIds.length })
       : []
+    perf.start('api.sites.GET.withConcepts.fetchImages.process')
     const firstImageBySite = new Map<string, string>()
     const categoryBySite = new Map<string, string>()
     for (const img of fImages as any[]) {
@@ -350,8 +422,11 @@ export async function GET(request: NextRequest) {
         categoryBySite.set(img.siteId, (img.category || 'website'))
       }
     }
+    perf.end('api.sites.GET.withConcepts.fetchImages.process', { imagesCount: fImages.length })
+    perf.end('api.sites.GET.withConcepts.fetchImages')
 
-    return NextResponse.json({
+    perf.start('api.sites.GET.withConcepts.serializeResponse')
+    const responseData = {
       sites: paginatedSites.map((site: any) => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
@@ -360,14 +435,28 @@ export async function GET(request: NextRequest) {
       hasMore,
       total: totalCount,
       offset,
-      limit
-    })
+      limit,
+      _performance: perf.getSummary(),
+    }
+    perf.end('api.sites.GET.withConcepts.serializeResponse', { responseSize: JSON.stringify(responseData).length })
+    
+    perf.end('api.sites.GET.withConcepts')
+    perf.end('api.sites.GET', { totalDuration: perf.getMetrics().reduce((sum, m) => sum + m.duration, 0) })
+
+    // Log performance report
+    console.log('\n' + perf.getReport())
+
+    return NextResponse.json(responseData)
   } catch (error: any) {
+    perf.end('api.sites.GET', { error: error.message })
     console.error('[sites] Error fetching sites:', error)
     console.error('[sites] Error message:', error.message)
     console.error('[sites] Error stack:', error.stack)
     console.error('[sites] DATABASE_URL present:', !!process.env.DATABASE_URL)
     console.error('[sites] DATABASE_URL starts with:', process.env.DATABASE_URL?.substring(0, 20))
+    
+    // Log performance report even on error
+    console.log('\n' + perf.getReport())
     
     // Return more detailed error in development, generic in production
     const errorDetails = process.env.NODE_ENV === 'production' 
@@ -375,7 +464,11 @@ export async function GET(request: NextRequest) {
       : error.message
     
     return NextResponse.json(
-      { error: 'Failed to fetch sites', details: errorDetails },
+      { 
+        error: 'Failed to fetch sites', 
+        details: errorDetails,
+        _performance: perf.getSummary(),
+      },
       { status: 500 }
     )
   }
