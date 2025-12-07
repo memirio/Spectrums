@@ -25,6 +25,8 @@ model Site {
   tags   SiteTag[]
   images Image[]
 
+  @@index([createdAt(sort: Desc)]) // Index for createdAt DESC sorting (critical for performance)
+  @@index([createdAt(sort: Desc), id(sort: Asc)]) // Composite index for exact orderBy clause
   @@map("sites")
 }
 
