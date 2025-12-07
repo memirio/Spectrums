@@ -372,50 +372,141 @@ export async function GET(request: NextRequest) {
         try {
           // Generate extensions for all categories in parallel
           const categoriesToGenerate = ['website', 'packaging', 'brand', 'fonts', 'apps']
-          const extensionPromises = categoriesToGenerate.map(async (cat) => {
+          
+          // Step 1: Check database cache for embeddings first, then generate Groq extensions if needed
+          perf.start('api.search.GET.zeroShot.generateVibeExtensions.step1_checkCache')
+          const vibeLower = vibeWord.toLowerCase()
+          const cacheCheckPromises = categoriesToGenerate.map(async (cat) => {
             try {
               perf.start(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`)
-              // Check if embedding is already cached
-              const embeddingCacheKey = `${vibeWord.toLowerCase()}:${cat}`
+              const embeddingCacheKey = `${vibeLower}:${cat}`
+              
+              // First check in-memory cache (fastest)
               const cachedEmbedding = globalForVibeExtensions.vibeEmbeddingsCache.get(embeddingCacheKey)
               if (cachedEmbedding) {
-                console.log(`[vibe-cache] Embedding cache HIT for ${embeddingCacheKey}`)
-                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: true })
-                return { category: cat, embedding: cachedEmbedding }
+                console.log(`[vibe-cache] In-memory embedding cache HIT for ${embeddingCacheKey}`)
+                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'memory' })
+                return { category: cat, extension: null, embedding: cachedEmbedding, needsEmbedding: false, needsGroq: false }
               }
-              console.log(`[vibe-cache] Embedding cache MISS for ${embeddingCacheKey} (cache size: ${globalForVibeExtensions.vibeEmbeddingsCache.size})`)
               
+              // Then check database cache for embedding (persists across serverless invocations)
+              try {
+                const dbCache = await prisma.queryExpansion.findFirst({
+                  where: {
+                    term: vibeLower,
+                    category: cat,
+                    source: 'groq',
+                    model: 'llama-3.3-70b-versatile',
+                    embedding: { not: null } // Only return if embedding exists
+                  },
+                  orderBy: { createdAt: 'desc' }
+                })
+                
+                if (dbCache && dbCache.embedding) {
+                  const dbEmbedding = dbCache.embedding as unknown as number[]
+                  if (Array.isArray(dbEmbedding) && dbEmbedding.length > 0) {
+                    // Populate in-memory cache for faster access
+                    globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, dbEmbedding)
+                    console.log(`[vibe-cache] Database embedding cache HIT for ${embeddingCacheKey}`)
+                    perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'database' })
+                    return { category: cat, extension: null, embedding: dbEmbedding, needsEmbedding: false, needsGroq: false }
+                  }
+                }
+              } catch (dbError: any) {
+                console.warn(`[vibe-cache] Database cache check failed for ${embeddingCacheKey}:`, dbError.message)
+              }
+              
+              console.log(`[vibe-cache] Cache MISS for ${embeddingCacheKey}, generating...`)
+              
+              // Generate extension with Groq
               const extensions = await perf.measure(`api.search.GET.zeroShot.generateVibeExtensions.${cat}.groq`, async () => {
                 return await generateVibeExtensionsForCategory(vibeWord, cat)
               })
               if (extensions.length > 0) {
                 // Take only the first extension (single string per category)
                 const extension = extensions[0]
-                const [embedding] = await perf.measure(`api.search.GET.zeroShot.generateVibeExtensions.${cat}.embed`, async () => {
-                  return await embedTextBatch([extension])
-                })
-                // L2-normalize the embedding
-                const normalizedEmbedding = perf.measureSync(`api.search.GET.zeroShot.generateVibeExtensions.${cat}.normalize`, () => {
-                  return l2norm(embedding)
-                })
-                
-                // Cache the normalized embedding
-                globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
-                
-                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: false })
-                return { category: cat, embedding: normalizedEmbedding }
+                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { needsEmbedding: true })
+                return { category: cat, extension, embedding: null, needsEmbedding: true, needsGroq: false }
               }
               perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { noExtensions: true })
-              return { category: cat, embedding: null }
+              return { category: cat, extension: null, embedding: null, needsEmbedding: false, needsGroq: false }
             } catch (error: any) {
               perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { error: error.message })
               console.warn(`[search] Failed to generate vibe extensions for category "${cat}":`, error.message)
-              return { category: cat, embedding: null }
+              return { category: cat, extension: null, embedding: null, needsEmbedding: false, needsGroq: false }
             }
           })
           
-          const results = await Promise.all(extensionPromises)
-          for (const result of results) {
+          const cacheResults = await Promise.all(cacheCheckPromises)
+          perf.end('api.search.GET.zeroShot.generateVibeExtensions.step1_checkCache', { 
+            cached: cacheResults.filter(r => !r.needsEmbedding && r.embedding).length,
+            needsEmbedding: cacheResults.filter(r => r.needsEmbedding).length
+          })
+          
+          // Step 2: Batch embed all extensions that need embedding in a single call
+          perf.start('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed')
+          const extensionsToEmbed = cacheResults
+            .filter(r => r.needsEmbedding && r.extension)
+            .map(r => ({ category: r.category, extension: r.extension! }))
+          
+          let batchEmbeddings: number[][] = []
+          if (extensionsToEmbed.length > 0) {
+            const extensionTexts = extensionsToEmbed.map(e => e.extension)
+            batchEmbeddings = await perf.measure('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed.embedTextBatch', async () => {
+              return await embedTextBatch(extensionTexts)
+            })
+          }
+          perf.end('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed', { 
+            batchSize: extensionsToEmbed.length 
+          })
+          
+          // Step 3: Normalize, cache embeddings (in-memory and database), map back to categories
+          perf.start('api.search.GET.zeroShot.generateVibeExtensions.step3_normalize')
+          for (let i = 0; i < extensionsToEmbed.length; i++) {
+            const { category, extension } = extensionsToEmbed[i]
+            const embedding = batchEmbeddings[i]
+            if (embedding) {
+              const embeddingCacheKey = `${vibeLower}:${category}`
+              // L2-normalize the embedding
+              const normalizedEmbedding = perf.measureSync(`api.search.GET.zeroShot.generateVibeExtensions.step3_normalize.${category}`, () => {
+                return l2norm(embedding)
+              })
+              
+              // Cache the normalized embedding in memory
+              globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
+              
+              // Store embedding in database for persistence across serverless invocations
+              try {
+                await prisma.queryExpansion.updateMany({
+                  where: {
+                    term: vibeLower,
+                    expansion: extension,
+                    source: 'groq',
+                    category: category
+                  },
+                  data: {
+                    embedding: normalizedEmbedding,
+                    lastUsedAt: new Date()
+                  }
+                })
+                console.log(`[vibe-cache] Stored embedding in database cache: ${embeddingCacheKey}`)
+              } catch (dbError: any) {
+                console.warn(`[vibe-cache] Failed to store embedding in database for ${embeddingCacheKey}:`, dbError.message)
+              }
+              
+              // Find the corresponding result and update it
+              const result = cacheResults.find(r => r.category === category)
+              if (result) {
+                result.embedding = normalizedEmbedding
+              }
+            }
+          }
+          perf.end('api.search.GET.zeroShot.generateVibeExtensions.step3_normalize', { 
+            normalized: extensionsToEmbed.length 
+          })
+          
+          // Step 4: Build final vibeExtensionsByCategory map
+          for (const result of cacheResults) {
             if (result.embedding) {
               // Store as array with single embedding for compatibility with scoring logic
               vibeExtensionsByCategory[result.category] = [result.embedding]

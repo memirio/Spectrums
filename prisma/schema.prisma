@@ -152,6 +152,7 @@ model QueryExpansion {
   source     String // 'groq' | 'curated' (previously 'gemini')
   category   String   @default("global") // Category ('global' for website/default, 'packaging', etc.) for category-specific expansions
   model      String? // 'llama-3.3-70b-versatile', etc.
+  embedding  Json? // Cached CLIP embedding (stored as normalized float array) - prevents re-embedding on every request
   createdAt  DateTime @default(now())
   lastUsedAt DateTime @default(now())
 
