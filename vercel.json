@@ -2,7 +2,7 @@
   "buildCommand": "rm -rf node_modules/.prisma && DATABASE_URL='postgresql://dummy:dummy@dummy:5432/dummy' npm run vercel-build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "regions": ["iad1"],
+  "regions": ["cdg1"],
   "env": {
     "NODE_ENV": "production"
   },
