@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useRef } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateAccountMessageModal from '../components/CreateAccountMessageModal'
@@ -11,6 +11,9 @@ function LoginForm() {
   const [showCreateAccountMessage, setShowCreateAccountMessage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<{ username?: string; password?: string }>({})
+  const usernameRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/app/all'
@@ -30,24 +33,50 @@ function LoginForm() {
                 User name
               </label>
               <input
+                ref={usernameRef}
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-900"
+                onChange={(e) => {
+                  setUsername(e.target.value)
+                  if (fieldErrors.username) {
+                    setFieldErrors(prev => ({ ...prev, username: undefined }))
+                  }
+                }}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
+                  fieldErrors.username 
+                    ? 'border-red-300 focus:ring-red-500' 
+                    : 'border-gray-300 focus:ring-gray-500'
+                }`}
                 placeholder="Enter your username"
               />
+              {fieldErrors.username && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.username}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
+                ref={passwordRef}
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-900"
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (fieldErrors.password) {
+                    setFieldErrors(prev => ({ ...prev, password: undefined }))
+                  }
+                }}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
+                  fieldErrors.password 
+                    ? 'border-red-300 focus:ring-red-500' 
+                    : 'border-gray-300 focus:ring-gray-500'
+                }`}
                 placeholder="Enter your password"
               />
+              {fieldErrors.password && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+              )}
             </div>
           </div>
 
@@ -61,8 +90,36 @@ function LoginForm() {
             <button
               type="button"
               onClick={async () => {
-                setIsLoading(true)
+                // Clear previous errors
                 setError('')
+                setFieldErrors({})
+                
+                // Validate fields
+                const errors: { username?: string; password?: string } = {}
+                let hasErrors = false
+                
+                if (!username.trim()) {
+                  errors.username = 'Username is required'
+                  hasErrors = true
+                }
+                
+                if (!password.trim()) {
+                  errors.password = 'Password is required'
+                  hasErrors = true
+                }
+                
+                if (hasErrors) {
+                  setFieldErrors(errors)
+                  // Focus the first field with an error
+                  if (errors.username) {
+                    usernameRef.current?.focus()
+                  } else if (errors.password) {
+                    passwordRef.current?.focus()
+                  }
+                  return
+                }
+                
+                setIsLoading(true)
                 
                 try {
                   const result = await signIn('credentials', {
@@ -85,7 +142,7 @@ function LoginForm() {
                   setIsLoading(false)
                 }
               }}
-              disabled={isLoading || !username || !password}
+              disabled={isLoading}
               className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Logging in...' : 'Login'}

@@ -99,6 +99,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [showAddConceptModal, setShowAddConceptModal] = useState(false) // Track if "Add Concept" modal is open
   const [addConceptInputValue, setAddConceptInputValue] = useState('') // Track the value of the concept input
   const [addConceptInputRef, setAddConceptInputRef] = useState<HTMLInputElement | null>(null) // Ref for input auto-focus
+  const [vibeFieldError, setVibeFieldError] = useState<string | undefined>(undefined) // Error message for vibe field
   
   // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
@@ -1317,9 +1318,21 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
 
   // Handle creating spectrum from modal
   const handleCreateSpectrum = async () => {
+    // Clear previous errors
+    setVibeFieldError(undefined)
+    
     const concept = addConceptInputValue.trim()
     
-    if (!concept) return
+    // Validate field
+    if (!concept) {
+      setVibeFieldError('Vibe is required')
+      // Focus the input field
+      if (addConceptInputRef) {
+        addConceptInputRef.focus()
+        addConceptInputRef.select()
+      }
+      return
+    }
     
     // Close modal immediately
     setShowAddConceptModal(false)
@@ -2667,6 +2680,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                   value={addConceptInputValue}
                   onChange={(e) => {
                     setAddConceptInputValue(e.target.value)
+                    // Clear error when user starts typing
+                    if (vibeFieldError) {
+                      setVibeFieldError(undefined)
+                    }
                   }}
                   onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -2675,15 +2692,21 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     }
                   }}
                   placeholder="e.g., Romantic, Minimalistic, Techy..."
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
+                  className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-500 ${
+                    vibeFieldError 
+                      ? 'border-red-300 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-gray-400'
+                  }`}
                 />
+                {vibeFieldError && (
+                  <p className="mt-1 text-sm text-red-600">{vibeFieldError}</p>
+                )}
               </div>
               
               {/* Create Spectrum button */}
               <button
                 onClick={handleCreateSpectrum}
-                disabled={!addConceptInputValue.trim()}
-                className="w-full px-4 py-2 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-300 cursor-pointer disabled:cursor-not-allowed text-white rounded-md transition-colors text-sm font-medium"
+                className="w-full px-4 py-2 bg-gray-900 hover:bg-gray-700 cursor-pointer text-white rounded-md transition-colors text-sm font-medium"
               >
                 Create filter
               </button>
