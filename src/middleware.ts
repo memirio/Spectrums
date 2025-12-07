@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone()
@@ -28,20 +27,8 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next()
     }
     
-    // Protect /app/* routes - require authentication
-    if (pathname.startsWith('/app/') || pathname === '/app') {
-      const token = await getToken({ 
-        req: request, 
-        secret: process.env.NEXTAUTH_SECRET 
-      })
-      
-      // If not authenticated, redirect to login
-      if (!token) {
-        const loginUrl = new URL('/login', request.url)
-        loginUrl.searchParams.set('callbackUrl', pathname)
-        return NextResponse.redirect(loginUrl)
-      }
-    }
+    // Note: Authentication is now handled in src/app/app/layout.tsx
+    // to avoid Edge runtime issues with NextAuth
     
     // If accessing root on app subdomain, redirect to /app/all
     if (pathname === '/' || pathname === '') {
