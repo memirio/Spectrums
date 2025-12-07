@@ -396,8 +396,7 @@ export async function GET(request: NextRequest) {
                     term: vibeLower,
                     category: cat,
                     source: 'groq',
-                    model: 'llama-3.3-70b-versatile',
-                    embedding: { not: null } // Only return if embedding exists
+                    model: 'llama-3.3-70b-versatile'
                   },
                   orderBy: { createdAt: 'desc' }
                 })
