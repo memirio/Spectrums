@@ -476,14 +476,25 @@ export async function GET(request: NextRequest) {
               
               // Store embedding in database for persistence across serverless invocations
               try {
-                await prisma.queryExpansion.updateMany({
+                await prisma.queryExpansion.upsert({
                   where: {
+                    term_expansion_source_category: {
+                      term: vibeLower,
+                      expansion: extension,
+                      source: 'groq',
+                      category: category
+                    }
+                  },
+                  update: {
+                    embedding: normalizedEmbedding,
+                    lastUsedAt: new Date()
+                  },
+                  create: {
                     term: vibeLower,
                     expansion: extension,
                     source: 'groq',
-                    category: category
-                  },
-                  data: {
+                    category: category,
+                    model: 'llama-3.3-70b-versatile',
                     embedding: normalizedEmbedding,
                     lastUsedAt: new Date()
                   }
