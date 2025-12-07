@@ -31,10 +31,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Ensure Prisma binaries are included in the build
-  serverExternalPackages: ['@prisma/client'],
-  experimental: {
-    serverComponentsExternalPackages: ['bcryptjs', '@prisma/client', 'pg'],
-  },
+  serverExternalPackages: ['@prisma/client', 'bcryptjs', 'pg'],
   // Workaround for NextAuth v5 beta module resolution issue with Next.js 16
   transpilePackages: ['next-auth'],
 };

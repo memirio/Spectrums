@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateAccountMessageModal from '../components/CreateAccountMessageModal'
 
-export default function LoginPage() {
+function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showCreateAccountMessage, setShowCreateAccountMessage] = useState(false)
@@ -108,6 +108,18 @@ export default function LoginPage() {
         />
       )}
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#fbf9f4] flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
 
