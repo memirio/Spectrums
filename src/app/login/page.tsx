@@ -18,6 +18,60 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/app/all'
 
+  const handleLogin = async () => {
+    // Clear previous errors
+    setError('')
+    setFieldErrors({})
+    
+    // Validate fields
+    const errors: { username?: string; password?: string } = {}
+    let hasErrors = false
+    
+    if (!username.trim()) {
+      errors.username = 'Username is required'
+      hasErrors = true
+    }
+    
+    if (!password.trim()) {
+      errors.password = 'Password is required'
+      hasErrors = true
+    }
+    
+    if (hasErrors) {
+      setFieldErrors(errors)
+      // Focus the first field with an error
+      if (errors.username) {
+        usernameRef.current?.focus()
+      } else if (errors.password) {
+        passwordRef.current?.focus()
+      }
+      return
+    }
+    
+    setIsLoading(true)
+    
+    try {
+      const result = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError('Invalid username or password')
+      } else if (result?.ok) {
+        // Redirect to callback URL or app home
+        router.push(callbackUrl)
+        router.refresh()
+      }
+    } catch (err: any) {
+      setError('An error occurred. Please try again.')
+      console.error('[login] Error:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#fbf9f4]">
       {/* Main Content */}
@@ -40,6 +94,12 @@ function LoginForm() {
                   setUsername(e.target.value)
                   if (fieldErrors.username) {
                     setFieldErrors(prev => ({ ...prev, username: undefined }))
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleLogin()
                   }
                 }}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
@@ -67,6 +127,12 @@ function LoginForm() {
                     setFieldErrors(prev => ({ ...prev, password: undefined }))
                   }
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleLogin()
+                  }
+                }}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
                   fieldErrors.password 
                     ? 'border-red-300 focus:ring-red-500' 
@@ -89,59 +155,7 @@ function LoginForm() {
           <div className="flex flex-col gap-3 mt-6">
             <button
               type="button"
-              onClick={async () => {
-                // Clear previous errors
-                setError('')
-                setFieldErrors({})
-                
-                // Validate fields
-                const errors: { username?: string; password?: string } = {}
-                let hasErrors = false
-                
-                if (!username.trim()) {
-                  errors.username = 'Username is required'
-                  hasErrors = true
-                }
-                
-                if (!password.trim()) {
-                  errors.password = 'Password is required'
-                  hasErrors = true
-                }
-                
-                if (hasErrors) {
-                  setFieldErrors(errors)
-                  // Focus the first field with an error
-                  if (errors.username) {
-                    usernameRef.current?.focus()
-                  } else if (errors.password) {
-                    passwordRef.current?.focus()
-                  }
-                  return
-                }
-                
-                setIsLoading(true)
-                
-                try {
-                  const result = await signIn('credentials', {
-                    username,
-                    password,
-                    redirect: false,
-                  })
-
-                  if (result?.error) {
-                    setError('Invalid username or password')
-                  } else if (result?.ok) {
-                    // Redirect to callback URL or app home
-                    router.push(callbackUrl)
-                    router.refresh()
-                  }
-                } catch (err: any) {
-                  setError('An error occurred. Please try again.')
-                  console.error('[login] Error:', err)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
+              onClick={handleLogin}
               disabled={isLoading}
               className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
