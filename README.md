@@ -16,8 +16,11 @@ Spectrums is a web application that lets users discover great website designs by
 - **Screenshot service**: Automated website screenshot capture with cookie banner removal
 - **Interactive gallery**: Responsive grid with beautiful UI and concept chips, with category tags
 - **Concept Spectrum**: Interactive slider system to explore the spectrum between concepts and their opposites, with 10-tier ranking for fine-grained control
-- **Submission form**: Easy site submission with automatic screenshot generation
-- **Hub detection**: Automatically detects and penalizes "hub" images that appear too frequently in search results
+- **User authentication**: Invite-only user accounts with login, saved images (favorites), and account management
+- **Account types**: Pro, Agency, Enterprise, and VIP account tiers
+- **Submission form**: Easy site submission with drag-and-drop image upload, category selection, and automatic processing
+- **Pipeline 2.0**: Fast image processing pipeline that tags with existing concepts only (no new concept generation) for user submissions
+- **Hub detection**: Automatically detects and penalizes "hub" images that appear too frequently in search results (triggered automatically for new uploads)
 - **Performance optimized**: 
   - Database-level query filtering (no in-memory processing)
   - Optimized LATERAL JOINs for efficient first-image-per-site lookups
@@ -37,11 +40,14 @@ Spectrums is a web application that lets users discover great website designs by
 - **Concept Generation**: Google Gemini 1.5 Flash (vision-language model)
 - **Query Expansion**: Groq API (llama-3.3-70b-versatile) for abstract query expansion
 - **Image Processing**: Sharp
+- **Image Storage**: Supabase Storage (production) / MinIO (local dev)
+- **Authentication**: NextAuth.js (Auth.js v5) with JWT sessions
 - **Screenshot Service**: Playwright (Chromium) with BullMQ queue (optional)
 - **Deployment**: 
-  - **Frontend**: Vercel (Next.js optimized)
+  - **Frontend**: Vercel (Next.js optimized, EU region for Supabase proximity)
   - **Embedding Service**: Railway (supports native binaries)
   - **Database**: Supabase (PostgreSQL with pgvector)
+  - **Storage**: Supabase Storage (image uploads)
 
 ---
 
@@ -89,6 +95,15 @@ GEMINI_API_KEY="your-google-gemini-api-key"
 # Query Expansion (required for abstract query expansion)
 # Uses Groq API (OpenAI-compatible) for fast, low-latency query expansion
 GROQ_API_KEY="your-groq-api-key"
+
+# Authentication (required for user login)
+NEXTAUTH_SECRET="your-nextauth-secret-key" # Generate with: openssl rand -base64 32
+NEXTAUTH_URL="http://localhost:3000" # Production: https://www.spectrums.design
+
+# Supabase Storage (required for image uploads)
+SUPABASE_URL="https://your-project.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+SUPABASE_STORAGE_BUCKET="Images" # Bucket name for image storage
 
 # OpenAI API (optional - for generating concept relationships: opposites, synonyms, related)
 # Used by scripts/generate_concept_relationships.ts
@@ -201,9 +216,46 @@ This will:
   Total:    94
 ```
 
-### 5. Production Pipeline (Add Photo Pipeline)
+### 5. User Authentication Setup
 
-The production pipeline automatically processes new sites when added via the API or submission form. This is the complete "add-photo pipeline" that runs for every new site submission:
+The application uses NextAuth.js for authentication. Users are invite-only (no public registration).
+
+**Create a test user:**
+```bash
+npx tsx scripts/create-test-user.ts
+```
+
+This will prompt you for:
+- Username
+- Email (optional)
+- Password (will be hashed with bcrypt)
+
+**Update user account type:**
+```bash
+npx tsx scripts/update_user_account_type.ts <username> <accountType>
+# Account types: Pro, Agency, Enterprise, VIP
+```
+
+**Access:**
+- **Public site**: `http://localhost:3000` (or `https://www.spectrums.design` in production)
+  - Browse and search designs
+  - Limited to 2 active vibe filters (prompts login after limit)
+  - Maximum 3 filters created per day (prompts login after limit)
+- **Logged-in app**: `http://localhost:3000/app/*` (or `https://app.spectrums.design/*` in production)
+  - Full access to all features
+  - Save images to favorites
+  - Submit new designs
+  - Account management
+
+### 6. Production Pipeline (Add Photo Pipeline)
+
+The production pipeline automatically processes new sites when added via the API or submission form. There are two pipeline modes:
+
+**Pipeline 2.0 (User Submissions)**: Fast pipeline that tags images with existing concepts only, skipping new concept generation. Used for user submissions via the web form.
+
+**Pipeline 1.0 (Legacy)**: Full pipeline with Gemini concept generation. Used for bulk imports and scripts.
+
+This is the complete "add-photo pipeline" that runs for every new site submission:
 
 #### Step-by-Step Process
 
@@ -245,7 +297,7 @@ The production pipeline automatically processes new sites when added via the API
    - Stores embedding in `ImageEmbedding` table with `contentHash`
    - Unit-normalizes vector (L2 norm = 1.0)
 
-7. **First Round: Concept Scoring & Tagging (Existing Concepts)**
+7. **Concept Scoring & Tagging**
    - Computes cosine similarity between image embedding and all seeded concept embeddings
    - Sorts concepts by similarity score (highest first)
    - Filters concepts above `MIN_SCORE` threshold (0.18)
@@ -257,22 +309,32 @@ The production pipeline automatically processes new sites when added via the API
    - **Note**: Images are tagged only with directly matched concepts. Synonyms are not automatically added as tags.
    - Removes old tags that are no longer in top-K
 
-8. **Gemini Concept Generation**
+8. **Pipeline 2.0 vs Pipeline 1.0**:
+   - **Pipeline 2.0** (user submissions): Stops here. No new concept generation. Hub detection is triggered immediately.
+   - **Pipeline 1.0** (legacy/bulk imports): Continues with steps 9-11 below.
+
+9. **Gemini Concept Generation** (Pipeline 1.0 only)
    - Analyzes image using Google Gemini 1.5 Flash vision model
    - Generates new abstract concepts (at least 1 per category from 12 categories):
      - Feeling/Emotion, Vibe/Mood, Philosophical/Existential, Aesthetic/Formal, Natural/Metaphysical, Social/Cultural, Design Style, Color & Tone, Texture & Materiality, Form & Structure, Design Technique, Industry
    - Creates new concepts in `seed_concepts.json` and database
    - Merges duplicates (exact matches) and synonyms (fuzzy matches) into existing concepts
 
-9. **Second Round: Concept Scoring & Tagging (All Concepts)**
-   - Re-computes cosine similarity between image embedding and **all concepts** (existing + newly created)
-   - Re-applies pragmatic tagging logic with updated concept list
-   - Updates `ImageTag` records (may add tags for newly created concepts if they score high)
+10. **Second Round: Concept Scoring & Tagging (All Concepts)** (Pipeline 1.0 only)
+    - Re-computes cosine similarity between image embedding and **all concepts** (existing + newly created)
+    - Re-applies pragmatic tagging logic with updated concept list
+    - Updates `ImageTag` records (may add tags for newly created concepts if they score high)
 
-10. **New Concept Auto-Tagging**
+11. **New Concept Auto-Tagging** (Pipeline 1.0 only)
     - Applies newly created concepts to **all existing images** in the database
     - Only tags images where similarity score >= `MIN_SCORE` (0.15)
     - Ensures new concepts are immediately searchable across all images
+
+12. **Hub Detection** (Pipeline 2.0 only)
+    - Automatically triggered for new user submissions
+    - Runs in background (fire-and-forget) to avoid API timeouts
+    - Detects if image appears disproportionately frequently in search results
+    - Updates hub stats (hubCount, hubScore, etc.) in database
 
 #### Pipeline Characteristics
 
@@ -280,7 +342,8 @@ The production pipeline automatically processes new sites when added via the API
 - **Resilient**: Screenshot failures are non-fatal (site created without image)
 - **Efficient**: Reuses embeddings by content hash (deduplication)
 - **Automatic**: All steps run automatically when site is submitted
-- **Non-blocking**: Gemini concept generation and new concept tagging are non-fatal (warnings logged, but request succeeds)
+- **Fast (Pipeline 2.0)**: User submissions use Pipeline 2.0 which skips concept generation for faster processing
+- **Non-blocking**: Gemini concept generation (Pipeline 1.0), new concept tagging, and hub detection are non-fatal (warnings logged, but request succeeds)
 
 #### Pipeline Triggers
 
@@ -317,9 +380,15 @@ curl -X POST http://localhost:3002/api/sites \
 
 **Adding a Site via UI:**
 
-Use the "Submit" button in the header to open the submission form. The pipeline automatically triggers when you submit.
+1. **Public users**: Click "Submit" button → prompted to log in (invite-only)
+2. **Logged-in users**: Click "Submit" button → opens submission modal with:
+   - Category selector (at top)
+   - Drag-and-drop image upload (JPG, JPEG, PNG, WEBP)
+   - Website URL field
+   - Company name field (used as title)
+3. Submit → Image uploaded to Supabase Storage → Pipeline 2.0 processes automatically
 
-### 6. Start the Development Server
+### 7. Start the Development Server
 
 ```bash
 npm run dev
@@ -327,7 +396,7 @@ npm run dev
 
 The app will start on `http://localhost:3000` (or next available port). Check the terminal output for the exact URL.
 
-### 6. (Optional) Start Screenshot Service
+### 8. (Optional) Start Screenshot Service
 
 If you want automatic screenshot generation, start the screenshot service:
 
@@ -820,14 +889,19 @@ export const SEARCH_CONFIG = {
 - **Concepts** — Design concept definitions (labels, synonyms, related terms, opposites, embeddings)
 - **ImageTags** — Auto-tagging relationships (image ↔ concept with similarity scores)
   - Images are tagged only with directly matched concepts (no synonym expansion)
+- **Users** — User accounts (username, email, hashed password, account type)
+  - Account types: Pro, Agency, Enterprise, VIP
+  - Invite-only (no public registration)
+- **SavedImages** — User's saved/favorited images (bookmarks/collections)
 - **UserInteractions** — User interaction data for learned reranker training (queries, clicks, saves, dwell time, query embeddings, tag features)
 - **QueryExpansion** — Cached LLM-generated query expansions (Groq) for abstract terms, with category field for category-specific expansions
 
 **Stored Separately (Not in Database):**
-- **Screenshot files** — Stored in Supabase Storage (production) or MinIO (local dev)
+- **Image files** — Stored in Supabase Storage (production) or MinIO (local dev)
   - Database only stores the URL reference
   - Production: `https://[project].supabase.co/storage/v1/object/public/Images/...`
   - Local: `http://localhost:9000/screenshots/...`
+  - User-uploaded images go directly to Supabase Storage
 - **Job queue state** — Redis (ephemeral, used by screenshot service for BullMQ)
 
 **Summary:**
@@ -1036,11 +1110,20 @@ spectrums/
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── search/route.ts      # Zero-shot search endpoint (logs impressions)
-│   │   │   ├── sites/route.ts       # Site creation endpoint
-│   │   │   └── interactions/route.ts # User interaction logging endpoint
+│   │   │   ├── sites/route.ts       # Site creation endpoint (Pipeline 2.0 for user submissions)
+│   │   │   ├── interactions/route.ts # User interaction logging endpoint
+│   │   │   ├── auth/[...nextauth]/route.ts # NextAuth.js authentication
+│   │   │   ├── upload-image/route.ts # Supabase Storage image upload
+│   │   │   └── user/route.ts        # User account management
+│   │   ├── app/                     # Logged-in app routes (subdomain routing)
+│   │   │   └── all/page.tsx         # Main gallery for logged-in users
+│   │   ├── login/                   # Login page
 │   │   ├── components/
 │   │   │   ├── Gallery.tsx         # Main gallery component
-│   │   │   └── SubmissionForm.tsx   # Site submission form
+│   │   │   ├── Header.tsx          # Search and action buttons
+│   │   │   ├── SubmissionForm.tsx   # Site submission form (with category selector)
+│   │   │   ├── LoginModal.tsx      # Login modal
+│   │   │   └── LoginRequiredModal.tsx # Modal prompting login for filter limits
 │   │   └── globals.css              # Global styles (includes .magical-glow)
 │   ├── concepts/
 │   │   ├── seed_concepts.json       # 94+ design concepts
@@ -1048,6 +1131,9 @@ spectrums/
 │   ├── lib/
 │   │   ├── embeddings.ts            # CLIP embedding functions
 │   │   ├── prisma.ts                # Prisma client singleton
+│   │   ├── auth.ts                  # NextAuth.js configuration
+│   │   ├── supabase-storage.ts      # Supabase Storage client for image uploads
+│   │   ├── performance-logger.ts   # Performance monitoring utility
 │   │   ├── tagging-config.ts        # Auto-tagging constants
 │   │   ├── concept-opposites.ts     # Concept opposites mapping (synced from seed_concepts.json)
 │   │   ├── query-expansion.ts       # Abstract query expansion (curated + Groq)
@@ -1055,7 +1141,9 @@ spectrums/
 │   │   ├── interaction-logger.ts    # User interaction logging for learned reranker
 │   │   └── update-concept-opposites.ts  # Utility to sync opposites
 │   └── jobs/
-│       └── tagging.ts               # Auto-tagging job (used inline)
+│       ├── tagging.ts               # Auto-tagging job (Pipeline 1.0 and 2.0)
+│       ├── hub-detection.ts         # Hub detection algorithm
+│       └── hub-detection-trigger.ts # Debounced hub detection trigger
 ├── scripts/
 │   ├── seed_concepts.ts             # Seed design concepts
 │   ├── list_concepts.ts             # List all concepts
@@ -1077,6 +1165,8 @@ spectrums/
 │   ├── check_image_counts.ts       # Check image and hub statistics
 │   ├── run_hub_detection_for_image.ts  # Run hub detection for a specific image
 │   ├── check_hub_score_for_image.ts    # Check hub score for a specific image (without saving)
+│   ├── create-test-user.ts          # Create test users for authentication
+│   ├── update_user_account_type.ts  # Update user account type (Pro/Agency/Enterprise/VIP)
 │   ├── add_brand_items.ts          # Bulk upload brand items
 │   └── ...                          # More utility scripts
 ├── docs/

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
 import SubmissionForm from './SubmissionForm'
 import CreateAccountMessageModal from './CreateAccountMessageModal'
 import LoginRequiredModal from './LoginRequiredModal'
@@ -41,6 +42,7 @@ interface GalleryProps {
 }
 
 export default function Gallery({ category: categoryProp, onCategoryChange }: GalleryProps = {} as GalleryProps) {
+  const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   
@@ -49,6 +51,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const isPublicPage = typeof window !== 'undefined' 
     ? !window.location.hostname.startsWith('app.') && !pathname?.startsWith('/app/')
     : !pathname?.startsWith('/app/')
+  
+  // Determine logged-in state:
+  // - On /app/* pages: only show logged in if explicitly authenticated (not just "not unauthenticated")
+  // - On public pages: only show logged in if authenticated
+  // - This ensures the menu updates correctly in production
+  const isLoggedIn = isPublicPage
+    ? status === 'authenticated' && !!session?.user
+    : status === 'authenticated' && !!session?.user // On /app/* pages, require explicit authentication
   
   // Internal category state if not provided via props
   const [internalCategory, setInternalCategory] = useState<string | undefined>(categoryProp)
@@ -145,6 +155,66 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [showCreateAccountMessage, setShowCreateAccountMessage] = useState(false)
   const [clickStartTimes, setClickStartTimes] = useState<Map<string, number>>(new Map())
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [isAccountDrawerOpen, setIsAccountDrawerOpen] = useState(false)
+  const [isAccountSettingsView, setIsAccountSettingsView] = useState(false)
+  const [emailValue, setEmailValue] = useState('')
+  const [passwordValue, setPasswordValue] = useState('')
+  const [repeatPasswordValue, setRepeatPasswordValue] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
+  const [currentEditView, setCurrentEditView] = useState<'email' | 'password' | null>(null)
+
+  const handlePasswordUpdate = async () => {
+    // Clear previous errors
+    setPasswordError('')
+
+    // Validate passwords
+    if (!passwordValue || !repeatPasswordValue) {
+      setPasswordError('Both fields are required')
+      return
+    }
+
+    if (passwordValue.length < 6) {
+      setPasswordError('Password must be at least 6 characters long')
+      return
+    }
+
+    if (passwordValue !== repeatPasswordValue) {
+      setPasswordError('Passwords do not match')
+      return
+    }
+
+    setIsUpdatingPassword(true)
+
+    try {
+      const response = await fetch('/api/user/update-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newPassword: passwordValue,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        setPasswordError(data.error || 'Failed to update password')
+        return
+      }
+
+      // Success - close the edit view and reset values
+      setCurrentEditView(null)
+      setPasswordValue('')
+      setRepeatPasswordValue('')
+      setPasswordError('')
+    } catch (error) {
+      console.error('Error updating password:', error)
+      setPasswordError('An error occurred. Please try again.')
+    } finally {
+      setIsUpdatingPassword(false)
+    }
+  }
   const [conceptData, setConceptData] = useState<Map<string, { id: string; label: string; opposites: string[] }>>(new Map())
   const [sliderPositions, setSliderPositions] = useState<Map<string, number>>(new Map()) // Map of concept -> slider position (0-1, where 1 is right/default)
   const [conceptResults, setConceptResults] = useState<Map<string, Site[]>>(new Map()) // Map of concept -> results for that concept
@@ -2398,6 +2468,15 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             <Header 
               onSubmitClick={() => setShowSubmissionForm(true)}
               onLoginClick={() => router.push('/login')}
+              onFavouritesClick={() => {
+                // TODO: Navigate to favourites page or show favourites
+                console.log('Favourites clicked')
+              }}
+              onUserAccountClick={() => {
+                setIsAccountDrawerOpen(true)
+              }}
+              isLoggedIn={isLoggedIn}
+              username={session?.user?.username}
               searchQuery={searchQuery}
               onSearchInputChange={handleSearchInputChange}
               onSearchKeyDown={handleSearchKeyDown}
@@ -2576,10 +2655,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                   setHoveredLikeButtonId(null)
                                 }}
                                 className="p-2 hover:bg-black/20 rounded-md transition-opacity cursor-pointer"
-                                aria-label="Save to collection"
+                                aria-label="Add to favorites"
                               >
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M18 5C18 4.73478 17.8946 4.48051 17.707 4.29297C17.5195 4.10543 17.2652 4 17 4H7C6.73478 4 6.48051 4.10543 6.29297 4.29297C6.10543 4.48051 6 4.73478 6 5V19.0566L11.4189 15.1865L11.5547 15.1045C11.8817 14.9418 12.277 14.9693 12.5811 15.1865L18 19.0566V5ZM20 21C20 21.3745 19.791 21.7182 19.458 21.8896C19.1249 22.0611 18.7238 22.0312 18.4189 21.8135L12 17.2285L5.58105 21.8135C5.27624 22.0312 4.87506 22.0611 4.54199 21.8896C4.209 21.7182 4 21.3745 4 21V5C4 4.20435 4.3163 3.44152 4.87891 2.87891C5.44152 2.3163 6.20435 2 7 2H17C17.7956 2 18.5585 2.3163 19.1211 2.87891C19.6837 3.44152 20 4.20435 20 5V21Z" fill="white"/>
+                                  <path d="M21.4502 8.50195C21.4502 7.91086 21.3337 7.32537 21.1074 6.7793C20.8811 6.23319 20.5489 5.73723 20.1309 5.31934V5.31836C19.7131 4.90042 19.2168 4.56901 18.6709 4.34277C18.1248 4.1165 17.5393 4.00001 16.9482 4C16.3571 4 15.7717 4.1165 15.2256 4.34277C14.6796 4.569 14.1834 4.90042 13.7656 5.31836V5.31934L12.7051 6.37891C12.3145 6.76935 11.6815 6.7694 11.291 6.37891L10.2314 5.31934C9.38729 4.47518 8.24167 4.00098 7.04785 4.00098C5.85415 4.00106 4.70932 4.47525 3.86523 5.31934C3.02122 6.16347 2.54688 7.30824 2.54688 8.50195C2.54691 9.69568 3.02117 10.8405 3.86523 11.6846L11.998 19.8174L20.1309 11.6846L20.2842 11.5244C20.6308 11.1421 20.9094 10.7024 21.1074 10.2246C21.3337 9.67854 21.4502 9.09303 21.4502 8.50195ZM23.4502 8.50195C23.4502 9.35576 23.2819 10.2015 22.9551 10.9902C22.6283 11.7789 22.1487 12.4951 21.5449 13.0986L12.7051 21.9385C12.3146 22.329 11.6815 22.329 11.291 21.9385L2.45117 13.0986C1.23203 11.8794 0.546909 10.2261 0.546875 8.50195C0.546875 6.7777 1.23194 5.12353 2.45117 3.9043C3.6703 2.68531 5.32384 2.00106 7.04785 2.00098C8.77206 2.00098 10.4263 2.68513 11.6455 3.9043L11.998 4.25684L12.3506 3.9043C12.9542 3.30048 13.6712 2.82194 14.46 2.49512C15.2488 2.16827 16.0944 2 16.9482 2C17.8021 2.00001 18.6477 2.16828 19.4365 2.49512C20.225 2.82186 20.9415 3.3007 21.5449 3.9043C22.1488 4.50792 22.6282 5.22486 22.9551 6.01367C23.2819 6.80247 23.4502 7.64812 23.4502 8.50195Z" fill="white"/>
                                 </svg>
                               </button>
                             </div>
@@ -2596,7 +2675,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                           {hoveredLikeButtonId === (site.id || `${site.imageId}-${index}`) && (
                             <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                               <div className="bg-black/60 text-white px-4 py-2 rounded-md text-sm font-medium">
-                                Login to save to collection
+                                Login to add to favorites
                               </div>
                             </div>
                           )}
@@ -2721,6 +2800,232 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         <LoginRequiredModal
           onClose={() => setShowLoginModal(false)}
         />
+      )}
+
+      {/* Account Drawer - slides from right */}
+      {isAccountDrawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-[70] transition-opacity"
+            onClick={() => {
+              setIsAccountDrawerOpen(false)
+              setIsAccountSettingsView(false)
+              setCurrentEditView(null)
+            }}
+          />
+          {/* Drawer */}
+          <div className="fixed right-0 top-0 h-full w-full md:w-[440px] bg-[#fbf9f4] border-l border-gray-300 z-[71] shadow-xl transition-transform duration-300 ease-in-out flex flex-col">
+            {/* Header */}
+            <div className="sticky top-0 z-50 bg-[#fbf9f4] p-4 md:p-6 flex items-center justify-between">
+              {(isAccountSettingsView || currentEditView) ? (
+                <button
+                  onClick={() => {
+                    if (currentEditView) {
+                      setCurrentEditView(null)
+                    } else {
+                      setIsAccountSettingsView(false)
+                    }
+                  }}
+                  className="p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
+                  aria-label="Back"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              ) : (
+                <div></div>
+              )}
+              <button
+                onClick={() => {
+                  setIsAccountDrawerOpen(false)
+                  setIsAccountSettingsView(false)
+                  setCurrentEditView(null)
+                }}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
+                aria-label="Close drawer"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            
+            {/* Content */}
+            {!isAccountSettingsView ? (
+              /* Main Account View */
+              <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col items-center justify-center">
+                {session?.user && (
+                  <div className="flex flex-col items-center mb-auto">
+                    <div className="w-[72px] h-[72px] rounded-full bg-black flex items-center justify-center text-4xl font-medium text-white mb-4">
+                      {session.user.username?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-1">{session.user.username}</h3>
+                    {session.user.email && (
+                      <p className="text-sm text-gray-600 mb-4">{session.user.email}</p>
+                    )}
+                    <button
+                      onClick={() => {
+                        setIsAccountSettingsView(true)
+                        setEmailValue(session.user.email || '')
+                      }}
+                      className="text-gray-900 px-4 py-2 rounded-lg hover:bg-[#f5f3ed] transition-colors cursor-pointer"
+                    >
+                      Account settings
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : currentEditView ? (
+              /* Edit Views (Email or Password) */
+              <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                {session?.user && (
+                  <div className="space-y-4">
+                    {currentEditView === 'email' ? (
+                      <>
+                        <div className="mb-6">
+                          <label className="block text-sm font-bold text-gray-900 mb-2">Email</label>
+                          <input
+                            type="email"
+                            value={emailValue}
+                            onChange={(e) => setEmailValue(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                            autoFocus
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            // TODO: Update email
+                            console.log('Updating email:', emailValue)
+                            setCurrentEditView(null)
+                          }}
+                          className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
+                        >
+                          Update
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mb-4">
+                          <label className="block text-sm font-bold text-gray-900 mb-2">New password</label>
+                          <input
+                            type="password"
+                            value={passwordValue}
+                            onChange={(e) => {
+                              setPasswordValue(e.target.value)
+                              setPasswordError('')
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                            autoFocus
+                          />
+                        </div>
+                        <div className="mb-6">
+                          <label className="block text-sm font-bold text-gray-900 mb-2">Repeat new password</label>
+                          <input
+                            type="password"
+                            value={repeatPasswordValue}
+                            onChange={(e) => {
+                              setRepeatPasswordValue(e.target.value)
+                              setPasswordError('')
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handlePasswordUpdate()
+                              }
+                            }}
+                          />
+                          {passwordError && (
+                            <p className="mt-1 text-sm text-red-600">{passwordError}</p>
+                          )}
+                        </div>
+                        <button
+                          onClick={handlePasswordUpdate}
+                          disabled={isUpdatingPassword || !passwordValue || !repeatPasswordValue}
+                          className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isUpdatingPassword ? 'Updating...' : 'Update'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Account Settings View */
+              <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                {session?.user && (
+                  <div>
+                    {/* Username - Read only */}
+                    <div className="flex items-center justify-between p-4 border-b border-gray-300">
+                      <div className="flex-1">
+                        <label className="block text-sm font-bold text-gray-900 mb-1">User ID</label>
+                        <p className="text-gray-900">{session.user.username}</p>
+                      </div>
+                    </div>
+
+                    {/* Account Type - Read only */}
+                    <div className="flex items-center justify-between p-4 border-b border-gray-300">
+                      <div className="flex-1">
+                        <label className="block text-sm font-bold text-gray-900 mb-1">Account type</label>
+                        <p className="text-gray-900">{session.user.accountType || 'Pro'}</p>
+                      </div>
+                    </div>
+
+                    {/* Email - Editable */}
+                    <div className="flex items-center justify-between p-4 border-b border-gray-300 cursor-pointer hover:bg-[#f5f3ed] transition-colors"
+                      onClick={() => {
+                        setCurrentEditView('email')
+                        setEmailValue(session.user.email || '')
+                      }}
+                    >
+                      <div className="flex-1">
+                        <label className="block text-sm font-bold text-gray-900 mb-1">Email</label>
+                        <p className="text-gray-900">{session.user.email || 'No email'}</p>
+                      </div>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-600 flex-shrink-0">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+
+                    {/* Password - Editable */}
+                    <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#f5f3ed] transition-colors"
+                      onClick={() => {
+                        setCurrentEditView('password')
+                        setPasswordValue('')
+                        setRepeatPasswordValue('')
+                        setPasswordError('')
+                      }}
+                    >
+                      <div className="flex-1">
+                        <label className="block text-sm font-bold text-gray-900 mb-1">Password</label>
+                        <p className="text-gray-900">••••••••</p>
+                      </div>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-600 flex-shrink-0">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Logout button at bottom - only show in main view */}
+            {!isAccountSettingsView && (
+              <div className="p-4 md:p-6">
+                <button
+                  onClick={async () => {
+                    await signOut({ redirect: true, callbackUrl: '/' })
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* Add vibes Modal */}

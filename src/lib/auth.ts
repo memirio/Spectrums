@@ -36,6 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           username: user.username,
           email: user.email,
+          accountType: user.accountType,
         }
       },
     }),
@@ -45,12 +46,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.username = user.username
+        token.accountType = user.accountType
       }
       return token
     },
@@ -58,10 +61,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string
         session.user.username = token.username as string
+        session.user.accountType = token.accountType as 'Pro' | 'Agency' | 'Enterprise' | 'VIP' | undefined
       }
       return session
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true, // Trust the host header in production (Vercel)
 })
 
