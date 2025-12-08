@@ -406,17 +406,8 @@ export async function tagImageWithoutNewConcepts(imageId: string): Promise<void>
     }
   }
   
-  // Trigger incremental hub detection for this image only (debounced, runs in background)
-  // This is much faster than processing all images
-  try {
-    const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
-    triggerHubDetectionForImages([image.id]).catch((err) => {
-      console.warn(`[tagImageWithoutNewConcepts] Failed to trigger hub detection: ${err.message}`)
-    })
-  } catch (hubError) {
-    // Non-fatal: hub detection is a background optimization
-    console.warn(`[tagImageWithoutNewConcepts] Failed to trigger hub detection:`, (hubError as Error)?.message)
-  }
+  // Hub detection is now triggered by the caller (sites route) with force mode
+  // Removed duplicate call to avoid double-triggering
 }
 
 /**
