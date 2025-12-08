@@ -2969,7 +2969,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     <div className="flex items-center justify-between p-4 border-b border-gray-300">
                       <div className="flex-1">
                         <label className="block text-sm font-bold text-gray-900 mb-1">Account type</label>
-                        <p className="text-gray-900">{session.user.accountType || 'Pro'}</p>
+                        <p className="text-gray-900">{(session.user as { accountType?: 'Pro' | 'Agency' | 'Enterprise' | 'VIP' }).accountType || 'Pro'}</p>
                       </div>
                     </div>
 
