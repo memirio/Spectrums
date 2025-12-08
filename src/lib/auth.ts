@@ -61,7 +61,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string
         session.user.username = token.username as string
-        session.user.accountType = token.accountType as 'Pro' | 'Agency' | 'Enterprise' | 'VIP' | undefined
+        ;(session.user as any).accountType = token.accountType as 'Pro' | 'Agency' | 'Enterprise' | 'VIP' | undefined
       }
       return session
     },
