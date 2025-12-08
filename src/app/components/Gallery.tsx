@@ -4,9 +4,10 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import SubmissionForm from './SubmissionForm'
 import CreateAccountMessageModal from './CreateAccountMessageModal'
+import LoginRequiredModal from './LoginRequiredModal'
 import Header from './Header'
 import Navigation from './Navigation'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 interface Tag {
   id: string
@@ -41,6 +42,13 @@ interface GalleryProps {
 
 export default function Gallery({ category: categoryProp, onCategoryChange }: GalleryProps = {} as GalleryProps) {
   const router = useRouter()
+  const pathname = usePathname()
+  
+  // Check if we're on the public (logged-out) page
+  // Check both pathname and hostname to be more robust
+  const isPublicPage = typeof window !== 'undefined' 
+    ? !window.location.hostname.startsWith('app.') && !pathname?.startsWith('/app/')
+    : !pathname?.startsWith('/app/')
   
   // Internal category state if not provided via props
   const [internalCategory, setInternalCategory] = useState<string | undefined>(categoryProp)
@@ -97,9 +105,37 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   }
   const [spectrums, setSpectrums] = useState<Spectrum[]>([])
   const [showAddConceptModal, setShowAddConceptModal] = useState(false) // Track if "Add Concept" modal is open
+  const [showLoginModal, setShowLoginModal] = useState(false) // Track if login required modal is open
   const [addConceptInputValue, setAddConceptInputValue] = useState('') // Track the value of the concept input
   const [addConceptInputRef, setAddConceptInputRef] = useState<HTMLInputElement | null>(null) // Ref for input auto-focus
   const [vibeFieldError, setVibeFieldError] = useState<string | undefined>(undefined) // Error message for vibe field
+  
+  // Track daily filter creation count (max 3 per day)
+  const getDailyFilterCount = (): number => {
+    if (typeof window === 'undefined') return 0
+    const today = new Date().toDateString()
+    const stored = localStorage.getItem('vibeFiltersCreated')
+    if (!stored) return 0
+    try {
+      const data = JSON.parse(stored)
+      if (data.date === today) {
+        return data.count || 0
+      }
+    } catch {
+      return 0
+    }
+    return 0
+  }
+  
+  const incrementDailyFilterCount = (): void => {
+    if (typeof window === 'undefined') return
+    const today = new Date().toDateString()
+    const currentCount = getDailyFilterCount()
+    localStorage.setItem('vibeFiltersCreated', JSON.stringify({
+      date: today,
+      count: currentCount + 1
+    }))
+  }
   
   // Legacy concept state (for backward compatibility with existing logic)
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
@@ -1334,6 +1370,29 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       return
     }
     
+    // On public page, enforce limits:
+    // 1. Max 2 active filters at the same time
+    // 2. Max 3 filters created per day
+    if (isPublicPage) {
+      // Check if already have 2 active filters
+      if (spectrums.length >= 2) {
+        setShowAddConceptModal(false)
+        setShowLoginModal(true)
+        return
+      }
+      
+      // Check if already created 3 filters today
+      const dailyCount = getDailyFilterCount()
+      if (dailyCount >= 3) {
+        setShowAddConceptModal(false)
+        setShowLoginModal(true)
+        return
+      }
+      
+      // Increment daily count
+      incrementDailyFilterCount()
+    }
+    
     // Close modal immediately
     setShowAddConceptModal(false)
     const inputValue = addConceptInputValue
@@ -1776,6 +1835,19 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           {/* Add vibes button */}
           <button
             onClick={() => {
+              if (isPublicPage) {
+                // Check if already have 2 active filters
+                if (spectrums.length >= 2) {
+                  setShowLoginModal(true)
+                  return
+                }
+                // Check if already created 3 filters today
+                const dailyCount = getDailyFilterCount()
+                if (dailyCount >= 3) {
+                  setShowLoginModal(true)
+                  return
+                }
+              }
               setShowAddConceptModal(true)
               setAddConceptInputValue('')
             }}
@@ -2641,6 +2713,13 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       {showCreateAccountMessage && (
         <CreateAccountMessageModal
           onClose={() => setShowCreateAccountMessage(false)}
+        />
+      )}
+
+      {/* Login Required Modal */}
+      {showLoginModal && (
+        <LoginRequiredModal
+          onClose={() => setShowLoginModal(false)}
         />
       )}
 
