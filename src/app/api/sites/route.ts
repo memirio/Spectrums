@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
         
         // Use LATERAL JOIN to get the first image for each site efficiently
         // This is much faster than DISTINCT ON because it uses indexes properly
-        const result = await perf?.measure('api.sites.GET.queryWithCategory.lateralJoin', async () => {
+        const queryResult = await perf?.measure('api.sites.GET.queryWithCategory.lateralJoin', async () => {
           return await (prisma.$queryRawUnsafe as any)(
             `SELECT 
               s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt",
@@ -193,6 +193,7 @@ export async function GET(request: NextRequest) {
             offset
           )
         }, { category, limit, offset })
+        const result = queryResult ?? []
         
         perf?.end('api.sites.GET.queryWithCategory', { resultCount: result.length })
         
@@ -231,7 +232,7 @@ export async function GET(request: NextRequest) {
           return seconds * 1000 + nanoseconds / 1000000
         }
         const connectionStart = getTime()
-        sites = await perf?.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
+        const queryResult = await perf?.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
           const queryStart = getTime()
           const result = await prisma.site.findMany({
             orderBy: [
@@ -250,6 +251,7 @@ export async function GET(request: NextRequest) {
           })
           return result
         }, { limit, offset })
+        sites = queryResult ?? []
         perf?.end('api.sites.GET.queryWithoutCategory.connection')
         
         perf?.end('api.sites.GET.queryWithoutCategory', { sitesCount: sites.length })
@@ -277,7 +279,7 @@ export async function GET(request: NextRequest) {
         if (fetchedSiteIds.length > 0) {
           // Use simple IN query - let database handle it efficiently with indexes
           const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
-          const images = await perf?.measure('api.sites.GET.fetchImages.query', async () => {
+          const imagesResult = await perf?.measure('api.sites.GET.fetchImages.query', async () => {
             return await (prisma.$queryRawUnsafe as any)(
               `SELECT "id", "siteId", "url", "category"
                FROM "images"
@@ -286,6 +288,7 @@ export async function GET(request: NextRequest) {
               ...fetchedSiteIds
             )
           }, { siteIdsCount: fetchedSiteIds.length })
+          const images = imagesResult ?? []
           
           perf?.start('api.sites.GET.fetchImages.process')
           // Filter to first image per site in JavaScript (simpler than DISTINCT ON)
@@ -340,7 +343,7 @@ export async function GET(request: NextRequest) {
     // OPTIMIZATION: Use database queries instead of loading everything into memory
     // Find concept IDs that match the search terms (fuzzy match on label)
           perf?.start('api.sites.GET.withConcepts.findConcepts')
-    const conceptMatches = await perf?.measure('api.sites.GET.withConcepts.findConcepts.findMany', async () => {
+    const conceptMatchesResult = await perf?.measure('api.sites.GET.withConcepts.findConcepts.findMany', async () => {
       return await prisma.concept.findMany({
         where: {
           OR: conceptList.map(term => ({
@@ -353,6 +356,7 @@ export async function GET(request: NextRequest) {
         select: { id: true, label: true }
       })
     }, { conceptListCount: conceptList.length })
+    const conceptMatches = conceptMatchesResult ?? []
     
     const matchedConceptIds = new Set(conceptMatches.map(c => c.id))
     const matchedConceptLabels = new Set(conceptMatches.map(c => c.label.toLowerCase()))
@@ -408,7 +412,7 @@ export async function GET(request: NextRequest) {
           perf?.start('api.sites.GET.withConcepts.querySites', { conceptIdsCount: conceptIdsArray.length, limit, offset })
     // Query: Find sites where ALL concepts are present in image tags
     // This uses a GROUP BY with HAVING COUNT(DISTINCT conceptId) = number of concepts
-    const sitesWithAllConcepts = await perf?.measure('api.sites.GET.withConcepts.querySites.rawQuery', async () => {
+    const sitesWithAllConceptsResult = await perf?.measure('api.sites.GET.withConcepts.querySites.rawQuery', async () => {
       return await (prisma.$queryRawUnsafe as any)(
         `SELECT DISTINCT s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
          FROM "sites" s
@@ -425,6 +429,7 @@ export async function GET(request: NextRequest) {
         offset
       )
     }, { conceptIdsCount: conceptIdsArray.length, limit, offset })
+    const sitesWithAllConcepts = sitesWithAllConceptsResult ?? []
           perf?.end('api.sites.GET.withConcepts.querySites', { sitesCount: sitesWithAllConcepts.length })
 
           perf?.start('api.sites.GET.withConcepts.paginate')
@@ -436,7 +441,7 @@ export async function GET(request: NextRequest) {
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
           perf?.start('api.sites.GET.withConcepts.fetchImages')
     const fIds = paginatedSites.map((s: any) => s.id)
-    const fImages = fIds.length
+    const fImagesResult = fIds.length
       ? await perf?.measure('api.sites.GET.withConcepts.fetchImages.findMany', async () => {
           return await (prisma.image as any).findMany({ 
             where: { siteId: { in: fIds } }, 
@@ -445,6 +450,7 @@ export async function GET(request: NextRequest) {
           })
         }, { siteIdsCount: fIds.length })
       : []
+    const fImages = fImagesResult ?? []
           perf?.start('api.sites.GET.withConcepts.fetchImages.process')
     const firstImageBySite = new Map<string, string>()
     const imageIdBySite = new Map<string, string>()
