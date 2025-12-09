@@ -99,6 +99,8 @@ model Image {
   
   // Relations for saved images
   savedBy SavedImage[]
+  // Relations for collections
+  inCollections CollectionImage[]
 
   @@unique([siteId, url], name: "siteId_url")
   @@index([category]) // Index for fast filtering by category
@@ -188,17 +190,27 @@ model UserInteraction {
   @@map("user_interactions")
 }
 
+enum AccountType {
+  Pro
+  Agency
+  Enterprise
+  VIP
+}
+
 // User authentication and accounts
 model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  email     String?  @unique
-  password  String // Hashed password
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String      @id @default(cuid())
+  username    String      @unique
+  email       String?     @unique
+  password    String // Hashed password
+  accountType AccountType @default(Pro)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   // User's saved images
   savedImages SavedImage[]
+  // User's collections
+  collections Collection[]
 
   @@map("users")
 }
@@ -217,4 +229,37 @@ model SavedImage {
   @@index([userId])
   @@index([imageId])
   @@map("saved_images")
+}
+
+// User's collections
+model Collection {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images CollectionImage[]
+
+  @@unique([userId, name], name: "userId_name") // Prevent duplicate collection names per user
+  @@index([userId])
+  @@map("collections")
+}
+
+// Many-to-many relationship between collections and images
+model CollectionImage {
+  id           String   @id @default(cuid())
+  collectionId String
+  imageId      String
+  createdAt    DateTime @default(now())
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  image      Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, imageId], name: "collectionId_imageId") // Prevent duplicate images in collection
+  @@index([collectionId])
+  @@index([imageId])
+  @@map("collection_images")
 }

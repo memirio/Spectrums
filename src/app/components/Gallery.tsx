@@ -8,7 +8,9 @@ import CreateAccountMessageModal from './CreateAccountMessageModal'
 import LoginRequiredModal from './LoginRequiredModal'
 import Header from './Header'
 import Navigation from './Navigation'
+import AddToCollectionModal from './AddToCollectionModal'
 import { useRouter, usePathname } from 'next/navigation'
+import { useSearch } from '../contexts/SearchContext'
 
 interface Tag {
   id: string
@@ -45,6 +47,15 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
+  
+  // Sync with global search context
+  const globalSearch = useSearch()
+  
+  // Check if we're on the gallery page
+  const isGalleryPage = pathname === '/all' || pathname === '/app/all'
+  
+  // Check if we're on the collections page
+  const isCollectionsPage = pathname === '/collections' || pathname === '/app/collections'
   
   // Check if we're on the public (logged-out) page
   // Check both pathname and hostname to be more robust
@@ -99,8 +110,35 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [paginationOffset, setPaginationOffset] = useState(0) // Current API pagination offset
   const [hasMoreResults, setHasMoreResults] = useState(false) // Whether there are more results to fetch
   const [isLoadingMore, setIsLoadingMore] = useState(false) // Loading state for pagination
-  // Main search (simple text search, no concepts)
-  const [searchQuery, setSearchQuery] = useState('')
+  // Use global search context, but maintain local state for immediate UI updates
+  const [searchQuery, setSearchQuery] = useState(globalSearch.searchQuery)
+  
+  // Sync selectedConcepts with global context
+  const [selectedConcepts, setSelectedConcepts] = useState<string[]>(globalSearch.selectedConcepts)
+  
+  // Sync local state with global context when it changes (only on gallery page)
+  useEffect(() => {
+    if (isGalleryPage) {
+      setSearchQuery(globalSearch.searchQuery)
+      setSelectedConcepts(globalSearch.selectedConcepts)
+    }
+  }, [globalSearch.searchQuery, globalSearch.selectedConcepts, isGalleryPage])
+  
+  // Update global context when local state changes (only on gallery page)
+  useEffect(() => {
+    if (isGalleryPage) {
+      globalSearch.setSearchQuery(searchQuery)
+      // Note: selectedConcepts updates are handled by addConcept/removeConcept calls
+    }
+  }, [searchQuery, isGalleryPage, globalSearch])
+  
+  // Open vibe filter modal if flag is set (when navigating from another page)
+  useEffect(() => {
+    if (isGalleryPage && globalSearch.shouldOpenVibeFilterModal) {
+      setShowAddConceptModal(true)
+      globalSearch.clearVibeFilterModalFlag()
+    }
+  }, [isGalleryPage, globalSearch.shouldOpenVibeFilterModal, globalSearch])
   
   // Drawer spectrums (concept-based sliders)
   interface Spectrum {
@@ -148,7 +186,6 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   }
   
   // Legacy concept state (for backward compatibility with existing logic)
-  const [selectedConcepts, setSelectedConcepts] = useState<string[]>([])
   const [customConcepts, setCustomConcepts] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
@@ -227,6 +264,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [isMobile, setIsMobile] = useState(false) // Track if we're on mobile
   const [copiedImageId, setCopiedImageId] = useState<string | null>(null) // Track which image was copied
   const [hoveredLikeButtonId, setHoveredLikeButtonId] = useState<string | null>(null) // Track which like button is being hovered
+  const [showAddToCollectionModal, setShowAddToCollectionModal] = useState(false) // Show add to collection modal
+  const [selectedImageForCollection, setSelectedImageForCollection] = useState<{ id: string; url: string; title?: string } | null>(null) // Image to add to collection
 
   // Detect mobile and set initial collapsed state
   useEffect(() => {
@@ -1038,7 +1077,54 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   }
 
   const fetchSites = useCallback(async () => {
-    console.log('[fetchSites] Called with selectedConcepts:', selectedConcepts, 'category:', category)
+    console.log('[fetchSites] Called with selectedConcepts:', selectedConcepts, 'category:', category, 'isCollectionsPage:', isCollectionsPage)
+    
+    // If on collections page, fetch saved images instead
+    if (isCollectionsPage && isLoggedIn) {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/saved-images')
+        if (!response.ok) {
+          console.error('[fetchSites] Failed to fetch saved images:', response.status)
+          setSites([])
+          setAllSites([])
+          return
+        }
+        const data = await response.json()
+        const savedImages = data.savedImages || []
+        
+        // Convert saved images to Site format
+        const sitesFromSaved = savedImages.map((saved: any) => {
+          const image = saved.image
+          const site = image?.site
+          return {
+            id: site?.id || image?.id,
+            title: site?.title || 'Untitled',
+            description: site?.description || null,
+            url: site?.url || image?.url || '',
+            imageUrl: image?.url || '',
+            author: site?.author || null,
+            tags: [], // Tags not needed for collections display
+            imageId: image?.id,
+            category: image?.category || 'website',
+          } as Site
+        })
+        
+        setAllSites(sitesFromSaved)
+        setSites(sitesFromSaved.slice(0, 50))
+        setDisplayedCount(50)
+        setHasMoreResults(false)
+        setPaginationOffset(0)
+      } catch (error) {
+        console.error('[fetchSites] Error fetching saved images:', error)
+        setSites([])
+        setAllSites([])
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
+    
     try {
       setLoading(true)
       
@@ -1295,11 +1381,11 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     } finally {
       setLoading(false)
     }
-  }, [selectedConcepts, category])
+  }, [selectedConcepts, category, isCollectionsPage, isLoggedIn])
 
-  // Fetch sites when concepts or category change (but not when slider moves)
+  // Fetch sites when concepts, category, or collections page changes (but not when slider moves)
   useEffect(() => {
-    console.log('[useEffect] selectedConcepts or category changed, scheduling fetchSites in 300ms. selectedConcepts:', selectedConcepts, 'category:', category)
+    console.log('[useEffect] selectedConcepts, category, or isCollectionsPage changed, scheduling fetchSites in 300ms. selectedConcepts:', selectedConcepts, 'category:', category, 'isCollectionsPage:', isCollectionsPage)
     const controller = new AbortController()
     const timer = setTimeout(() => {
       console.log('[useEffect] Timer fired, calling fetchSites')
@@ -1309,7 +1395,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       controller.abort()
       clearTimeout(timer)
     }
-  }, [selectedConcepts, category, fetchSites])
+  }, [selectedConcepts, category, isCollectionsPage, fetchSites])
 
   // Initial fetch on mount
   useEffect(() => {
@@ -1325,9 +1411,16 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const handleSearchSubmit = () => {
     const trimmed = searchQuery.trim()
     if (trimmed) {
+      // If not on gallery page, navigate there first
+      if (!isGalleryPage) {
+        globalSearch.triggerSearch(trimmed)
+        return
+      }
+      
       // Add as custom concept and trigger search (same logic as before, but no concept matching)
       if (!selectedConcepts.includes(trimmed)) {
         setSelectedConcepts(prev => [...prev, trimmed])
+        globalSearch.addConcept(trimmed)
         setCustomConcepts(prev => new Set(prev).add(trimmed))
         setSliderPositions(prev => {
           const newMap = new Map(prev)
@@ -1440,10 +1533,18 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       return
     }
     
-    // On public page, enforce limits:
+    // If not on gallery page, navigate there first
+    if (!isGalleryPage) {
+      globalSearch.triggerVibeFilter(concept)
+      setShowAddConceptModal(false)
+      setAddConceptInputValue('')
+      return
+    }
+    
+    // On public page (when not logged in), enforce limits:
     // 1. Max 2 active filters at the same time
     // 2. Max 3 filters created per day
-    if (isPublicPage) {
+    if (isPublicPage && !isLoggedIn) {
       // Check if already have 2 active filters
       if (spectrums.length >= 2) {
         setShowAddConceptModal(false)
@@ -1494,6 +1595,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         console.log('[vibe-filter] Updated selectedConcepts:', updated)
         return updated
       })
+      globalSearch.addConcept(concept)
       setCustomConcepts(prev => new Set(prev).add(concept))
       setSliderPositions(prev => {
         const newMap = new Map(prev)
@@ -1508,30 +1610,37 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
 
   // Remove a spectrum from the drawer
   const removeSpectrum = (spectrumId: string) => {
-    setSpectrums(prev => {
-      const filtered = prev.filter(s => s.id !== spectrumId)
-      // Also remove from selectedConcepts if it was added
-      const spectrum = prev.find(s => s.id === spectrumId)
-      if (spectrum && spectrum.concept) {
-        console.log('[vibe-filter] Removing concept:', spectrum.concept)
-        setSelectedConcepts(prevConcepts => {
-          const updated = prevConcepts.filter(c => c !== spectrum.concept)
-          console.log('[vibe-filter] Updated selectedConcepts after removal:', updated)
-          return updated
-        })
-        setCustomConcepts(prevCustom => {
-          const next = new Set(prevCustom)
-          next.delete(spectrum.concept)
-          return next
-        })
-        setSliderPositions(prev => {
-          const newMap = new Map(prev)
-          newMap.delete(spectrum.concept)
-          return newMap
-        })
-      }
-      return filtered
-    })
+    // Find the spectrum before removing it
+    const spectrum = spectrums.find(s => s.id === spectrumId)
+    
+    // Remove from spectrums
+    setSpectrums(prev => prev.filter(s => s.id !== spectrumId))
+    
+    // If spectrum has a concept, remove it from all related state
+    if (spectrum && spectrum.concept) {
+      const concept = spectrum.concept
+      console.log('[vibe-filter] Removing concept:', concept)
+      
+      // Update global context (outside of state updater to avoid render issues)
+      globalSearch.removeConcept(concept)
+      
+      // Update local state
+      setSelectedConcepts(prevConcepts => {
+        const updated = prevConcepts.filter(c => c !== concept)
+        console.log('[vibe-filter] Updated selectedConcepts after removal:', updated)
+        return updated
+      })
+      setCustomConcepts(prevCustom => {
+        const next = new Set(prevCustom)
+        next.delete(concept)
+        return next
+      })
+      setSliderPositions(prev => {
+        const newMap = new Map(prev)
+        newMap.delete(concept)
+        return newMap
+      })
+    }
   }
 
   // Handle spectrum concept selection (when user selects a concept from suggestions)
@@ -1849,46 +1958,45 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
 
   return (
     <div className="h-screen bg-[#fbf9f4] flex overflow-hidden relative">
-      {/* Mobile: Floating chevron button when collapsed */}
-      {isMobile && isDrawerCollapsed && (
-        <button
-          onClick={() => setIsDrawerCollapsed(false)}
-          className="fixed top-4 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] transition-colors md:hidden cursor-pointer"
-          aria-label="Expand drawer"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
+      {/* Content area - Drawer and main content side by side */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile: Floating chevron button when collapsed */}
+        {isMobile && isDrawerCollapsed && (
+          <button
+            onClick={() => setIsDrawerCollapsed(false)}
+            className="fixed top-20 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] transition-colors md:hidden cursor-pointer"
+            aria-label="Expand drawer"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      )}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
 
-      {/* Mobile backdrop when drawer is open */}
-      {isMobile && !isDrawerCollapsed && (
-        <div 
-          className="fixed inset-0 z-[55] md:hidden"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
-          onClick={() => setIsDrawerCollapsed(true)}
-        />
-      )}
+        {/* Mobile backdrop when drawer is open */}
+        {isMobile && !isDrawerCollapsed && (
+          <div 
+            className="fixed inset-0 z-[55] md:hidden"
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
+            onClick={() => setIsDrawerCollapsed(true)}
+          />
+        )}
 
-      {/* Left Drawer - Dynamic, max width 280px - Fixed position on desktop, overlay on mobile */}
-      <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out ${
-        isMobile 
-          ? (isDrawerCollapsed ? 'hidden' : 'fixed left-0 top-0 z-[60] w-[280px] h-full shadow-lg') 
-          : (isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0')
-      } overflow-hidden flex flex-col h-full`}>
-        {/* Logo and collapse button at top of drawer - sticky */}
-        <div className="sticky top-0 z-50 bg-[#fbf9f4] p-4 md:p-6 border-b border-gray-300 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <img src="/Logo.svg" alt="Logo" className="h-6 w-auto" />
-          </Link>
+        {/* Left Drawer - Dynamic, max width 280px - Below menu */}
+        <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out ${
+          isMobile 
+            ? (isDrawerCollapsed ? 'hidden' : 'fixed left-0 top-[73px] z-[60] w-[280px] h-[calc(100vh-73px)] shadow-lg') 
+            : (isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0')
+        } overflow-hidden flex flex-col h-full`}>
+        {/* Collapse button at top of drawer - sticky */}
+        <div className="sticky top-0 z-50 bg-[#fbf9f4] px-6 py-3 border-b border-gray-300 flex items-center justify-end">
           <button
             onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
             className="p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
@@ -1905,7 +2013,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           {/* Add vibes button */}
           <button
             onClick={() => {
-              if (isPublicPage) {
+              if (isPublicPage && !isLoggedIn) {
                 // Check if already have 2 active filters
                 if (spectrums.length >= 2) {
                   setShowLoginModal(true)
@@ -1965,7 +2073,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                           }, 200)
                         }}
                         placeholder="e.g., Love, Minimalistic, Tech..."
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500"
+                        className="w-full px-3 py-2 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-500 bg-[#EEEDEA]"
                         autoFocus
                       />
                       
@@ -2457,20 +2565,17 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         </div>
       </div>
 
-      {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
-      <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
-        isMobile && isDrawerCollapsed ? 'w-full' : ''
-      }`}>
-        {/* Scrollable Gallery Content */}
-        <div className="flex-1 overflow-y-auto min-w-0">
-          {/* Header with search bar - Sticky at top */}
-          <div className="sticky top-0 bg-[#fbf9f4] z-50">
+        {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
+        <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
+          isMobile && isDrawerCollapsed ? 'w-full' : ''
+        }`}>
+          {/* Header */}
+          <div className="flex-shrink-0 z-50">
             <Header 
               onSubmitClick={() => setShowSubmissionForm(true)}
               onLoginClick={() => router.push('/login')}
               onFavouritesClick={() => {
-                // TODO: Navigate to favourites page or show favourites
-                console.log('Favourites clicked')
+                router.push('/collections')
               }}
               onUserAccountClick={() => {
                 setIsAccountDrawerOpen(true)
@@ -2484,12 +2589,13 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               onClearSearch={clearSearchQuery}
               searchInputRef={inputRef}
             />
-        </div>
-        
-        {/* Main Content and Panel Container */}
-        <div className="flex">
-          {/* Main Content - shifts when panel opens */}
-          <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
+          </div>
+          {/* Scrollable Gallery Content */}
+          <div className="flex-1 overflow-y-auto min-w-0">
+            {/* Main Content and Panel Container */}
+            <div className="flex">
+              {/* Main Content - shifts when panel opens */}
+              <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
 
             {/* Gallery Grid */}
             <main className="bg-transparent pb-8">
@@ -2646,7 +2752,26 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                 onClick={(e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
-                                  router.push('/login')
+                                  if (isLoggedIn) {
+                                    // Open add to collection modal
+                                    // Use imageId if available
+                                    if (site.imageId) {
+                                      setSelectedImageForCollection({
+                                        id: site.imageId,
+                                        url: site.imageUrl || '',
+                                        title: site.title
+                                      })
+                                      setShowAddToCollectionModal(true)
+                                    } else {
+                                      // Fallback: Try to find image by matching URL
+                                      // This handles cases where imageId might not be in the response yet
+                                      console.warn('[Gallery] imageId missing for site', site.id, '- attempting to find image by URL')
+                                      // For now, show a helpful message
+                                      alert('Unable to add this image to a collection. Please try refreshing the page.')
+                                    }
+                                  } else {
+                                    router.push('/login')
+                                  }
                                 }}
                                 onMouseEnter={() => {
                                   setHoveredLikeButtonId(site.id || `${site.imageId}-${index}`)
@@ -2671,8 +2796,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                               </div>
                             </div>
                           )}
-                          {/* Like button hover message */}
-                          {hoveredLikeButtonId === (site.id || `${site.imageId}-${index}`) && (
+                          {/* Like button hover message - only show when not logged in */}
+                          {!isLoggedIn && hoveredLikeButtonId === (site.id || `${site.imageId}-${index}`) && (
                             <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                               <div className="bg-black/60 text-white px-4 py-2 rounded-md text-sm font-medium">
                                 Login to add to favorites
@@ -2771,22 +2896,193 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         )}
         </div>
       </main>
+              </div>
 
-      {/* Submission Form Modal */}
-      {showSubmissionForm && (
-        <SubmissionForm
-          onClose={() => setShowSubmissionForm(false)}
-          onSuccess={handleSubmissionSuccess}
-          onLoginClick={() => {
-            setShowSubmissionForm(false)
-            router.push('/login')
-          }}
-          onCreateAccountClick={() => {
-            setShowSubmissionForm(false)
-            setShowCreateAccountMessage(true)
-          }}
-        />
-      )}
+        {/* Side Panel - slides in from right and pushes content */}
+        <div
+          className={`sticky top-0 h-screen bg-[#fbf9f4] transition-all duration-300 ease-in-out overflow-hidden ${
+            isPanelOpen ? 'w-80' : 'w-0'
+          }`}
+        >
+          <div className={`p-6 pr-[52px] ${isPanelOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">Concept Spectrum</h2>
+            <button
+              onClick={() => setIsPanelOpen(false)}
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              aria-label="Close panel"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div className="space-y-3">
+            {selectedConcepts
+              .filter(concept => !customConcepts.has(concept))
+              .map((concept) => {
+                const conceptInfo = conceptData.get(concept.toLowerCase())
+                const opposites = conceptInfo?.opposites || []
+                // Opposites are stored as concept IDs, so we'll display them as-is for now
+                // In the future, we could fetch concept labels for these IDs
+                const firstOpposite = opposites.length > 0 ? opposites[0] : null
+                
+                return (
+                  (() => {
+                const sliderPosition = sliderPositions.get(concept) ?? 1.0 // Default to 1.0 (right)
+                // Clamp position to 0-1
+                const clampedPosition = Math.max(0, Math.min(1, sliderPosition))
+                // Convert to percentage for CSS, accounting for handle width
+                // Handle is 24px (w-6), track is 128px (w-32), so handle can move from 12px to 116px
+                // This maps to 0% to 100% of the usable track area
+                const handlePositionPercent = clampedPosition * 100
+                
+                const handleSliderMouseDown = (e: React.MouseEvent) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  
+                  const sliderTrack = e.currentTarget.closest('.bg-gray-300') as HTMLElement
+                  if (!sliderTrack) {
+                    console.error('[Slider] Could not find slider track element')
+                    return
+                  }
+                  
+                  const handleSliderStart = (clientX: number, track: HTMLElement) => {
+                    const trackRect = track.getBoundingClientRect()
+                    const updatePosition = (x: number) => {
+                      const clickPosition = Math.max(0, Math.min(1, (x - trackRect.left) / trackRect.width))
+                      
+                      setSliderPositions(prev => {
+                        const newMap = new Map(prev)
+                        newMap.set(concept, clickPosition)
+                        return newMap
+                      })
+                      
+                      requestAnimationFrame(() => {
+                        setSliderVersion(v => v + 1)
+                      })
+                    }
+                    
+                    updatePosition(clientX)
+                    
+                    const handleMouseMove = (moveEvent: MouseEvent) => {
+                      updatePosition(moveEvent.clientX)
+                    }
+                    
+                    const handleEnd = () => {
+                      document.removeEventListener('mousemove', handleMouseMove)
+                      document.removeEventListener('mouseup', handleEnd)
+                    }
+                    
+                    document.addEventListener('mousemove', handleMouseMove)
+                    document.addEventListener('mouseup', handleEnd)
+                  }
+                  
+                  handleSliderStart(e.clientX, sliderTrack)
+                }
+                
+                const handleSliderTouchStart = (e: React.TouchEvent) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  
+                  if (e.touches.length === 0) return
+                  
+                  // Find the actual slider track element
+                  let sliderTrack = e.currentTarget as HTMLElement
+                  if (!sliderTrack.classList.contains('bg-gray-300')) {
+                    sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
+                  }
+                  
+                  if (!sliderTrack) {
+                    console.error('[Slider] Could not find slider track element')
+                    return
+                  }
+                  
+                  const handleSliderStart = (clientX: number, track: HTMLElement) => {
+                    const trackRect = track.getBoundingClientRect()
+                    const updatePosition = (x: number) => {
+                      const clickPosition = Math.max(0, Math.min(1, (x - trackRect.left) / trackRect.width))
+                      
+                      setSliderPositions(prev => {
+                        const newMap = new Map(prev)
+                        newMap.set(concept, clickPosition)
+                        return newMap
+                      })
+                      
+                      requestAnimationFrame(() => {
+                        setSliderVersion(v => v + 1)
+                      })
+                    }
+                    
+                    updatePosition(clientX)
+                    
+                    const handleTouchMove = (moveEvent: TouchEvent) => {
+                      moveEvent.preventDefault()
+                      if (moveEvent.touches.length > 0) {
+                        updatePosition(moveEvent.touches[0].clientX)
+                      }
+                    }
+                    
+                    const handleEnd = () => {
+                      document.removeEventListener('touchmove', handleTouchMove)
+                      document.removeEventListener('touchend', handleEnd)
+                      document.removeEventListener('touchcancel', handleEnd)
+                    }
+                    
+                    document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                    document.addEventListener('touchend', handleEnd)
+                    document.addEventListener('touchcancel', handleEnd)
+                  }
+                  
+                  if (e.touches.length > 0) {
+                    handleSliderStart(e.touches[0].clientX, sliderTrack)
+                  }
+                }
+                
+                return (
+                      <div key={concept} className="flex items-center">
+                        {firstOpposite && (
+                          <>
+                            <div className="w-20 p-3 text-left overflow-hidden">
+                              <span className="text-sm text-gray-900 truncate block">{firstOpposite}</span>
+                            </div>
+                            <div className="flex-1 flex items-center justify-center">
+                              <div 
+                                className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
+                                onMouseDown={handleSliderMouseDown}
+                                onTouchStart={handleSliderTouchStart}
+                              >
+                            <div 
+                              className="absolute flex items-center justify-center pointer-events-none"
+                              style={{ 
+                                left: `calc(${Math.max(0, Math.min(100, handlePositionPercent))}% - 12px)`, 
+                                top: '50%',
+                                marginTop: '-12px',
+                                width: '24px',
+                                height: '24px'
+                              }}
+                            >
+                              <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
+                            </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        <div className="w-20 p-3 overflow-hidden flex justify-end">
+                          <span className="text-sm text-gray-900 truncate block text-right">{concept}</span>
+                        </div>
+                      </div>
+                    )
+                  })()
+                )
+              })}
+          </div>
+          </div>
+        </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Create Account Message Modal */}
       {showCreateAccountMessage && (
@@ -2890,7 +3186,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                             type="email"
                             value={emailValue}
                             onChange={(e) => setEmailValue(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                            className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 bg-[#EEEDEA]"
                             autoFocus
                           />
                         </div>
@@ -2916,7 +3212,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                               setPasswordValue(e.target.value)
                               setPasswordError('')
                             }}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                            className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 bg-[#EEEDEA]"
                             autoFocus
                           />
                         </div>
@@ -2929,7 +3225,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                               setRepeatPasswordValue(e.target.value)
                               setPasswordError('')
                             }}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                            className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 bg-[#EEEDEA]"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 handlePasswordUpdate()
@@ -3033,23 +3329,20 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="p-6">
-              <div className="relative mb-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Vibe filter</h2>
                 <button
                   onClick={() => {
                     setShowAddConceptModal(false)
                     setAddConceptInputValue('')
                   }}
-                  className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 cursor-pointer"
+                  className="text-gray-400 hover:text-gray-600 cursor-pointer"
                   aria-label="Close modal"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
-              </div>
-
-              <div className="text-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Vibe filter</h2>
               </div>
             
             <div className="space-y-4">
@@ -3076,10 +3369,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     }
                   }}
                   placeholder="e.g., Romantic, Minimalistic, Techy..."
-                  className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-500 ${
+                  className={`w-full px-3 py-2 text-sm rounded-md focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-500 bg-[#EEEDEA] ${
                     vibeFieldError 
-                      ? 'border-red-300 focus:ring-red-500' 
-                      : 'border-gray-300 focus:ring-gray-400'
+                      ? 'border border-red-300 focus:ring-red-500' 
+                      : 'focus:ring-gray-400'
                   }`}
                 />
                 {vibeFieldError && (
@@ -3100,216 +3393,33 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         </div>
       )}
 
-        {/* Side Panel - slides in from right and pushes content */}
-        <div
-          className={`sticky top-0 h-screen bg-[#fbf9f4] transition-all duration-300 ease-in-out overflow-hidden ${
-            isPanelOpen ? 'w-80' : 'w-0'
-          }`}
-        >
-          <div className={`p-6 pr-[52px] ${isPanelOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Concept Spectrum</h2>
-            <button
-              onClick={() => setIsPanelOpen(false)}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer"
-              aria-label="Close panel"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-          <div className="space-y-3">
-            {selectedConcepts
-              .filter(concept => !customConcepts.has(concept))
-              .map((concept) => {
-                const conceptInfo = conceptData.get(concept.toLowerCase())
-                const opposites = conceptInfo?.opposites || []
-                // Opposites are stored as concept IDs, so we'll display them as-is for now
-                // In the future, we could fetch concept labels for these IDs
-                const firstOpposite = opposites.length > 0 ? opposites[0] : null
-                
-                return (
-                  (() => {
-                const sliderPosition = sliderPositions.get(concept) ?? 1.0 // Default to 1.0 (right)
-                // Clamp position to 0-1
-                const clampedPosition = Math.max(0, Math.min(1, sliderPosition))
-                // Convert to percentage for CSS, accounting for handle width
-                // Handle is 24px (w-6), track is 128px (w-32), so handle can move from 12px to 116px
-                // This maps to 0% to 100% of the usable track area
-                const handlePositionPercent = clampedPosition * 100
-                    
-                    // Shared function to handle both mouse and touch events
-                    const handleSliderStart = (clientX: number, sliderTrack: HTMLElement) => {
-                      // Store the initial track rect and position
-                      const initialTrackRect = sliderTrack.getBoundingClientRect()
-                      const initialPosition = sliderPositions.get(concept) ?? 1.0
-                      
-                      let lastUpdateTime = 0
-                      const throttleDelay = 16 // ~60fps
-                      let lastPosition = initialPosition
-                      
-                      const updatePosition = (currentX: number) => {
-                        const now = Date.now()
-                        if (now - lastUpdateTime < throttleDelay) return
-                        lastUpdateTime = now
-                        
-                        // Calculate delta from initial position
-                        const deltaX = currentX - initialTrackRect.left
-                        // Map to position (0-1)
-                        const newPosition = Math.max(0, Math.min(1, deltaX / initialTrackRect.width))
-                        
-                        // Only update if position changed significantly
-                        if (Math.abs(lastPosition - newPosition) < 0.001) {
-                          return // No change, skip update
-                        }
-                        
-                        lastPosition = newPosition
-                        
-                        // Update position
-                        setSliderPositions(prev => {
-                          const newMap = new Map(prev)
-                          newMap.set(concept, newPosition)
-                          return newMap
-                        })
-                        
-                        // Increment version AFTER state update
-                        requestAnimationFrame(() => {
-                          setSliderVersion(v => v + 1)
-                        })
-                      }
-                      
-                      // Initial click/touch: calculate position from location
-                      const clickPosition = Math.max(0, Math.min(1, (clientX - initialTrackRect.left) / initialTrackRect.width))
-                      
-                      setSliderPositions(prev => {
-                        const currentPos = prev.get(concept) ?? 1.0
-                        if (Math.abs(currentPos - clickPosition) < 0.001) {
-                          return prev // No change
-                        }
-                        const newMap = new Map(prev)
-                        newMap.set(concept, clickPosition)
-                        requestAnimationFrame(() => {
-                          setSliderVersion(v => v + 1)
-                        })
-                        return newMap
-                      })
-                      
-                      // Mouse move handler
-                      const handleMouseMove = (moveEvent: MouseEvent) => {
-                        updatePosition(moveEvent.clientX)
-                      }
-                      
-                      // Touch move handler
-                      const handleTouchMove = (moveEvent: TouchEvent) => {
-                        moveEvent.preventDefault() // Prevent scrolling
-                        if (moveEvent.touches.length > 0) {
-                          updatePosition(moveEvent.touches[0].clientX)
-                        }
-                      }
-                      
-                      // Cleanup handlers
-                      const handleEnd = () => {
-                        document.removeEventListener('mousemove', handleMouseMove)
-                        document.removeEventListener('mouseup', handleEnd)
-                        document.removeEventListener('touchmove', handleTouchMove)
-                        document.removeEventListener('touchend', handleEnd)
-                        document.removeEventListener('touchcancel', handleEnd)
-                      }
-                      
-                      // Add event listeners
-                      document.addEventListener('mousemove', handleMouseMove)
-                      document.addEventListener('mouseup', handleEnd)
-                      document.addEventListener('touchmove', handleTouchMove, { passive: false })
-                      document.addEventListener('touchend', handleEnd)
-                      document.addEventListener('touchcancel', handleEnd)
-                    }
-                    
-                    const handleSliderMouseDown = (e: React.MouseEvent) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      
-                      // Find the actual slider track element
-                      let sliderTrack = e.currentTarget as HTMLElement
-                      if (!sliderTrack.classList.contains('bg-gray-300')) {
-                        sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
-                      }
-                      
-                      if (!sliderTrack) {
-                        console.error('[Slider] Could not find slider track element')
-                        return
-                      }
-                      
-                      handleSliderStart(e.clientX, sliderTrack)
-                    }
-                    
-                    const handleSliderTouchStart = (e: React.TouchEvent) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      
-                      // Find the actual slider track element
-                      let sliderTrack = e.currentTarget as HTMLElement
-                      if (!sliderTrack.classList.contains('bg-gray-300')) {
-                        sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
-                      }
-                      
-                      if (!sliderTrack) {
-                        console.error('[Slider] Could not find slider track element')
-                        return
-                      }
-                      
-                      if (e.touches.length > 0) {
-                        handleSliderStart(e.touches[0].clientX, sliderTrack)
-                      }
-                    }
-                    
-                    return (
-                      <div key={concept} className="flex items-center">
-                        {firstOpposite && (
-                          <>
-                            <div className="w-20 p-3 text-left overflow-hidden">
-                              <span className="text-sm text-gray-900 truncate block">{firstOpposite}</span>
-                            </div>
-                            <div className="flex-1 flex items-center justify-center">
-                              <div 
-                                className="flex-shrink-0 w-32 h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
-                                onMouseDown={handleSliderMouseDown}
-                                onTouchStart={handleSliderTouchStart}
-                              >
-                            <div 
-                              className="absolute flex items-center justify-center pointer-events-none"
-                              style={{ 
-                                left: `calc(${Math.max(0, Math.min(100, handlePositionPercent))}% - 12px)`, 
-                                top: '50%',
-                                marginTop: '-12px',
-                                width: '24px',
-                                height: '24px'
-                              }}
-                            >
-                              <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
-                            </div>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                        <div className="w-20 p-3 overflow-hidden flex justify-end">
-                          <span className="text-sm text-gray-900 truncate block text-right">{concept}</span>
-                        </div>
-                      </div>
-                    )
-                  })()
-                )
-              })}
-          </div>
-          </div>
-        </div>
-        </div>
-      {/* End of Main Content */}
-      </div>
-      {/* End of Main Content and Panel Container */}
-      </div>
-      {/* End of Scrollable Gallery Content */}
-      </div>
+      {/* Add to Collection Modal */}
+      {showAddToCollectionModal && selectedImageForCollection && (
+        <AddToCollectionModal
+          isOpen={showAddToCollectionModal}
+          onClose={() => {
+            setShowAddToCollectionModal(false)
+            setSelectedImageForCollection(null)
+          }}
+          image={selectedImageForCollection}
+        />
+      )}
+
+      {/* Submission Form Modal */}
+      {showSubmissionForm && (
+        <SubmissionForm
+          onClose={() => setShowSubmissionForm(false)}
+          onSuccess={handleSubmissionSuccess}
+          onLoginClick={() => {
+            setShowSubmissionForm(false)
+            router.push('/login')
+          }}
+          onCreateAccountClick={() => {
+            setShowSubmissionForm(false)
+            setShowCreateAccountMessage(true)
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -9,8 +9,6 @@ export default function Navigation({ activeCategory, onCategoryChange }: Navigat
 const navItems = [
     { category: undefined, label: 'All' },
     { category: 'website', label: 'Webb' },
-    { category: 'fonts', label: 'Fonts' },
-    { category: 'apps', label: 'Apps' },
     { category: 'packaging', label: 'Packaging' },
     { category: 'brand', label: 'Brand' },
 ]

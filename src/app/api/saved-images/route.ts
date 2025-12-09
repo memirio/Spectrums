@@ -22,12 +22,13 @@ export async function GET(request: NextRequest) {
         image: {
           include: {
             site: {
-              include: {
-                tags: {
-                  include: {
-                    tag: true,
-                  },
-                },
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                url: true,
+                imageUrl: true,
+                author: true,
               },
             },
           },
@@ -41,8 +42,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ savedImages }, { status: 200 })
   } catch (error: any) {
     console.error('[saved-images] Error fetching saved images:', error)
+    console.error('[saved-images] Error details:', error.message, error.code, error.meta)
     return NextResponse.json(
-      { error: 'Failed to fetch saved images' },
+      { error: 'Failed to fetch saved images', details: error.message },
       { status: 500 }
     )
   }

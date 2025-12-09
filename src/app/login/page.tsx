@@ -102,10 +102,10 @@ function LoginForm() {
                     handleLogin()
                   }
                 }}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
+                className={`w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 text-gray-900 bg-[#EEEDEA] ${
                   fieldErrors.username 
-                    ? 'border-red-300 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-gray-500'
+                    ? 'border border-red-300 focus:ring-red-500' 
+                    : 'focus:ring-gray-500'
                 }`}
                 placeholder="Enter your username"
               />
@@ -133,10 +133,10 @@ function LoginForm() {
                     handleLogin()
                   }
                 }}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
+                className={`w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 text-gray-900 bg-[#EEEDEA] ${
                   fieldErrors.password 
-                    ? 'border-red-300 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-gray-500'
+                    ? 'border border-red-300 focus:ring-red-500' 
+                    : 'focus:ring-gray-500'
                 }`}
                 placeholder="Enter your password"
               />

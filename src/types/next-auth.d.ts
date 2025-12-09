@@ -6,6 +6,7 @@ declare module 'next-auth' {
       id: string
       username: string
       email?: string | null
+      accountType?: 'Pro' | 'Agency' | 'Enterprise' | 'VIP'
     }
   }
 
@@ -13,6 +14,7 @@ declare module 'next-auth' {
     id: string
     username: string
     email?: string | null
+    accountType?: 'Pro' | 'Agency' | 'Enterprise' | 'VIP'
   }
 }
 
@@ -20,6 +22,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string
     username: string
+    accountType?: 'Pro' | 'Agency' | 'Enterprise' | 'VIP'
   }
 }
 

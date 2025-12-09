@@ -24,6 +24,8 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
   const [isDragging, setIsDragging] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [imageError, setImageError] = useState('')
+  const [websiteError, setWebsiteError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const acceptedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -49,11 +51,12 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
   }
 
   const handleFileSelect = (file: File) => {
-                if (!acceptedFormats.includes(file.type)) {
-      setError('Please upload a valid image file (JPG, JPEG, PNG, or WEBP)')
+    if (!acceptedFormats.includes(file.type)) {
+      setImageError('Please upload a valid image file (JPG, JPEG, PNG, or WEBP)')
       return
     }
     
+    setImageError('')
     setError('')
     setImageFile(file)
     
@@ -93,18 +96,29 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
   }
 
   const handleSubmit = async () => {
+    // Clear previous errors
+    setImageError('')
+    setWebsiteError('')
+    setError('')
+    
+    // Validate fields
+    let hasErrors = false
+    
     if (!imageFile) {
-      setError('Please upload an image')
-      return
+      setImageError('Please upload an image')
+      hasErrors = true
     }
     
     if (!website.trim()) {
-      setError('Please enter a website URL')
+      setWebsiteError('Please enter a website URL')
+      hasErrors = true
+    }
+    
+    if (hasErrors) {
       return
     }
     
     setIsSubmitting(true)
-    setError('')
     
     try {
       // First, upload the image
@@ -251,7 +265,9 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                  isDragging
+                  imageError
+                    ? 'border-red-300'
+                    : isDragging
                     ? 'border-gray-900 bg-gray-50'
                     : imagePreview
                     ? 'border-gray-300'
@@ -301,6 +317,9 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
                   </div>
                 )}
               </div>
+              {imageError && (
+                <p className="mt-1 text-sm text-red-600">{imageError}</p>
+              )}
             </div>
 
             {/* Website */}
@@ -309,10 +328,22 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
               <input
                 type="url"
                 value={website}
-                onChange={(e) => setWebsite(e.target.value)}
+                onChange={(e) => {
+                  setWebsite(e.target.value)
+                  if (websiteError) {
+                    setWebsiteError('')
+                  }
+                }}
                 placeholder="https://example.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                className={`w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 text-gray-900 bg-[#EEEDEA] ${
+                  websiteError
+                    ? 'border border-red-300 focus:ring-red-500'
+                    : 'focus:ring-gray-400'
+                }`}
               />
+              {websiteError && (
+                <p className="mt-1 text-sm text-red-600">{websiteError}</p>
+              )}
             </div>
 
             {/* Company */}
@@ -323,7 +354,7 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 placeholder="Company name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900"
+                className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-gray-900 bg-[#EEEDEA]"
               />
             </div>
 
@@ -335,7 +366,7 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
             {/* Submit button */}
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting || !imageFile || !website.trim()}
+              disabled={isSubmitting}
               className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Submitting...' : 'Submit'}

@@ -13,6 +13,20 @@ export interface PerformanceMetric {
   parentOperation?: string
 }
 
+// Helper to get high-resolution time (works in both browser and Node.js)
+function getHighResTime(): number {
+  if (typeof performance !== 'undefined' && performance.now) {
+    return performance.now()
+  }
+  // Fallback for Node.js/serverless environments
+  if (typeof process !== 'undefined' && process.hrtime) {
+    const [seconds, nanoseconds] = process.hrtime()
+    return seconds * 1000 + nanoseconds / 1000000
+  }
+  // Final fallback to Date.now() (less precise but always available)
+  return Date.now()
+}
+
 class PerformanceLogger {
   private metrics: PerformanceMetric[] = []
   private operationStack: string[] = []
@@ -27,7 +41,7 @@ class PerformanceLogger {
       : operation
 
     this.operationStack.push(fullOperation)
-    this.startTimes.set(fullOperation, performance.now())
+    this.startTimes.set(fullOperation, getHighResTime())
     
     if (metadata) {
       console.log(`[PERF] START: ${fullOperation}`, metadata)
@@ -52,7 +66,7 @@ class PerformanceLogger {
       return 0
     }
 
-    const duration = performance.now() - startTime
+    const duration = getHighResTime() - startTime
     this.startTimes.delete(fullOperation)
 
     const parentOperation = this.operationStack.length > 0

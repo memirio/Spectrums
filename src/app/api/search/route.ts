@@ -1572,68 +1572,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(results)
     }
 
-    // Fallback to old concept-expansion logic (if zeroShot is false)
-    // Query is already normalized to lowercase
-    const rawTokens = q.split(/[,+\s]+/).map((t: string) => t.trim()).filter(Boolean)
-    if (rawTokens.length === 0) return NextResponse.json({ images: [] })
-
-    const concepts = await prisma.concept.findMany()
-    const expandSet = new Set<string>()
-    for (const t of rawTokens) {
-      expandSet.add(t)
-      const c = concepts.find((x: any) => x.id.toLowerCase() === t.toLowerCase() || x.label.toLowerCase() === t.toLowerCase())
-      if (c) {
-        const syn = (c.synonyms as unknown as string[] | undefined) || []
-        const rel = (c.related as unknown as string[] | undefined) || []
-        for (const s of syn) expandSet.add(String(s))
-        for (const r of rel) expandSet.add(String(r))
-      }
-    }
-    const expanded = Array.from(expandSet)
-
-    const textVecs = await embedTextBatch(expanded)
-    const dim = textVecs[0]?.length || 0
-    const query = new Array(dim).fill(0)
-    for (const v of textVecs) for (let i = 0; i < dim; i++) query[i] += v[i]
-    const nrm = Math.sqrt(query.reduce((s, x) => s + x * x, 0)) || 1
-    for (let i = 0; i < dim; i++) query[i] /= nrm
-
-    const images = await (prisma.image.findMany as any)({ include: { embedding: true, tags: true } })
-    const conceptIds = new Set(rawTokens.map((t: string) => t.toLowerCase()))
-
-    const ranked = [] as Array<{ imageId: string; siteId: string; url: string; score: number }>
-    for (const img of images as any[]) {
-      const ivec = (img.embedding?.vector as unknown as number[]) || []
-      if (ivec.length !== dim || dim === 0) continue
-      let score = cosine(query, ivec)
-      for (const it of img.tags) {
-        if (conceptIds.has(it.conceptId.toLowerCase())) score += 0.02
-      }
-      ranked.push({ imageId: img.id, siteId: (img as any).siteId, url: (img as any).url, score })
-    }
-    // Sort by score with deterministic secondary sort
-    ranked.sort((a, b) => {
-      // Use very tight threshold to ensure deterministic ordering
-      if (Math.abs(b.score - a.score) > 0.000001) {
-        return b.score - a.score
-      }
-      // Secondary sort by image ID for deterministic ordering when scores are equal
-      return (a.imageId || '').localeCompare(b.imageId || '')
-    })
-
-    // Pagination: limit and offset
-    const limit = parseInt(searchParams.get('limit') || '60')
-    const offset = parseInt(searchParams.get('offset') || '0')
-    const paginated = ranked.slice(offset, offset + limit)
-    const hasMore = offset + limit < ranked.length
-
+    // If zeroShot is false, return empty results (legacy path removed)
+    // The zero-shot path is the only supported search method
     return NextResponse.json({ 
-      query: expanded, 
-      images: paginated,
-      total: ranked.length,
-      hasMore,
-      offset,
-      limit
+      query: q,
+      images: [],
+      sites: [],
+      total: 0,
+      _performance: perf.getSummary(),
+      _message: 'Zero-shot search is required. Set ZERO_SHOT=false is no longer supported.'
     })
   } catch (e: any) {
     console.error(`[search] ERROR in search API:`, e)

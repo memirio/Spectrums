@@ -1,6 +1,8 @@
 'use client'
 
 import { RefObject } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
 interface HeaderProps {
   onSubmitClick: () => void
@@ -36,50 +38,49 @@ export default function Header({
     <header className="bg-[#fbf9f4]">
       <div className="max-w-full mx-auto px-4 md:px-[52px] py-3">
         {/* Desktop layout */}
-        <div className="hidden md:flex items-center justify-between gap-4">
-          {/* Search bar - only show if search props are provided */}
-          {searchInputRef && onSearchInputChange && onSearchKeyDown && onSearchSubmit && onClearSearch && (
-            <div className="flex-1 border border-gray-300 rounded-md relative flex items-center" style={{ height: '40px' }}>
-              <div className="flex-1 min-w-0 relative h-full">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={onSearchInputChange}
-                  onKeyDown={onSearchKeyDown}
-                  placeholder="Search for anything..."
-                  className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
-                  id="search-input"
-                />
-              </div>
-              {/* Icon-only button - 32px tall - shows X when query exists, search icon otherwise */}
-              {searchQuery.trim() ? (
+        <div className="hidden md:flex items-center gap-4">
+          {/* Logo - far left */}
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <img src="/Logo.svg" alt="Spectrums" className="h-5 w-auto" />
+          </Link>
+          {/* Search bar - centered, max 500px */}
+          <div className="flex-1 flex justify-center">
+            <div className="w-full max-w-[500px] rounded-md relative flex items-center bg-[#EEEDEA]" style={{ height: '40px' }}>
+            {/* Leading icon */}
+            <div className="flex items-center justify-center ml-3 flex-shrink-0">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.60729 5.40905C9.69145 5.40905 9.73356 5.35994 9.7546 5.28278C9.97202 4.11136 9.95802 4.08331 11.1785 3.85182C11.2627 3.83781 11.3118 3.7887 11.3118 3.70451C11.3118 3.62035 11.2627 3.57124 11.1785 3.5572C9.96502 3.31173 10.0001 3.28366 9.7546 2.12627C9.73356 2.04911 9.69145 2 9.60729 2C9.5231 2 9.48102 2.04911 9.45998 2.12627C9.21448 3.28366 9.25656 3.31173 8.03605 3.5572C7.95889 3.57124 7.90278 3.62035 7.90278 3.70451C7.90278 3.7887 7.95889 3.83781 8.03605 3.85182C9.25656 4.09735 9.24252 4.11136 9.45998 5.28278C9.48102 5.35994 9.5231 5.40905 9.60729 5.40905ZM6.2123 10.235C6.34558 10.235 6.43677 10.1508 6.45077 10.0246C6.70331 8.15168 6.76643 8.15168 8.70243 7.77994C8.8287 7.75887 8.91986 7.67472 8.91986 7.54145C8.91986 7.41518 8.8287 7.32399 8.70243 7.30295C6.76643 7.0364 6.69628 6.97326 6.45077 5.06532C6.43677 4.93908 6.34558 4.84789 6.2123 4.84789C6.08604 4.84789 5.99484 4.93908 5.98081 5.07236C5.74934 6.95222 5.65112 6.94521 3.72918 7.30295C3.60291 7.33102 3.51172 7.41518 3.51172 7.54145C3.51172 7.68172 3.60291 7.75887 3.75722 7.77994C5.66515 8.08857 5.74934 8.13768 5.98081 10.0105C5.99484 10.1508 6.08604 10.235 6.2123 10.235ZM10.9681 18C11.1505 18 11.2838 17.8667 11.3188 17.6773C11.8168 13.8334 12.357 13.2512 16.1588 12.8303C16.3552 12.8093 16.4885 12.662 16.4885 12.4796C16.4885 12.2972 16.3552 12.1569 16.1588 12.1289C12.357 11.708 11.8168 11.1258 11.3188 7.28191C11.2838 7.09252 11.1505 6.96625 10.9681 6.96625C10.7857 6.96625 10.6524 7.09252 10.6244 7.28191C10.1264 11.1258 9.57924 11.708 5.78439 12.1289C5.581 12.1569 5.44772 12.2972 5.44772 12.4796C5.44772 12.662 5.581 12.8093 5.78439 12.8303C9.57221 13.3284 10.0983 13.8404 10.6244 17.6773C10.6524 17.8667 10.7857 18 10.9681 18Z" fill="black"/>
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0 relative h-full">
+              <input
+                ref={searchInputRef || null}
+                type="text"
+                value={searchQuery || ''}
+                onChange={onSearchInputChange || (() => {})}
+                onKeyDown={onSearchKeyDown || (() => {})}
+                placeholder="Search for anything..."
+                className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-[#EEEDEA]"
+                id="search-input"
+                disabled={!onSearchInputChange}
+                style={{ paddingRight: searchQuery ? '2.5rem' : '0.75rem' }}
+              />
+              {searchQuery && onClearSearch && (
                 <button
                   onClick={onClearSearch}
-                  className="flex items-center justify-center mx-2 transition-colors hover:opacity-70 cursor-pointer"
-                  style={{ width: '32px', height: '32px' }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                   aria-label="Clear search"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              ) : (
-                <button
-                  onClick={onSearchSubmit}
-                  disabled={!searchQuery.trim()}
-                  className="flex items-center justify-center mx-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                  style={{ width: '32px', height: '32px' }}
-                  aria-label="Search"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11 2C15.9706 2 20 6.02944 20 11C20 13.125 19.2619 15.0766 18.0303 16.6162L21.7051 20.291C22.0955 20.6815 22.0956 21.3146 21.7051 21.7051C21.3146 22.0956 20.6815 22.0955 20.291 21.7051L16.6162 18.0303C15.0766 19.2619 13.125 20 11 20C6.02944 20 2 15.9706 2 11C2 6.02944 6.02944 2 11 2ZM11 4C7.13401 4 4 7.13401 4 11C4 14.866 7.13401 18 11 18C12.8873 18 14.5985 17.2514 15.8574 16.0371C15.8831 16.0039 15.911 15.9719 15.9414 15.9414C15.9719 15.911 16.0039 15.8831 16.0371 15.8574C17.2514 14.5985 18 12.8873 18 11C18 7.13401 14.866 4 11 4Z" fill="black"/>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               )}
             </div>
-          )}
-          <div className="flex gap-3">
+            </div>
+          </div>
+          {/* Buttons - right side */}
+          <div className="flex gap-3 flex-shrink-0">
             <button 
               onClick={onSubmitClick}
               className="text-gray-900 px-4 py-2 rounded-lg hover:bg-[#f5f3ed] transition-colors cursor-pointer"
@@ -125,7 +126,13 @@ export default function Header({
         
         {/* Mobile layout: stacked vertically */}
         <div className="flex md:hidden flex-col gap-3">
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between">
+            {/* Logo - left corner */}
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <img src="/Logo.svg" alt="Spectrums" className="h-5 w-auto" />
+            </Link>
+            {/* Buttons on the right */}
+            <div className="flex gap-2">
             <div className="flex gap-2">
               <button 
                 onClick={onSubmitClick}
@@ -168,48 +175,42 @@ export default function Header({
                 </button>
               )}
             </div>
+            </div>
           </div>
-          {/* Mobile search bar - only show if search props are provided */}
-          {searchInputRef && onSearchInputChange && onSearchKeyDown && onSearchSubmit && onClearSearch && (
-            <div className="border border-gray-300 rounded-md relative flex items-center" style={{ height: '40px' }}>
-              <div className="flex-1 min-w-0 relative h-full">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={onSearchInputChange}
-                  onKeyDown={onSearchKeyDown}
-                  placeholder="Search for anything..."
-                  className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-transparent"
-                  id="search-input"
-                />
-              </div>
-              {searchQuery.trim() ? (
+          {/* Mobile search bar - always visible */}
+          <div className="rounded-md relative flex items-center bg-[#EEEDEA]" style={{ height: '40px' }}>
+            {/* Leading icon */}
+            <div className="flex items-center justify-center ml-3 flex-shrink-0">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.60729 5.40905C9.69145 5.40905 9.73356 5.35994 9.7546 5.28278C9.97202 4.11136 9.95802 4.08331 11.1785 3.85182C11.2627 3.83781 11.3118 3.7887 11.3118 3.70451C11.3118 3.62035 11.2627 3.57124 11.1785 3.5572C9.96502 3.31173 10.0001 3.28366 9.7546 2.12627C9.73356 2.04911 9.69145 2 9.60729 2C9.5231 2 9.48102 2.04911 9.45998 2.12627C9.21448 3.28366 9.25656 3.31173 8.03605 3.5572C7.95889 3.57124 7.90278 3.62035 7.90278 3.70451C7.90278 3.7887 7.95889 3.83781 8.03605 3.85182C9.25656 4.09735 9.24252 4.11136 9.45998 5.28278C9.48102 5.35994 9.5231 5.40905 9.60729 5.40905ZM6.2123 10.235C6.34558 10.235 6.43677 10.1508 6.45077 10.0246C6.70331 8.15168 6.76643 8.15168 8.70243 7.77994C8.8287 7.75887 8.91986 7.67472 8.91986 7.54145C8.91986 7.41518 8.8287 7.32399 8.70243 7.30295C6.76643 7.0364 6.69628 6.97326 6.45077 5.06532C6.43677 4.93908 6.34558 4.84789 6.2123 4.84789C6.08604 4.84789 5.99484 4.93908 5.98081 5.07236C5.74934 6.95222 5.65112 6.94521 3.72918 7.30295C3.60291 7.33102 3.51172 7.41518 3.51172 7.54145C3.51172 7.68172 3.60291 7.75887 3.75722 7.77994C5.66515 8.08857 5.74934 8.13768 5.98081 10.0105C5.99484 10.1508 6.08604 10.235 6.2123 10.235ZM10.9681 18C11.1505 18 11.2838 17.8667 11.3188 17.6773C11.8168 13.8334 12.357 13.2512 16.1588 12.8303C16.3552 12.8093 16.4885 12.662 16.4885 12.4796C16.4885 12.2972 16.3552 12.1569 16.1588 12.1289C12.357 11.708 11.8168 11.1258 11.3188 7.28191C11.2838 7.09252 11.1505 6.96625 10.9681 6.96625C10.7857 6.96625 10.6524 7.09252 10.6244 7.28191C10.1264 11.1258 9.57924 11.708 5.78439 12.1289C5.581 12.1569 5.44772 12.2972 5.44772 12.4796C5.44772 12.662 5.581 12.8093 5.78439 12.8303C9.57221 13.3284 10.0983 13.8404 10.6244 17.6773C10.6524 17.8667 10.7857 18 10.9681 18Z" fill="black"/>
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0 relative h-full">
+              <input
+                ref={searchInputRef || null}
+                type="text"
+                value={searchQuery || ''}
+                onChange={onSearchInputChange || (() => {})}
+                onKeyDown={onSearchKeyDown || (() => {})}
+                placeholder="Search for anything..."
+                className="w-full h-full px-3 rounded-md border border-transparent focus:outline-none text-gray-900 placeholder-gray-500 bg-[#EEEDEA]"
+                id="search-input"
+                disabled={!onSearchInputChange}
+                style={{ paddingRight: searchQuery ? '2.5rem' : '0.75rem' }}
+              />
+              {searchQuery && onClearSearch && (
                 <button
                   onClick={onClearSearch}
-                  className="flex items-center justify-center mx-2 transition-colors hover:opacity-70 cursor-pointer"
-                  style={{ width: '32px', height: '32px' }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                   aria-label="Clear search"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              ) : (
-                <button
-                  onClick={onSearchSubmit}
-                  disabled={!searchQuery.trim()}
-                  className="flex items-center justify-center mx-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                  style={{ width: '32px', height: '32px' }}
-                  aria-label="Search"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11 2C15.9706 2 20 6.02944 20 11C20 13.125 19.2619 15.0766 18.0303 16.6162L21.7051 20.291C22.0955 20.6815 22.0956 21.3146 21.7051 21.7051C21.3146 22.0956 20.6815 22.0955 20.291 21.7051L16.6162 18.0303C15.0766 19.2619 13.125 20 11 20C6.02944 20 2 15.9706 2 11C2 6.02944 6.02944 2 11 2ZM11 4C7.13401 4 4 7.13401 4 11C4 14.866 7.13401 18 11 18C12.8873 18 14.5985 17.2514 15.8574 16.0371C15.8831 16.0039 15.911 15.9719 15.9414 15.9414C15.9719 15.911 16.0039 15.8831 16.0371 15.8574C17.2514 14.5985 18 12.8873 18 11C18 7.13401 14.866 4 11 4Z" fill="black"/>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </header>

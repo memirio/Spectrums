@@ -132,14 +132,22 @@ async function findBestMatch(input: string, candidates: string[], maxDistance = 
 }
 
 export async function GET(request: NextRequest) {
-  const perf = getPerformanceLogger()
-  perf.clear() // Clear previous metrics for this request
-  
+  let perf: ReturnType<typeof getPerformanceLogger> | null = null
   try {
-    perf.start('api.sites.GET', {
-      url: request.url,
-      timestamp: new Date().toISOString(),
-    })
+    // Safely initialize performance logger
+    try {
+      perf = getPerformanceLogger()
+      if (perf) {
+        perf.clear()
+        perf?.start('api.sites.GET', {
+          url: request.url,
+          timestamp: new Date().toISOString(),
+        })
+      }
+    } catch (perfInitError) {
+      console.warn('[sites] Performance logger failed, continuing without it')
+      perf = null
+    }
 
     const { searchParams } = new URL(request.url)
     const concepts = searchParams.get('concepts')
@@ -147,7 +155,7 @@ export async function GET(request: NextRequest) {
     
     // Return all sites if no concepts specified (null or empty string)
     if (!concepts || !concepts.trim()) {
-      perf.start('api.sites.GET.noConcepts')
+      perf?.start('api.sites.GET.noConcepts')
       
       // OPTIMIZATION: Limit initial load to improve performance
       // Return all sites if no concepts specified
@@ -161,18 +169,18 @@ export async function GET(request: NextRequest) {
       
       // If category is specified, use a LATERAL JOIN for efficient first-image-per-site lookup
       if (category) {
-        perf.start('api.sites.GET.queryWithCategory', { category, limit, offset })
+        perf?.start('api.sites.GET.queryWithCategory', { category, limit, offset })
         
         // Use LATERAL JOIN to get the first image for each site efficiently
         // This is much faster than DISTINCT ON because it uses indexes properly
-        const result = await perf.measure('api.sites.GET.queryWithCategory.lateralJoin', async () => {
+        const result = await perf?.measure('api.sites.GET.queryWithCategory.lateralJoin', async () => {
           return await (prisma.$queryRawUnsafe as any)(
             `SELECT 
               s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt",
-              i."url" as "firstImageUrl", i."category" as "imageCategory"
+              i."id" as "firstImageId", i."url" as "firstImageUrl", i."category" as "imageCategory"
             FROM "sites" s
             INNER JOIN LATERAL (
-              SELECT "url", "category"
+              SELECT "id", "url", "category"
               FROM "images"
               WHERE "siteId" = s."id" AND "category" = $1
               ORDER BY "id" DESC
@@ -186,36 +194,45 @@ export async function GET(request: NextRequest) {
           )
         }, { category, limit, offset })
         
-        perf.end('api.sites.GET.queryWithCategory', { resultCount: result.length })
+        perf?.end('api.sites.GET.queryWithCategory', { resultCount: result.length })
         
-        perf.start('api.sites.GET.processResults')
+        perf?.start('api.sites.GET.processResults')
         // Check if there are more results
         hasMore = result.length > limit
         sites = hasMore ? result.slice(0, limit) : result
         
-        // Map results to include imageUrl from the JOIN
+        // Map results to include imageUrl and imageId from the JOIN
         sites = sites.map((row: any) => ({
           id: row.id,
           title: row.title,
           description: row.description,
           url: row.url,
           imageUrl: row.firstImageUrl || row.imageUrl || null,
+          imageId: row.firstImageId || null,
           author: row.author,
           createdAt: row.createdAt,
           updatedAt: row.updatedAt,
           category: row.imageCategory || 'website'
         }))
-        perf.end('api.sites.GET.processResults', { sitesCount: sites.length })
+        perf?.end('api.sites.GET.processResults', { sitesCount: sites.length })
         
         totalCount = sites.length // Approximate count, avoid expensive COUNT query
       } else {
-        perf.start('api.sites.GET.queryWithoutCategory', { limit, offset })
+        perf?.start('api.sites.GET.queryWithoutCategory', { limit, offset })
         
         // No category filter - use standard Prisma query
-        perf.start('api.sites.GET.queryWithoutCategory.connection')
-        const connectionStart = performance.now()
-        sites = await perf.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
-          const queryStart = performance.now()
+        perf?.start('api.sites.GET.queryWithoutCategory.connection')
+        // Helper to get high-resolution time (works in both browser and Node.js)
+        const getTime = () => {
+          if (typeof performance !== 'undefined' && performance.now) {
+            return performance.now()
+          }
+          const [seconds, nanoseconds] = process.hrtime()
+          return seconds * 1000 + nanoseconds / 1000000
+        }
+        const connectionStart = getTime()
+        sites = await perf?.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
+          const queryStart = getTime()
           const result = await prisma.site.findMany({
             orderBy: [
               { createdAt: 'desc' },
@@ -224,8 +241,8 @@ export async function GET(request: NextRequest) {
             take: limit + 1, // Fetch one extra to check if there are more
             skip: offset,
           })
-          const queryEnd = performance.now()
-          perf.end('api.sites.GET.queryWithoutCategory.findMany', { 
+          const queryEnd = getTime()
+          perf?.end('api.sites.GET.queryWithoutCategory.findMany', { 
             limit, 
             offset,
             queryExecutionTime: queryEnd - queryStart,
@@ -233,15 +250,15 @@ export async function GET(request: NextRequest) {
           })
           return result
         }, { limit, offset })
-        perf.end('api.sites.GET.queryWithoutCategory.connection')
+        perf?.end('api.sites.GET.queryWithoutCategory.connection')
         
-        perf.end('api.sites.GET.queryWithoutCategory', { sitesCount: sites.length })
+        perf?.end('api.sites.GET.queryWithoutCategory', { sitesCount: sites.length })
         
-        perf.start('api.sites.GET.processResults')
+        perf?.start('api.sites.GET.processResults')
         // Check if there are more results
         hasMore = sites.length > limit
         sites = hasMore ? sites.slice(0, limit) : sites
-        perf.end('api.sites.GET.processResults', { sitesCount: sites.length })
+        perf?.end('api.sites.GET.processResults', { sitesCount: sites.length })
         
         totalCount = sites.length // Approximate count, avoid expensive COUNT query
       }
@@ -249,19 +266,20 @@ export async function GET(request: NextRequest) {
       // Fetch first images for these sites as a fallback when site.imageUrl is null
       // OPTIMIZATION: Only fetch images if we didn't already get them from the JOIN query
       let firstImageBySite = new Map<string, string>()
+      let imageIdBySite = new Map<string, string>()
       let categoryBySite = new Map<string, string>()
       
       if (!category) {
-        perf.start('api.sites.GET.fetchImages', { siteCount: sites.length })
+        perf?.start('api.sites.GET.fetchImages', { siteCount: sites.length })
         
         // Simple query matching working branch approach
         const fetchedSiteIds = sites.map((s: any) => s.id)
         if (fetchedSiteIds.length > 0) {
           // Use simple IN query - let database handle it efficiently with indexes
           const placeholders = fetchedSiteIds.map((_: any, i: number) => `$${i + 1}`).join(',')
-          const images = await perf.measure('api.sites.GET.fetchImages.query', async () => {
+          const images = await perf?.measure('api.sites.GET.fetchImages.query', async () => {
             return await (prisma.$queryRawUnsafe as any)(
-              `SELECT "siteId", "url", "category"
+              `SELECT "id", "siteId", "url", "category"
                FROM "images"
                WHERE "siteId" IN (${placeholders}) AND "siteId" IS NOT NULL
                ORDER BY "id" DESC`,
@@ -269,58 +287,60 @@ export async function GET(request: NextRequest) {
             )
           }, { siteIdsCount: fetchedSiteIds.length })
           
-          perf.start('api.sites.GET.fetchImages.process')
+          perf?.start('api.sites.GET.fetchImages.process')
           // Filter to first image per site in JavaScript (simpler than DISTINCT ON)
           for (const img of images as any[]) {
             if (!firstImageBySite.has(img.siteId)) {
               firstImageBySite.set(img.siteId, img.url)
+              imageIdBySite.set(img.siteId, img.id)
               categoryBySite.set(img.siteId, (img.category || 'website'))
             }
           }
-          perf.end('api.sites.GET.fetchImages.process', { imagesCount: images.length })
+          perf?.end('api.sites.GET.fetchImages.process', { imagesCount: images.length })
         }
-        perf.end('api.sites.GET.fetchImages')
+        perf?.end('api.sites.GET.fetchImages')
       }
 
-      perf.start('api.sites.GET.serializeResponse')
+      perf?.start('api.sites.GET.serializeResponse')
       const responseData = {
         sites: sites.map((site: any) => ({
           ...site,
           // Prefer stored screenshot (Image.url) over legacy site.imageUrl (often OG image)
           imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
+          imageId: imageIdBySite.get(site.id) || site.imageId || null,
           category: categoryBySite.get(site.id) || site.category || 'website', // Include category from image
         })),
         hasMore,
         total: totalCount,
         offset,
         limit,
-        _performance: perf.getSummary(), // Include performance data in response
+        _performance: perf?.getSummary() || {}, // Include performance data in response
       }
-      perf.end('api.sites.GET.serializeResponse', { responseSize: JSON.stringify(responseData).length })
+      perf?.end('api.sites.GET.serializeResponse', { responseSize: JSON.stringify(responseData).length })
       
-      perf.end('api.sites.GET.noConcepts')
-      perf.end('api.sites.GET', { totalDuration: perf.getMetrics().reduce((sum, m) => sum + m.duration, 0) })
+      perf?.end('api.sites.GET.noConcepts')
+      perf?.end('api.sites.GET', { totalDuration: perf?.getMetrics()?.reduce((sum, m) => sum + m.duration, 0) || 0 })
 
       // Log performance report
-      console.log('\n' + perf.getReport())
+      console.log('\n' + (perf?.getReport() || ''))
       
       return NextResponse.json(responseData)
     }
 
-    perf.start('api.sites.GET.withConcepts', { concepts })
+          perf?.start('api.sites.GET.withConcepts', { concepts })
     
     // Parse concepts from query string (comma-separated)
-    perf.start('api.sites.GET.withConcepts.parse')
+          perf?.start('api.sites.GET.withConcepts.parse')
     const conceptList = concepts
       .split(',')
       .map((c: string) => c.trim().toLowerCase())
       .filter(Boolean)
-    perf.end('api.sites.GET.withConcepts.parse', { conceptCount: conceptList.length })
+          perf?.end('api.sites.GET.withConcepts.parse', { conceptCount: conceptList.length })
 
     // OPTIMIZATION: Use database queries instead of loading everything into memory
     // Find concept IDs that match the search terms (fuzzy match on label)
-    perf.start('api.sites.GET.withConcepts.findConcepts')
-    const conceptMatches = await perf.measure('api.sites.GET.withConcepts.findConcepts.findMany', async () => {
+          perf?.start('api.sites.GET.withConcepts.findConcepts')
+    const conceptMatches = await perf?.measure('api.sites.GET.withConcepts.findConcepts.findMany', async () => {
       return await prisma.concept.findMany({
         where: {
           OR: conceptList.map(term => ({
@@ -336,12 +356,12 @@ export async function GET(request: NextRequest) {
     
     const matchedConceptIds = new Set(conceptMatches.map(c => c.id))
     const matchedConceptLabels = new Set(conceptMatches.map(c => c.label.toLowerCase()))
-    perf.end('api.sites.GET.withConcepts.findConcepts', { matchedCount: matchedConceptIds.size })
+          perf?.end('api.sites.GET.withConcepts.findConcepts', { matchedCount: matchedConceptIds.size })
     
     // Also check for exact matches in concept list
-    perf.start('api.sites.GET.withConcepts.findExactMatches')
+          perf?.start('api.sites.GET.withConcepts.findExactMatches')
     for (const term of conceptList) {
-      await perf.measure(`api.sites.GET.withConcepts.findExactMatches.${term}`, async () => {
+      await perf?.measure(`api.sites.GET.withConcepts.findExactMatches.${term}`, async () => {
         const exactMatch = await prisma.concept.findFirst({
           where: {
             OR: [
@@ -356,7 +376,7 @@ export async function GET(request: NextRequest) {
         }
       })
     }
-    perf.end('api.sites.GET.withConcepts.findExactMatches', { finalMatchedCount: matchedConceptIds.size })
+          perf?.end('api.sites.GET.withConcepts.findExactMatches', { finalMatchedCount: matchedConceptIds.size })
 
     // OPTIMIZATION: Use database query to find sites that have images with matching concepts
     // This filters at the database level instead of loading everything
@@ -365,16 +385,16 @@ export async function GET(request: NextRequest) {
     
     if (matchedConceptIds.size === 0) {
       // No matching concepts found, return empty result
-      perf.end('api.sites.GET.withConcepts')
-      perf.end('api.sites.GET')
-      console.log('\n' + perf.getReport())
+      perf?.end('api.sites.GET.withConcepts')
+      perf?.end('api.sites.GET')
+      console.log('\n' + (perf?.getReport() || ''))
       return NextResponse.json({
         sites: [],
         hasMore: false,
         total: 0,
         offset,
         limit,
-        _performance: perf.getSummary(),
+        _performance: perf?.getSummary() || {},
       })
     }
 
@@ -385,10 +405,10 @@ export async function GET(request: NextRequest) {
     const requiredCount = conceptIdsArray.length
     const limitParam = limit + 1 // Fetch one extra to check hasMore
     
-    perf.start('api.sites.GET.withConcepts.querySites', { conceptIdsCount: conceptIdsArray.length, limit, offset })
+          perf?.start('api.sites.GET.withConcepts.querySites', { conceptIdsCount: conceptIdsArray.length, limit, offset })
     // Query: Find sites where ALL concepts are present in image tags
     // This uses a GROUP BY with HAVING COUNT(DISTINCT conceptId) = number of concepts
-    const sitesWithAllConcepts = await perf.measure('api.sites.GET.withConcepts.querySites.rawQuery', async () => {
+    const sitesWithAllConcepts = await perf?.measure('api.sites.GET.withConcepts.querySites.rawQuery', async () => {
       return await (prisma.$queryRawUnsafe as any)(
         `SELECT DISTINCT s."id", s."title", s."description", s."url", s."imageUrl", s."author", s."createdAt", s."updatedAt"
          FROM "sites" s
@@ -405,70 +425,80 @@ export async function GET(request: NextRequest) {
         offset
       )
     }, { conceptIdsCount: conceptIdsArray.length, limit, offset })
-    perf.end('api.sites.GET.withConcepts.querySites', { sitesCount: sitesWithAllConcepts.length })
+          perf?.end('api.sites.GET.withConcepts.querySites', { sitesCount: sitesWithAllConcepts.length })
 
-    perf.start('api.sites.GET.withConcepts.paginate')
+          perf?.start('api.sites.GET.withConcepts.paginate')
     const hasMore = sitesWithAllConcepts.length > limit
     const paginatedSites = hasMore ? sitesWithAllConcepts.slice(0, limit) : sitesWithAllConcepts
     const totalCount = paginatedSites.length // Approximate, avoid expensive COUNT
-    perf.end('api.sites.GET.withConcepts.paginate', { paginatedCount: paginatedSites.length })
+          perf?.end('api.sites.GET.withConcepts.paginate', { paginatedCount: paginatedSites.length })
 
     // Build image fallback map (prefer stored Image.url over legacy site.imageUrl)
-    perf.start('api.sites.GET.withConcepts.fetchImages')
+          perf?.start('api.sites.GET.withConcepts.fetchImages')
     const fIds = paginatedSites.map((s: any) => s.id)
     const fImages = fIds.length
-      ? await perf.measure('api.sites.GET.withConcepts.fetchImages.findMany', async () => {
+      ? await perf?.measure('api.sites.GET.withConcepts.fetchImages.findMany', async () => {
           return await (prisma.image as any).findMany({ 
             where: { siteId: { in: fIds } }, 
             orderBy: { id: 'desc' },
-            select: { siteId: true, url: true, category: true }
+            select: { id: true, siteId: true, url: true, category: true }
           })
         }, { siteIdsCount: fIds.length })
       : []
-    perf.start('api.sites.GET.withConcepts.fetchImages.process')
+          perf?.start('api.sites.GET.withConcepts.fetchImages.process')
     const firstImageBySite = new Map<string, string>()
+    const imageIdBySite = new Map<string, string>()
     const categoryBySite = new Map<string, string>()
     for (const img of fImages as any[]) {
       if (!firstImageBySite.has(img.siteId)) {
         firstImageBySite.set(img.siteId, img.url)
+        imageIdBySite.set(img.siteId, img.id)
         categoryBySite.set(img.siteId, (img.category || 'website'))
       }
     }
-    perf.end('api.sites.GET.withConcepts.fetchImages.process', { imagesCount: fImages.length })
-    perf.end('api.sites.GET.withConcepts.fetchImages')
+          perf?.end('api.sites.GET.withConcepts.fetchImages.process', { imagesCount: fImages.length })
+          perf?.end('api.sites.GET.withConcepts.fetchImages')
 
-    perf.start('api.sites.GET.withConcepts.serializeResponse')
+          perf?.start('api.sites.GET.withConcepts.serializeResponse')
     const responseData = {
       sites: paginatedSites.map((site: any) => ({
         ...site,
         imageUrl: firstImageBySite.get(site.id) || site.imageUrl || null,
+        imageId: imageIdBySite.get(site.id) || null,
         category: categoryBySite.get(site.id) || 'website', // Include category from image
       })),
       hasMore,
       total: totalCount,
       offset,
       limit,
-      _performance: perf.getSummary(),
+      _performance: perf?.getSummary() || {},
     }
-    perf.end('api.sites.GET.withConcepts.serializeResponse', { responseSize: JSON.stringify(responseData).length })
+          perf?.end('api.sites.GET.withConcepts.serializeResponse', { responseSize: JSON.stringify(responseData).length })
     
-    perf.end('api.sites.GET.withConcepts')
-    perf.end('api.sites.GET', { totalDuration: perf.getMetrics().reduce((sum, m) => sum + m.duration, 0) })
+          perf?.end('api.sites.GET.withConcepts')
+          perf?.end('api.sites.GET', { totalDuration: perf?.getMetrics()?.reduce((sum, m) => sum + m.duration, 0) || 0 })
 
     // Log performance report
-    console.log('\n' + perf.getReport())
+    console.log('\n' + (perf?.getReport() || ''))
 
     return NextResponse.json(responseData)
   } catch (error: any) {
-    perf.end('api.sites.GET', { error: error.message })
+    // Safely handle performance logger in case it failed to initialize
+    try {
+      if (perf) {
+        perf?.end('api.sites.GET', { error: error.message })
+        console.log('\n' + (perf?.getReport() || ''))
+      }
+    } catch (perfError) {
+      console.error('[sites] Error in performance logger:', perfError)
+    }
+    
     console.error('[sites] Error fetching sites:', error)
     console.error('[sites] Error message:', error.message)
     console.error('[sites] Error stack:', error.stack)
+    console.error('[sites] Error name:', error.name)
     console.error('[sites] DATABASE_URL present:', !!process.env.DATABASE_URL)
     console.error('[sites] DATABASE_URL starts with:', process.env.DATABASE_URL?.substring(0, 20))
-    
-    // Log performance report even on error
-    console.log('\n' + perf.getReport())
     
     // Return more detailed error in development, generic in production
     const errorDetails = process.env.NODE_ENV === 'production' 
@@ -479,7 +509,7 @@ export async function GET(request: NextRequest) {
       { 
         error: 'Failed to fetch sites', 
         details: errorDetails,
-        _performance: perf.getSummary(),
+        _performance: perf?.getSummary() || {},
       },
       { status: 500 }
     )
@@ -741,6 +771,12 @@ export async function POST(request: NextRequest) {
           }
           
           // Only proceed with tagging if we have an embedding
+          console.log(`[sites] DEBUG: Checking conditions for hub detection:`)
+          console.log(`[sites] DEBUG: - usePipeline2: ${String(usePipeline2)}`)
+          console.log(`[sites] DEBUG: - ivec exists: ${String(!!ivec)}`)
+          console.log(`[sites] DEBUG: - ivec length: ${ivec && Array.isArray(ivec) ? String(ivec.length) : 'N/A'}`)
+          console.log(`[sites] DEBUG: - skipConceptGeneration from body: ${String(skipConceptGeneration)}`)
+          
           if (ivec) {
             if (usePipeline2) {
               // PIPELINE 2.0: Tag with existing concepts only (no concept generation)
@@ -753,9 +789,30 @@ export async function POST(request: NextRequest) {
                 // Non-fatal: logging warning but not failing the request
                 console.warn(`[sites] Pipeline 2.0: tagImageWithoutNewConcepts failed for image ${image.id}:`, (tagError as Error)?.message)
               }
+              
+              // Run hub detection immediately for user submissions (force mode)
+              // Note: We don't await this to avoid timeout issues in serverless (hub detection takes 1-2 minutes)
+              // The hub detection will run in the background and complete even if the function exits
+              console.log(`[sites] DEBUG: About to trigger hub detection for image ${image.id}...`)
+              try {
+                const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
+                // Force immediate run (bypass debounce) since this is a user submission
+                // Fire and forget - don't await to avoid serverless timeout
+                console.log(`[sites] Starting hub detection (force mode) for new image ${image.id}...`)
+                triggerHubDetectionForImages([image.id], { force: true }).catch((err) => {
+                  console.error(`[sites] ❌ Hub detection failed:`, err.message)
+                  console.error(`[sites] Hub detection error stack:`, err.stack)
+                })
+                console.log(`[sites] ✅ Hub detection triggered (running in background) for image ${image.id}`)
+              } catch (hubError) {
+                // Non-fatal: hub detection is an optimization, but log the error
+                console.error(`[sites] ❌ Failed to trigger hub detection:`, (hubError as Error)?.message)
+                console.error(`[sites] Hub detection error stack:`, (hubError as Error)?.stack)
+              }
             } else {
               // PIPELINE 1.0: HYBRID APPROACH - Generate new concepts for this site, then tag appropriately
               console.log(`[sites] Pipeline 1.0: Generating new concepts and tagging image ${image.id}...`)
+              console.log(`[sites] DEBUG: Skipping hub detection - usePipeline2 is false (Pipeline 1.0)`)
               
               // Check existing concepts BEFORE generating new ones
               const existingConceptIdsBefore = new Set(
@@ -809,17 +866,9 @@ export async function POST(request: NextRequest) {
               }
             }
             
-            // STEP 3: Trigger incremental hub detection for this image only (debounced, runs in background)
-            try {
-              const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
-              triggerHubDetectionForImages([image.id]).catch((err) => {
-                console.warn(`[sites] Failed to trigger hub detection: ${err.message}`)
-              })
-              console.log(`[sites] ✅ Triggered incremental hub detection for new image (will run after debounce)`)
-            } catch (hubError) {
-              // Non-fatal: hub detection is a background optimization
-              console.warn(`[sites] Failed to trigger hub detection:`, (hubError as Error)?.message)
-            }
+            // STEP 3: Hub detection is now triggered immediately in Pipeline 2.0 branch above
+            // For Pipeline 1.0, we still use the debounced version (but it won't work in serverless)
+            // TODO: Consider running immediately for Pipeline 1.0 as well
             
             // STEP 4: Clear search result cache (new image may affect search results)
             // Query embedding cache is kept (embeddings don't change when new images are added)
@@ -831,7 +880,8 @@ export async function POST(request: NextRequest) {
               console.warn(`[sites] Failed to clear search cache:`, (cacheError as Error)?.message)
             }
           } else {
-            console.log(`[sites] Skipping tagging - no embedding available (transformers not available in this environment)`)
+            console.log(`[sites] ⚠️ Skipping tagging and hub detection - no embedding available (ivec is null/undefined)`)
+            console.log(`[sites] DEBUG: This means the image embedding was not created or could not be loaded`)
           }
         }
       } catch (e) {
