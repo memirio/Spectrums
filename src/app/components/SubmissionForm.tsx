@@ -122,8 +122,9 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
     
     try {
       // First, upload the image
+      // imageFile is guaranteed to be non-null here due to validation above
       const uploadFormData = new FormData()
-      uploadFormData.append('image', imageFile)
+      uploadFormData.append('image', imageFile!)
       
       const uploadResponse = await fetch('/api/upload-image', {
         method: 'POST',
