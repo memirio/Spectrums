@@ -503,9 +503,11 @@ Format: ["description1", "description2", "description3", "description4"]`
     let completion
     let lastError
     let usedModel = ''
+    const groqTimeout = 10000 // 10 seconds max per model attempt
     for (const model of modelsToTry) {
       try {
-        completion = await client.chat.completions.create({
+        // Add timeout to prevent hanging on slow Groq API calls
+        const groqPromise = client.chat.completions.create({
           model,
           messages: [
             {
@@ -515,12 +517,23 @@ Format: ["description1", "description2", "description3", "description4"]`
           ],
           temperature: 0.7
         } as any)
+        
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error(`Groq API call timed out after ${groqTimeout}ms for model ${model}`)), groqTimeout)
+        })
+        
+        completion = await Promise.race([groqPromise, timeoutPromise]) as any
         usedModel = model
         console.log(`[query-expansion] Using model: ${model}`)
         break
       } catch (error: any) {
         lastError = error
-        if (!error.message.includes('blocked') && !error.message.includes('decommissioned')) {
+        if (error.message?.includes('timeout')) {
+          // Timeout - try next model
+          console.warn(`[query-expansion] Model ${model} timed out, trying next model...`)
+          continue
+        }
+        if (!error.message?.includes('blocked') && !error.message?.includes('decommissioned')) {
           // If it's not a blocking issue, throw immediately
           throw error
         }

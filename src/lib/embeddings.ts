@@ -118,23 +118,27 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
     const baseUrl = embeddingServiceUrl.replace(/\/+$/, '');
     
     // Retry logic: Railway might be slow on first request (cold start - model loading takes 10-30s)
-    const maxRetries = 3; // Increased retries for cold starts
+    // OPTIMIZED for Vercel's 60s timeout: reduce retries and timeouts to fail faster
+    // Worst case: 15s (first attempt) + 2s (backoff) + 20s (retry) = 37s (within 60s limit)
+    const maxRetries = 1; // Reduced to 1 retry (2 attempts total) to stay within Vercel's 60s limit
     let lastError: any = null;
     
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         if (attempt > 0) {
-          // Exponential backoff: 5s, 10s, 15s (Railway cold starts can take 20-30s)
-          const delay = 5000 * attempt;
+          // Shorter backoff: 2s (reduced from 5s, 10s, 15s)
+          const delay = 2000;
           console.log(`[embeddings] Retry attempt ${attempt}/${maxRetries} for embedding service (waiting ${delay}ms for cold start...)`);
           await new Promise(resolve => setTimeout(resolve, delay));
         } else {
           console.log('[embeddings] Using external embedding service:', baseUrl);
         }
         
-        // Create AbortController for timeout (45s to allow for cold starts)
+        // Create AbortController for timeout
+        // First attempt: 15s (fast for warm service), retry: 20s (allows for cold start)
+        const timeout = attempt === 0 ? 15000 : 20000; // 15s first, 20s retry
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout for cold starts
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
         
         try {
           const response = await fetch(`${baseUrl}/embed/text`, {
@@ -162,15 +166,15 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
                 throw new Error(`Embedding service not found at ${baseUrl}. Please verify EMBEDDING_SERVICE_URL is correct and the service is deployed.`);
               }
             }
-            // 502 Bad Gateway often means service is starting up - retry with longer delay
+            // 502 Bad Gateway often means service is starting up - retry with delay
             if (response.status === 502 && attempt < maxRetries) {
-              console.warn(`[embeddings] Service returned 502 (likely cold start), will retry with longer delay...`);
+              console.warn(`[embeddings] Service returned 502 (likely cold start), will retry once...`);
               lastError = new Error(`Embedding service returned ${response.status}`);
               continue;
             }
             // 503 Service Unavailable also indicates startup
             if (response.status === 503 && attempt < maxRetries) {
-              console.warn(`[embeddings] Service returned 503 (service unavailable), will retry...`);
+              console.warn(`[embeddings] Service returned 503 (service unavailable), will retry once...`);
               lastError = new Error(`Embedding service returned ${response.status}`);
               continue;
             }
@@ -195,11 +199,11 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
           if (fetchError.name === 'AbortError') {
             // Timeout - might be cold start, retry if attempts remaining
             if (attempt < maxRetries) {
-              console.warn(`[embeddings] Request timed out (likely cold start), will retry...`);
+              console.warn(`[embeddings] Request timed out after ${timeout}ms (likely cold start), will retry once...`);
               lastError = fetchError;
               continue;
             }
-            throw new Error('Embedding service request timed out after 45s');
+            throw new Error(`Embedding service request timed out after ${timeout}ms (attempt ${attempt + 1}/${maxRetries + 1})`);
           }
           throw fetchError;
         }

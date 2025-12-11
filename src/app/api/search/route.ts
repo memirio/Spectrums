@@ -140,7 +140,9 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
   const prompt = logoPrompt
 
   try {
-    const completion = await client.chat.completions.create({
+    // Add timeout to Groq API call (10s max) to prevent hanging
+    const groqTimeout = 10000 // 10 seconds
+    const groqPromise = client.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
         {
@@ -150,6 +152,12 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
       ],
       temperature: 0.8
     })
+    
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Groq API call timed out after 10s')), groqTimeout)
+    })
+    
+    const completion = await Promise.race([groqPromise, timeoutPromise]) as any
 
     const text = completion.choices[0]?.message?.content || ''
     
@@ -187,33 +195,33 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
       globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, result)
       
       // Store in database cache (persists across serverless invocations)
-      try {
-        const extension = result[0]
-        await prisma.queryExpansion.upsert({
-          where: {
-            term_expansion_source_category: {
-              term: vibeLower,
-              expansion: extension,
-              source: 'groq',
-              category: category
-            }
-          },
-          update: {
-            lastUsedAt: new Date(),
-            model: 'llama-3.3-70b-versatile'
-          },
-          create: {
+      // Non-blocking: fire and forget to avoid blocking the response
+      const extension = result[0]
+      prisma.queryExpansion.upsert({
+        where: {
+          term_expansion_source_category: {
             term: vibeLower,
             expansion: extension,
             source: 'groq',
-            category: category,
-            model: 'llama-3.3-70b-versatile'
+            category: category
           }
-        })
+        },
+        update: {
+          lastUsedAt: new Date(),
+          model: 'llama-3.3-70b-versatile'
+        },
+        create: {
+          term: vibeLower,
+          expansion: extension,
+          source: 'groq',
+          category: category,
+          model: 'llama-3.3-70b-versatile'
+        }
+      }).then(() => {
         console.log(`[vibe-cache] Stored in database cache: ${cacheKey}`)
-      } catch (error: any) {
+      }).catch((error: any) => {
         console.warn(`[vibe-cache] Failed to store in database cache for ${cacheKey}:`, error.message)
-      }
+      })
     }
     
     return result
@@ -476,68 +484,86 @@ export async function GET(request: NextRequest) {
             .map(r => ({ category: r.category, extension: r.extension! }))
           
           let batchEmbeddings: number[][] = []
+          let embedError: any = null
           if (extensionsToEmbed.length > 0) {
-            const extensionTexts = extensionsToEmbed.map(e => e.extension)
-            batchEmbeddings = await perf.measure('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed.embedTextBatch', async () => {
-              return await embedTextBatch(extensionTexts)
-            })
+            try {
+              const extensionTexts = extensionsToEmbed.map(e => e.extension)
+              batchEmbeddings = await perf.measure('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed.embedTextBatch', async () => {
+                return await embedTextBatch(extensionTexts)
+              })
+            } catch (err: any) {
+              // If embedding fails (e.g., service timeout), log and continue without embeddings
+              // The search will still work, just without vibe extensions for these categories
+              embedError = err
+              console.warn(`[search] Failed to embed vibe extensions (${extensionsToEmbed.length} extensions):`, err.message)
+              // Continue with empty batchEmbeddings - vibe extensions will be skipped for these categories
+            }
           }
           perf.end('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed', { 
-            batchSize: extensionsToEmbed.length 
+            batchSize: extensionsToEmbed.length,
+            embedded: batchEmbeddings.length,
+            error: embedError?.message || null
           })
           
           // Step 3: Normalize, cache embeddings (in-memory and database), map back to categories
           perf.start('api.search.GET.zeroShot.generateVibeExtensions.step3_normalize')
-          for (let i = 0; i < extensionsToEmbed.length; i++) {
-            const { category, extension } = extensionsToEmbed[i]
+          
+          // Process all embeddings in parallel (not sequential) to avoid blocking
+          const normalizePromises = extensionsToEmbed.map(async ({ category, extension }, i) => {
             const embedding = batchEmbeddings[i]
-            if (embedding) {
-              const embeddingCacheKey = `${vibeLower}:${category}`
-              // L2-normalize the embedding
-              const normalizedEmbedding = perf.measureSync(`api.search.GET.zeroShot.generateVibeExtensions.step3_normalize.${category}`, () => {
-                return l2norm(embedding)
-              })
-              
-              // Cache the normalized embedding in memory
-              globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
-              
-              // Store embedding in database for persistence across serverless invocations
-              try {
-                await prisma.queryExpansion.upsert({
-                  where: {
-                    term_expansion_source_category: {
-                      term: vibeLower,
-                      expansion: extension,
-                      source: 'groq',
-                      category: category
-                    }
-                  },
-                  update: {
-                    embedding: normalizedEmbedding,
-                    lastUsedAt: new Date()
-                  },
-                  create: {
-                    term: vibeLower,
-                    expansion: extension,
-                    source: 'groq',
-                    category: category,
-                    model: 'llama-3.3-70b-versatile',
-                    embedding: normalizedEmbedding,
-                    lastUsedAt: new Date()
-                  }
-                })
-                console.log(`[vibe-cache] Stored embedding in database cache: ${embeddingCacheKey}`)
-              } catch (dbError: any) {
-                console.warn(`[vibe-cache] Failed to store embedding in database for ${embeddingCacheKey}:`, dbError.message)
+            if (!embedding) return null
+            
+            const embeddingCacheKey = `${vibeLower}:${category}`
+            // L2-normalize the embedding
+            const normalizedEmbedding = perf.measureSync(`api.search.GET.zeroShot.generateVibeExtensions.step3_normalize.${category}`, () => {
+              return l2norm(embedding)
+            })
+            
+            // Cache the normalized embedding in memory
+            globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
+            
+            // Store embedding in database for persistence (non-blocking - fire and forget)
+            // Don't await - let it run in background to avoid blocking the response
+            prisma.queryExpansion.upsert({
+              where: {
+                term_expansion_source_category: {
+                  term: vibeLower,
+                  expansion: extension,
+                  source: 'groq',
+                  category: category
+                }
+              },
+              update: {
+                embedding: normalizedEmbedding,
+                lastUsedAt: new Date()
+              },
+              create: {
+                term: vibeLower,
+                expansion: extension,
+                source: 'groq',
+                category: category,
+                model: 'llama-3.3-70b-versatile',
+                embedding: normalizedEmbedding,
+                lastUsedAt: new Date()
               }
-              
-              // Find the corresponding result and update it
-              const result = cacheResults.find(r => r.category === category)
-              if (result) {
-                result.embedding = normalizedEmbedding
-              }
+            }).then(() => {
+              console.log(`[vibe-cache] Stored embedding in database cache: ${embeddingCacheKey}`)
+            }).catch((dbError: any) => {
+              console.warn(`[vibe-cache] Failed to store embedding in database for ${embeddingCacheKey}:`, dbError.message)
+            })
+            
+            // Find the corresponding result and update it
+            const result = cacheResults.find(r => r.category === category)
+            if (result) {
+              result.embedding = normalizedEmbedding
             }
-          }
+            
+            return { category, embedding: normalizedEmbedding }
+          })
+          
+          // Wait for all normalizations to complete (but database writes are fire-and-forget)
+          await Promise.all(normalizePromises)
+          
           perf.end('api.search.GET.zeroShot.generateVibeExtensions.step3_normalize', { 
             normalized: extensionsToEmbed.length 
           })
