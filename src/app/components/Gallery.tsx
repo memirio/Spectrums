@@ -86,10 +86,12 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   
   // Handle category changes
   const handleCategoryChange = (newCategory: string | undefined) => {
+    console.log('[Gallery] handleCategoryChange called with:', newCategory)
     if (onCategoryChange) {
       onCategoryChange(newCategory)
     } else {
       setInternalCategory(newCategory)
+      console.log('[Gallery] Category state updated to:', newCategory)
     }
     // Reset sites and pagination when category changes
     setSites([])
@@ -301,10 +303,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       const query = selectedConcepts.join(' ')
       const categoryParam = category || 'all'
       
+      // Determine source: if searchQuery matches the query, it's from search bar; otherwise it's a vibe filter
+      const isSearchQuery = searchQuery.trim() && searchQuery.trim().toLowerCase() === query.trim().toLowerCase()
+      const source = isSearchQuery ? 'search' : 'vibefilter'
+      
       let data: any
       if (query.trim()) {
         // Search query: use search API
-        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=${paginationOffset}`
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=${paginationOffset}`
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('Failed to fetch more images', response.status)
@@ -1141,9 +1147,13 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         // Pass category parameter: "website", "packaging", or "all" (or omit for "all")
         const categoryParam = category || 'all'
         
+        // Determine source: if searchQuery matches the query, it's from search bar; otherwise it's a vibe filter
+        const isSearchQuery = searchQuery.trim() && searchQuery.trim().toLowerCase() === query.trim().toLowerCase()
+        const source = isSearchQuery ? 'search' : 'vibefilter'
+        
         // Don't pass slider positions - we'll reorder client-side
         // Initial fetch: limit 60, offset 0
-        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&limit=60&offset=0`
+        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=0`
         console.log('[fetchSites] Fetching search URL:', searchUrl)
         const response = await fetch(searchUrl)
         if (!response.ok) {
@@ -2637,7 +2647,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                             <img
                               src={site.imageUrl}
                               alt={site.title}
-                              className="w-full h-full object-cover object-top"
+                              className={`w-full h-full object-cover ${site.category === 'logo' ? 'object-center' : 'object-top'}`}
                               loading="lazy"
                               onError={(e) => {
                                 // Silently hide failed images
@@ -2822,8 +2832,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                            site.category === 'app' ? 'App' :
                            site.category === 'fonts' ? 'Fonts' :
                            site.category === 'graphic-design' ? 'Graphic Design' :
+                           site.category === 'graphic' ? 'Graphic' :
                            site.category === 'branding' ? 'Branding' :
                            site.category === 'brand' ? 'Brand' :
+                           site.category === 'logo' ? 'Logo' :
                            site.category === 'website' ? 'Website' :
                            // Fallback: show category string as-is for new categories
                            toTitleCase(site.category)}
@@ -3151,26 +3163,88 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             {/* Content */}
             {!isAccountSettingsView ? (
               /* Main Account View */
-              <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col items-center justify-center">
+              <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col">
                 {session?.user && (
-                  <div className="flex flex-col items-center mb-auto">
-                    <div className="w-[72px] h-[72px] rounded-full bg-black flex items-center justify-center text-4xl font-medium text-white mb-4">
-                      {session.user.username?.charAt(0).toUpperCase() || 'U'}
+                  <>
+                    {/* Account Info - Anchored to top */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-[72px] h-[72px] rounded-full bg-black flex items-center justify-center text-4xl font-medium text-white mb-4">
+                        {session.user.username?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                      <h3 className="text-2xl font-semibold text-gray-900 mb-1">{session.user.username}</h3>
+                      {session.user.email && (
+                        <p className="text-sm text-gray-600 mb-4">{session.user.email}</p>
+                      )}
+                      <button
+                        onClick={() => {
+                          setIsAccountSettingsView(true)
+                          setEmailValue(session.user.email || '')
+                        }}
+                        className="text-gray-900 px-4 py-2 rounded-lg hover:bg-[#f5f3ed] transition-colors cursor-pointer"
+                      >
+                        Account settings
+                      </button>
                     </div>
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-1">{session.user.username}</h3>
-                    {session.user.email && (
-                      <p className="text-sm text-gray-600 mb-4">{session.user.email}</p>
-                    )}
-                    <button
-                      onClick={() => {
-                        setIsAccountSettingsView(true)
-                        setEmailValue(session.user.email || '')
-                      }}
-                      className="text-gray-900 px-4 py-2 rounded-lg hover:bg-[#f5f3ed] transition-colors cursor-pointer"
-                    >
-                      Account settings
-                    </button>
-                  </div>
+                    
+                    {/* Feedback Section - Centered vertically */}
+                    <div className="flex-1 flex items-center justify-center">
+                      <div className="w-full max-w-md">
+                        <label className="block text-sm font-bold text-gray-900 mb-3">Feedback</label>
+                        <div className="space-y-0">
+                          {/* Request a feature */}
+                          <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#f5f3ed] transition-colors rounded-lg"
+                            onClick={() => {
+                              const subject = `Feature Request from ${session?.user?.username || 'User'}`
+                              const body = `Type: Feature Request
+User: ${session?.user?.username || 'Unknown'} (${session?.user?.email || 'No email provided'})
+
+Message:
+`
+                              const mailtoLink = `mailto:victor.jacobsson@hyperisland.se?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+                              window.location.href = mailtoLink
+                            }}
+                          >
+                            <span className="text-gray-900">Request a feature</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-600 flex-shrink-0">
+                              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                          {/* Divider */}
+                          <div className="border-t border-gray-300"></div>
+                          {/* Report a bug */}
+                          <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#f5f3ed] transition-colors rounded-lg"
+                            onClick={() => {
+                              const subject = `Bug Report from ${session?.user?.username || 'User'}`
+                              const body = `Type: Bug Report
+User: ${session?.user?.username || 'Unknown'} (${session?.user?.email || 'No email provided'})
+
+Message:
+`
+                              const mailtoLink = `mailto:victor.jacobsson@hyperisland.se?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+                              window.location.href = mailtoLink
+                            }}
+                          >
+                            <span className="text-gray-900">Report a bug</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-600 flex-shrink-0">
+                              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Logout button - only show in main view */}
+                    <div className="mt-auto w-full p-4 md:p-6">
+                      <button
+                        onClick={async () => {
+                          await signOut({ redirect: true, callbackUrl: '/' })
+                        }}
+                        className="w-full px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors cursor-pointer"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             ) : currentEditView ? (
@@ -3307,19 +3381,6 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               </div>
             )}
             
-            {/* Logout button at bottom - only show in main view */}
-            {!isAccountSettingsView && (
-              <div className="p-4 md:p-6">
-                <button
-                  onClick={async () => {
-                    await signOut({ redirect: true, callbackUrl: '/' })
-                  }}
-                  className="w-full px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors cursor-pointer"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
           </div>
         </>
       )}

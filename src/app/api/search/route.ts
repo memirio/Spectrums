@@ -41,6 +41,8 @@ const CATEGORY_CONTEXTS: Record<string, string> = {
   'brand': 'logos, brand identity, visual identity systems, and brand guidelines',
   'fonts': 'typography, font design, letterforms, and text styling',
   'apps': 'mobile apps, app interfaces, and application design',
+  'graphic': 'graphic design, posters, print design, typography, illustrations, and graphic compositions',
+  'logo': 'logo design, logo marks, wordmarks, letterforms, symbol design, brand symbols, and iconography',
   'all': 'general design across all categories'
 }
 
@@ -99,7 +101,28 @@ async function generateVibeExtensionsForCategory(vibe: string, category: string)
   const categoryContext = CATEGORY_CONTEXTS[category] || 'design in this category'
   const client = getGroqClientForCategory(category)
   
-  const prompt = `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
+  // Logo-specific prompt that focuses on symbols, iconography, and letterforms
+  const logoPrompt = category === 'logo' ? `Generate exactly 1 semantic extension for "${vibe}" in logo design.
+
+The extension must be a single comma-separated string with exactly these 5 attributes in order:
+1. Symbol/Icon style - describe the type of logo mark (e.g., "geometric wordmark design", "organic icon mark", "abstract letterform symbol", "emblem style mark")
+2. Shapes and forms characteristics - describe the shape qualities (e.g., "round and curved forms", "beveled angular edges", "sharp geometric shapes", "interlocking curved patterns")
+3. Visual style - describe the overall aesthetic (e.g., "minimalist geometric style", "vintage retro aesthetic", "futuristic modern design", "organic natural forms")
+4. Typography style - describe the letterform characteristics (e.g., "bold sans-serif letterforms", "elegant serif typography", "playful script letterforms", "geometric display type")
+5. Level of detail - describe the complexity (e.g., "minimal simplified forms", "detailed ornate elements", "simplified icon shapes", "complex intricate patterns")
+
+CRITICAL: 
+- Focus on SYMBOLS, SHAPES, and TYPOGRAPHY - not colors or generic UI elements
+- Be descriptive and specific about visual characteristics
+- Each attribute should be a descriptive phrase that captures the visual quality
+
+Examples:
+- ["geometric wordmark design, round and curved forms, minimalist geometric style, bold sans-serif letterforms, minimal simplified forms"]
+- ["organic icon mark, beveled angular edges, vintage retro aesthetic, elegant serif typography, detailed ornate elements"]
+- ["abstract letterform symbol, sharp geometric shapes, futuristic modern design, geometric display type, simplified icon shapes"]
+- ["emblem style mark, interlocking curved patterns, organic natural forms, playful script letterforms, complex intricate patterns"]
+
+You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.` : `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
 
 The extension must be a single comma-separated string with exactly these 7 elements in order:
 1. Style (e.g., "3D website design", "romantic packaging design")
@@ -113,6 +136,8 @@ Examples:
 - ["romantic packaging design, soft pink and rose tones, elegant script typography, centered label composition, embossed textures, foil stamping, delicate floral patterns"]
 
 You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+  
+  const prompt = logoPrompt
 
   try {
     const completion = await client.chat.completions.create({
@@ -308,6 +333,8 @@ export async function GET(request: NextRequest) {
     // Normalize query to lowercase for case-insensitive search
     const q = rawQuery.trim().toLowerCase()
     const category = searchParams.get('category') || null // Get category filter: 'website', 'packaging', 'all', or null
+    const source = searchParams.get('source') || 'vibefilter' // 'search' or 'vibefilter' - determines which extension system to use
+    console.log(`\n🔎 [search] API called: q="${q}", category="${category || 'null'}", source="${source}"`)
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
     
@@ -364,14 +391,14 @@ export async function GET(request: NextRequest) {
       // Extensions are generated immediately, not stored
       const vibeExtensionsByCategory: Record<string, number[][]> = {}
       
-      // For single-word queries, always generate vibe extensions
-      // This is simpler and more reliable than abstract detection
-      if (wordCount === 1) {
+      // For single-word queries, generate vibe extensions only if source is 'vibefilter'
+      // If source is 'search', use expansion system instead
+      if (wordCount === 1 && source === 'vibefilter') {
         perf.start('api.search.GET.zeroShot.generateVibeExtensions', { vibeWord: q.trim() })
         const vibeWord = q.trim()
         try {
           // Generate extensions for all categories in parallel
-          const categoriesToGenerate = ['website', 'packaging', 'brand', 'fonts', 'apps']
+          const categoriesToGenerate = ['website', 'packaging', 'brand', 'fonts', 'apps', 'graphic', 'logo']
           
           // Step 1: Check database cache for embeddings first, then generate Groq extensions if needed
           perf.start('api.search.GET.zeroShot.generateVibeExtensions.step1_checkCache')
@@ -554,7 +581,7 @@ export async function GET(request: NextRequest) {
         // When category is 'all', generate expansions for all categories
         if (category === 'all') {
           // Generate expansions for all categories in parallel (non-blocking)
-          const allCategories = ['website', 'packaging', 'brand']
+          const allCategories = ['website', 'packaging', 'brand', 'graphic', 'logo']
           Promise.all(
             allCategories.map((cat: string) => 
               expandAbstractQuery(q, cat).catch((err: any) => {
@@ -568,9 +595,18 @@ export async function GET(request: NextRequest) {
         }
         // Pass category to getExpansionEmbeddings for category-specific expansions
         // For 'all', use null (global) for the actual search, but expansions are generated above
-        expansionEmbeddings = await getExpansionEmbeddings(q, category && category !== 'all' ? category : null)
+        const expansionCategory = category && category !== 'all' ? category : null
+        console.log(`\n🎯 [search] EXPANSION CONFIGURATION:`)
+        console.log(`   Query: "${q}"`)
+        console.log(`   Category: "${category || 'null'}"`)
+        console.log(`   Expansion Category: "${expansionCategory || 'null'}"`)
+        console.log(`   isAbstract: ${isAbstract}, useExpansion: ${useExpansion}, isExpanded: ${isExpanded}`)
+        expansionEmbeddings = await getExpansionEmbeddings(q, expansionCategory)
+        console.log(`[search] Got ${expansionEmbeddings.length} expansion embedding vectors`)
         // For backward compatibility, also compute averaged embedding (used in debug mode)
-        queryVec = await expandAndEmbedQuery(q)
+        // IMPORTANT: Pass category so initial pgvector search uses category-specific expansions
+        queryVec = await expandAndEmbedQuery(q, expansionCategory)
+        console.log(`[search] ✅ Query vector computed (dim: ${queryVec.length}) - will be used for pgvector search\n`)
       } else {
         // Direct embedding for concrete queries or queries with >2 words
         perf.start('api.search.GET.zeroShot.embedQuery')
@@ -673,16 +709,26 @@ export async function GET(request: NextRequest) {
           if (category && category !== 'all') {
             pgvectorQuery += ` AND i.category = $${queryParams.length + 1}`
             queryParams.push(category)
+            console.log(`[search] 🔍 pgvector search: filtering by category="${category}"`)
           }
           
           pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC LIMIT $${queryParams.length + 1}`
           queryParams.push(TOP_CANDIDATES)
           
+          console.log(`[search] 🔍 Executing pgvector query:`)
+          console.log(`   Category filter: ${category && category !== 'all' ? `"${category}"` : 'none'}`)
+          console.log(`   Top candidates: ${TOP_CANDIDATES}`)
+          console.log(`   Query vector dim: ${queryVec.length}`)
           perf.start('api.search.GET.zeroShot.pgvectorQuery', { topCandidates: TOP_CANDIDATES, category })
           const pgvectorResults = await perf.measure('api.search.GET.zeroShot.pgvectorQuery.execute', async () => {
             return await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
           }, { topCandidates: TOP_CANDIDATES, category })
           perf.end('api.search.GET.zeroShot.pgvectorQuery', { resultCount: pgvectorResults.length })
+          console.log(`[search] ✅ pgvector returned ${Array.isArray(pgvectorResults) ? pgvectorResults.length : 0} candidates`)
+          if (pgvectorResults.length > 0) {
+            const categories = [...new Set(pgvectorResults.slice(0, 10).map((r: any) => r.category || 'unknown'))]
+            console.log(`   Top 10 candidate categories: ${categories.join(', ')}`)
+          }
           
           // Transform results to match expected format
           // pgvector returns vectors as strings or arrays - normalize to array
@@ -776,7 +822,8 @@ export async function GET(request: NextRequest) {
       
       let dimensionMismatchCount = 0
       
-      for (const emb of imageEmbeddings as any[]) {
+      for (let i = 0; i < (imageEmbeddings as any[]).length; i++) {
+        const emb = (imageEmbeddings as any[])[i]
         let baseScore: number
         const imageCategory = emb.image.category || 'website'
         
@@ -831,6 +878,12 @@ export async function GET(request: NextRequest) {
               baseScore = poolMax(expansionScores)
             } else {
               baseScore = poolSoftmax(expansionScores, poolingTemp)
+            }
+            // Log top scoring expansion for debugging
+            if (i < 10) { // Log first 10 for debugging
+              const maxScoreIdx = expansionScores.indexOf(Math.max(...expansionScores))
+              const maxScore = Math.max(...expansionScores)
+              console.log(`[search] Image ${i} (${emb.image?.category || 'unknown'}): score=${baseScore.toFixed(4)}, best expansion #${maxScoreIdx} (${maxScore.toFixed(4)})`)
             }
           } else {
             // Round to ensure deterministic scoring
@@ -1119,6 +1172,11 @@ export async function GET(request: NextRequest) {
       }
       
       // 5. Apply very light boosts/penalties (tag-based) + slider adjustments
+      console.log(`\n📊 [search] RERANKING:`)
+      console.log(`   Candidates to rerank: ${imageEmbeddings.length}`)
+      console.log(`   Top K for rerank: ${topK.length}`)
+      console.log(`   Using ${isExpanded && expansionEmbeddings ? expansionEmbeddings.length + ' expansion embeddings' : 'single query vector'} for scoring`)
+      console.log(`   Pooling method: ${usePooling}`)
       perf.start('api.search.GET.zeroShot.rerank', { topKCount: topK.length })
       
       // IMPORTANT: Sort topK deterministically by score (with imageId as tiebreaker) BEFORE processing
@@ -1533,14 +1591,19 @@ export async function GET(request: NextRequest) {
       const limitedSites = uniqueSites.slice(0, MAX_RESULTS)
       const limitedImages = finalRanked.slice(0, MAX_RESULTS)
       
-      // Log first 5 images being returned
+      // Log comprehensive results summary
+      console.log(`\n📊 [search] FINAL RESULTS SUMMARY:`)
+      console.log(`   Query: "${q}"`)
+      console.log(`   Category: "${category || 'null'}"`)
+      console.log(`   Total candidates: ${finalRanked.length}`)
+      console.log(`   Unique sites: ${uniqueSites.length}`)
+      console.log(`   Returning: ${limitedSites.length} sites, ${limitedImages.length} images`)
       if (limitedImages.length > 0) {
-        const first5 = limitedImages.slice(0, 5).map((r: any) => ({
-          imageId: r.imageId?.substring(0, 12) || 'unknown',
-          score: (r.score ?? r.baseScore ?? 0).toFixed(6),
-          siteId: r.site?.id?.substring(0, 12) || 'unknown'
-        }))
+        console.log(`   Top 5 scores: ${limitedImages.slice(0, 5).map((r: any) => (r.score ?? r.baseScore ?? 0).toFixed(4)).join(', ')}`)
+        console.log(`   Top 5 categories: ${limitedImages.slice(0, 5).map((r: any) => r.site?.category || 'unknown').join(', ')}`)
+        console.log(`   Top 5 titles: ${limitedImages.slice(0, 5).map((r: any) => (r.site?.title || 'Untitled').substring(0, 30)).join(', ')}`)
       }
+      console.log(`\n`)
       
       perf.start('api.search.GET.zeroShot.serializeResponse')
       const results = { 
