@@ -11,6 +11,8 @@ const navItems = [
     { category: 'website', label: 'Webb' },
     { category: 'packaging', label: 'Packaging' },
     { category: 'brand', label: 'Brand' },
+    { category: 'graphic', label: 'Graphic' },
+    { category: 'logo', label: 'Logo' },
 ]
 
   return (

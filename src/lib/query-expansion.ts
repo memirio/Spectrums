@@ -743,11 +743,13 @@ export async function getExpansionEmbeddings(query: string, category?: string | 
 /**
  * Expand query and create averaged embedding (legacy - for backward compatibility)
  * Returns the averaged, L2-normalized embedding vector
+ * @param query Query term to expand
+ * @param category Optional category for category-specific expansions
  * @deprecated Use getExpansionEmbeddings with max/softmax pooling instead
  */
-export async function expandAndEmbedQuery(query: string): Promise<number[]> {
-  console.log(`[query-expansion] expandAndEmbedQuery called for "${query}" (using mean pooling - consider using max/softmax)`)
-  const embeddings = await getExpansionEmbeddings(query)
+export async function expandAndEmbedQuery(query: string, category?: string | null): Promise<number[]> {
+  console.log(`[query-expansion] expandAndEmbedQuery called for "${query}"${category ? `, category: "${category}"` : ''} (using mean pooling - consider using max/softmax)`)
+  const embeddings = await getExpansionEmbeddings(query, category)
   
   // Average the embeddings (legacy behavior)
   const avg = meanVec(embeddings)
