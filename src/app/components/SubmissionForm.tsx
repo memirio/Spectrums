@@ -33,9 +33,9 @@ export default function SubmissionForm({ onClose, onSuccess, onLoginClick, onCre
   const categories = [
     { value: 'website', label: 'Webb' },
     { value: 'packaging', label: 'Packaging' },
-    { value: 'apps', label: 'Apps' },
-    { value: 'fonts', label: 'Fonts' },
     { value: 'brand', label: 'Brand' },
+    { value: 'graphic', label: 'Graphic' },
+    { value: 'logo', label: 'Logo' },
   ]
   
   const handleOpenLogin = () => {

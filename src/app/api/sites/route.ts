@@ -232,26 +232,54 @@ export async function GET(request: NextRequest) {
           return seconds * 1000 + nanoseconds / 1000000
         }
         const connectionStart = getTime()
-        const queryResult = await perf?.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
-          const queryStart = getTime()
-          const result = await prisma.site.findMany({
-            orderBy: [
-              { createdAt: 'desc' },
-              { id: 'asc' }
-            ],
-            take: limit + 1, // Fetch one extra to check if there are more
-            skip: offset,
-          })
-          const queryEnd = getTime()
-          perf?.end('api.sites.GET.queryWithoutCategory.findMany', { 
-            limit, 
-            offset,
-            queryExecutionTime: queryEnd - queryStart,
-            connectionTime: queryStart - connectionStart,
-          })
-          return result
-        }, { limit, offset })
-        sites = queryResult ?? []
+        
+        // Retry logic for database connection timeouts
+        let queryResult: any[] = []
+        let retries = 0
+        const maxRetries = 3
+        while (retries <= maxRetries) {
+          try {
+            queryResult = await perf?.measure('api.sites.GET.queryWithoutCategory.findMany', async () => {
+              const queryStart = getTime()
+              const result = await prisma.site.findMany({
+                orderBy: [
+                  { createdAt: 'desc' },
+                  { id: 'asc' }
+                ],
+                take: limit + 1, // Fetch one extra to check if there are more
+                skip: offset,
+              })
+              const queryEnd = getTime()
+              perf?.end('api.sites.GET.queryWithoutCategory.findMany', { 
+                limit, 
+                offset,
+                queryExecutionTime: queryEnd - queryStart,
+                connectionTime: queryStart - connectionStart,
+                retries,
+              })
+              return result
+            }, { limit, offset }) ?? []
+            break // Success, exit retry loop
+          } catch (error: any) {
+            const errorMsg = error.message || String(error)
+            if ((errorMsg.includes('timeout') || errorMsg.includes('connection') || errorMsg.includes('ECONNREFUSED')) && retries < maxRetries) {
+              retries++
+              console.warn(`[sites] Database connection timeout, retrying (${retries}/${maxRetries})...`)
+              // Wait before retry
+              await new Promise(resolve => setTimeout(resolve, 1000 * retries))
+              // Try to reconnect
+              try {
+                await prisma.$disconnect()
+                await new Promise(resolve => setTimeout(resolve, 500))
+              } catch {
+                // Ignore disconnect errors
+              }
+            } else {
+              throw error // Re-throw if not a connection error or max retries reached
+            }
+          }
+        }
+        sites = queryResult
         perf?.end('api.sites.GET.queryWithoutCategory.connection')
         
         perf?.end('api.sites.GET.queryWithoutCategory', { sitesCount: sites.length })
@@ -796,23 +824,21 @@ export async function POST(request: NextRequest) {
                 console.warn(`[sites] Pipeline 2.0: tagImageWithoutNewConcepts failed for image ${image.id}:`, (tagError as Error)?.message)
               }
               
-              // Run hub detection immediately for user submissions (force mode)
-              // Note: We don't await this to avoid timeout issues in serverless (hub detection takes 1-2 minutes)
-              // The hub detection will run in the background and complete even if the function exits
-              console.log(`[sites] DEBUG: About to trigger hub detection for image ${image.id}...`)
+              // Run hub detection using extensions + tags (Pipeline 2.0)
+              // This uses actual user queries + image tags to identify hubs
+              // Note: We don't await this to avoid timeout issues in serverless
+              console.log(`[sites] Pipeline 2.0: Running hub detection (extensions + tags) for image ${image.id}...`)
               try {
-                const { triggerHubDetectionForImages } = await import('@/jobs/hub-detection-trigger')
-                // Force immediate run (bypass debounce) since this is a user submission
+                const { updateHubStatsForImage } = await import('@/jobs/hub-detection-extensions')
                 // Fire and forget - don't await to avoid serverless timeout
-                console.log(`[sites] Starting hub detection (force mode) for new image ${image.id}...`)
-                triggerHubDetectionForImages([image.id], { force: true }).catch((err) => {
-                  console.error(`[sites] ❌ Hub detection failed:`, err.message)
+                updateHubStatsForImage(image.id).catch((err) => {
+                  console.error(`[sites] ❌ Hub detection (extensions + tags) failed:`, err.message)
                   console.error(`[sites] Hub detection error stack:`, err.stack)
                 })
-                console.log(`[sites] ✅ Hub detection triggered (running in background) for image ${image.id}`)
+                console.log(`[sites] ✅ Hub detection (extensions + tags) triggered for image ${image.id}`)
               } catch (hubError) {
                 // Non-fatal: hub detection is an optimization, but log the error
-                console.error(`[sites] ❌ Failed to trigger hub detection:`, (hubError as Error)?.message)
+                console.error(`[sites] ❌ Failed to trigger hub detection (extensions + tags):`, (hubError as Error)?.message)
                 console.error(`[sites] Hub detection error stack:`, (hubError as Error)?.stack)
               }
             } else {

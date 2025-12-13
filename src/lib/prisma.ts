@@ -36,7 +36,7 @@ function getPrismaClient(): PrismaClient {
           max: 1, // One connection per serverless function invocation
           min: 0, // Don't keep idle connections
           idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
-          connectionTimeoutMillis: 10000, // 10s timeout for cold starts and network latency
+          connectionTimeoutMillis: 30000, // 30s timeout for local dev (increased from 10s)
           // For Transaction Pooler, connections are pooled at Supabase's end
           // We just need to ensure we don't leak connections
           // Add statement_timeout to prevent long-running queries from blocking

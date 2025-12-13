@@ -60,6 +60,408 @@ if (!globalForVibeExtensions.vibeEmbeddingsCache) {
   globalForVibeExtensions.vibeEmbeddingsCache = new Map()
 }
 
+// Generate search extensions for a single category (concrete, tangible elements)
+// Used when source='search' - focuses on concrete symbols, elements, and content
+async function generateSearchExtensionsForCategory(query: string, category: string): Promise<string[]> {
+  const queryLower = query.toLowerCase()
+  const cacheKey = `search:${queryLower}:${category}`
+  
+  // Check in-memory cache first (fastest)
+  const cached = globalForVibeExtensions.vibeExtensionsCache.get(cacheKey)
+  if (cached) {
+    console.log(`[search-extensions] In-memory cache HIT for ${cacheKey}`)
+    return cached
+  }
+  
+  // Check database cache (persists across serverless invocations)
+  try {
+    const dbCache = await prisma.queryExpansion.findMany({
+      where: {
+        term: queryLower,
+        category: category,
+        source: 'searchbar',
+        model: 'llama-3.3-70b-versatile'
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 1
+    })
+    
+    if (dbCache.length > 0 && dbCache[0].expansion) {
+      const extensions = [dbCache[0].expansion]
+      // Populate in-memory cache for faster access
+      globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, extensions)
+      console.log(`[search-extensions] Database cache HIT for ${cacheKey}`)
+      return extensions
+    }
+  } catch (error: any) {
+    console.warn(`[search-extensions] Database cache check failed for ${cacheKey}:`, error.message)
+  }
+  
+  console.log(`[search-extensions] Cache MISS for ${cacheKey}, generating concrete search extension...`)
+  
+  const categoryContext = CATEGORY_CONTEXTS[category] || 'design in this category'
+  const client = getGroqClientForCategory(category)
+  
+  // Category-specific prompts for search queries (concrete and tangible)
+  let prompt = ''
+  
+  if (category === 'website') {
+    prompt = `You are a visual-grounding engine for a CLIP-based web design search system.
+
+Your task is to translate the user's query "${query}" into concrete, visually recognizable WEB INTERFACE ELEMENTS, LAYOUT PATTERNS, OR UI COMPONENTS commonly seen in websites.
+
+Rules:
+
+1. If the query is abstract, map it to common, visible web UI structures or components.
+
+2. Prefer layout patterns and interface elements that are immediately recognizable in screenshots.
+
+3. Use short noun phrases only (2–5 words each).
+
+4. Output 3–7 visual groundings.
+
+5. Do NOT include explanations, styles, moods, branding language, or abstract concepts.
+
+Output ONLY this JSON:
+
+{
+  "visual_groundings": []
+}
+
+Example for "direction":
+{
+  "visual_groundings": [
+    "arrow icons",
+    "scroll indicator arrows",
+    "breadcrumb navigation",
+    "step progress indicator",
+    "directional call to action"
+  ]
+}
+
+Example for "structure":
+{
+  "visual_groundings": [
+    "grid layout",
+    "multi column layout",
+    "sectioned content blocks",
+    "card layout",
+    "aligned content rows"
+  ]
+}
+
+Example for "interaction":
+{
+  "visual_groundings": [
+    "hover buttons",
+    "clickable cards",
+    "dropdown menus",
+    "toggle switches",
+    "accordion panels"
+  ]
+}`
+  } else if (category === 'logo') {
+    prompt = `You are a visual-grounding engine for a CLIP-based logo and icon search system.
+
+Your task is to translate the user's query "${query}" into a small set of concrete, visually recognizable symbols or shapes commonly used in logo and icon design.
+
+Rules:
+
+1. If the query is abstract, map it to the most common visual representations.
+
+2. Prefer simple, flat, symbolic forms that are easy to recognize visually.
+
+3. Use short noun phrases only (2–5 words each).
+
+4. Output 3–7 visual groundings.
+
+5. Do NOT include explanations, styles, moods, or abstract language.
+
+Output ONLY this JSON:
+
+{
+  "visual_groundings": []
+}
+
+Example for "direction":
+{
+  "visual_groundings": [
+    "arrow symbol",
+    "directional arrow icon",
+    "compass icon",
+    "navigation arrow",
+    "forward pointing arrow"
+  ]
+}`
+  } else if (category === 'graphic') {
+    prompt = `You are a visual-grounding engine for a CLIP-based graphic design search system.
+
+Your task is to translate the user's query "${query}" into concrete, visually recognizable GRAPHIC ELEMENTS commonly seen in posters, patterns, and surface designs.
+
+Rules:
+
+1. If the query is abstract, map it to common visual motifs, shapes, layouts, or repeating elements used in graphic design.
+
+2. Prefer visible, repeatable graphic components over conceptual ideas.
+
+3. Use short noun phrases only (2–5 words each).
+
+4. Output 3–7 visual groundings.
+
+5. Do NOT include explanations, moods, styles, branding language, or abstract terms.
+
+Output ONLY this JSON:
+
+{
+  "visual_groundings": []
+}
+
+Example for "energy":
+{
+  "visual_groundings": [
+    "zigzag shapes",
+    "lightning bolt motifs",
+    "radiating lines",
+    "dynamic diagonal shapes",
+    "repeating wave forms"
+  ]
+}
+
+Example for "order":
+{
+  "visual_groundings": [
+    "grid layout",
+    "repeating square pattern",
+    "aligned columns",
+    "even spacing",
+    "symmetrical arrangement"
+  ]
+}`
+  } else if (category === 'packaging') {
+    prompt = `You are a visual-grounding engine for a CLIP-based packaging design search system.
+
+Your task is to translate the user's query "${query}" into concrete, visually recognizable PACKAGING FORMS, STRUCTURES, OR COMMON PACKAGING ELEMENTS used in product design.
+
+Rules:
+
+1. If the query is abstract, map it to the most common physical or visual packaging representations.
+
+2. Prefer tangible packaging formats, materials, and structural elements.
+
+3. Use short noun phrases only (2–5 words each).
+
+4. Output 3–7 visual groundings.
+
+5. Do NOT include explanations, styles, moods, branding language, or abstract concepts.
+
+Output ONLY this JSON:
+
+{
+  "visual_groundings": []
+}
+
+Example for "direction":
+{
+  "visual_groundings": [
+    "arrow graphic",
+    "directional arrows",
+    "opening instruction arrow",
+    "tear here arrow",
+    "folding direction arrows"
+  ]
+}`
+  } else if (category === 'brand' || category === 'branding') {
+    prompt = `You are a visual-grounding engine for a CLIP-based branding design search system.
+
+Your task is to translate the user's query "${query}" into concrete, visually recognizable BRAND ASSETS OR BRAND APPLICATION CONTEXTS commonly shown in branding imagery.
+
+Rules:
+
+1. If the query is abstract, map it to common brand assets or real-world brand applications.
+
+2. Include multiple distinct asset types to reflect visual diversity.
+
+3. Prefer tangible, visible artifacts over abstract branding concepts.
+
+4. Use short noun phrases only (2–5 words each).
+
+5. Output 5–9 visual groundings to cover variety.
+
+6. Do NOT include explanations, styles, moods, or abstract language.
+
+Output ONLY this JSON:
+
+{
+  "visual_groundings": []
+}
+
+Example for "direction":
+{
+  "visual_groundings": [
+    "arrow logo mark",
+    "brand symbol icon",
+    "directional signage",
+    "wayfinding graphics",
+    "branded poster",
+    "brand guidelines spread",
+    "brand application mockup"
+  ]
+}
+
+Example for "identity":
+{
+  "visual_groundings": [
+    "logo system",
+    "brand mark variations",
+    "brand guidelines pages",
+    "stationery set",
+    "business card design",
+    "brand application mockup",
+    "visual identity system"
+  ]
+}
+
+Example for "consistency":
+{
+  "visual_groundings": [
+    "repeated brand elements",
+    "cohesive brand layouts",
+    "multi asset brand system",
+    "consistent color usage",
+    "brand guideline examples",
+    "aligned typography samples"
+  ]
+}`
+  } else {
+    // Generic prompt for other categories
+    prompt = `Generate exactly 1 concrete search extension for "${query}" in ${categoryContext}.
+
+The extension must describe CONCRETE, TANGIBLE elements related to "${query}":
+- Specific symbols, icons, or visual elements representing "${query}" or its synonyms
+- Concrete design elements commonly associated with "${query}"
+- Tangible visual patterns that appear in ${categoryContext} related to "${query}"
+
+Focus on WHAT YOU CAN SEE, not abstract concepts. Be specific about concrete visual elements.
+
+You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+  }
+
+  try {
+    // Add timeout to Groq API call (10s max) to prevent hanging
+    const groqTimeout = 10000 // 10 seconds
+    const groqPromise = client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.8
+    })
+    
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Groq API call timed out after 10s')), groqTimeout)
+    })
+    
+    const completion = await Promise.race([groqPromise, timeoutPromise]) as any
+
+    const text = completion.choices[0]?.message?.content || ''
+    
+    // Parse JSON from response
+    let jsonText = text.trim()
+    if (jsonText.startsWith('```json')) {
+      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
+    } else if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '')
+    }
+    
+    const parsed = JSON.parse(jsonText)
+    
+    // Handle different response formats
+    let extensions: string[]
+    if ((category === 'logo' || category === 'packaging' || category === 'graphic' || category === 'website' || category === 'brand' || category === 'branding') && parsed.visual_groundings && Array.isArray(parsed.visual_groundings)) {
+      // For logo, packaging, graphic, website, and brand categories, use the visual_groundings array
+      extensions = parsed.visual_groundings
+      console.log(`[search-extensions] ${category} category: received ${extensions.length} visual groundings`)
+    } else if (Array.isArray(parsed)) {
+      extensions = parsed
+    } else if (parsed.extensions && Array.isArray(parsed.extensions)) {
+      extensions = parsed.extensions
+    } else {
+      throw new Error(`Expected array of extensions, got: ${typeof parsed}`)
+    }
+    
+    // Normalize: trim, filter empty, ensure strings
+    const normalized = extensions
+      .map((item: any) => typeof item === 'string' ? item.trim() : String(item).trim())
+      .filter((s: string) => s.length > 0)
+    
+    // For logo, packaging, graphic, website, and brand categories, combine all visual groundings into a single extension string
+    // For other categories, take only the first extension
+    let result: string[]
+    if ((category === 'logo' || category === 'packaging' || category === 'graphic' || category === 'website' || category === 'brand' || category === 'branding') && normalized.length > 0) {
+      // Combine all visual groundings into a single comma-separated string
+      const combinedExtension = normalized.join(', ')
+      result = [combinedExtension]
+      console.log(`[search-extensions] ${category} category: combined ${normalized.length} visual groundings into: "${combinedExtension.substring(0, 150)}..."`)
+    } else {
+      // For other categories, take only the first extension
+      result = normalized.slice(0, 1)
+    }
+    
+    if (result.length === 0) {
+      result = []
+    }
+    
+    // Cache the result for future use
+    if (result.length > 0) {
+      // Combine query with extension: "Query, Extension"
+      const extension = result[0]
+      const combinedExtension = `${query}, ${extension}`
+      const combinedResult = [combinedExtension]
+      
+      // Store in in-memory cache (fast)
+      globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, combinedResult)
+      
+      // Store in database cache (persists across serverless invocations)
+      // Non-blocking: fire and forget to avoid blocking the response
+      prisma.queryExpansion.upsert({
+        where: {
+          term_expansion_source_category: {
+            term: queryLower,
+            expansion: combinedExtension,
+            source: 'searchbar',
+            category: category
+          }
+        },
+        update: {
+          lastUsedAt: new Date(),
+          model: 'llama-3.3-70b-versatile'
+        },
+        create: {
+          term: queryLower,
+          expansion: combinedExtension,
+            source: 'searchbar',
+          category: category,
+          model: 'llama-3.3-70b-versatile'
+        }
+      }).then(() => {
+        console.log(`[search-extensions] Stored in database cache: ${cacheKey}`)
+      }).catch((error: any) => {
+        console.warn(`[search-extensions] Failed to store in database cache for ${cacheKey}:`, error.message)
+      })
+      
+      return combinedResult
+    }
+    
+    return result
+  } catch (error: any) {
+    console.error(`[search-extensions] Error generating search extensions for category "${category}":`, error.message)
+    return []
+  }
+}
+
 // Generate vibe extensions for a single category (cached to ensure consistent results)
 async function generateVibeExtensionsForCategory(vibe: string, category: string): Promise<string[]> {
   const vibeLower = vibe.toLowerCase()
@@ -73,13 +475,13 @@ async function generateVibeExtensionsForCategory(vibe: string, category: string)
   }
   
   // Check database cache (persists across serverless invocations)
+  // Don't filter by model - some entries might not have it set
   try {
     const dbCache = await prisma.queryExpansion.findMany({
       where: {
         term: vibeLower,
         category: category,
-        source: 'groq',
-        model: 'llama-3.3-70b-versatile'
+        source: 'vibefilter'
       },
       orderBy: { createdAt: 'desc' },
       take: 1
@@ -124,16 +526,30 @@ Examples:
 
 You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.` : `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
 
+CRITICAL RULES:
+1. CLIP only sees STATIC images - NEVER mention animations, motion, interactions, or dynamic effects
+2. Focus on distinctive but GENERAL visual characteristics (not overly specific elements that only match 1-2 examples)
+3. Avoid generic terms that apply to all designs
+4. Use terms that are distinctive enough to differentiate "${vibe}" from opposite styles, but general enough to match many examples
+
 The extension must be a single comma-separated string with exactly these 7 elements in order:
-1. Style (e.g., "3D website design", "romantic packaging design")
-2. Color (e.g., "pastel gradients", "soft pink and rose tones")
-3. Typography (e.g., "clean sans-serif typography", "elegant script typography")
-4. Composition (e.g., "spacious layout", "centered label composition")
-5-7. Three UI elements (e.g., "floating elements", "soft shadows", "abstract 3D shapes")
+1. Distinctive style characteristic (e.g., "3D rendered surfaces", "romantic floral motifs", "whimsical hand-drawn style" - NOT generic "website design" or overly specific "dreamcatcher icon")
+2. Color palette specifics (e.g., "pastel gradient backgrounds", "soft pink and rose tones", "vibrant neon accents" - describe color characteristics, not specific objects)
+3. Typography characteristics (e.g., "playful script letterforms", "elegant serif headings", "bold geometric display type" - describe TYPEFACE STYLE, not just "typography")
+4. Composition approach (e.g., "asymmetrical scattered layouts", "centered symmetrical arrangements", "overlapping layered elements" - describe LAYOUT PATTERN, not just "layout")
+5-7. Three distinctive visual elements (e.g., "rounded corner elements", "soft drop shadows", "abstract geometric shapes", "decorative border patterns" - be distinctive but GENERAL, avoid overly specific items like "glowing button" or "dreamcatcher icon")
+
+IMPORTANT RULES:
+- DO NOT use generic terms like "website design", "packaging design", "typography", "layout", "composition" - these match everything
+- DO NOT mention animations, motion, interactions, dynamic effects, or anything that requires movement (CLIP only sees static images)
+- DO NOT use overly specific elements that only match 1-2 examples (e.g., "dreamcatcher icon", "glowing button", "specific object names")
+- DO use distinctive but general visual characteristics that appear in many "${vibe}" designs
+- Each element should be a descriptive phrase (2-5 words) that highlights what makes "${vibe}" designs visually distinct
+- Focus on visual elements that would NOT appear in opposite styles (e.g., for "playful", avoid terms that also match "serious" or "professional")
 
 Examples:
-- ["3D website design, pastel gradients, clean sans-serif typography, spacious layout, floating elements, soft shadows, abstract 3D shapes"]
-- ["romantic packaging design, soft pink and rose tones, elegant script typography, centered label composition, embossed textures, foil stamping, delicate floral patterns"]
+- For "playful": ["whimsical hand-drawn style, vibrant neon color accents, playful script letterforms, asymmetrical scattered layouts, rounded corner elements, soft drop shadows, stylized decorative shapes"]
+- For "romantic": ["delicate floral motifs, soft pastel pink tones, elegant serif script typography, centered symmetrical arrangements, embossed texture effects, decorative border patterns, vintage ornamental details"]
 
 You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
   
@@ -189,39 +605,9 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
     
     const result = normalized.length > 0 ? normalized : []
     
-    // Cache the result for future use (ensures consistent rankings when switching tabs)
+    // Cache in memory only (database storage handled in main search route)
     if (result.length > 0) {
-      // Store in in-memory cache (fast)
       globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, result)
-      
-      // Store in database cache (persists across serverless invocations)
-      // Non-blocking: fire and forget to avoid blocking the response
-      const extension = result[0]
-      prisma.queryExpansion.upsert({
-        where: {
-          term_expansion_source_category: {
-            term: vibeLower,
-            expansion: extension,
-            source: 'groq',
-            category: category
-          }
-        },
-        update: {
-          lastUsedAt: new Date(),
-          model: 'llama-3.3-70b-versatile'
-        },
-        create: {
-          term: vibeLower,
-          expansion: extension,
-          source: 'groq',
-          category: category,
-          model: 'llama-3.3-70b-versatile'
-        }
-      }).then(() => {
-        console.log(`[vibe-cache] Stored in database cache: ${cacheKey}`)
-      }).catch((error: any) => {
-        console.warn(`[vibe-cache] Failed to store in database cache for ${cacheKey}:`, error.message)
-      })
     }
     
     return result
@@ -342,7 +728,10 @@ export async function GET(request: NextRequest) {
     const q = rawQuery.trim().toLowerCase()
     const category = searchParams.get('category') || null // Get category filter: 'website', 'packaging', 'all', or null
     const source = searchParams.get('source') || 'vibefilter' // 'search' or 'vibefilter' - determines which extension system to use
-    console.log(`\n🔎 [search] API called: q="${q}", category="${category || 'null'}", source="${source}"`)
+    const extensionSystem = source === 'search' ? '🔍 SEARCH (concrete)' : '🎨 VIBE FILTER (abstract)'
+    console.log(`\n🔎 [search] API called: q="${q}", category="${category || 'null'}", source="${source}" (${extensionSystem})`)
+    console.log(`🔎 [search] Full URL: ${request.url}`)
+    console.log(`🔎 [search] Category parameter received: "${category}" (type: ${typeof category})`)
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
     
@@ -372,7 +761,7 @@ export async function GET(request: NextRequest) {
       perf.start('api.search.GET.zeroShot.analyzeQuery')
       // Count words in query
       const wordCount = q.trim().split(/\s+/).filter((w: string) => w.length > 0).length
-      const useExpansion = wordCount <= 2 // Only use expansion for queries with 2 words or less
+      const useExpansion = wordCount < 3 // Only use expansion for queries with less than 3 words (1-2 words)
       
       let isAbstract = false
       if (useExpansion) {
@@ -399,9 +788,27 @@ export async function GET(request: NextRequest) {
       // Extensions are generated immediately, not stored
       const vibeExtensionsByCategory: Record<string, number[][]> = {}
       
-      // For single-word queries, generate vibe extensions only if source is 'vibefilter'
-      // If source is 'search', use expansion system instead
-      if (wordCount === 1 && source === 'vibefilter') {
+      console.log(`\n🔍 [search] Extension path decision:`)
+      console.log(`   Query: "${q}"`)
+      console.log(`   Category: "${category || 'null'}"`)
+      console.log(`   wordCount: ${wordCount}`)
+      console.log(`   source: "${source}"`)
+      console.log(`   isAbstract: ${isAbstract}`)
+      console.log(`   useExpansion: ${useExpansion}`)
+      console.log(`   isExpanded: ${isExpanded}`)
+      const condition1 = wordCount < 3 && source === 'vibefilter'
+      const condition2 = wordCount < 3 && source === 'search'
+      console.log(`   Condition 1 (vibefilter): wordCount < 3 && source === 'vibefilter' = ${condition1}`)
+      console.log(`   Condition 2 (search): wordCount < 3 && source === 'search' = ${condition2}`)
+      console.log(`   Condition 3 (expansion): isExpanded = ${isExpanded}`)
+      console.log(`   🔍 DEBUG: wordCount=${wordCount}, source="${source}", source type=${typeof source}`)
+      
+      // For queries with less than 3 words, generate vibe extensions only if source is 'vibefilter'
+      // If source is 'search', use search extension system (concrete, tangible elements)
+      if (wordCount < 3 && source === 'vibefilter') {
+        console.log(`\n✅ [search] Taking VIBE FILTER path`)
+        console.log(`   [search] Vibe word: "${q}"`)
+        console.log(`   [search] Will generate extensions for: website, packaging, brand, fonts, apps, graphic, logo`)
         perf.start('api.search.GET.zeroShot.generateVibeExtensions', { vibeWord: q.trim() })
         const vibeWord = q.trim()
         try {
@@ -420,30 +827,67 @@ export async function GET(request: NextRequest) {
               const cachedEmbedding = globalForVibeExtensions.vibeEmbeddingsCache.get(embeddingCacheKey)
               if (cachedEmbedding) {
                 console.log(`[vibe-cache] In-memory embedding cache HIT for ${embeddingCacheKey}`)
-                perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'memory' })
-                return { category: cat, extension: null, embedding: cachedEmbedding, needsEmbedding: false, needsGroq: false }
+                // Verify database entry exists - if not, we need to regenerate
+                const dbCacheForExtension = await prisma.queryExpansion.findFirst({
+                  where: {
+                    term: vibeLower,
+                    category: cat,
+                    source: 'vibefilter'
+                  },
+                  orderBy: { createdAt: 'desc' }
+                })
+                if (dbCacheForExtension?.expansion && dbCacheForExtension.embedding) {
+                  // Database entry exists with both expansion and embedding - all good
+                  console.log(`[vibe-cache] ✅ Database entry verified: "${dbCacheForExtension.expansion.substring(0, 100)}..."`)
+                  perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'memory+db' })
+                  return { category: cat, extension: dbCacheForExtension.expansion, embedding: cachedEmbedding, needsEmbedding: false, needsGroq: false }
+                } else if (dbCacheForExtension?.expansion && !dbCacheForExtension.embedding) {
+                  // Database has expansion but no embedding - need to embed it
+                  console.warn(`[vibe-cache] ⚠️  Database has expansion but no embedding for ${embeddingCacheKey}`)
+                  console.warn(`[vibe-cache]    Will regenerate embedding from: "${dbCacheForExtension.expansion.substring(0, 100)}..."`)
+                  return { category: cat, extension: dbCacheForExtension.expansion, embedding: null, needsEmbedding: true, needsGroq: false }
+                } else {
+                  // Database entry missing - in-memory cache is orphaned, need to regenerate
+                  console.error(`[vibe-cache] ❌ CRITICAL: In-memory cache has embedding but NO database entry for ${embeddingCacheKey}`)
+                  console.error(`[vibe-cache]    This means previous database storage failed! Will regenerate extension.`)
+                  // Clear the orphaned in-memory cache
+                  globalForVibeExtensions.vibeEmbeddingsCache.delete(embeddingCacheKey)
+                  // Fall through to generate new extension
+                }
               }
               
               // Then check database cache for embedding (persists across serverless invocations)
+              // Don't filter by model - some entries might not have it set
               try {
                 const dbCache = await prisma.queryExpansion.findFirst({
                   where: {
                     term: vibeLower,
                     category: cat,
-                    source: 'groq',
-                    model: 'llama-3.3-70b-versatile'
+                    source: 'vibefilter'
                   },
                   orderBy: { createdAt: 'desc' }
                 })
                 
-                if (dbCache && dbCache.embedding) {
-                  const dbEmbedding = dbCache.embedding as unknown as number[]
-                  if (Array.isArray(dbEmbedding) && dbEmbedding.length > 0) {
-                    // Populate in-memory cache for faster access
-                    globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, dbEmbedding)
-                    console.log(`[vibe-cache] Database embedding cache HIT for ${embeddingCacheKey}`)
-                    perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'database' })
-                    return { category: cat, extension: null, embedding: dbEmbedding, needsEmbedding: false, needsGroq: false }
+                if (dbCache) {
+                  // If we have an embedding, use it directly
+                  if (dbCache.embedding) {
+                    const dbEmbedding = dbCache.embedding as unknown as number[]
+                    if (Array.isArray(dbEmbedding) && dbEmbedding.length > 0) {
+                      // Populate in-memory cache for faster access
+                      globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, dbEmbedding)
+                      console.log(`[vibe-cache] ✅ Database embedding cache HIT for ${embeddingCacheKey}`)
+                      if (dbCache.expansion) {
+                        console.log(`[vibe-cache] Extension: "${dbCache.expansion.substring(0, 150)}..."`)
+                      }
+                      perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'database' })
+                      return { category: cat, extension: dbCache.expansion || null, embedding: dbEmbedding, needsEmbedding: false, needsGroq: false }
+                    }
+                  }
+                  // If we have expansion text but no embedding, we'll need to generate embedding
+                  if (dbCache.expansion && !dbCache.embedding) {
+                    console.log(`[vibe-cache] Found expansion text but no embedding for ${embeddingCacheKey}, will generate embedding`)
+                    // Return the extension so it can be embedded
+                    return { category: cat, extension: dbCache.expansion, embedding: null, needsEmbedding: true, needsGroq: false }
                   }
                 }
               } catch (dbError: any) {
@@ -483,14 +927,24 @@ export async function GET(request: NextRequest) {
             .filter(r => r.needsEmbedding && r.extension)
             .map(r => ({ category: r.category, extension: r.extension! }))
           
+          console.log(`[vibe-cache] 📝 Extensions to embed: ${extensionsToEmbed.length}`)
+          extensionsToEmbed.forEach(e => {
+            console.log(`[vibe-cache]    - ${e.category}: "${e.extension.substring(0, 80)}..."`)
+          })
+          
           let batchEmbeddings: number[][] = []
           let embedError: any = null
           if (extensionsToEmbed.length > 0) {
             try {
-              const extensionTexts = extensionsToEmbed.map(e => e.extension)
+              // Combine vibe word with extension: "Vibe, Extension"
+              // This includes the vibe word as part of the semantic meaning
+              const extensionTexts = extensionsToEmbed.map(e => `${vibeWord}, ${e.extension}`)
+              console.log(`[vibe-cache] 🔄 Embedding ${extensionTexts.length} combined texts (vibe + extension)...`)
+              console.log(`[vibe-cache]    Example: "${extensionTexts[0]?.substring(0, 100)}..."`)
               batchEmbeddings = await perf.measure('api.search.GET.zeroShot.generateVibeExtensions.step2_batchEmbed.embedTextBatch', async () => {
                 return await embedTextBatch(extensionTexts)
               })
+              console.log(`[vibe-cache] ✅ Successfully embedded ${batchEmbeddings.length} texts`)
             } catch (err: any) {
               // If embedding fails (e.g., service timeout), log and continue without embeddings
               // The search will still work, just without vibe extensions for these categories
@@ -522,14 +976,16 @@ export async function GET(request: NextRequest) {
             // Cache the normalized embedding in memory
             globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
             
+            // Store just the extension (7-element format) in database, not "vibe, extension"
+            // The embedding was computed from "vibe, extension" but we store clean extension text
             // Store embedding in database for persistence (non-blocking - fire and forget)
             // Don't await - let it run in background to avoid blocking the response
             prisma.queryExpansion.upsert({
               where: {
                 term_expansion_source_category: {
                   term: vibeLower,
-                  expansion: extension,
-                  source: 'groq',
+                  expansion: extension, // Store just the 7-element extension, not "vibe, extension"
+                  source: 'vibefilter',
                   category: category
                 }
               },
@@ -539,17 +995,22 @@ export async function GET(request: NextRequest) {
               },
               create: {
                 term: vibeLower,
-                expansion: extension,
-                source: 'groq',
+                expansion: extension, // Store just the 7-element extension, not "vibe, extension"
+                source: 'vibefilter',
                 category: category,
                 model: 'llama-3.3-70b-versatile',
                 embedding: normalizedEmbedding,
                 lastUsedAt: new Date()
               }
             }).then(() => {
-              console.log(`[vibe-cache] Stored embedding in database cache: ${embeddingCacheKey}`)
+              console.log(`[vibe-cache] ✅ Successfully stored in database: ${embeddingCacheKey}`)
+              console.log(`[vibe-cache]    Term: "${vibeLower}", Category: "${category}", Source: "vibefilter"`)
+              console.log(`[vibe-cache]    Expansion: "${extension.substring(0, 100)}..."`)
             }).catch((dbError: any) => {
-              console.warn(`[vibe-cache] Failed to store embedding in database for ${embeddingCacheKey}:`, dbError.message)
+              console.error(`[vibe-cache] ❌ FAILED to store in database for ${embeddingCacheKey}:`, dbError.message)
+              console.error(`[vibe-cache]    Error details:`, dbError)
+              console.error(`[vibe-cache]    Term: "${vibeLower}", Category: "${category}", Source: "vibefilter"`)
+              console.error(`[vibe-cache]    Expansion: "${extension.substring(0, 100)}..."`)
             })
             
             // Find the corresponding result and update it
@@ -573,8 +1034,12 @@ export async function GET(request: NextRequest) {
             if (result.embedding) {
               // Store as array with single embedding for compatibility with scoring logic
               vibeExtensionsByCategory[result.category] = [result.embedding]
+              console.log(`[vibe-cache] ✅ Added embedding for category="${result.category}"`)
+            } else {
+              console.warn(`[vibe-cache] ⚠️  No embedding for category="${result.category}" (extension: ${result.extension ? 'exists' : 'missing'})`)
             }
           }
+          console.log(`[vibe-cache] 📊 Final vibeExtensionsByCategory: ${Object.keys(vibeExtensionsByCategory).join(', ') || 'EMPTY'}`)
           perf.end('api.search.GET.zeroShot.generateVibeExtensions', { 
             categoriesGenerated: Object.keys(vibeExtensionsByCategory).length 
           })
@@ -582,9 +1047,233 @@ export async function GET(request: NextRequest) {
           perf.end('api.search.GET.zeroShot.generateVibeExtensions', { error: error.message })
           console.warn(`[search] Failed to generate vibe extensions:`, error.message)
         }
+      } else if (wordCount < 3 && source === 'search') {
+        // Generate search extensions (concrete, tangible elements) for search queries
+        console.log(`\n✅ [search] Taking SEARCH EXTENSION path (wordCount=${wordCount}, source="${source}")`)
+        perf.start('api.search.GET.zeroShot.generateSearchExtensions', { searchQuery: q.trim() })
+        const searchQuery = q.trim()
+        try {
+          console.log(`\n🔍 [search-extensions] Generating concrete search extensions for "${searchQuery}"`)
+          
+          // Generate extensions for all categories in parallel
+          const categoriesToGenerate = ['website', 'packaging', 'brand', 'fonts', 'apps', 'graphic', 'logo']
+          
+          // Step 1: Check database cache for embeddings first, then generate Groq extensions if needed
+          perf.start('api.search.GET.zeroShot.generateSearchExtensions.step1_checkCache')
+          const searchLower = searchQuery.toLowerCase()
+          const cacheCheckPromises = categoriesToGenerate.map(async (cat) => {
+            try {
+              perf.start(`api.search.GET.zeroShot.generateSearchExtensions.${cat}`)
+              const embeddingCacheKey = `search:${searchLower}:${cat}`
+              
+              // First check in-memory cache (fastest)
+              const cachedEmbedding = globalForVibeExtensions.vibeEmbeddingsCache.get(embeddingCacheKey)
+              if (cachedEmbedding) {
+                console.log(`[search-extensions] In-memory embedding cache HIT for ${embeddingCacheKey}`)
+                perf.end(`api.search.GET.zeroShot.generateSearchExtensions.${cat}`, { cached: 'memory' })
+                return { category: cat, extension: null, embedding: cachedEmbedding, needsEmbedding: false }
+              }
+              
+              // Then check database cache for embedding (persists across serverless invocations)
+              // IMPORTANT: Only check for source='search' to avoid using vibe filter extensions
+              try {
+                const dbCache = await prisma.queryExpansion.findFirst({
+                  where: {
+                    term: searchLower,
+                    category: cat,
+                    source: 'searchbar', // CRITICAL: Only use search extensions, not vibe filters
+                    model: 'llama-3.3-70b-versatile'
+                  },
+                  orderBy: { createdAt: 'desc' }
+                })
+                
+                if (dbCache && dbCache.embedding) {
+                  const dbEmbedding = dbCache.embedding as unknown as number[]
+                  if (Array.isArray(dbEmbedding) && dbEmbedding.length > 0) {
+                    // Populate in-memory cache for faster access
+                    globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, dbEmbedding)
+                    console.log(`[search-extensions] ✅ Database embedding cache HIT for ${embeddingCacheKey} (source=searchbar)`)
+                    console.log(`[search-extensions] Extension text: "${dbCache.expansion?.substring(0, 150)}..."`)
+                    perf.end(`api.search.GET.zeroShot.generateSearchExtensions.${cat}`, { cached: 'database', source: 'searchbar' })
+                    return { category: cat, extension: null, embedding: dbEmbedding, needsEmbedding: false }
+                  }
+                } else {
+                  // Check if vibe filter extension exists (for debugging)
+                  const vibeCache = await prisma.queryExpansion.findFirst({
+                    where: {
+                      term: searchLower,
+                      category: cat,
+                      source: 'vibefilter', // Vibe filters use 'vibefilter' source
+                      model: 'llama-3.3-70b-versatile'
+                    },
+                    orderBy: { createdAt: 'desc' }
+                  })
+                  if (vibeCache) {
+                    console.log(`[search-extensions] ⚠️  Found vibe filter extension for "${searchLower}:${cat}" but NOT using it (source=searchbar requires search extensions)`)
+                  }
+                }
+              } catch (dbError: any) {
+                console.warn(`[search-extensions] Database cache check failed for ${embeddingCacheKey}:`, dbError.message)
+              }
+              
+              console.log(`[search-extensions] ❌ Cache MISS for ${embeddingCacheKey}, generating NEW concrete search extension...`)
+              
+              // Generate extension with Groq (using search-specific prompts)
+              const extensions = await perf.measure(`api.search.GET.zeroShot.generateSearchExtensions.${cat}.groq`, async () => {
+                return await generateSearchExtensionsForCategory(searchQuery, cat)
+              })
+              if (extensions.length > 0) {
+                // Take only the first extension (single string per category)
+                const extension = extensions[0]
+                console.log(`[search-extensions] ✅ Generated NEW extension for ${cat}: "${extension.substring(0, 150)}..."`)
+                perf.end(`api.search.GET.zeroShot.generateSearchExtensions.${cat}`, { needsEmbedding: true, generated: true })
+                return { category: cat, extension, embedding: null, needsEmbedding: true }
+              } else {
+                console.warn(`[search-extensions] ⚠️  No extensions generated for ${cat}`)
+              }
+              perf.end(`api.search.GET.zeroShot.generateSearchExtensions.${cat}`, { noExtensions: true })
+              return { category: cat, extension: null, embedding: null, needsEmbedding: false }
+            } catch (error: any) {
+              perf.end(`api.search.GET.zeroShot.generateSearchExtensions.${cat}`, { error: error.message })
+              console.warn(`[search-extensions] Failed to generate search extensions for category "${cat}":`, error.message)
+              return { category: cat, extension: null, embedding: null, needsEmbedding: false }
+            }
+          })
+          
+          const cacheResults = await Promise.all(cacheCheckPromises)
+          perf.end('api.search.GET.zeroShot.generateSearchExtensions.step1_checkCache', { 
+            cached: cacheResults.filter(r => !r.needsEmbedding && r.embedding).length,
+            needsEmbedding: cacheResults.filter(r => r.needsEmbedding).length
+          })
+          
+          // Step 2: Batch embed all extensions that need embedding in a single call
+          perf.start('api.search.GET.zeroShot.generateSearchExtensions.step2_batchEmbed')
+          const extensionsToEmbed = cacheResults
+            .filter(r => r.needsEmbedding && r.extension)
+            .map(r => ({ category: r.category, extension: r.extension! }))
+          
+          let batchEmbeddings: number[][] = []
+          let embedError: any = null
+          if (extensionsToEmbed.length > 0) {
+            try {
+              // Combine query with extension: "Query, Extension"
+              const extensionTexts = extensionsToEmbed.map(e => `${searchQuery}, ${e.extension}`)
+              batchEmbeddings = await perf.measure('api.search.GET.zeroShot.generateSearchExtensions.step2_batchEmbed.embedTextBatch', async () => {
+                return await embedTextBatch(extensionTexts)
+              })
+            } catch (err: any) {
+              // If embedding fails (e.g., service timeout), log and continue without embeddings
+              embedError = err
+              console.warn(`[search-extensions] Failed to embed search extensions (${extensionsToEmbed.length} extensions):`, err.message)
+            }
+          }
+          perf.end('api.search.GET.zeroShot.generateSearchExtensions.step2_batchEmbed', { 
+            batchSize: extensionsToEmbed.length,
+            embedded: batchEmbeddings.length,
+            error: embedError?.message || null
+          })
+          
+          // Step 3: Normalize, cache embeddings (in-memory and database), map back to categories
+          perf.start('api.search.GET.zeroShot.generateSearchExtensions.step3_normalize')
+          
+          // Process all embeddings in parallel (not sequential) to avoid blocking
+          const normalizePromises = extensionsToEmbed.map(async ({ category, extension }, i) => {
+            const embedding = batchEmbeddings[i]
+            if (!embedding) return null
+            
+            const embeddingCacheKey = `search:${searchLower}:${category}`
+            // L2-normalize the embedding
+            const normalizedEmbedding = perf.measureSync(`api.search.GET.zeroShot.generateSearchExtensions.step3_normalize.${category}`, () => {
+              return l2norm(embedding)
+            })
+            
+            // Cache the normalized embedding in memory
+            globalForVibeExtensions.vibeEmbeddingsCache.set(embeddingCacheKey, normalizedEmbedding)
+            
+            // Combine query with extension: "Query, Extension" for storage
+            const combinedExtension = `${searchQuery}, ${extension}`
+            
+            // Store embedding in database for persistence (non-blocking - fire and forget)
+            prisma.queryExpansion.upsert({
+              where: {
+                term_expansion_source_category: {
+                  term: searchLower,
+                  expansion: combinedExtension,
+                  source: 'searchbar',
+                  category: category
+                }
+              },
+              update: {
+                embedding: normalizedEmbedding,
+                lastUsedAt: new Date()
+              },
+              create: {
+                term: searchLower,
+                expansion: combinedExtension,
+                source: 'searchbar',
+                category: category,
+                model: 'llama-3.3-70b-versatile',
+                embedding: normalizedEmbedding,
+                lastUsedAt: new Date()
+              }
+            }).then(() => {
+              console.log(`[search-extensions] Stored embedding in database cache: ${embeddingCacheKey}`)
+            }).catch((dbError: any) => {
+              console.warn(`[search-extensions] Failed to store embedding in database for ${embeddingCacheKey}:`, dbError.message)
+            })
+            
+            // Find the corresponding result and update it
+            const result = cacheResults.find(r => r.category === category)
+            if (result) {
+              result.embedding = normalizedEmbedding
+            }
+            
+            return { category, embedding: normalizedEmbedding }
+          })
+          
+          // Wait for all normalizations to complete (but database writes are fire-and-forget)
+          await Promise.all(normalizePromises)
+          
+          perf.end('api.search.GET.zeroShot.generateSearchExtensions.step3_normalize', { 
+            normalized: extensionsToEmbed.length 
+          })
+          
+          // Step 4: Build final searchExtensionsByCategory map
+          for (const result of cacheResults) {
+            if (result.embedding) {
+              // Store as array with single embedding for compatibility with scoring logic
+              vibeExtensionsByCategory[result.category] = [result.embedding]
+            }
+          }
+          
+          console.log(`[search-extensions] ✅ Generated extensions for ${Object.keys(vibeExtensionsByCategory).length} categories`)
+          console.log(`[search-extensions] Categories with extensions: ${Object.keys(vibeExtensionsByCategory).join(', ')}`)
+          // Log what extensions are being used
+          for (const [cat, embeddings] of Object.entries(vibeExtensionsByCategory)) {
+            const result = cacheResults.find(r => r.category === cat)
+            if (result?.extension) {
+              console.log(`[search-extensions] 📝 Using for ${cat}: "${result.extension.substring(0, 150)}..."`)
+            } else if (result?.embedding) {
+              console.log(`[search-extensions] 📝 Using cached embedding for ${cat} (extension text not available)`)
+            }
+          }
+          perf.end('api.search.GET.zeroShot.generateSearchExtensions', { 
+            categoriesGenerated: Object.keys(vibeExtensionsByCategory).length 
+          })
+        } catch (error: any) {
+          perf.end('api.search.GET.zeroShot.generateSearchExtensions', { error: error.message })
+          console.warn(`[search-extensions] Failed to generate search extensions:`, error.message)
+        }
       }
       
       const hasVibeExtensions = Object.keys(vibeExtensionsByCategory).length > 0
+      
+      console.log(`\n📊 [search] Extension system status:`)
+      console.log(`   wordCount: ${wordCount}`)
+      console.log(`   source: "${source}"`)
+      console.log(`   isExpanded: ${isExpanded}`)
+      console.log(`   hasVibeExtensions: ${hasVibeExtensions}`)
+      console.log(`   vibeExtensionsByCategory keys: ${Object.keys(vibeExtensionsByCategory).join(', ') || 'none'}`)
       
       if (hasVibeExtensions) {
         // Set expansionEmbeddings to null - we'll compute per-category in scoring
@@ -593,16 +1282,41 @@ export async function GET(request: NextRequest) {
         // This ensures we retrieve the best candidates for the selected category
         // If category is 'all' or null, use website extension as default
         const categoryForQuery = category && category !== 'all' ? category : 'website'
+        console.log(`[search] 🔍 Selecting query embedding for category="${categoryForQuery}"`)
+        console.log(`[search] Available extensions: ${Object.keys(vibeExtensionsByCategory).join(', ')}`)
         perf.start('api.search.GET.zeroShot.getQueryEmbedding')
+        
+        // CRITICAL: Only use vibe extension embeddings, never fallback to raw query
+        // If no vibe extensions are available, this is an error condition
         const queryEmbedding = vibeExtensionsByCategory[categoryForQuery]?.[0] || 
                                vibeExtensionsByCategory['website']?.[0] ||
-                               Object.values(vibeExtensionsByCategory)[0]?.[0] ||
-                               (await perf.measure('api.search.GET.zeroShot.getQueryEmbedding.embedFallback', async () => {
-                                 return await embedTextBatch([q])
-                               }))[0]
-        queryVec = queryEmbedding
-        perf.end('api.search.GET.zeroShot.getQueryEmbedding', { hasVibeExtension: !!vibeExtensionsByCategory[categoryForQuery]?.[0] })
+                               Object.values(vibeExtensionsByCategory)[0]?.[0]
+        
+        let usedExtensionCategory = 'fallback'
+        if (!queryEmbedding) {
+          console.error(`[search] ❌ ERROR: No vibe extension embeddings available! vibeExtensionsByCategory keys: ${Object.keys(vibeExtensionsByCategory).join(', ')}`)
+          console.error(`[search] This should not happen - vibe extensions should have been generated`)
+          // Fallback to raw query only as last resort
+          const [fallbackVec] = await perf.measure('api.search.GET.zeroShot.getQueryEmbedding.embedFallback', async () => {
+            return await embedTextBatch([q])
+          })
+          queryVec = fallbackVec
+          usedExtensionCategory = 'fallback'
+          console.warn(`[search] ⚠️  Using fallback embedding for raw query "${q}" (vibe extensions failed)`)
+        } else {
+          queryVec = queryEmbedding
+          usedExtensionCategory = vibeExtensionsByCategory[categoryForQuery]?.[0] ? categoryForQuery :
+                                  vibeExtensionsByCategory['website']?.[0] ? 'website' :
+                                  Object.keys(vibeExtensionsByCategory)[0] || 'unknown'
+          console.log(`[search] ✅ Using vibe extension embedding from category="${usedExtensionCategory}" for initial pgvector search`)
+        }
+        perf.end('api.search.GET.zeroShot.getQueryEmbedding', { 
+          hasVibeExtension: !!vibeExtensionsByCategory[categoryForQuery]?.[0],
+          usedCategory: usedExtensionCategory,
+          requestedCategory: categoryForQuery
+        })
       } else if (isExpanded) {
+        console.log(`\n✅ [search] Taking EXPANSION path (isExpanded=${isExpanded}, wordCount=${wordCount}, source="${source}")`)
         // Use max/softmax pooling for expansions (OR semantics)
         // When category is 'all', generate expansions for all categories
         if (category === 'all') {
@@ -736,6 +1450,9 @@ export async function GET(request: NextRequest) {
             pgvectorQuery += ` AND i.category = $${queryParams.length + 1}`
             queryParams.push(category)
             console.log(`[search] 🔍 pgvector search: filtering by category="${category}"`)
+            console.log(`[search] 🔍 SQL query will include: AND i.category = $${queryParams.length}`)
+          } else {
+            console.log(`[search] 🔍 pgvector search: NO category filter (category="${category || 'null'}")`)
           }
           
           pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC LIMIT $${queryParams.length + 1}`
@@ -752,8 +1469,22 @@ export async function GET(request: NextRequest) {
           perf.end('api.search.GET.zeroShot.pgvectorQuery', { resultCount: pgvectorResults.length })
           console.log(`[search] ✅ pgvector returned ${Array.isArray(pgvectorResults) ? pgvectorResults.length : 0} candidates`)
           if (pgvectorResults.length > 0) {
-            const categories = [...new Set(pgvectorResults.slice(0, 10).map((r: any) => r.category || 'unknown'))]
-            console.log(`   Top 10 candidate categories: ${categories.join(', ')}`)
+            const categories = [...new Set(pgvectorResults.map((r: any) => r.category || 'unknown'))]
+            const categoryCounts = new Map<string, number>()
+            pgvectorResults.forEach((r: any) => {
+              const cat = r.category || 'unknown'
+              categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1)
+            })
+            console.log(`   All candidate categories: ${Array.from(categoryCounts.entries()).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+            if (category && category !== 'all') {
+              const expectedCount = categoryCounts.get(category) || 0
+              const unexpectedCount = pgvectorResults.length - expectedCount
+              if (unexpectedCount > 0) {
+                console.warn(`   ⚠️  WARNING: Expected only "${category}" images, but found ${unexpectedCount} images from other categories!`)
+              } else {
+                console.log(`   ✅ All ${pgvectorResults.length} candidates are from category "${category}" as expected`)
+              }
+            }
           }
           
           // Transform results to match expected format
@@ -787,6 +1518,30 @@ export async function GET(request: NextRequest) {
           
           if (imageEmbeddings.length === 0) {
             console.warn(`[search] WARNING: pgvector returned 0 images! This might indicate a problem with the query vector or database.`)
+          } else {
+            // Safety check: Filter out images with wrong category if category filter is active
+            if (category && category !== 'all') {
+              const beforeFilter = imageEmbeddings.length
+              const categoryBreakdown = new Map<string, number>()
+              imageEmbeddings.forEach((emb: any) => {
+                const imgCategory = emb.image?.category || 'website'
+                categoryBreakdown.set(imgCategory, (categoryBreakdown.get(imgCategory) || 0) + 1)
+              })
+              console.log(`[search] 📊 Category breakdown BEFORE filtering: ${Array.from(categoryBreakdown.entries()).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+              
+              imageEmbeddings = imageEmbeddings.filter((emb: any) => {
+                const imgCategory = emb.image?.category || 'website'
+                return imgCategory === category
+              })
+              const afterFilter = imageEmbeddings.length
+              if (beforeFilter !== afterFilter) {
+                console.warn(`[search] ⚠️  FILTERED OUT ${beforeFilter - afterFilter} images with wrong category! Expected "${category}", but found images from other categories.`)
+                console.warn(`[search] This indicates a database issue - images may have incorrect category values.`)
+                console.warn(`[search] Removed categories: ${Array.from(categoryBreakdown.entries()).filter(([cat]) => cat !== category).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+              } else {
+                console.log(`[search] ✅ All ${imageEmbeddings.length} images have correct category "${category}"`)
+              }
+            }
           }
         } else {
           // Fallback to loading all embeddings (old method)
@@ -853,44 +1608,34 @@ export async function GET(request: NextRequest) {
         let baseScore: number
         const imageCategory = emb.image.category || 'website'
         
-        // If we have vibe extensions by category, use category-specific extension
-        // IMPORTANT: Always recompute score with category-specific extension, even if pgvector similarity exists
-        // We MUST ignore pgvector's pre-computed similarity when using vibe extensions
+        // If we have vibe extensions, use pgvector similarity (same as direct search)
+        // The initial pgvector search already used the vibe extension embedding, so the similarity is correct
+        // We should use pgvector similarity to match direct search behavior
         if (hasVibeExtensions) {
-          // Always recompute with category-specific extension - ignore pgvector similarity
-          if (vibeExtensionsByCategory[imageCategory] && vibeExtensionsByCategory[imageCategory].length > 0) {
-            const categoryExtension = vibeExtensionsByCategory[imageCategory][0] // Single embedding per category
-            const ivec = (emb.vector as unknown as number[]) || []
-            if (ivec.length !== dim) {
-              dimensionMismatchCount++
-              if (dimensionMismatchCount <= 3) {
-                console.warn(`[search] Dimension mismatch: ivec.length=${ivec.length}, dim=${dim}, category=${imageCategory}`)
-              }
-              continue
-            }
-            
-            // Compute similarity using category-specific extension (single cosine similarity)
-            // Round to ensure deterministic scoring
-            baseScore = Math.round(cosine(categoryExtension, ivec) * 1000000) / 1000000
+          // Use pgvector similarity if available (matches direct search behavior)
+          if (emb.similarity !== undefined) {
+            baseScore = emb.similarity
           } else {
-            // Vibe extensions exist but not for this category - use default category extension
-            // Use default category extension instead of queryVec
-            const defaultCategory = category && category !== 'all' ? category : 'website'
-            const defaultExtension = vibeExtensionsByCategory[defaultCategory]?.[0] || vibeExtensionsByCategory['website']?.[0]
-            if (defaultExtension) {
+            // Fallback: recompute with category-specific extension if pgvector similarity not available
+            if (vibeExtensionsByCategory[imageCategory] && vibeExtensionsByCategory[imageCategory].length > 0) {
+              const categoryExtension = vibeExtensionsByCategory[imageCategory][0]
               const ivec = (emb.vector as unknown as number[]) || []
-              if (ivec.length !== dim) continue
-              // Round to ensure deterministic scoring
-              baseScore = Math.round(cosine(defaultExtension, ivec) * 1000000) / 1000000
+              if (ivec.length !== dim) {
+                dimensionMismatchCount++
+                if (dimensionMismatchCount <= 3) {
+                  console.warn(`[search] Dimension mismatch: ivec.length=${ivec.length}, dim=${dim}, category=${imageCategory}`)
+                }
+                continue
+              }
+              baseScore = Math.round(cosine(categoryExtension, ivec) * 1000000) / 1000000
             } else {
-              // Fallback to query vector if no default extension available
+              // No category extension available, use queryVec
               const ivec = (emb.vector as unknown as number[]) || []
               if (ivec.length !== dim) continue
-              // Round to ensure deterministic scoring
               baseScore = Math.round(cosine(queryVecArray, ivec) * 1000000) / 1000000
             }
           }
-        } else if (emb.similarity !== undefined && !hasVibeExtensions) {
+        } else if (emb.similarity !== undefined) {
           // If similarity is pre-computed (pgvector) and we're not using vibe extensions, use it
           baseScore = emb.similarity
         } else {

@@ -303,14 +303,23 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       const query = selectedConcepts.join(' ')
       const categoryParam = category || 'all'
       
-      // Determine source: if searchQuery matches the query, it's from search bar; otherwise it's a vibe filter
-      const isSearchQuery = searchQuery.trim() && searchQuery.trim().toLowerCase() === query.trim().toLowerCase()
+      // Determine source: 
+      // - If searchQuery exists and selectedConcepts is empty, it's a search bar query
+      // - If searchQuery matches the query exactly, it's a search bar query
+      // - Otherwise, it's a vibe filter
+      const hasSearchQuery = searchQuery.trim().length > 0
+      const hasSelectedConcepts = selectedConcepts.length > 0
+      const isSearchQuery = hasSearchQuery && (!hasSelectedConcepts || searchQuery.trim().toLowerCase() === query.trim().toLowerCase())
+      
+      // Use searchQuery if it exists and is a search query, otherwise use selectedConcepts
+      const finalQuery = isSearchQuery && hasSearchQuery ? searchQuery.trim() : query.trim()
       const source = isSearchQuery ? 'search' : 'vibefilter'
+      console.log(`[Gallery] loadMore - Source determination: searchQuery="${searchQuery}", selectedConcepts="${selectedConcepts.join(', ')}", query="${query}", finalQuery="${finalQuery}", isSearchQuery=${isSearchQuery}, source="${source}"`)
       
       let data: any
-      if (query.trim()) {
+      if (finalQuery.trim()) {
         // Search query: use search API
-        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=${paginationOffset}`
+        const searchUrl = `/api/search?q=${encodeURIComponent(finalQuery)}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=${paginationOffset}`
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('Failed to fetch more images', response.status)
@@ -1142,19 +1151,30 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
       
-      if (query.trim()) {
+      // Determine source: 
+      // - If searchQuery exists and selectedConcepts is empty, it's a search bar query
+      // - If searchQuery matches the query exactly, it's a search bar query
+      // - Otherwise, it's a vibe filter
+      const hasSearchQuery = searchQuery.trim().length > 0
+      const hasSelectedConcepts = selectedConcepts.length > 0
+      const isSearchQuery = hasSearchQuery && (!hasSelectedConcepts || searchQuery.trim().toLowerCase() === query.trim().toLowerCase())
+      
+      // Use searchQuery if it exists and is a search query, otherwise use selectedConcepts
+      const finalQuery = isSearchQuery && hasSearchQuery ? searchQuery.trim() : query.trim()
+      const source = isSearchQuery ? 'search' : 'vibefilter'
+      
+      if (finalQuery.trim()) {
         // Zero-shot search: rank images by cosine similarity
         // Pass category parameter: "website", "packaging", or "all" (or omit for "all")
         const categoryParam = category || 'all'
         
-        // Determine source: if searchQuery matches the query, it's from search bar; otherwise it's a vibe filter
-        const isSearchQuery = searchQuery.trim() && searchQuery.trim().toLowerCase() === query.trim().toLowerCase()
-        const source = isSearchQuery ? 'search' : 'vibefilter'
+        console.log(`[Gallery] Source determination: searchQuery="${searchQuery}", selectedConcepts="${selectedConcepts.join(', ')}", query="${query}", finalQuery="${finalQuery}", isSearchQuery=${isSearchQuery}, source="${source}"`)
         
         // Don't pass slider positions - we'll reorder client-side
         // Initial fetch: limit 60, offset 0
-        const searchUrl = `/api/search?q=${encodeURIComponent(query.trim())}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=0`
+        const searchUrl = `/api/search?q=${encodeURIComponent(finalQuery)}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=0`
         console.log('[fetchSites] Fetching search URL:', searchUrl)
+        console.log('[fetchSites] Category state:', category, 'Category param:', categoryParam)
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('[fetchSites] Failed response fetching search', response.status, response.statusText)
@@ -1168,7 +1188,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         console.log('[fetchSites] Search response received:', { 
           imageCount: data.images?.length || 0, 
           hasMore: data.hasMore,
-          query: query.trim(),
+          query: finalQuery,
           error: data.error,
           total: data.total
         })

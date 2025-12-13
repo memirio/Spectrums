@@ -52,3 +52,4 @@ next-env.d.ts
 prisma/backups/
 *.db.backup*
 *.sql
+server.log
