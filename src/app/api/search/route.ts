@@ -526,8 +526,12 @@ async function generateVibeExtensionsForCategory(vibe: string, category: string)
   const categoryContext = CATEGORY_CONTEXTS[category] || 'design in this category'
   const client = getGroqClientForCategory(category)
   
-  // Logo-specific prompt that focuses on symbols, iconography, and letterforms
-  const logoPrompt = category === 'logo' ? `Generate exactly 1 semantic extension for "${vibe}" in logo design.
+  // Category-specific prompts
+  let prompt: string
+  
+  if (category === 'logo') {
+    // Logo-specific prompt that focuses on symbols, iconography, and letterforms
+    prompt = `Generate exactly 1 semantic extension for "${vibe}" in logo design.
 
 The extension must be a single comma-separated string with exactly these 5 attributes in order:
 1. Symbol/Icon style - describe the type of logo mark (e.g., "geometric wordmark design", "organic icon mark", "abstract letterform symbol", "emblem style mark")
@@ -547,7 +551,65 @@ Examples:
 - ["abstract letterform symbol, sharp geometric shapes, futuristic modern design, geometric display type, simplified icon shapes"]
 - ["emblem style mark, interlocking curved patterns, organic natural forms, playful script letterforms, complex intricate patterns"]
 
-You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.` : `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
+You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+  } else if (category === 'graphic') {
+    // Graphic-specific prompt: [Palette] tones, [Effect], [Material], [Exact user query]
+    prompt = `Generate exactly 1 semantic extension for "${vibe}" in graphic design.
+
+The extension must be a single comma-separated string with exactly these 4 elements in order:
+1. [Palette] tones - describe the color palette and tones (e.g., "vibrant neon color tones", "soft pastel palette", "monochrome grayscale tones", "warm earth tone palette")
+2. [Effect] - describe visual effects or treatments (e.g., "grainy texture overlay", "smooth gradient effects", "halftone dot pattern", "glitch distortion effect", "soft blur effects")
+3. [Material] - describe material or surface qualities (e.g., "matte paper texture", "glossy metallic finish", "rough canvas texture", "smooth digital surface", "textured fabric appearance")
+4. [Exact user query] - include the exact user query "${vibe}" as the final element
+
+CRITICAL RULES:
+- CLIP only sees STATIC images - NEVER mention animations, motion, interactions, or dynamic effects
+- Focus on visual characteristics that are distinctive but general enough to match many "${vibe}" designs
+- Each element should be a descriptive phrase (2-5 words)
+- The final element must be exactly "${vibe}" (the user's query)
+
+IMPORTANT RULES:
+- DO NOT use generic terms that apply to all designs
+- DO NOT mention animations, motion, interactions, or dynamic effects
+- DO use distinctive visual characteristics that differentiate "${vibe}" from opposite styles
+
+Examples:
+- For "playful": ["vibrant neon color tones, grainy texture overlay, matte paper texture, playful"]
+- For "romantic": ["soft pastel palette, smooth gradient effects, glossy metallic finish, romantic"]
+- For "minimalist": ["monochrome grayscale tones, smooth gradient effects, smooth digital surface, minimalist"]
+
+You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+  } else if (category === 'website' || category === 'webb') {
+    // Website-specific prompt: [Palette] tones, [Material], [Exact user query]
+    prompt = `Generate exactly 1 semantic extension for "${vibe}" in web design.
+
+The extension must be a single comma-separated string with exactly these 3 elements in order:
+1. [Palette] tones - describe the color palette and tones (e.g., "vibrant neon color tones", "soft pastel palette", "monochrome grayscale tones", "warm earth tone palette", "light mode color scheme")
+2. [Material] - describe material or surface qualities (e.g., "matte paper texture", "glossy metallic finish", "smooth digital surface", "textured fabric appearance", "glass morphism effect")
+3. [Exact user query] - include the exact user query "${vibe}" as the final element
+
+CRITICAL RULES:
+- CLIP only sees STATIC images (screenshots) - NEVER mention animations, motion, interactions, or dynamic effects
+- Focus on visual characteristics visible in website screenshots
+- Each element should be a descriptive phrase (2-5 words)
+- The final element must be exactly "${vibe}" (the user's query)
+
+IMPORTANT RULES:
+- DO NOT use generic terms that apply to all websites
+- DO NOT mention animations, motion, interactions, or dynamic effects
+- DO use distinctive visual characteristics that differentiate "${vibe}" from opposite styles
+- Consider how colors, materials, and surfaces appear in website screenshots
+
+Examples:
+- For "playful": ["vibrant neon color tones, glossy metallic finish, playful"]
+- For "romantic": ["soft pastel palette, smooth digital surface, romantic"]
+- For "minimalist": ["monochrome grayscale tones, smooth digital surface, minimalist"]
+- For "medical": ["light mode color scheme, smooth digital surface, medical"]
+
+You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+  } else {
+    // Default prompt for other categories (packaging, brand, fonts, apps)
+    prompt = `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
 
 CRITICAL RULES:
 1. CLIP only sees STATIC images - NEVER mention animations, motion, interactions, or dynamic effects
@@ -575,8 +637,7 @@ Examples:
 - For "romantic": ["delicate floral motifs, soft pastel pink tones, elegant serif script typography, centered symmetrical arrangements, embossed texture effects, decorative border patterns, vintage ornamental details"]
 
 You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
-  
-  const prompt = logoPrompt
+  }
 
   try {
     // Add timeout to Groq API call (10s max) to prevent hanging
