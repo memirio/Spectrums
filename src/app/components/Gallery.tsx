@@ -117,6 +117,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [isQueryFromAssistant, setIsQueryFromAssistant] = useState<boolean>(false)
   // Use a ref to track the latest query to prevent race conditions
   const latestQueryRef = useRef<string>('')
+  // Use a ref to track current searchQuery for fetchSites (prevents triggering on every keystroke)
+  const searchQueryRef = useRef<string>(globalSearch.searchQuery)
+  
+  // Separate state for style assistant (independent from search bar)
+  const [assistantQuery, setAssistantQuery] = useState<string>('')
+  const [assistantSites, setAssistantSites] = useState<Site[]>([])
+  const [assistantAllSites, setAssistantAllSites] = useState<Site[]>([])
+  const assistantQueryRef = useRef<string>('')
   
   // Sync selectedConcepts with global context
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>(globalSearch.selectedConcepts)
@@ -127,6 +135,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     if (isGalleryPage) {
       if (searchQuery !== globalSearch.searchQuery) {
         setSearchQuery(globalSearch.searchQuery)
+        searchQueryRef.current = globalSearch.searchQuery // Update ref when syncing from global
       }
       const currentConceptsStr = JSON.stringify([...selectedConcepts].sort())
       const globalConceptsStr = JSON.stringify([...globalSearch.selectedConcepts].sort())
@@ -1100,6 +1109,49 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     }
   }
 
+  // Separate fetch function for style assistant (independent from search bar)
+  const fetchAssistantResults = useCallback(async (query: string, categoryParam: string) => {
+    console.log('[fetchAssistantResults] Fetching for assistant:', query, 'category:', categoryParam)
+    try {
+      setLoading(true)
+      
+      const searchUrl = `/api/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(categoryParam)}&source=search&limit=60&offset=0&fromAssistant=true`
+      console.log('[fetchAssistantResults] Fetching:', searchUrl)
+      
+      const response = await fetch(searchUrl)
+      if (!response.ok) {
+        console.error('[fetchAssistantResults] Failed response:', response.status)
+        setAssistantSites([])
+        setAssistantAllSites([])
+        return
+      }
+      
+      const data = await response.json()
+      const sites = data.images || []
+      
+      // Deduplicate by imageId
+      const seen = new Set<string>()
+      const deduplicatedSites = sites.filter((site: Site) => {
+        const imageId = site.imageId || site.id
+        if (seen.has(imageId)) return false
+        seen.add(imageId)
+        return true
+      })
+      
+      const sorted = [...deduplicatedSites].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+      setAssistantAllSites(sorted)
+      setAssistantSites(sorted.slice(0, 50))
+      
+      console.log('[fetchAssistantResults] Loaded', sorted.length, 'results for assistant')
+    } catch (error) {
+      console.error('[fetchAssistantResults] Error:', error)
+      setAssistantSites([])
+      setAssistantAllSites([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   const fetchSites = useCallback(async () => {
     console.log('[fetchSites] Called with selectedConcepts:', selectedConcepts, 'category:', category, 'isCollectionsPage:', isCollectionsPage)
     
@@ -1160,16 +1212,19 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       // Build search query from selected concepts
       const query = selectedConcepts.join(' ')
       
+      // Use ref to get current searchQuery value (prevents triggering on every keystroke)
+      const currentSearchQuery = searchQueryRef.current
+      
       // Determine source: 
       // - If searchQuery exists and selectedConcepts is empty, it's a search bar query
       // - If searchQuery matches the query exactly, it's a search bar query
       // - Otherwise, it's a vibe filter
-      const hasSearchQuery = searchQuery.trim().length > 0
+      const hasSearchQuery = currentSearchQuery.trim().length > 0
       const hasSelectedConcepts = selectedConcepts.length > 0
-      const isSearchQuery = hasSearchQuery && (!hasSelectedConcepts || searchQuery.trim().toLowerCase() === query.trim().toLowerCase())
+      const isSearchQuery = hasSearchQuery && (!hasSelectedConcepts || currentSearchQuery.trim().toLowerCase() === query.trim().toLowerCase())
       
       // Use searchQuery if it exists and is a search query, otherwise use selectedConcepts
-      const finalQuery = isSearchQuery && hasSearchQuery ? searchQuery.trim() : query.trim()
+      const finalQuery = isSearchQuery && hasSearchQuery ? currentSearchQuery.trim() : query.trim()
       const source = isSearchQuery ? 'search' : 'vibefilter'
       
       if (finalQuery.trim()) {
@@ -1177,7 +1232,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         // Pass category parameter: "website", "packaging", or "all" (or omit for "all")
         const categoryParam = category || 'all'
         
-        console.log(`[Gallery] Source determination: searchQuery="${searchQuery}", selectedConcepts="${selectedConcepts.join(', ')}", query="${query}", finalQuery="${finalQuery}", isSearchQuery=${isSearchQuery}, source="${source}"`)
+        console.log(`[Gallery] Source determination: searchQuery="${currentSearchQuery}", selectedConcepts="${selectedConcepts.join(', ')}", query="${query}", finalQuery="${finalQuery}", isSearchQuery=${isSearchQuery}, source="${source}"`)
         
         // Don't pass slider positions - we'll reorder client-side
         // Initial fetch: limit 60, offset 0
@@ -1447,6 +1502,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   }, [selectedConcepts, category, isCollectionsPage, isLoggedIn, searchQuery])
 
   // Fetch sites when concepts, category, or collections page changes (but not when slider moves)
+  // Note: searchQuery is NOT in dependencies - searches only trigger on Enter key press
   useEffect(() => {
     console.log('[useEffect] selectedConcepts, category, or isCollectionsPage changed, scheduling fetchSites in 300ms. selectedConcepts:', selectedConcepts, 'category:', category, 'isCollectionsPage:', isCollectionsPage)
     const controller = new AbortController()
@@ -1467,7 +1523,9 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
 
   // Main search input handler (simple text search)
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
+    const value = e.target.value
+    setSearchQuery(value)
+    searchQueryRef.current = value // Update ref immediately
     setIsQueryFromAssistant(false) // User typing in search bar, not from assistant
   }
 
@@ -1495,7 +1553,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       console.log('[handleSendMessage] Calling API with:', {
         message: userMessage,
         currentCategory: category,
-        currentQuery: searchQuery,
+        currentQuery: assistantQuery, // Use assistant query, not search bar query
         currentConcepts: selectedConcepts
       })
       
@@ -1509,7 +1567,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           message: userMessage,
           conversationHistory: updatedMessages, // Use messages before loading message
           currentCategory: category,
-          currentQuery: searchQuery,
+          currentQuery: assistantQuery, // Use assistant query, not search bar query
           currentConcepts: selectedConcepts
         })
       })
@@ -1539,49 +1597,43 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         // Handle different action types
         if (action.type === 'search') {
           if (action.query) {
-            console.log('[handleSendMessage] Setting search query to:', action.query, '(previous query was:', searchQuery, ')')
+            console.log('[handleSendMessage] Setting assistant query to:', action.query, '(previous query was:', assistantQuery, ')')
             
-            // If there's an existing query and the new query doesn't contain it, it might be a refinement
+            // If there's an existing assistant query and the new query doesn't contain it, it might be a refinement
             // In that case, combine them to ensure we're filtering the existing results
             let finalQuery = action.query
-            if (searchQuery && searchQuery.trim() && !action.query.toLowerCase().includes(searchQuery.toLowerCase())) {
+            if (assistantQuery && assistantQuery.trim() && !action.query.toLowerCase().includes(assistantQuery.toLowerCase())) {
               // New query doesn't contain old query - combine them
-              finalQuery = `${searchQuery} ${action.query}`.trim()
-              console.log('[handleSendMessage] Combined queries:', searchQuery, '+', action.query, '=', finalQuery)
+              finalQuery = `${assistantQuery} ${action.query}`.trim()
+              console.log('[handleSendMessage] Combined queries:', assistantQuery, '+', action.query, '=', finalQuery)
             }
             
-            setSearchQuery(finalQuery)
-            latestQueryRef.current = finalQuery.trim().toLowerCase() // Update ref immediately to prevent race conditions
-            setIsQueryFromAssistant(true) // Mark that this query came from the style assistant
-            // Clear old results when starting a new search to prevent showing wrong counts
-            setAllSites([])
-            setSites([])
-            // Clear selected concepts when doing a new search (only if query is completely different)
-            // If the new query contains the old query, it's a refinement, so keep concepts
-            const isRefinement = searchQuery && (finalQuery.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(finalQuery.toLowerCase()))
-            if (!isRefinement && finalQuery !== searchQuery) {
-              setSelectedConcepts([])
-            }
-          }
-          if (action.category && action.category !== category) {
-            console.log('[handleSendMessage] Changing category from', category, 'to', action.category)
-            handleCategoryChange(action.category)
-          } else if (action.category) {
-            console.log('[handleSendMessage] Category already set to', action.category, 'or no category change needed')
-            // Even if category matches, ensure it's set properly
-            if (category !== action.category) {
+            // Update assistant query (separate from search bar - does NOT touch searchQuery)
+            setAssistantQuery(finalQuery)
+            assistantQueryRef.current = finalQuery.trim().toLowerCase()
+            
+            // Change category if specified
+            const targetCategory = action.category || category || 'all'
+            if (action.category && action.category !== category) {
+              console.log('[handleSendMessage] Changing category from', category, 'to', action.category)
               handleCategoryChange(action.category)
             }
-          } else {
-            console.log('[handleSendMessage] No category in action, current category:', category)
+            
+            // Store the message to update after search completes
+            setPendingSearchMessage(message)
+            
+            // Fetch results for assistant (separate from search bar)
+            fetchAssistantResults(finalQuery, targetCategory)
+          } else if (action.category) {
+            // Just change category without query
+            if (action.category !== category) {
+              handleCategoryChange(action.category)
+            }
+            // If there's an existing assistant query, re-fetch with new category
+            if (assistantQuery) {
+              fetchAssistantResults(assistantQuery, action.category)
+            }
           }
-          // Store the message to update after search completes
-          setPendingSearchMessage(message)
-          // Trigger search by calling fetchSites
-          setTimeout(() => {
-            console.log('[handleSendMessage] Triggering fetchSites after search action')
-            fetchSites()
-          }, 100)
         } else if (action.type === 'add_concept') {
           if (action.concepts && action.concepts.length > 0) {
             const newConcepts = [...selectedConcepts]
@@ -1610,13 +1662,13 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             }, 100)
           }
         } else if (action.type === 'clear') {
-          setSearchQuery('')
-          setIsQueryFromAssistant(false)
-          setSelectedConcepts([])
-          globalSearch.clearSearch()
-          // Store the message to update after search completes
+          // Clear assistant state (separate from search bar)
+          setAssistantQuery('')
+          assistantQueryRef.current = ''
+          setAssistantSites([])
+          setAssistantAllSites([])
           setPendingSearchMessage(message)
-          // Trigger fetch to show default sites
+          // Fetch default sites
           setTimeout(() => {
             fetchSites()
           }, 100)
@@ -1648,29 +1700,33 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
 
   // Update assistant message when search completes
   useEffect(() => {
-    if (pendingSearchMessage && allSites.length > 0) {
+    // Check if we should update assistant message (use assistant results) or regular search message
+    const currentResults = assistantAllSites.length > 0 ? assistantAllSites : allSites
+    const currentQuery = assistantQueryRef.current || latestQueryRef.current
+    
+    if (pendingSearchMessage && currentResults.length > 0) {
       // Wait a bit to ensure the search is fully complete and results have settled
-      // Also check that we have a search query (not just default sites)
-      const hasSearchQuery = searchQuery.trim().length > 0
-      if (!hasSearchQuery) {
-        // If there's no search query, this might be default sites - don't update the message
+      // Check that we have an assistant query (for assistant results) or search query (for regular results)
+      const hasQuery = assistantQueryRef.current || searchQuery.trim().length > 0
+      if (!hasQuery) {
+        // If there's no query, this might be default sites - don't update the message
         return
       }
       
       const timer = setTimeout(() => {
-        // Double-check that the current search query matches what we're expecting
+        // Double-check that the current query matches what we're expecting
         // This prevents updating with old results from a previous search
-        const currentQuery = searchQuery.trim().toLowerCase()
-        const latestQuery = latestQueryRef.current
+        const expectedQuery = assistantQueryRef.current || searchQuery.trim().toLowerCase()
+        const latestQuery = assistantQueryRef.current || latestQueryRef.current
         
         // Only update if the current query matches the latest query (from ref)
         // This ensures we're updating with results from the correct search
-        if (currentQuery === latestQuery || !latestQuery) {
+        if (expectedQuery === latestQuery || !latestQuery) {
           setChatMessages(prev => {
             const lastMessage = prev[prev.length - 1]
             if (lastMessage && lastMessage.role === 'assistant') {
               const newMessages = [...prev]
-              const resultCount = allSites.length
+              const resultCount = currentResults.length
               newMessages[newMessages.length - 1] = {
                 ...lastMessage,
                 content: `${pendingSearchMessage} ✓ Found ${resultCount} result${resultCount !== 1 ? 's' : ''}.`
@@ -1681,14 +1737,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           })
           setPendingSearchMessage(null)
         } else {
-          console.log('[useEffect] Skipping message update - query mismatch:', `current="${currentQuery}", latest="${latestQuery}"`)
+          console.log('[useEffect] Skipping message update - query mismatch:', `expected="${expectedQuery}", latest="${latestQuery}"`)
         }
       }, 500)
       return () => clearTimeout(timer)
     }
-  }, [allSites, pendingSearchMessage, searchQuery])
+  }, [allSites, assistantAllSites, pendingSearchMessage, searchQuery, assistantQueryRef, latestQueryRef])
 
-  // Main search submit handler - uses same logic as before (custom queries) but no concept suggestions
+  // Main search submit handler - triggers search while keeping query in input field
   const handleSearchSubmit = () => {
     const trimmed = searchQuery.trim()
     if (trimmed) {
@@ -1698,42 +1754,58 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         return
       }
       
-      // Add as custom concept and trigger search (same logic as before, but no concept matching)
-      if (!selectedConcepts.includes(trimmed)) {
-        setSelectedConcepts(prev => [...prev, trimmed])
-        globalSearch.addConcept(trimmed)
-        setCustomConcepts(prev => new Set(prev).add(trimmed))
-        setSliderPositions(prev => {
-          const newMap = new Map(prev)
-          newMap.set(trimmed, 1.0) // Default position
-          return newMap
-        })
+      // Update both local and global search query to keep it visible in the input field
+      setSearchQuery(trimmed) // Update local state directly
+      searchQueryRef.current = trimmed // Update ref for fetchSites
+      globalSearch.setSearchQuery(trimmed) // Update global context
+      latestQueryRef.current = trimmed.toLowerCase() // Update ref immediately
+      setIsQueryFromAssistant(false) // User typed in search bar
+      
+      // Clear selected concepts when doing a text search (search bar takes precedence)
+      // This ensures the search query is used, not concepts
+      if (selectedConcepts.length > 0) {
+        setSelectedConcepts([])
+        // Don't call globalSearch.clearSearch() as it clears the searchQuery too
+        // Instead, just clear the concepts locally
       }
-      // Keep the search query visible in the input field
+      
+      // Trigger search by clearing and manually calling fetchSites
+      setAllSites([])
+      setSites([])
+      setPaginationOffset(0)
+      setDisplayedCount(50)
+      
+      // Manually trigger fetchSites since we removed searchQuery from useEffect dependencies
+      fetchSites()
     }
   }
 
-  // Clear search query
+  // Clear search query and reset search results
   const clearSearchQuery = () => {
+    // Clear search query state and refs
     setSearchQuery('')
+    searchQueryRef.current = '' // Update ref for fetchSites
+    latestQueryRef.current = '' // Update ref immediately
     setIsQueryFromAssistant(false)
-    // Also remove from selectedConcepts if it was added
-    const trimmed = searchQuery.trim()
-    if (trimmed && selectedConcepts.includes(trimmed)) {
-      setSelectedConcepts(prev => prev.filter(c => c !== trimmed))
-      setCustomConcepts(prev => {
-        const next = new Set(prev)
-        next.delete(trimmed)
-        return next
-      })
-      setSliderPositions(prev => {
-        const newMap = new Map(prev)
-        newMap.delete(trimmed)
-        return newMap
-      })
-      // Also remove from spectrums if it exists
-      setSpectrums(prev => prev.filter(s => s.concept !== trimmed))
-    }
+    
+    // Clear global search context (this also clears selectedConcepts in the context)
+    globalSearch.clearSearch()
+    
+    // Clear local selected concepts and related state
+    setSelectedConcepts([])
+    setCustomConcepts(new Set())
+    setSliderPositions(new Map())
+    setSpectrums([])
+    
+    // Reset search results - clear sites and fetch default sites
+    setAllSites([])
+    setSites([])
+    setPaginationOffset(0)
+    setDisplayedCount(50)
+    setHasMoreResults(false)
+    
+    // Fetch default sites (no search query)
+    fetchSites()
   }
 
   // Spectrum input change handler
@@ -3024,9 +3096,9 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               </div>
             ))}
           </div>
-        ) : sites.length > 0 ? (
+        ) : (assistantSites.length > 0 || sites.length > 0) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sites.map((site, index) => (
+            {(assistantSites.length > 0 ? assistantSites : sites).map((site, index) => (
                      <div key={`${site.id}-${index}`} className="group">
                        <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
                           {site.imageUrl ? (
