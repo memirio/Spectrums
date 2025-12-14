@@ -114,25 +114,28 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [isLoadingMore, setIsLoadingMore] = useState(false) // Loading state for pagination
   // Use global search context, but maintain local state for immediate UI updates
   const [searchQuery, setSearchQuery] = useState(globalSearch.searchQuery)
+  const [isQueryFromAssistant, setIsQueryFromAssistant] = useState<boolean>(false)
+  // Use a ref to track the latest query to prevent race conditions
+  const latestQueryRef = useRef<string>('')
   
   // Sync selectedConcepts with global context
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>(globalSearch.selectedConcepts)
   
   // Sync local state with global context when it changes (only on gallery page)
+  // Only update if values are actually different to prevent infinite loops
   useEffect(() => {
     if (isGalleryPage) {
-      setSearchQuery(globalSearch.searchQuery)
-      setSelectedConcepts(globalSearch.selectedConcepts)
+      if (searchQuery !== globalSearch.searchQuery) {
+        setSearchQuery(globalSearch.searchQuery)
+      }
+      const currentConceptsStr = JSON.stringify([...selectedConcepts].sort())
+      const globalConceptsStr = JSON.stringify([...globalSearch.selectedConcepts].sort())
+      if (currentConceptsStr !== globalConceptsStr) {
+        setSelectedConcepts(globalSearch.selectedConcepts)
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalSearch.searchQuery, globalSearch.selectedConcepts, isGalleryPage])
-  
-  // Update global context when local state changes (only on gallery page)
-  useEffect(() => {
-    if (isGalleryPage) {
-      globalSearch.setSearchQuery(searchQuery)
-      // Note: selectedConcepts updates are handled by addConcept/removeConcept calls
-    }
-  }, [searchQuery, isGalleryPage, globalSearch])
   
   // Open vibe filter modal if flag is set (when navigating from another page)
   useEffect(() => {
@@ -264,6 +267,11 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [isDrawerOpen, setIsDrawerOpen] = useState(true) // Drawer open/closed state
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false) // Drawer collapsed state (80px vs 280px)
   const [isMobile, setIsMobile] = useState(false) // Track if we're on mobile
+  const [drawerTab, setDrawerTab] = useState<'style-filter' | 'style-assistant'>('style-filter') // Drawer tab state
+  const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]) // Chat messages
+  const [chatInput, setChatInput] = useState('') // Chat input value
+  const chatMessagesEndRef = useRef<HTMLDivElement>(null) // Ref for auto-scrolling to bottom
+  const [pendingSearchMessage, setPendingSearchMessage] = useState<string | null>(null) // Track pending search completion message
   const [copiedImageId, setCopiedImageId] = useState<string | null>(null) // Track which image was copied
   const [hoveredLikeButtonId, setHoveredLikeButtonId] = useState<string | null>(null) // Track which like button is being hovered
   const [showAddToCollectionModal, setShowAddToCollectionModal] = useState(false) // Show add to collection modal
@@ -319,7 +327,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       let data: any
       if (finalQuery.trim()) {
         // Search query: use search API
-        const searchUrl = `/api/search?q=${encodeURIComponent(finalQuery)}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=${paginationOffset}`
+        const fromAssistantParam = isQueryFromAssistant ? '&fromAssistant=true' : ''
+        const searchUrl = `/api/search?q=${encodeURIComponent(finalQuery)}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=${paginationOffset}${fromAssistantParam}`
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('Failed to fetch more images', response.status)
@@ -1172,7 +1181,9 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         
         // Don't pass slider positions - we'll reorder client-side
         // Initial fetch: limit 60, offset 0
-        const searchUrl = `/api/search?q=${encodeURIComponent(finalQuery)}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=0`
+        // Pass fromAssistant parameter if query came from style assistant
+        const fromAssistantParam = isQueryFromAssistant ? '&fromAssistant=true' : ''
+        const searchUrl = `/api/search?q=${encodeURIComponent(finalQuery)}&category=${encodeURIComponent(categoryParam)}&source=${source}&limit=60&offset=0${fromAssistantParam}`
         console.log('[fetchSites] Fetching search URL:', searchUrl)
         console.log('[fetchSites] Category state:', category, 'Category param:', categoryParam)
         const response = await fetch(searchUrl)
@@ -1232,6 +1243,28 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           }
         }
         const deduplicatedSites = Array.from(siteMap.values())
+        
+        // If this is a search query with no selected concepts, just display the results directly
+        // IMPORTANT: Only update if the query matches the current searchQuery to avoid race conditions
+        if (selectedConcepts.length === 0 && isSearchQuery) {
+          const requestQuery = finalQuery.trim().toLowerCase()
+          const latestQuery = latestQueryRef.current
+          
+          // Only update if the request query matches the latest query (from ref)
+          // This prevents race conditions where old query results overwrite new ones
+          // The ref is updated immediately when setSearchQuery is called, so it's more reliable than state
+          if (requestQuery === latestQuery || !latestQuery) {
+            console.log('[fetchSites] Search query with no concepts, setting sites directly:', deduplicatedSites.length, `(request: "${requestQuery}", latest: "${latestQuery}")`)
+            const sorted = [...deduplicatedSites].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+            setAllSites(sorted)
+            setSites(sorted.slice(0, 50))
+            setDisplayedCount(50)
+            return
+          } else {
+            console.log('[fetchSites] ⚠️ Skipping update - request query does not match latest query (race condition):', `request="${requestQuery}", latest="${latestQuery}"`)
+            return
+          }
+        }
         
         // Store results for each concept
         if (selectedConcepts.length === 1) {
@@ -1411,7 +1444,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     } finally {
       setLoading(false)
     }
-  }, [selectedConcepts, category, isCollectionsPage, isLoggedIn])
+  }, [selectedConcepts, category, isCollectionsPage, isLoggedIn, searchQuery])
 
   // Fetch sites when concepts, category, or collections page changes (but not when slider moves)
   useEffect(() => {
@@ -1435,7 +1468,225 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   // Main search input handler (simple text search)
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
+    setIsQueryFromAssistant(false) // User typing in search bar, not from assistant
   }
+
+  // Handle sending chat messages
+  const handleSendMessage = async () => {
+    console.log('[handleSendMessage] Function called, chatInput:', chatInput)
+    if (!chatInput.trim()) {
+      console.log('[handleSendMessage] Empty input, returning')
+      return
+    }
+    
+    const userMessage = chatInput.trim()
+    console.log('[handleSendMessage] User message:', userMessage)
+    const updatedMessages = [...chatMessages, { role: 'user' as const, content: userMessage }]
+    setChatMessages(updatedMessages)
+    setChatInput('')
+    
+    // Show loading message
+    setChatMessages(prev => [...prev, { 
+      role: 'assistant', 
+      content: 'Thinking...' 
+    }])
+    
+    try {
+      console.log('[handleSendMessage] Calling API with:', {
+        message: userMessage,
+        currentCategory: category,
+        currentQuery: searchQuery,
+        currentConcepts: selectedConcepts
+      })
+      
+      // Call the style assistant API
+      const response = await fetch('/api/style-assistant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          conversationHistory: updatedMessages, // Use messages before loading message
+          currentCategory: category,
+          currentQuery: searchQuery,
+          currentConcepts: selectedConcepts
+        })
+      })
+      
+      console.log('[handleSendMessage] Response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[handleSendMessage] API error response:', errorText)
+        throw new Error(`Failed to get assistant response: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      console.log('[handleSendMessage] API response data:', data)
+      console.log('[handleSendMessage] Full action object:', JSON.stringify(data.action, null, 2))
+      const { action, message } = data
+      
+      // Remove loading message and add assistant response
+      setChatMessages(prev => {
+        const filtered = prev.filter((msg, idx) => idx !== prev.length - 1)
+        return [...filtered, { role: 'assistant', content: message || 'Done!' }]
+      })
+      
+      // Apply the action to the gallery
+      if (action) {
+        console.log('[handleSendMessage] Applying action:', action.type, action)
+        // Handle different action types
+        if (action.type === 'search') {
+          if (action.query) {
+            console.log('[handleSendMessage] Setting search query to:', action.query, '(previous query was:', searchQuery, ')')
+            
+            // If there's an existing query and the new query doesn't contain it, it might be a refinement
+            // In that case, combine them to ensure we're filtering the existing results
+            let finalQuery = action.query
+            if (searchQuery && searchQuery.trim() && !action.query.toLowerCase().includes(searchQuery.toLowerCase())) {
+              // New query doesn't contain old query - combine them
+              finalQuery = `${searchQuery} ${action.query}`.trim()
+              console.log('[handleSendMessage] Combined queries:', searchQuery, '+', action.query, '=', finalQuery)
+            }
+            
+            setSearchQuery(finalQuery)
+            latestQueryRef.current = finalQuery.trim().toLowerCase() // Update ref immediately to prevent race conditions
+            setIsQueryFromAssistant(true) // Mark that this query came from the style assistant
+            // Clear old results when starting a new search to prevent showing wrong counts
+            setAllSites([])
+            setSites([])
+            // Clear selected concepts when doing a new search (only if query is completely different)
+            // If the new query contains the old query, it's a refinement, so keep concepts
+            const isRefinement = searchQuery && (finalQuery.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(finalQuery.toLowerCase()))
+            if (!isRefinement && finalQuery !== searchQuery) {
+              setSelectedConcepts([])
+            }
+          }
+          if (action.category && action.category !== category) {
+            console.log('[handleSendMessage] Changing category from', category, 'to', action.category)
+            handleCategoryChange(action.category)
+          } else if (action.category) {
+            console.log('[handleSendMessage] Category already set to', action.category, 'or no category change needed')
+            // Even if category matches, ensure it's set properly
+            if (category !== action.category) {
+              handleCategoryChange(action.category)
+            }
+          } else {
+            console.log('[handleSendMessage] No category in action, current category:', category)
+          }
+          // Store the message to update after search completes
+          setPendingSearchMessage(message)
+          // Trigger search by calling fetchSites
+          setTimeout(() => {
+            console.log('[handleSendMessage] Triggering fetchSites after search action')
+            fetchSites()
+          }, 100)
+        } else if (action.type === 'add_concept') {
+          if (action.concepts && action.concepts.length > 0) {
+            const newConcepts = [...selectedConcepts]
+            action.concepts.forEach((concept: string) => {
+              if (!newConcepts.includes(concept.toLowerCase())) {
+                newConcepts.push(concept.toLowerCase())
+              }
+            })
+            setSelectedConcepts(newConcepts)
+            globalSearch.addConcept(action.concepts[0].toLowerCase())
+            // Store the message to update after search completes
+            setPendingSearchMessage(message)
+            // Trigger search
+            setTimeout(() => {
+              fetchSites()
+            }, 100)
+          }
+        } else if (action.type === 'change_category') {
+          if (action.category && action.category !== category) {
+            handleCategoryChange(action.category)
+            // Store the message to update after search completes
+            setPendingSearchMessage(message)
+            // Trigger search with new category
+            setTimeout(() => {
+              fetchSites()
+            }, 100)
+          }
+        } else if (action.type === 'clear') {
+          setSearchQuery('')
+          setIsQueryFromAssistant(false)
+          setSelectedConcepts([])
+          globalSearch.clearSearch()
+          // Store the message to update after search completes
+          setPendingSearchMessage(message)
+          // Trigger fetch to show default sites
+          setTimeout(() => {
+            fetchSites()
+          }, 100)
+        }
+      }
+    } catch (error: any) {
+      console.error('[handleSendMessage] Error:', error)
+      console.error('[handleSendMessage] Error details:', {
+        message: error.message,
+        stack: error.stack
+      })
+      // Remove loading message and show error
+      setChatMessages(prev => {
+        const filtered = prev.filter((msg, idx) => idx !== prev.length - 1)
+        return [...filtered, { 
+          role: 'assistant', 
+          content: `Sorry, I encountered an error: ${error.message || 'Unknown error'}. Please check the console for details.` 
+        }]
+      })
+    }
+  }
+
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    if (chatMessagesEndRef.current) {
+      chatMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [chatMessages])
+
+  // Update assistant message when search completes
+  useEffect(() => {
+    if (pendingSearchMessage && allSites.length > 0) {
+      // Wait a bit to ensure the search is fully complete and results have settled
+      // Also check that we have a search query (not just default sites)
+      const hasSearchQuery = searchQuery.trim().length > 0
+      if (!hasSearchQuery) {
+        // If there's no search query, this might be default sites - don't update the message
+        return
+      }
+      
+      const timer = setTimeout(() => {
+        // Double-check that the current search query matches what we're expecting
+        // This prevents updating with old results from a previous search
+        const currentQuery = searchQuery.trim().toLowerCase()
+        const latestQuery = latestQueryRef.current
+        
+        // Only update if the current query matches the latest query (from ref)
+        // This ensures we're updating with results from the correct search
+        if (currentQuery === latestQuery || !latestQuery) {
+          setChatMessages(prev => {
+            const lastMessage = prev[prev.length - 1]
+            if (lastMessage && lastMessage.role === 'assistant') {
+              const newMessages = [...prev]
+              const resultCount = allSites.length
+              newMessages[newMessages.length - 1] = {
+                ...lastMessage,
+                content: `${pendingSearchMessage} ✓ Found ${resultCount} result${resultCount !== 1 ? 's' : ''}.`
+              }
+              return newMessages
+            }
+            return prev
+          })
+          setPendingSearchMessage(null)
+        } else {
+          console.log('[useEffect] Skipping message update - query mismatch:', `current="${currentQuery}", latest="${latestQuery}"`)
+        }
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [allSites, pendingSearchMessage, searchQuery])
 
   // Main search submit handler - uses same logic as before (custom queries) but no concept suggestions
   const handleSearchSubmit = () => {
@@ -1465,6 +1716,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   // Clear search query
   const clearSearchQuery = () => {
     setSearchQuery('')
+    setIsQueryFromAssistant(false)
     // Also remove from selectedConcepts if it was added
     const trimmed = searchQuery.trim()
     if (trimmed && selectedConcepts.includes(trimmed)) {
@@ -2038,34 +2290,38 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           </button>
         </div>
         
+        {/* Tabs - below minimize section */}
+        <div className={`sticky top-[73px] z-40 bg-[#fbf9f4] px-6 py-3 ${isDrawerCollapsed ? 'hidden' : ''}`}>
+          <div className="bg-[#EEEDEA] rounded-md p-0.5 flex items-center gap-0.5">
+            <button
+              onClick={() => setDrawerTab('style-filter')}
+              className={`flex-1 px-2 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                drawerTab === 'style-filter'
+                  ? 'bg-[#fbf9f4] text-gray-900'
+                  : 'bg-transparent text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              Style filter
+            </button>
+            <button
+              onClick={() => setDrawerTab('style-assistant')}
+              className={`flex-1 px-2 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                drawerTab === 'style-assistant'
+                  ? 'bg-[#fbf9f4] text-gray-900'
+                  : 'bg-transparent text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              Style assistant
+            </button>
+          </div>
+        </div>
+        
         {/* Drawer content - scrollable */}
-        <div className={`flex-1 overflow-y-auto p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-          {/* Add vibes button */}
-          <button
-            onClick={() => {
-              if (isPublicPage && !isLoggedIn) {
-                // Check if already have 2 active filters
-                if (spectrums.length >= 2) {
-                  setShowLoginModal(true)
-                  return
-                }
-                // Check if already created 3 filters today
-                const dailyCount = getDailyFilterCount()
-                if (dailyCount >= 3) {
-                  setShowLoginModal(true)
-                  return
-                }
-              }
-              setShowAddConceptModal(true)
-              setAddConceptInputValue('')
-            }}
-            className="w-full mb-4 px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors text-sm font-medium cursor-pointer"
-          >
-            + Vibe filter
-          </button>
-          
-          {/* Spectrum list */}
-          <div className="space-y-10">
+        <div className={`flex-1 overflow-hidden flex flex-col ${isDrawerCollapsed ? 'hidden' : ''}`}>
+          {drawerTab === 'style-filter' ? (
+            /* Spectrum list */
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-0">
+            <div className="space-y-10 pb-4">
             {spectrums.map((spectrum) => {
               const conceptInfo = conceptData.get(spectrum.concept.toLowerCase())
               const opposites = conceptInfo?.opposites || []
@@ -2591,8 +2847,118 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                 </div>
               )
             })}
-          </div>
+            </div>
+            </div>
+          ) : (
+            /* Style assistant content - Chat interface */
+            <div className="flex flex-col flex-1 min-h-0">
+              {/* Chat messages area - scrollable */}
+              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 min-h-0">
+                {chatMessages.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-sm text-gray-500">Start a conversation with the style assistant...</p>
+                  </div>
+                ) : (
+                  chatMessages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
+                          message.role === 'user'
+                            ? 'bg-[#EEEDEA] text-gray-900'
+                            : 'text-gray-900'
+                        }`}
+                      >
+                        {message.content}
+                      </div>
+                    </div>
+                  ))
+                )}
+                <div ref={chatMessagesEndRef} />
+              </div>
+              
+              {/* Chat input - fixed at bottom */}
+              <div className="flex-shrink-0 p-4 md:p-6 pt-3">
+                <div className="border border-gray-300 rounded-md p-2">
+                  <textarea
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        if (chatInput.trim()) {
+                          console.log('[Textarea] Enter pressed, calling handleSendMessage')
+                          await handleSendMessage()
+                        }
+                      }
+                    }}
+                    placeholder="What style are you looking for?"
+                    className="w-full px-3 py-2 text-sm rounded-md focus:outline-none text-gray-900 placeholder-gray-500 resize-none"
+                    rows={2}
+                    style={{ maxHeight: '240px' }}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = 'auto'
+                      target.style.height = `${Math.min(target.scrollHeight, 240)}px`
+                    }}
+                  />
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="button"
+                      onClick={async (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        console.log('[Button] Clicked, calling handleSendMessage')
+                        console.log('[Button] handleSendMessage type:', typeof handleSendMessage)
+                        if (typeof handleSendMessage === 'function') {
+                          await handleSendMessage()
+                        } else {
+                          console.error('[Button] handleSendMessage is not a function!')
+                        }
+                      }}
+                      className="p-2 rounded-md bg-gray-900 text-white hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                      aria-label="Send message"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+        
+        {/* Add vibes button - sticky at bottom of drawer (only show for style-filter tab) */}
+        {drawerTab === 'style-filter' && (
+          <div className={`sticky bottom-0 bg-[#fbf9f4] p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
+            <button
+              onClick={() => {
+                if (isPublicPage && !isLoggedIn) {
+                  // Check if already have 2 active filters
+                  if (spectrums.length >= 2) {
+                    setShowLoginModal(true)
+                    return
+                  }
+                  // Check if already created 3 filters today
+                  const dailyCount = getDailyFilterCount()
+                  if (dailyCount >= 3) {
+                    setShowLoginModal(true)
+                    return
+                  }
+                }
+                setShowAddConceptModal(true)
+                setAddConceptInputValue('')
+              }}
+              className="w-full px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors text-sm font-medium cursor-pointer"
+            >
+              + Style filter
+            </button>
+          </div>
+        )}
       </div>
 
         {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
@@ -3411,7 +3777,7 @@ Message:
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Vibe filter</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Style filter</h2>
                 <button
                   onClick={() => {
                     setShowAddConceptModal(false)

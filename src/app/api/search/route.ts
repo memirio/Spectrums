@@ -108,19 +108,30 @@ async function generateSearchExtensionsForCategory(query: string, category: stri
   if (category === 'website') {
     prompt = `You are a visual-grounding engine for a CLIP-based web design search system.
 
-Your task is to translate the user's query "${query}" into concrete, visually recognizable WEB INTERFACE ELEMENTS, LAYOUT PATTERNS, OR UI COMPONENTS commonly seen in websites.
+Your task is to translate the user's query "${query}" into concrete, visually recognizable visual elements that can be seen in website screenshots.
+
+CRITICAL RULES:
+1. Focus on what is VISUALLY PRESENT in screenshots - colors, layouts, UI elements, visual patterns
+2. For color/visual characteristic queries (like "white", "light", "dark", "minimal"), emphasize how these characteristics appear VISUALLY
+3. For abstract queries, map to concrete visual elements that represent them
+4. Always describe what can be SEEN, not abstract concepts
 
 Rules:
 
-1. If the query is abstract, map it to common, visible web UI structures or components.
+1. If the query describes a visual characteristic (color, style, mood), describe how it appears visually:
+   - Colors: "white background", "light colored interface", "dark mode design"
+   - Styles: "minimal layout", "clean white space", "bold typography"
+   - Visual patterns: "grid layout", "card-based design", "full-width sections"
 
-2. Prefer layout patterns and interface elements that are immediately recognizable in screenshots.
+2. If the query is abstract (concept, function), map it to visible UI elements:
+   - "direction" → "arrow icons", "breadcrumb navigation", "step indicators"
+   - "structure" → "grid layout", "sectioned blocks", "card layout"
 
 3. Use short noun phrases only (2–5 words each).
 
-4. Output 3–7 visual groundings.
+4. Output 5–7 visual groundings that cover different aspects of how "${query}" appears visually.
 
-5. Do NOT include explanations, styles, moods, branding language, or abstract concepts.
+5. Do NOT include explanations, moods, branding language, or abstract concepts - ONLY what can be seen in screenshots.
 
 Output ONLY this JSON:
 
@@ -128,7 +139,19 @@ Output ONLY this JSON:
   "visual_groundings": []
 }
 
-Example for "direction":
+Example for "white" (color characteristic):
+{
+  "visual_groundings": [
+    "white background",
+    "light colored interface",
+    "white and light color scheme",
+    "bright white backgrounds",
+    "light mode design",
+    "white page backgrounds"
+  ]
+}
+
+Example for "direction" (abstract concept):
 {
   "visual_groundings": [
     "arrow icons",
@@ -139,7 +162,18 @@ Example for "direction":
   ]
 }
 
-Example for "structure":
+Example for "minimal" (style characteristic):
+{
+  "visual_groundings": [
+    "minimal layout",
+    "clean white space",
+    "simple interface design",
+    "sparse content layout",
+    "minimalist design elements"
+  ]
+}
+
+Example for "structure" (abstract concept):
 {
   "visual_groundings": [
     "grid layout",
@@ -147,17 +181,6 @@ Example for "structure":
     "sectioned content blocks",
     "card layout",
     "aligned content rows"
-  ]
-}
-
-Example for "interaction":
-{
-  "visual_groundings": [
-    "hover buttons",
-    "clickable cards",
-    "dropdown menus",
-    "toggle switches",
-    "accordion panels"
   ]
 }`
   } else if (category === 'logo') {
@@ -728,13 +751,13 @@ export async function GET(request: NextRequest) {
     const q = rawQuery.trim().toLowerCase()
     const category = searchParams.get('category') || null // Get category filter: 'website', 'packaging', 'all', or null
     const source = searchParams.get('source') || 'vibefilter' // 'search' or 'vibefilter' - determines which extension system to use
+    const fromAssistant = searchParams.get('fromAssistant') === 'true' // Whether query came from style assistant
     const extensionSystem = source === 'search' ? '🔍 SEARCH (concrete)' : '🎨 VIBE FILTER (abstract)'
-    console.log(`\n🔎 [search] API called: q="${q}", category="${category || 'null'}", source="${source}" (${extensionSystem})`)
+    console.log(`\n🔎 [search] API called: q="${q}", category="${category || 'null'}", source="${source}" (${extensionSystem}), fromAssistant=${fromAssistant}`)
     console.log(`🔎 [search] Full URL: ${request.url}`)
     console.log(`🔎 [search] Category parameter received: "${category}" (type: ${typeof category})`)
     const debug = searchParams.get('debug') === '1'
     const zeroShot = searchParams.get('ZERO_SHOT') !== 'false' // default true
-    
     // Parse slider positions
     let sliderPositions: Record<string, number> = {}
     const slidersParam = searchParams.get('sliders')
@@ -759,9 +782,22 @@ export async function GET(request: NextRequest) {
       // Query is already normalized to lowercase
       
       perf.start('api.search.GET.zeroShot.analyzeQuery')
-      // Count words in query
-      const wordCount = q.trim().split(/\s+/).filter((w: string) => w.length > 0).length
+      // Count words in query (handle slashes - "bright/white" counts as 2 words)
+      const baseWords = q.trim().split(/\s+/).filter((w: string) => w.length > 0)
+      let wordCount = baseWords.length
+      // If any word contains "/", count each part separately
+      for (const word of baseWords) {
+        if (word.includes('/')) {
+          const parts = word.split('/').filter(p => p.trim().length > 0)
+          if (parts.length > 1) {
+            wordCount += parts.length - 1 // Add extra words for slash-separated parts
+          }
+        }
+      }
+      // Use expansion for queries with less than 3 words, OR for queries that look like they're from the style assistant (multiple terms combined)
+      // For style assistant queries (3+ words), we want to be more restrictive, so we'll embed the combined query directly without expansion
       const useExpansion = wordCount < 3 // Only use expansion for queries with less than 3 words (1-2 words)
+      // For 3+ word queries, we'll embed the raw query which should be more specific and return fewer results
       
       let isAbstract = false
       if (useExpansion) {
@@ -1390,7 +1426,9 @@ export async function GET(request: NextRequest) {
       // Use pgvector similarity search (cosine distance: 1 - cosine similarity)
       // IMPORTANT: When using vibe extensions, we need more candidates because scoring uses category-specific extensions
       // which can reorder items. We need enough candidates to ensure items that rank in top 100 after reordering are included.
-      const TOP_CANDIDATES = hasVibeExtensions ? 200 : 100
+      // For multi-word queries (2+ words), be more restrictive - these are refinements that should return fewer results
+      const isMultiWordQuery = wordCount >= 2
+      const TOP_CANDIDATES = hasVibeExtensions ? 200 : (isMultiWordQuery ? 100 : 100) // Same initial candidates, but AND logic will filter more aggressively
       
       let imageEmbeddings: any[] = []
       
@@ -1673,9 +1711,272 @@ export async function GET(request: NextRequest) {
         })
       }
       
+      // For multi-word queries, use AND logic: require good similarity to ALL terms
+      // This makes refinements more restrictive (e.g., "medical white" should only match images that are both medical AND white)
+      let filteredScoredImages = scoredImages
+      
+      // Apply strict AND logic ONLY for queries from style assistant (refinements)
+      // Regular multi-word queries from search bar use standard filtering
+      console.log(`[search] AND logic check: wordCount=${wordCount}, fromAssistant=${fromAssistant}, query="${q}"`)
+      if (wordCount >= 2 && fromAssistant) {
+        console.log(`\n🔍 [search] ===== AND LOGIC TRIGGERED (from style assistant) =====`)
+        console.log(`[search] Multi-word query detected (${wordCount} words): "${q}"`)
+        console.log(`[search] Initial results before AND filtering: ${scoredImages.length}`)
+        
+        // Split query into individual terms (handle slashes and special characters)
+        // For "medical bright/white", split by spaces first, then handle slashes
+        let queryTerms = q.trim().split(/\s+/).filter(term => term.length > 0)
+        // If a term contains "/", split it and add both parts
+        const expandedTerms: string[] = []
+        for (const term of queryTerms) {
+          if (term.includes('/')) {
+            const parts = term.split('/').map(p => p.trim()).filter(p => p.length > 0)
+            expandedTerms.push(...parts)
+          } else {
+            expandedTerms.push(term)
+          }
+        }
+        queryTerms = expandedTerms
+        console.log(`[search] Query terms (after expansion):`, queryTerms)
+        
+        // Embed each term separately
+        perf.start('api.search.GET.zeroShot.embedIndividualTerms')
+        const termEmbeddings = await perf.measure('api.search.GET.zeroShot.embedIndividualTerms.embedTextBatch', async () => {
+          return await embedTextBatch(queryTerms)
+        })
+        perf.end('api.search.GET.zeroShot.embedIndividualTerms', { termCount: queryTerms.length })
+        
+        // For each image, compute similarity to EACH term
+        // Require minimum similarity to ALL terms (AND logic)
+        const minTermSimilarity = 0.20 // Minimum similarity to each individual term
+        const filtered: typeof scoredImages = []
+        
+        for (const img of scoredImages) {
+          // Get the image embedding vector
+          let ivec = (img.embedding?.vector as unknown as number[]) || []
+          if (ivec.length !== dim) {
+            // Fallback: try to find from imageEmbeddings array
+            const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
+            if (!emb || !emb.vector) continue
+            ivec = (emb.vector as unknown as number[]) || []
+            if (ivec.length !== dim) continue
+          }
+          
+          // Compute similarity to each individual term
+          const termSimilarities = termEmbeddings.map(termVec => cosine(termVec, ivec))
+          const minSimilarity = Math.min(...termSimilarities)
+          const avgSimilarity = termSimilarities.reduce((a, b) => a + b, 0) / termSimilarities.length
+          const maxSimilarity = Math.max(...termSimilarities)
+          
+          // AND logic: Image must match ALL terms well
+          // For refinements (multi-word queries), be much more strict to ensure fewer results
+          // Require:
+          // 1. Good similarity to the combined query (img.baseScore >= 0.28 for multi-word - stricter)
+          // 2. Minimum similarity to ANY term >= 0.28 (ensures it matches ALL terms well - stricter)
+          // 3. Average similarity to all terms >= 0.30 (ensures overall match quality - stricter)
+          // 4. No term should have very low similarity (< 0.20) - all terms must contribute meaningfully
+          const allTermsAboveThreshold = termSimilarities.every(sim => sim >= 0.20)
+          
+          // MUCH stricter thresholds for multi-word queries to ensure refinements return fewer results
+          // The key insight: for "medical white", we want images that are BOTH medical AND white
+          // So we require strong similarity to BOTH terms, not just the combined phrase
+          // For refinements (2-word queries from style assistant), be VERY strict
+          const minCombinedScore = 0.35  // Very high threshold for combined query
+          const minTermScore = 0.35      // Each term must match very well
+          const minAvgScore = 0.37       // Overall average must be very high
+          
+          // Additional check: the difference between max and min similarity shouldn't be too large
+          // This ensures the image matches all terms relatively evenly (not just one term very well)
+          const similaritySpread = maxSimilarity - minSimilarity
+          const maxSpread = 0.10 // Tighter spread requirement - terms must match more evenly
+          
+          // Also require that no single term has very low similarity (all must contribute meaningfully)
+          const minIndividualTerm = 0.25 // Each term must be at least 0.25
+          
+          if (img.baseScore >= minCombinedScore && 
+              minSimilarity >= minTermScore && 
+              avgSimilarity >= minAvgScore && 
+              allTermsAboveThreshold &&
+              similaritySpread <= maxSpread &&
+              termSimilarities.every(sim => sim >= minIndividualTerm)) {
+            // Use the minimum score (most restrictive) between combined query and minimum term similarity
+            // This ensures the image matches BOTH the combined query AND all individual terms
+            const combinedScore = Math.min(img.baseScore, minSimilarity)
+            img.baseScore = combinedScore
+            img.score = combinedScore
+            filtered.push(img)
+          }
+        }
+        
+        filteredScoredImages = filtered
+        let filteredCount = scoredImages.length - filteredScoredImages.length
+        let filterPercentage = ((filteredCount / scoredImages.length) * 100).toFixed(1)
+        console.log(`[search] AND logic RESULT (first pass): ${scoredImages.length} → ${filteredScoredImages.length} results (filtered ${filteredCount}, ${filterPercentage}%)`)
+        
+        // If we filtered everything out, the thresholds are too strict - use a fallback with lower thresholds
+        if (filteredScoredImages.length === 0 && scoredImages.length > 0) {
+          console.warn(`[search] ⚠️  WARNING: AND logic filtered ALL results (${scoredImages.length} → 0). Using fallback with lower thresholds.`)
+          
+          // Fallback: use much lower thresholds to ensure we get some results
+          const fallbackFiltered: typeof scoredImages = []
+          const minCombinedScoreFallback = 0.20  // Lower threshold
+          const minTermScoreFallback = 0.20      // Lower threshold
+          const minAvgScoreFallback = 0.22      // Lower threshold
+          const maxSpreadFallback = 0.25         // More lenient spread
+          const minIndividualTermFallback = 0.15 // Lower individual term threshold
+          
+          for (const img of scoredImages) {
+            let ivec = (img.embedding?.vector as unknown as number[]) || []
+            if (ivec.length !== dim) {
+              const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
+              if (emb && emb.vector) {
+                ivec = (emb.vector as unknown as number[]) || []
+              }
+            }
+            if (ivec.length === dim) {
+              const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
+              const minSim = Math.min(...termSims)
+              const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
+              const maxSim = Math.max(...termSims)
+              const spread = maxSim - minSim
+              
+              if (img.baseScore >= minCombinedScoreFallback && 
+                  minSim >= minTermScoreFallback && 
+                  avgSim >= minAvgScoreFallback && 
+                  termSims.every(sim => sim >= minIndividualTermFallback) &&
+                  spread <= maxSpreadFallback) {
+                const combinedScore = Math.min(img.baseScore, minSim)
+                img.baseScore = combinedScore
+                img.score = combinedScore
+                fallbackFiltered.push(img)
+              }
+            }
+          }
+          
+          // If fallback still returns 0 results, use an even more lenient approach
+          // Just require that the image has decent similarity to at least one term
+          if (fallbackFiltered.length === 0) {
+            console.warn(`[search] ⚠️  WARNING: Fallback also filtered ALL results. Using ultra-lenient fallback.`)
+            for (const img of scoredImages) {
+              let ivec = (img.embedding?.vector as unknown as number[]) || []
+              if (ivec.length !== dim) {
+                const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
+                if (emb && emb.vector) {
+                  ivec = (emb.vector as unknown as number[]) || []
+                }
+              }
+              if (ivec.length === dim) {
+                const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
+                const maxSim = Math.max(...termSims)
+                const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
+                
+                // Ultra-lenient: require good similarity to combined query AND decent similarity to at least one term
+                if (img.baseScore >= 0.20 && maxSim >= 0.20 && avgSim >= 0.18) {
+                  // Use the average of combined query and best term similarity
+                  const combinedScore = (img.baseScore + maxSim) / 2
+                  img.baseScore = combinedScore
+                  img.score = combinedScore
+                  fallbackFiltered.push(img)
+                }
+              }
+            }
+          }
+          
+          filteredScoredImages = fallbackFiltered
+          filteredCount = scoredImages.length - filteredScoredImages.length
+          filterPercentage = ((filteredCount / scoredImages.length) * 100).toFixed(1)
+          console.log(`[search] AND logic RESULT (fallback): ${scoredImages.length} → ${filteredScoredImages.length} results (filtered ${filteredCount}, ${filterPercentage}%)`)
+          
+          // Final safety net: if we still have 0 results, return top 30% of original results
+          // This ensures we always return something, even if it's not perfectly filtered
+          if (filteredScoredImages.length === 0 && scoredImages.length > 0) {
+            console.warn(`[search] ⚠️  CRITICAL: All fallbacks filtered everything. Returning top 30% of original results as final safety net.`)
+            const safetyNetCount = Math.max(1, Math.floor(scoredImages.length * 0.3))
+            filteredScoredImages = scoredImages.slice(0, safetyNetCount)
+            console.log(`[search] AND logic RESULT (safety net): ${scoredImages.length} → ${filteredScoredImages.length} results`)
+          }
+        }
+        
+        // If we didn't filter enough (less than 30% filtered), apply a second, more aggressive pass
+        if (filteredScoredImages.length >= scoredImages.length * 0.7 && filteredScoredImages.length > 0) {
+          console.warn(`[search] ⚠️  WARNING: AND logic filtered less than 30% of results (${filterPercentage}% filtered).`)
+          console.warn(`[search] Applying second, more aggressive filter pass...`)
+          
+          // Second pass: even stricter thresholds
+          const stricterFiltered: typeof scoredImages = []
+          const minCombinedScore2 = 0.40  // Even higher
+          const minTermScore2 = 0.40      // Even higher
+          const minAvgScore2 = 0.42       // Even higher
+          const maxSpread2 = 0.08         // Tighter spread
+          const minIndividualTerm2 = 0.30 // Higher individual term threshold
+          
+          for (const img of scoredImages) {
+            let ivec = (img.embedding?.vector as unknown as number[]) || []
+            if (ivec.length !== dim) {
+              const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
+              if (emb && emb.vector) {
+                ivec = (emb.vector as unknown as number[]) || []
+              }
+            }
+            if (ivec.length === dim) {
+              const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
+              const minSim = Math.min(...termSims)
+              const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
+              const maxSim = Math.max(...termSims)
+              const spread = maxSim - minSim
+              
+              if (img.baseScore >= minCombinedScore2 && 
+                  minSim >= minTermScore2 && 
+                  avgSim >= minAvgScore2 && 
+                  termSims.every(sim => sim >= minIndividualTerm2) &&
+                  spread <= maxSpread2) {
+                const combinedScore = Math.min(img.baseScore, minSim)
+                img.baseScore = combinedScore
+                img.score = combinedScore
+                stricterFiltered.push(img)
+              }
+            }
+          }
+          
+          filteredScoredImages = stricterFiltered
+          filteredCount = scoredImages.length - filteredScoredImages.length
+          filterPercentage = ((filteredCount / scoredImages.length) * 100).toFixed(1)
+          console.log(`[search] AND logic RESULT (second pass): ${scoredImages.length} → ${filteredScoredImages.length} results (filtered ${filteredCount}, ${filterPercentage}%)`)
+          
+          // Show detailed stats for debugging
+          console.log(`[search] Detailed similarity stats for first 10 images:`)
+          for (let i = 0; i < Math.min(10, scoredImages.length); i++) {
+            const img = scoredImages[i]
+            let ivec = (img.embedding?.vector as unknown as number[]) || []
+            if (ivec.length !== dim) {
+              const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
+              if (emb && emb.vector) {
+                ivec = (emb.vector as unknown as number[]) || []
+              }
+            }
+            if (ivec.length === dim) {
+              const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
+              const minSim = Math.min(...termSims)
+              const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
+              const maxSim = Math.max(...termSims)
+              const spread = maxSim - minSim
+              const passed1 = img.baseScore >= 0.35 && minSim >= 0.35 && avgSim >= 0.37 && termSims.every(s => s >= 0.25) && spread <= 0.10
+              const passed2 = img.baseScore >= 0.40 && minSim >= 0.40 && avgSim >= 0.42 && termSims.every(s => s >= 0.30) && spread <= 0.08
+              console.log(`[search]   Image ${i+1}: baseScore=${img.baseScore.toFixed(3)}, termSims=[${termSims.map(s => s.toFixed(3)).join(', ')}], min=${minSim.toFixed(3)}, avg=${avgSim.toFixed(3)}, spread=${spread.toFixed(3)}, pass1=${passed1}, pass2=${passed2}`)
+            }
+          }
+        }
+        
+        console.log(`[search] ===== END AND LOGIC =====\n`)
+      } else {
+        // Single word query: use standard threshold
+        const minSimilarityThreshold = 0.15
+        filteredScoredImages = scoredImages.filter(img => img.baseScore >= minSimilarityThreshold)
+      }
+      
       // Sort by score (pgvector results are already sorted, but we sort anyway for consistency)
       // Use secondary sort by ID for deterministic ordering when scores are equal
-      scoredImages.sort((a, b) => {
+      filteredScoredImages.sort((a, b) => {
         // Use very tight threshold to ensure deterministic ordering
         if (Math.abs(b.baseScore - a.baseScore) > 0.000001) {
           return b.baseScore - a.baseScore
@@ -1684,17 +1985,19 @@ export async function GET(request: NextRequest) {
         return (a.id || '').localeCompare(b.id || '')
       })
       
-      if (scoredImages.length === 0 && imageEmbeddings.length > 0) {
-        console.error(`[search] ERROR: ${imageEmbeddings.length} embeddings loaded but 0 scored!`)
+      if (filteredScoredImages.length === 0 && imageEmbeddings.length > 0) {
+        console.error(`[search] ERROR: ${imageEmbeddings.length} embeddings loaded but 0 scored after filtering!`)
         console.error(`[search] Sample embedding:`, {
           hasVector: !!imageEmbeddings[0]?.vector,
           vectorType: typeof imageEmbeddings[0]?.vector,
           vectorLength: Array.isArray(imageEmbeddings[0]?.vector) ? imageEmbeddings[0]?.vector.length : 'not array',
           imageCategory: imageEmbeddings[0]?.image?.category,
-          dim: dim
+          dim: dim,
+          isMultiWord: isMultiWordQuery,
+          wordCount: wordCount
         })
       }
-      const topCandidates = scoredImages // Already limited by pgvector query
+      const topCandidates = filteredScoredImages // Already limited by pgvector query and similarity threshold
       
       // OPTIMIZATION: Load site data in parallel with other queries
       const siteIds = new Set(topCandidates.map(img => img.siteId).filter(Boolean))
