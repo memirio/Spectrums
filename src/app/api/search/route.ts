@@ -1526,62 +1526,136 @@ export async function GET(request: NextRequest) {
         }
         
         if (pgvectorAvailable[0].exists) {
-          // Use pgvector for fast ANN search
-          // Build query with parameterized category filter
-          let pgvectorQuery = `
-            SELECT 
-              ie."imageId",
-              ie.model,
-              ie.vector,
-              1 - (ie.vector <=> $1::vector) as similarity,
-              i.id,
-              i."siteId",
-              i.url,
-              i.category
-            FROM "image_embeddings" ie
-            JOIN "images" i ON i.id = ie."imageId"
-            WHERE ie.vector IS NOT NULL
-          `
+          let pgvectorResults: any[] = []
           
-          const queryParams: any[] = [queryVectorStr]
-          
-          if (category && category !== 'all') {
-            pgvectorQuery += ` AND i.category = $${queryParams.length + 1}`
-            queryParams.push(category)
-            console.log(`[search] 🔍 pgvector search: filtering by category="${category}"`)
-            console.log(`[search] 🔍 SQL query will include: AND i.category = $${queryParams.length}`)
-          } else {
-            console.log(`[search] 🔍 pgvector search: NO category filter (category="${category || 'null'}")`)
-          }
-          
-          pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC LIMIT $${queryParams.length + 1}`
-          queryParams.push(TOP_CANDIDATES)
-          
-          console.log(`[search] 🔍 Executing pgvector query:`)
-          console.log(`   Category filter: ${category && category !== 'all' ? `"${category}"` : 'none'}`)
-          console.log(`   Top candidates: ${TOP_CANDIDATES}`)
-          console.log(`   Query vector dim: ${queryVec.length}`)
-          perf.start('api.search.GET.zeroShot.pgvectorQuery', { topCandidates: TOP_CANDIDATES, category })
-          const pgvectorResults = await perf.measure('api.search.GET.zeroShot.pgvectorQuery.execute', async () => {
-            return await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
-          }, { topCandidates: TOP_CANDIDATES, category })
-          perf.end('api.search.GET.zeroShot.pgvectorQuery', { resultCount: pgvectorResults.length })
-          console.log(`[search] ✅ pgvector returned ${Array.isArray(pgvectorResults) ? pgvectorResults.length : 0} candidates`)
-          if (pgvectorResults.length > 0) {
-            const categories = [...new Set(pgvectorResults.map((r: any) => r.category || 'unknown'))]
-            const categoryCounts = new Map<string, number>()
-            pgvectorResults.forEach((r: any) => {
-              const cat = r.category || 'unknown'
-              categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1)
+          // When category is 'all' and we have vibe extensions, search each category with its own extension
+          // This ensures we get the best results from each category, not just from one category
+          if (category === 'all' && hasVibeExtensions && Object.keys(vibeExtensionsByCategory).length > 0) {
+            console.log(`[search] 🔍 Multi-category search: category="all" with vibe extensions`)
+            console.log(`[search] 🔍 Will search each category with its own extension`)
+            console.log(`[search] 🔍 Available categories with extensions: ${Object.keys(vibeExtensionsByCategory).join(', ')}`)
+            
+            // Search each category separately using its own extension
+            // Use a higher number per category to ensure we have enough candidates
+            // After scoring, we'll take the best results from each category
+            // Use at least 100 candidates per category to ensure we don't miss top results
+            const candidatesPerCategory = Math.max(100, Math.ceil(TOP_CANDIDATES / Object.keys(vibeExtensionsByCategory).length))
+            
+            const categorySearchPromises = Object.entries(vibeExtensionsByCategory).map(async ([cat, embeddings]) => {
+              if (!embeddings || embeddings.length === 0) return []
+              
+              const categoryExtension = embeddings[0]
+              const categoryVectorStr = '[' + categoryExtension.join(',') + ']'
+              
+              const categoryQuery = `
+                SELECT 
+                  ie."imageId",
+                  ie.model,
+                  ie.vector,
+                  1 - (ie.vector <=> $1::vector) as similarity,
+                  i.id,
+                  i."siteId",
+                  i.url,
+                  i.category
+                FROM "image_embeddings" ie
+                JOIN "images" i ON i.id = ie."imageId"
+                WHERE ie.vector IS NOT NULL
+                  AND i.category = $2
+                ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC
+                LIMIT $3
+              `
+              
+              try {
+                const results = await prisma.$queryRawUnsafe<any[]>(
+                  categoryQuery,
+                  categoryVectorStr,
+                  cat,
+                  candidatesPerCategory
+                )
+                console.log(`[search] ✅ Category "${cat}": ${results.length} candidates (using category-specific extension)`)
+                return results
+              } catch (error: any) {
+                console.warn(`[search] ⚠️  Failed to search category "${cat}":`, error.message)
+                return []
+              }
             })
-            console.log(`   All candidate categories: ${Array.from(categoryCounts.entries()).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+            
+            perf.start('api.search.GET.zeroShot.pgvectorQuery', { topCandidates: TOP_CANDIDATES, category: 'all', multiCategory: true })
+            const allCategoryResults = await perf.measure('api.search.GET.zeroShot.pgvectorQuery.execute', async () => {
+              return await Promise.all(categorySearchPromises)
+            }, { topCandidates: TOP_CANDIDATES, category: 'all', multiCategory: true })
+            perf.end('api.search.GET.zeroShot.pgvectorQuery', { resultCount: allCategoryResults.flat().length })
+            
+            // Flatten results from all categories
+            pgvectorResults = allCategoryResults.flat()
+            console.log(`[search] ✅ Multi-category pgvector search returned ${pgvectorResults.length} total candidates`)
+            
+            if (pgvectorResults.length > 0) {
+              const categoryCounts = new Map<string, number>()
+              pgvectorResults.forEach((r: any) => {
+                const cat = r.category || 'unknown'
+                categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1)
+              })
+              console.log(`   Category breakdown: ${Array.from(categoryCounts.entries()).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+            }
+          } else {
+            // Single category search (existing logic)
+            // Build query with parameterized category filter
+            let pgvectorQuery = `
+              SELECT 
+                ie."imageId",
+                ie.model,
+                ie.vector,
+                1 - (ie.vector <=> $1::vector) as similarity,
+                i.id,
+                i."siteId",
+                i.url,
+                i.category
+              FROM "image_embeddings" ie
+              JOIN "images" i ON i.id = ie."imageId"
+              WHERE ie.vector IS NOT NULL
+            `
+            
+            const queryParams: any[] = [queryVectorStr]
+            
             if (category && category !== 'all') {
-              const expectedCount = categoryCounts.get(category) || 0
-              const unexpectedCount = pgvectorResults.length - expectedCount
-              if (unexpectedCount > 0) {
-                console.warn(`   ⚠️  WARNING: Expected only "${category}" images, but found ${unexpectedCount} images from other categories!`)
-              } else {
-                console.log(`   ✅ All ${pgvectorResults.length} candidates are from category "${category}" as expected`)
+              pgvectorQuery += ` AND i.category = $${queryParams.length + 1}`
+              queryParams.push(category)
+              console.log(`[search] 🔍 pgvector search: filtering by category="${category}"`)
+              console.log(`[search] 🔍 SQL query will include: AND i.category = $${queryParams.length}`)
+            } else {
+              console.log(`[search] 🔍 pgvector search: NO category filter (category="${category || 'null'}")`)
+            }
+            
+            pgvectorQuery += ` ORDER BY ie.vector <=> $1::vector, ie."imageId" ASC LIMIT $${queryParams.length + 1}`
+            queryParams.push(TOP_CANDIDATES)
+            
+            console.log(`[search] 🔍 Executing pgvector query:`)
+            console.log(`   Category filter: ${category && category !== 'all' ? `"${category}"` : 'none'}`)
+            console.log(`   Top candidates: ${TOP_CANDIDATES}`)
+            console.log(`   Query vector dim: ${queryVec.length}`)
+            perf.start('api.search.GET.zeroShot.pgvectorQuery', { topCandidates: TOP_CANDIDATES, category })
+            pgvectorResults = await perf.measure('api.search.GET.zeroShot.pgvectorQuery.execute', async () => {
+              return await prisma.$queryRawUnsafe<any[]>(pgvectorQuery, ...queryParams)
+            }, { topCandidates: TOP_CANDIDATES, category })
+            perf.end('api.search.GET.zeroShot.pgvectorQuery', { resultCount: pgvectorResults.length })
+            console.log(`[search] ✅ pgvector returned ${Array.isArray(pgvectorResults) ? pgvectorResults.length : 0} candidates`)
+            if (pgvectorResults.length > 0) {
+              const categories = [...new Set(pgvectorResults.map((r: any) => r.category || 'unknown'))]
+              const categoryCounts = new Map<string, number>()
+              pgvectorResults.forEach((r: any) => {
+                const cat = r.category || 'unknown'
+                categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1)
+              })
+              console.log(`   All candidate categories: ${Array.from(categoryCounts.entries()).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+              if (category && category !== 'all') {
+                const expectedCount = categoryCounts.get(category) || 0
+                const unexpectedCount = pgvectorResults.length - expectedCount
+                if (unexpectedCount > 0) {
+                  console.warn(`   ⚠️  WARNING: Expected only "${category}" images, but found ${unexpectedCount} images from other categories!`)
+                } else {
+                  console.log(`   ✅ All ${pgvectorResults.length} candidates are from category "${category}" as expected`)
+                }
               }
             }
           }
@@ -2723,8 +2797,122 @@ export async function GET(request: NextRequest) {
         }))
       }
       
-      const limitedSites = uniqueSites.slice(0, MAX_RESULTS)
-      const limitedImages = finalRanked.slice(0, MAX_RESULTS)
+      // When category is 'all', ensure fair representation from each category
+      // Take top results from each category to prevent one category from dominating
+      let limitedImages: any[] = []
+      let limitedSites: any[] = []
+      
+      if (category === 'all' && hasVibeExtensions) {
+        // Group results by category
+        const resultsByCategory = new Map<string, any[]>()
+        for (const r of finalRanked) {
+          const cat = r.site?.category || 'website'
+          if (!resultsByCategory.has(cat)) {
+            resultsByCategory.set(cat, [])
+          }
+          resultsByCategory.get(cat)!.push(r)
+        }
+        
+        // Log initial distribution to see what we're working with
+        console.log(`[search] 📊 Category distribution for 'all' tab (from finalRanked):`)
+        for (const [cat, results] of resultsByCategory.entries()) {
+          console.log(`   Category "${cat}": ${results.length} total results`)
+        }
+        
+        // Take exactly 10 results from each category, then interleave them for a mixed distribution
+        const resultsPerCategory = 10
+        
+        console.log(`   Categories found: ${Array.from(resultsByCategory.keys()).join(', ')}`)
+        console.log(`   Results per category: ${resultsPerCategory}`)
+        
+        // Take top 10 results from each category (already sorted by score within each category)
+        const categoryTopResults = new Map<string, any[]>()
+        for (const [cat, results] of resultsByCategory.entries()) {
+          const topFromCategory = results.slice(0, resultsPerCategory)
+          categoryTopResults.set(cat, topFromCategory)
+          console.log(`   Category "${cat}": taking top ${topFromCategory.length} (from ${results.length} total)`)
+          // Log first 3 to verify they're different
+          if (topFromCategory.length > 0) {
+            console.log(`     First result: ${topFromCategory[0].site?.title?.substring(0, 30) || 'no title'} (score: ${(topFromCategory[0].score ?? topFromCategory[0].baseScore ?? 0).toFixed(4)})`)
+          }
+        }
+        
+        // Simple round-robin: take one from each category, repeat
+        // Result 1: first from cat1, Result 2: first from cat2, Result 3: first from cat3...
+        // Result N+1: second from cat1, Result N+2: second from cat2, etc.
+        const categoryEntries = Array.from(categoryTopResults.entries())
+        // Sort by category name for deterministic order
+        categoryEntries.sort(([catA], [catB]) => catA.localeCompare(catB))
+        
+        const categoryArrays = categoryEntries.map(([cat, results]) => ({
+          category: cat,
+          results: [...results], // Create a copy
+          index: 0 // Track current index for this category
+        }))
+        
+        console.log(`   Round-robin interleaving: ${categoryArrays.length} categories`)
+        console.log(`   Category order: ${categoryArrays.map(c => c.category).join(', ')}`)
+        
+        const interleavedResults: any[] = []
+        let round = 0
+        
+        // Keep going until we've used all results or hit MAX_RESULTS
+        while (interleavedResults.length < MAX_RESULTS && round < resultsPerCategory) {
+          let addedAny = false
+          
+          // Go through each category and take one result
+          for (const catData of categoryArrays) {
+            if (catData.index < catData.results.length && interleavedResults.length < MAX_RESULTS) {
+              interleavedResults.push(catData.results[catData.index])
+              catData.index++
+              addedAny = true
+            }
+          }
+          
+          if (!addedAny) {
+            // No more results in any category
+            break
+          }
+          
+          round++
+        }
+        
+        console.log(`   Created ${round} rounds, total ${interleavedResults.length} results`)
+        const first20Cats = interleavedResults.slice(0, 20).map(r => r.site?.category || 'unknown')
+        console.log(`   First 20 categories: ${first20Cats.join(', ')}`)
+        
+        // Use the interleaved results directly - DO NOT MODIFY
+        limitedImages = interleavedResults.slice(0, MAX_RESULTS)
+        
+        // Log final distribution
+        const finalCategoryCounts = new Map<string, number>()
+        limitedImages.forEach(r => {
+          const cat = r.site?.category || 'website'
+          finalCategoryCounts.set(cat, (finalCategoryCounts.get(cat) || 0) + 1)
+        })
+        console.log(`   Final distribution: ${Array.from(finalCategoryCounts.entries()).map(([cat, count]) => `${cat}:${count}`).join(', ')}`)
+        
+        // Final check: log the actual order of first 20 results
+        const actualFirst20 = limitedImages.slice(0, 20).map((r, i) => `${i+1}:${r.site?.category || 'unknown'}`)
+        console.log(`   Actual order of first 20: ${actualFirst20.join(', ')}`)
+        
+        // Deduplicate sites from limited images
+        const limitedSiteMap = new Map<string, any>()
+        for (const r of limitedImages) {
+          if (r.site?.id) {
+            const siteId = r.site.id
+            const existing = limitedSiteMap.get(siteId)
+            if (!existing || (r.score ?? r.baseScore ?? 0) > (existing.score ?? existing.baseScore ?? 0)) {
+              limitedSiteMap.set(siteId, r.site)
+            }
+          }
+        }
+        limitedSites = Array.from(limitedSiteMap.values())
+      } else {
+        // Single category or no vibe extensions: use standard limiting
+        limitedSites = uniqueSites.slice(0, MAX_RESULTS)
+        limitedImages = finalRanked.slice(0, MAX_RESULTS)
+      }
       
       // Log comprehensive results summary
       console.log(`\n📊 [search] FINAL RESULTS SUMMARY:`)
