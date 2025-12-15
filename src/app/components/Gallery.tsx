@@ -2780,7 +2780,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                   height: '24px'
                                 }}
                               >
-                                <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
+                                <div className="w-6 h-6 bg-gray-900 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
                               </div>
                             </div>
                           </div>
