@@ -55,7 +55,15 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const isGalleryPage = pathname === '/all' || pathname === '/app/all'
   
   // Check if we're on the collections page
-  const isCollectionsPage = pathname === '/collections' || pathname === '/app/collections'
+  const isCollectionsPage = pathname?.startsWith('/collections') || pathname?.startsWith('/app/collections')
+  
+  // Debug: log pathname and isCollectionsPage
+  // NOTE: We intentionally omit fetchAssistantResults from deps here because it's a stable useCallback([]),
+  // and including it was causing React's "deps size changed between renders" hot-reload warnings.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    console.log('[Gallery] pathname:', pathname, 'isCollectionsPage:', isCollectionsPage)
+  }, [pathname, isCollectionsPage])
   
   // Check if we're on the public (logged-out) page
   // Check both pathname and hostname to be more robust
@@ -122,6 +130,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   
   // Separate state for style assistant (independent from search bar)
   const [assistantQuery, setAssistantQuery] = useState<string>('')
+  const [assistantMainConcept, setAssistantMainConcept] = useState<string>('') // Main theme/concept
+  const [assistantAdditions, setAssistantAdditions] = useState<string[]>([]) // Additional refinements
   const [assistantSites, setAssistantSites] = useState<Site[]>([])
   const [assistantAllSites, setAssistantAllSites] = useState<Site[]>([])
   const assistantQueryRef = useRef<string>('')
@@ -330,7 +340,13 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       
       // Use searchQuery if it exists and is a search query, otherwise use selectedConcepts
       const finalQuery = isSearchQuery && hasSearchQuery ? searchQuery.trim() : query.trim()
-      const source = isSearchQuery ? 'search' : 'vibefilter'
+      // For style filter, force search-style extensions even when using concepts
+      const source =
+        drawerTab === 'style-filter'
+          ? 'search'
+          : isSearchQuery
+          ? 'search'
+          : 'vibefilter'
       console.log(`[Gallery] loadMore - Source determination: searchQuery="${searchQuery}", selectedConcepts="${selectedConcepts.join(', ')}", query="${query}", finalQuery="${finalQuery}", isSearchQuery=${isSearchQuery}, source="${source}"`)
       
       let data: any
@@ -803,154 +819,89 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         setDisplayedCount(50)
       }
     } else {
-      // Multiple concepts: apply slider-based ranking for each concept, then combine
+      // Multiple concepts: rank by how well each image's similarities match the slider positions
       
-      // Step 1: For each concept, calculate its tier-based ordering based on slider position
-      const conceptOrderedResults = new Map<string, Site[]>() // concept -> ordered results
+      // Step 1: Collect all images from all concepts with their similarity scores
+      const allImages = new Map<string, { site: Site; similarities: Map<string, number> }>() // siteId -> { site, similarities: concept -> score }
       
       for (const concept of selectedConcepts) {
         const sliderPos = sliderPositions.get(concept) ?? 1.0
         const conceptResultSet = conceptResults.get(concept) || []
         const oppositeResultSet = oppositeResults.get(concept) || []
         
-        if (conceptResultSet.length === 0 && oppositeResultSet.length === 0) {
-          console.log(`[MULTI DEBUG] No results for concept: ${concept}`)
+        // Determine which result set to use based on slider position
+        // For slider > 0.5: use concept results (higher similarity = better match)
+        // For slider <= 0.5: use opposite results (lower similarity = better match, so we invert)
+        const resultSet = sliderPos > 0.5 ? conceptResultSet : oppositeResultSet
+        
+        if (resultSet.length === 0) {
+          console.log(`[SIMILARITY MATCH] No results for concept: ${concept}`)
           continue
         }
         
-        // Calculate stop number (same logic as single concept)
-        const clampedPos = Math.max(0, Math.min(1, sliderPos))
-        let stopNumber: number
-        if (clampedPos === 1.0) {
-          stopNumber = 10
-        } else {
-          stopNumber = Math.floor(clampedPos * 10) + 1
-        }
-        stopNumber = Math.max(1, Math.min(10, stopNumber))
+        // Normalize scores per concept (0-1 range) for fair comparison across concepts
+        const scores = resultSet.map(s => s.score ?? 0)
+        const minScore = Math.min(...scores)
+        const maxScore = Math.max(...scores)
+        const scoreRange = maxScore - minScore || 1 // Avoid division by zero
         
-        console.log(`[MULTI DEBUG] Concept: ${concept}, sliderPos: ${sliderPos.toFixed(3)} (${(sliderPos * 100).toFixed(1)}%), stop: ${stopNumber}`)
-        
-        let orderedResults: Site[] = []
-        
-        if (sliderPos > 0.5) {
-          // Right side: use concept results
-          const conceptTiers = calculateTiers(conceptResultSet)
-          const t1 = [...conceptTiers.tier1]
-          const t2 = [...conceptTiers.tier2]
-          const t3 = [...conceptTiers.tier3]
-          const t4 = [...conceptTiers.tier4]
-          const t5 = [...conceptTiers.tier5]
-          const t6 = [...conceptTiers.tier6]
-          const t7 = [...conceptTiers.tier7]
-          const t8 = [...conceptTiers.tier8]
-          const t9 = [...conceptTiers.tier9]
-          const t10 = [...conceptTiers.tier10]
+        for (const site of resultSet) {
+          const rawScore = site.score ?? 0
+          // Normalize to 0-1 range
+          let normalizedScore = (rawScore - minScore) / scoreRange
           
-          // Apply same tier ordering logic as single concept
-          if (stopNumber === 10) {
-            orderedResults = [...t1, ...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10]
-          } else if (stopNumber === 9) {
-            orderedResults = [...t2, ...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1]
-          } else if (stopNumber === 8) {
-            orderedResults = [...t3, ...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2]
-          } else if (stopNumber === 7) {
-            orderedResults = [...t4, ...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3]
-          } else {
-            // Stop 6
-            orderedResults = [...t5, ...t6, ...t7, ...t8, ...t9, ...t10, ...t1, ...t2, ...t3, ...t4]
+          // If using opposite results (slider <= 0.5), invert the similarity
+          // Low similarity to opposite = high similarity to concept
+          if (sliderPos <= 0.5) {
+            normalizedScore = 1 - normalizedScore
           }
-        } else {
-          // Left side: use opposite results if available, otherwise concept results
-          if (oppositeResultSet.length === 0) {
-            // No opposite: use concept results with varied ordering
-            const conceptTiersNoOpp = calculateTiers(conceptResultSet)
-            const t1NoOpp = [...conceptTiersNoOpp.tier1]
-            const t2NoOpp = [...conceptTiersNoOpp.tier2]
-            const t3NoOpp = [...conceptTiersNoOpp.tier3]
-            const t4NoOpp = [...conceptTiersNoOpp.tier4]
-            const t5NoOpp = [...conceptTiersNoOpp.tier5]
-            const t6NoOpp = [...conceptTiersNoOpp.tier6]
-            const t7NoOpp = [...conceptTiersNoOpp.tier7]
-            const t8NoOpp = [...conceptTiersNoOpp.tier8]
-            const t9NoOpp = [...conceptTiersNoOpp.tier9]
-            const t10NoOpp = [...conceptTiersNoOpp.tier10]
-            
-            if (stopNumber === 1) {
-              orderedResults = [...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp]
-            } else if (stopNumber === 2) {
-              orderedResults = [...t2NoOpp, ...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp]
-            } else if (stopNumber === 3) {
-              orderedResults = [...t3NoOpp, ...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp]
-            } else if (stopNumber === 4) {
-              orderedResults = [...t4NoOpp, ...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp]
-            } else {
-              // Stop 5
-              orderedResults = [...t5NoOpp, ...t6NoOpp, ...t7NoOpp, ...t8NoOpp, ...t9NoOpp, ...t10NoOpp, ...t1NoOpp, ...t2NoOpp, ...t3NoOpp, ...t4NoOpp]
-            }
-          } else {
-            // Use opposite results
-            const oppositeTiers = calculateTiers(oppositeResultSet)
-            const t1Opp = [...oppositeTiers.tier1]
-            const t2Opp = [...oppositeTiers.tier2]
-            const t3Opp = [...oppositeTiers.tier3]
-            const t4Opp = [...oppositeTiers.tier4]
-            const t5Opp = [...oppositeTiers.tier5]
-            const t6Opp = [...oppositeTiers.tier6]
-            const t7Opp = [...oppositeTiers.tier7]
-            const t8Opp = [...oppositeTiers.tier8]
-            const t9Opp = [...oppositeTiers.tier9]
-            const t10Opp = [...oppositeTiers.tier10]
-            
-            if (stopNumber === 1) {
-              orderedResults = [...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp]
-            } else if (stopNumber === 2) {
-              orderedResults = [...t2Opp, ...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp]
-            } else if (stopNumber === 3) {
-              orderedResults = [...t3Opp, ...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp]
-            } else if (stopNumber === 4) {
-              orderedResults = [...t4Opp, ...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp]
-            } else {
-              // Stop 5
-              orderedResults = [...t5Opp, ...t6Opp, ...t7Opp, ...t8Opp, ...t9Opp, ...t10Opp, ...t1Opp, ...t2Opp, ...t3Opp, ...t4Opp]
-            }
-          }
-        }
-        
-        conceptOrderedResults.set(concept, orderedResults)
-        console.log(`[MULTI DEBUG] Concept ${concept}: ${orderedResults.length} ordered results`)
-      }
-      
-      // Step 2: Combine results from all concepts by scoring each site based on its tier position
-      // Sites that appear in higher tiers across multiple concepts get higher combined scores
-      const siteScores = new Map<string, { site: Site; score: number; conceptCount: number }>()
-      
-      for (const [concept, orderedResults] of conceptOrderedResults.entries()) {
-        // Score based on position: earlier in the list = higher score
-        // Use inverse position (first item gets highest score)
-        orderedResults.forEach((site, index) => {
-          const positionScore = 1.0 / (index + 1) // First item: 1.0, second: 0.5, third: 0.33, etc.
-          const existing = siteScores.get(site.id)
           
+          const existing = allImages.get(site.id)
           if (existing) {
-            // Site appears in multiple concepts: combine scores (additive)
-            existing.score += positionScore
-            existing.conceptCount += 1
+            existing.similarities.set(concept, normalizedScore)
           } else {
-            siteScores.set(site.id, {
+            allImages.set(site.id, {
               site,
-              score: positionScore,
-              conceptCount: 1
+              similarities: new Map([[concept, normalizedScore]])
             })
           }
-        })
+        }
       }
       
-      // Step 3: Sort by combined score (higher is better)
-      const combinedResults = Array.from(siteScores.values())
+      // Step 2: Calculate match score for each image
+      // Match score = how well the image's normalized similarities match the target slider positions
+      // Higher match score = better match (closer similarities to slider positions)
+      const imageMatchScores = Array.from(allImages.values()).map(({ site, similarities }) => {
+        let totalDeviation = 0
+        let conceptCount = 0
+        
+        for (const concept of selectedConcepts) {
+          const targetSimilarity = sliderPositions.get(concept) ?? 1.0
+          const actualSimilarity = similarities.get(concept) ?? 0
+          
+          // Calculate deviation: how far is actual from target?
+          const deviation = Math.abs(actualSimilarity - targetSimilarity)
+          totalDeviation += deviation
+          conceptCount++
+        }
+        
+        // Average deviation (lower is better)
+        const avgDeviation = conceptCount > 0 ? totalDeviation / conceptCount : 1.0
+        
+        // Match score: 1 - average deviation (higher is better, max 1.0)
+        // Perfect match (deviation = 0) gives score = 1.0
+        // Worst match (deviation = 1.0) gives score = 0.0
+        const matchScore = 1.0 - avgDeviation
+        
+        return { site, matchScore, conceptCount }
+      })
+      
+      // Step 3: Sort by match score (higher is better)
+      const rankedResults = imageMatchScores
         .sort((a, b) => {
-          // Primary sort: combined score (higher is better)
-          if (Math.abs(a.score - b.score) > 0.001) {
-            return b.score - a.score
+          // Primary sort: match score (higher is better)
+          if (Math.abs(a.matchScore - b.matchScore) > 0.0001) {
+            return b.matchScore - a.matchScore
           }
           // Secondary sort: number of concepts (more concepts = better)
           if (a.conceptCount !== b.conceptCount) {
@@ -961,11 +912,18 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         })
         .map(item => item.site)
       
-      console.log(`[MULTI DEBUG] Combined ${combinedResults.length} unique sites from ${selectedConcepts.length} concepts`)
-      console.log(`[MULTI DEBUG] First 10 IDs: ${combinedResults.slice(0, 10).map(s => s.id.substring(0, 8)).join(', ')}`)
+      console.log(`[SIMILARITY MATCH] Ranked ${rankedResults.length} images from ${selectedConcepts.length} concepts`)
+      if (rankedResults.length > 0) {
+        const topMatch = imageMatchScores.find(item => item.site.id === rankedResults[0].id)
+        console.log(`[SIMILARITY MATCH] Top match score: ${topMatch?.matchScore.toFixed(4)}, deviations: ${selectedConcepts.map(c => {
+          const target = sliderPositions.get(c) ?? 1.0
+          const actual = allImages.get(rankedResults[0].id)?.similarities.get(c) ?? 0
+          return `${c}: ${Math.abs(actual - target).toFixed(3)}`
+        }).join(', ')}`)
+      }
       
-      if (combinedResults.length > 0) {
-        setAllSites(combinedResults)
+      if (rankedResults.length > 0) {
+        setAllSites(rankedResults)
         setDisplayedCount(50)
       }
     }
@@ -1110,47 +1068,156 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   }
 
   // Separate fetch function for style assistant (independent from search bar)
-  const fetchAssistantResults = useCallback(async (query: string, categoryParam: string) => {
-    console.log('[fetchAssistantResults] Fetching for assistant:', query, 'category:', categoryParam)
-    try {
+  // For assistant refinements we **literally** do what you asked:
+  // - Run one direct search for the main concept (e.g. "techy")
+  // - Run one direct search for the additions (e.g. "3d models")
+  // - Combine their rankings (90% main, 10% additions)
+  const fetchAssistantResults = useCallback(
+    async (query: string, categoryParam: string, mainConcept?: string, additions?: string[]) => {
+      console.log(
+        '[fetchAssistantResults] Fetching for assistant:',
+        query,
+        'category:',
+        categoryParam,
+        'mainConcept:',
+        mainConcept,
+        'additions:',
+        additions,
+      )
+
+      // Helper: run a plain direct search via /api/search and return per-site ranks
+      const runDirectSearch = async (
+        directQuery: string,
+      ): Promise<Map<string, { site: Site; rank: number; score: number }>> => {
+        const result = new Map<string, { site: Site; rank: number; score: number }>()
+        const url = `/api/search?q=${encodeURIComponent(directQuery)}&category=${encodeURIComponent(
+          categoryParam,
+        )}&source=search&limit=100&offset=0`
+        console.log('[fetchAssistantResults/runDirectSearch] Fetching:', url)
+
+        const res = await fetch(url)
+        if (!res.ok) {
+          console.error('[fetchAssistantResults/runDirectSearch] Failed response:', res.status)
+          return result
+        }
+
+        const data = await res.json()
+        const images = data.images || []
+
+        // Map each image to a Site with score, then deduplicate per siteId
+        const perSiteBest: Map<string, Site> = new Map()
+        for (const image of images) {
+          const site = image.site || {}
+          const siteId = site.id || image.siteId
+          if (!siteId) continue
+
+          const siteCategory = site.category || image.category || 'website'
+          const score = image.score || 0
+
+          const siteObj: Site = {
+            id: siteId,
+            title: site.title || '',
+            description: site.description || null,
+            url: site.url || image.siteUrl || '',
+            imageUrl: image.url || site.imageUrl || null,
+            author: site.author || null,
+            tags: [],
+            imageId: image.imageId || undefined,
+            category: siteCategory,
+            score,
+          }
+
+          const existing = perSiteBest.get(siteId)
+          if (!existing || (existing.score ?? 0) < score) {
+            perSiteBest.set(siteId, siteObj)
+          }
+        }
+
+        const dedup = Array.from(perSiteBest.values())
+        dedup.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+
+        dedup.forEach((site, index) => {
+          result.set(site.id, { site, rank: index + 1, score: site.score ?? 0 })
+        })
+
+        console.log(
+          '[fetchAssistantResults/runDirectSearch] Loaded',
+          dedup.length,
+          'sites for query:',
+          directQuery,
+        )
+        return result
+      }
+
+      try {
       setLoading(true)
-      
-      const searchUrl = `/api/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(categoryParam)}&source=search&limit=60&offset=0&fromAssistant=true`
-      console.log('[fetchAssistantResults] Fetching:', searchUrl)
-      
-      const response = await fetch(searchUrl)
-      if (!response.ok) {
-        console.error('[fetchAssistantResults] Failed response:', response.status)
+
+        const hasRefinement = mainConcept && additions && additions.length > 0
+
+        if (hasRefinement && mainConcept) {
+          // 1) Run direct search for main concept
+          const mainResults = await runDirectSearch(mainConcept.trim())
+
+          // 2) Run direct search for additions as ONE combined text query
+          //    (e.g. "3d models", or "3d models white")
+          const additionsQuery = additions!.join(' ').trim()
+          const addResults =
+            additionsQuery.length > 0 ? await runDirectSearch(additionsQuery) : new Map()
+
+          // 3) Combine ranks: 70% main, 30% additions
+          const allSiteIds = new Set<string>([
+            ...Array.from(mainResults.keys()),
+            ...Array.from(addResults.keys()),
+          ])
+
+          const combined: Site[] = []
+          const mainCount = mainResults.size || 1
+          const addCount = addResults.size || 1
+
+          for (const siteId of allSiteIds) {
+            const main = mainResults.get(siteId)
+            const add = addResults.get(siteId)
+
+            const mainRank = main ? main.rank : mainCount + 1
+            const addRank = add ? add.rank : addCount + 1
+
+            // 70% weight to main concept rank, 30% to additions rank
+            const combinedRank = mainRank * 0.7 + addRank * 0.3
+            const combinedScore = 1 / (1 + combinedRank)
+
+            const baseSite = (main || add)!.site
+            combined.push({
+              ...baseSite,
+              score: combinedScore,
+            })
+          }
+
+          // Sort by combined score and store as assistant results
+          combined.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+          setAssistantAllSites(combined)
+          setAssistantSites(combined.slice(0, 50))
+
+          console.log('[fetchAssistantResults] Combined main+additions results:', combined.length)
+          return
+        }
+
+        // Fallback: no main/additions refinement – just run a single direct search
+        const directResults = await runDirectSearch(query)
+        const sites = Array.from(directResults.values()).map((entry) => entry.site)
+        const sorted = [...sites].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+        setAssistantAllSites(sorted)
+        setAssistantSites(sorted.slice(0, 50))
+        console.log('[fetchAssistantResults] Loaded', sorted.length, 'results for assistant (single query)')
+      } catch (error) {
+        console.error('[fetchAssistantResults] Error:', error)
         setAssistantSites([])
         setAssistantAllSites([])
-        return
+      } finally {
+        setLoading(false)
       }
-      
-      const data = await response.json()
-      const sites = data.images || []
-      
-      // Deduplicate by imageId
-      const seen = new Set<string>()
-      const deduplicatedSites = sites.filter((site: Site) => {
-        const imageId = site.imageId || site.id
-        if (seen.has(imageId)) return false
-        seen.add(imageId)
-        return true
-      })
-      
-      const sorted = [...deduplicatedSites].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-      setAssistantAllSites(sorted)
-      setAssistantSites(sorted.slice(0, 50))
-      
-      console.log('[fetchAssistantResults] Loaded', sorted.length, 'results for assistant')
-    } catch (error) {
-      console.error('[fetchAssistantResults] Error:', error)
-      setAssistantSites([])
-      setAssistantAllSites([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+    },
+    [],
+  )
 
   const fetchSites = useCallback(async () => {
     console.log('[fetchSites] Called with selectedConcepts:', selectedConcepts, 'category:', category, 'isCollectionsPage:', isCollectionsPage)
@@ -1599,17 +1666,34 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           if (action.query) {
             console.log('[handleSendMessage] Setting assistant query to:', action.query, '(previous query was:', assistantQuery, ')')
             
-            // If there's an existing assistant query and the new query doesn't contain it, it might be a refinement
-            // In that case, combine them to ensure we're filtering the existing results
-            let finalQuery = action.query
-            if (assistantQuery && assistantQuery.trim() && !action.query.toLowerCase().includes(assistantQuery.toLowerCase())) {
-              // New query doesn't contain old query - combine them
-              finalQuery = `${assistantQuery} ${action.query}`.trim()
-              console.log('[handleSendMessage] Combined queries:', assistantQuery, '+', action.query, '=', finalQuery)
+            // Track main concept and additions separately
+            const mainConcept = action.mainConcept || (assistantMainConcept || action.query.split(' ')[0])
+            const additions = action.additions || []
+            
+            // If this is a refinement (additions exist), keep the main concept, add the new additions
+            // If this is a new search (no main concept in action), use the query as main concept
+            let finalMainConcept = mainConcept
+            let finalAdditions = additions
+            
+            if (assistantMainConcept && additions.length > 0) {
+              // Refinement: keep existing main concept, add new additions
+              finalMainConcept = assistantMainConcept
+              finalAdditions = [...assistantAdditions, ...additions]
+              console.log('[handleSendMessage] Refinement detected - mainConcept:', finalMainConcept, 'additions:', finalAdditions)
+            } else if (!assistantMainConcept && mainConcept) {
+              // New search: set main concept
+              finalMainConcept = mainConcept
+              finalAdditions = additions
+              console.log('[handleSendMessage] New search - mainConcept:', finalMainConcept, 'additions:', finalAdditions)
             }
             
-            // Update assistant query (separate from search bar - does NOT touch searchQuery)
+            // Build final query from main concept + additions
+            const finalQuery = [finalMainConcept, ...finalAdditions].filter(Boolean).join(' ')
+            
+            // Update assistant state
             setAssistantQuery(finalQuery)
+            setAssistantMainConcept(finalMainConcept)
+            setAssistantAdditions(finalAdditions)
             assistantQueryRef.current = finalQuery.trim().toLowerCase()
             
             // Change category if specified
@@ -1623,7 +1707,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             setPendingSearchMessage(message)
             
             // Fetch results for assistant (separate from search bar)
-            fetchAssistantResults(finalQuery, targetCategory)
+            // Pass main concept and additions separately for weighted ranking
+            fetchAssistantResults(finalQuery, targetCategory, finalMainConcept, finalAdditions)
           } else if (action.category) {
             // Just change category without query
             if (action.category !== category) {
@@ -1631,7 +1716,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             }
             // If there's an existing assistant query, re-fetch with new category
             if (assistantQuery) {
-              fetchAssistantResults(assistantQuery, action.category)
+              fetchAssistantResults(assistantQuery, action.category, assistantMainConcept, assistantAdditions)
             }
           }
         } else if (action.type === 'add_concept') {
@@ -1770,6 +1855,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       }
       
       // Trigger search by clearing and manually calling fetchSites
+      // IMPORTANT: set loading *before* clearing sites to avoid brief "No sites found" flash
+      setLoading(true)
       setAllSites([])
       setSites([])
       setPaginationOffset(0)
@@ -1841,7 +1928,6 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       timers.forEach(timer => clearTimeout(timer))
     }
   }, [spectrums.map(s => s.inputValue).join(',')])
-
 
   // Function to fetch and set opposite for a concept
 
@@ -1971,7 +2057,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     setSpectrums(prev => prev.filter(s => s.id !== spectrumId))
     
     // If spectrum has a concept, remove it from all related state
-    if (spectrum && spectrum.concept) {
+      if (spectrum && spectrum.concept) {
       const concept = spectrum.concept
       console.log('[vibe-filter] Removing concept:', concept)
       
@@ -1984,11 +2070,11 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         console.log('[vibe-filter] Updated selectedConcepts after removal:', updated)
         return updated
       })
-      setCustomConcepts(prevCustom => {
-        const next = new Set(prevCustom)
+        setCustomConcepts(prevCustom => {
+          const next = new Set(prevCustom)
         next.delete(concept)
-        return next
-      })
+          return next
+        })
       setSliderPositions(prev => {
         const newMap = new Map(prev)
         newMap.delete(concept)
@@ -2314,73 +2400,74 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     <div className="h-screen bg-[#fbf9f4] flex overflow-hidden relative">
       {/* Content area - Drawer and main content side by side */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Mobile: Floating chevron button when collapsed */}
-        {isMobile && isDrawerCollapsed && (
-          <button
-            onClick={() => setIsDrawerCollapsed(false)}
+      {/* Mobile: Floating chevron button when collapsed */}
+        {!isCollectionsPage && isMobile && isDrawerCollapsed && (
+        <button
+          onClick={() => setIsDrawerCollapsed(false)}
             className="fixed top-20 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] transition-colors md:hidden cursor-pointer"
-            aria-label="Expand drawer"
+          aria-label="Expand drawer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-5 h-5"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
 
-        {/* Mobile backdrop when drawer is open */}
-        {isMobile && !isDrawerCollapsed && (
-          <div 
-            className="fixed inset-0 z-[55] md:hidden"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
-            onClick={() => setIsDrawerCollapsed(true)}
-          />
-        )}
+      {/* Mobile backdrop when drawer is open */}
+        {!isCollectionsPage && isMobile && !isDrawerCollapsed && (
+        <div 
+          className="fixed inset-0 z-[55] md:hidden"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
+          onClick={() => setIsDrawerCollapsed(true)}
+        />
+      )}
 
         {/* Left Drawer - Dynamic, max width 280px - Below menu */}
-        <div className={`bg-[#fbf9f4] border-r border-gray-300 transition-all duration-300 ease-in-out ${
-          isMobile 
+        {!isCollectionsPage && (
+        <div className={`bg-[#EEEDEA] transition-all duration-300 ease-in-out ${
+        isMobile 
             ? (isDrawerCollapsed ? 'hidden' : 'fixed left-0 top-[73px] z-[60] w-[280px] h-[calc(100vh-73px)] shadow-lg') 
-            : (isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0')
-        } overflow-hidden flex flex-col h-full`}>
+          : (isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0')
+      } overflow-hidden flex flex-col h-full`}>
         {/* Collapse button at top of drawer - sticky */}
-        <div className="sticky top-0 z-50 bg-[#fbf9f4] px-6 py-3 border-b border-gray-300 flex items-center justify-end">
+        <div className="sticky top-0 z-50 bg-[#EEEDEA] px-6 py-3 flex items-center justify-end">
           <button
             onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
             className="p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
             aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19 2C20.6569 2 22 3.34315 22 5V19C22 20.6569 20.6569 22 19 22H5C3.34315 22 2 20.6569 2 19V5C2 3.34315 3.34315 2 5 2H19ZM10 20H19C19.5523 20 20 19.5523 20 19V10H10V20ZM4 19C4 19.5523 4.44772 20 5 20H8V10H4V19ZM5 4C4.44772 4 4 4.44772 4 5V8H20V5C20 4.44772 19.5523 4 19 4H5Z" fill="currentColor"/>
             </svg>
           </button>
         </div>
         
         {/* Tabs - below minimize section */}
-        <div className={`sticky top-[73px] z-40 bg-[#fbf9f4] px-6 py-3 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-          <div className="bg-[#EEEDEA] rounded-md p-0.5 flex items-center gap-0.5">
-            <button
+        <div className={`sticky top-[60px] z-40 bg-[#EEEDEA] px-6 py-2 ${isDrawerCollapsed ? 'hidden' : ''}`}>
+          <div className="bg-[#e1dfd8] rounded-md p-0.5 flex items-center gap-0.5">
+          <button
               onClick={() => setDrawerTab('style-filter')}
               className={`flex-1 px-2 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 drawerTab === 'style-filter'
                   ? 'bg-[#fbf9f4] text-gray-900'
-                  : 'bg-transparent text-gray-500 hover:text-gray-900'
+                  : 'bg-[#e1dfd8] text-gray-600 hover:text-gray-900'
               }`}
             >
               Style filter
-            </button>
+          </button>
             <button
               onClick={() => setDrawerTab('style-assistant')}
               className={`flex-1 px-2 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 drawerTab === 'style-assistant'
                   ? 'bg-[#fbf9f4] text-gray-900'
-                  : 'bg-transparent text-gray-500 hover:text-gray-900'
+                  : 'bg-[#e1dfd8] text-gray-600 hover:text-gray-900'
               }`}
             >
               Style assistant
@@ -2393,7 +2480,12 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           {drawerTab === 'style-filter' ? (
             /* Spectrum list */
             <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-0">
-            <div className="space-y-10 pb-4">
+              {spectrums.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-center text-sm text-gray-600 px-4">
+                  <span>No active style filters</span>
+                </div>
+              ) : (
+                <div className="space-y-10 pb-4">
             {spectrums.map((spectrum) => {
               const conceptInfo = conceptData.get(spectrum.concept.toLowerCase())
               const opposites = conceptInfo?.opposites || []
@@ -2467,7 +2559,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                             // Single-pole skeleton (centered label)
                             <div className="flex items-center justify-center px-1 mb-6 pt-2">
                               <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-                            </div>
+                          </div>
                           ) : (
                             // Two-pole skeleton (labels on opposite ends)
                             <div className="flex items-center justify-between px-1 mb-6 pt-2">
@@ -2919,17 +3011,18 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                 </div>
               )
             })}
-            </div>
-            </div>
+          </div>
+              )}
+        </div>
           ) : (
             /* Style assistant content - Chat interface */
             <div className="flex flex-col flex-1 min-h-0">
               {/* Chat messages area - scrollable */}
               <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 min-h-0">
                 {chatMessages.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-sm text-gray-500">Start a conversation with the style assistant...</p>
-                  </div>
+                  <div className="h-full flex items-center justify-center text-center text-sm text-gray-600 px-4">
+                    <span>Start a conversation with the style assistant...</span>
+      </div>
                 ) : (
                   chatMessages.map((message, index) => (
                     <div
@@ -2949,8 +3042,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                   ))
                 )}
                 <div ref={chatMessagesEndRef} />
-              </div>
-              
+          </div>
+          
               {/* Chat input - fixed at bottom */}
               <div className="flex-shrink-0 p-4 md:p-6 pt-3">
                 <div className="border border-gray-300 rounded-md p-2">
@@ -2977,7 +3070,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     }}
                   />
                   <div className="flex justify-end mt-2">
-                    <button
+                <button
                       type="button"
                       onClick={async (e) => {
                         e.preventDefault()
@@ -2995,8 +3088,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
-                      </svg>
-                    </button>
+                  </svg>
+                </button>
                   </div>
                 </div>
               </div>
@@ -3006,8 +3099,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         
         {/* Add vibes button - sticky at bottom of drawer (only show for style-filter tab) */}
         {drawerTab === 'style-filter' && (
-          <div className={`sticky bottom-0 bg-[#fbf9f4] p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-            <button
+          <div className={`sticky bottom-0 bg-[#EEEDEA] p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
+                <button
               onClick={() => {
                 if (isPublicPage && !isLoggedIn) {
                   // Check if already have 2 active filters
@@ -3025,13 +3118,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                 setShowAddConceptModal(true)
                 setAddConceptInputValue('')
               }}
-              className="w-full px-4 py-2 border border-gray-300 text-gray-900 rounded-md hover:bg-[#f5f3ed] transition-colors text-sm font-medium cursor-pointer"
+              className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium cursor-pointer"
             >
-              + Style filter
-            </button>
+              + Add filter
+                </button>
           </div>
+              )}
+            </div>
         )}
-      </div>
 
         {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
         <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
@@ -3060,10 +3154,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           </div>
           {/* Scrollable Gallery Content */}
           <div className="flex-1 overflow-y-auto min-w-0">
-            {/* Main Content and Panel Container */}
-            <div className="flex">
-              {/* Main Content - shifts when panel opens */}
-              <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
+        {/* Main Content and Panel Container */}
+        <div className="flex">
+          {/* Main Content - shifts when panel opens */}
+          <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
 
             {/* Gallery Grid */}
             <main className="bg-transparent pb-8">
@@ -3078,25 +3172,43 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               <div key={i}>
                 {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
-                  <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
+                  <div
+                    className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent"
+                    style={{
+                      background:
+                        'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)',
+                    }}
+                  ></div>
                 </div>
                 {/* Text section skeleton - matches py-2 structure */}
                 <div className="py-2">
                   <div className="flex items-center justify-between gap-2">
                     {/* Title skeleton - flex-1, text-xs size */}
                     <div className="relative h-3 bg-[#e8e8e4] rounded flex-1 overflow-hidden">
-                      <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
+                      <div
+                        className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)',
+                        }}
+                      ></div>
                     </div>
                     {/* Category badge skeleton - matches badge size */}
                     <div className="relative h-5 w-16 bg-[#e8e8e4] rounded overflow-hidden">
-                      <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
+                      <div
+                        className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)',
+                        }}
+                      ></div>
                     </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        ) : (assistantSites.length > 0 || sites.length > 0) ? (
+        ) : assistantSites.length > 0 || sites.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {(assistantSites.length > 0 ? assistantSites : sites).map((site, index) => (
                      <div key={`${site.id}-${index}`} className="group">
@@ -3254,7 +3366,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                   <path d="M21.4502 8.50195C21.4502 7.91086 21.3337 7.32537 21.1074 6.7793C20.8811 6.23319 20.5489 5.73723 20.1309 5.31934V5.31836C19.7131 4.90042 19.2168 4.56901 18.6709 4.34277C18.1248 4.1165 17.5393 4.00001 16.9482 4C16.3571 4 15.7717 4.1165 15.2256 4.34277C14.6796 4.569 14.1834 4.90042 13.7656 5.31836V5.31934L12.7051 6.37891C12.3145 6.76935 11.6815 6.7694 11.291 6.37891L10.2314 5.31934C9.38729 4.47518 8.24167 4.00098 7.04785 4.00098C5.85415 4.00106 4.70932 4.47525 3.86523 5.31934C3.02122 6.16347 2.54688 7.30824 2.54688 8.50195C2.54691 9.69568 3.02117 10.8405 3.86523 11.6846L11.998 19.8174L20.1309 11.6846L20.2842 11.5244C20.6308 11.1421 20.9094 10.7024 21.1074 10.2246C21.3337 9.67854 21.4502 9.09303 21.4502 8.50195ZM23.4502 8.50195C23.4502 9.35576 23.2819 10.2015 22.9551 10.9902C22.6283 11.7789 22.1487 12.4951 21.5449 13.0986L12.7051 21.9385C12.3146 22.329 11.6815 22.329 11.291 21.9385L2.45117 13.0986C1.23203 11.8794 0.546909 10.2261 0.546875 8.50195C0.546875 6.7777 1.23194 5.12353 2.45117 3.9043C3.6703 2.68531 5.32384 2.00106 7.04785 2.00098C8.77206 2.00098 10.4263 2.68513 11.6455 3.9043L11.998 4.25684L12.3506 3.9043C12.9542 3.30048 13.6712 2.82194 14.46 2.49512C15.2488 2.16827 16.0944 2 16.9482 2C17.8021 2.00001 18.6477 2.16828 19.4365 2.49512C20.225 2.82186 20.9415 3.3007 21.5449 3.9043C22.1488 4.50792 22.6282 5.22486 22.9551 6.01367C23.2819 6.80247 23.4502 7.64812 23.4502 8.50195Z" fill="white"/>
                                 </svg>
                               </button>
-                            </div>
+                         </div>
                           </div>
                           {/* Copy success message */}
                           {copiedImageId === (site.id || `${site.imageId}-${index}`) && (
@@ -3311,7 +3423,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     {/* Image skeleton - matches aspect-[4/3] with shimmer effect */}
                     <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#e8e8e4]">
                       <div className="absolute inset-0 animate-shimmer bg-gradient-to-br from-transparent via-transparent via-white/60 to-transparent" style={{ background: 'linear-gradient(135deg, transparent 0%, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%, transparent 100%)' }}></div>
-                    </div>
+              </div>
                     {/* Text section skeleton - matches py-2 structure */}
                     <div className="py-2">
                       <div className="flex items-center justify-between gap-2">
@@ -3339,8 +3451,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                 <div className="text-gray-400 text-sm">
                   Scroll for more
                 </div>
-              </div>
-            ) : (
+          </div>
+        ) : (
               <div className="col-span-full flex justify-center py-8">
                 <div className="text-gray-400 text-sm">
                   No more results
@@ -3348,25 +3460,39 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               </div>
             )}
           </div>
-        ) : (
+        ) : !loading &&
+          assistantSites.length === 0 &&
+          sites.length === 0 &&
+          !assistantQueryRef.current &&
+          searchQueryRef.current.trim().length === 0 &&
+          selectedConcepts.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="mx-auto h-12 w-12"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No sites found</h3>
             <p className="text-gray-600">
               {selectedConcepts.length > 0
                 ? `No sites match the concepts: ${selectedConcepts.join(' + ')}`
-                : 'No sites have been submitted yet.'
-              }
+                : 'No sites have been submitted yet.'}
             </p>
           </div>
-        )}
+        ) : null}
         </div>
       </main>
-              </div>
+            </div>
 
         {/* Side Panel - slides in from right and pushes content */}
         <div
@@ -3406,7 +3532,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                 // Handle is 24px (w-6), track is 128px (w-32), so handle can move from 12px to 116px
                 // This maps to 0% to 100% of the usable track area
                 const handlePositionPercent = clampedPosition * 100
-                
+                    
                 const handleSliderMouseDown = (e: React.MouseEvent) => {
                   e.preventDefault()
                   e.stopPropagation()
@@ -3422,52 +3548,52 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     const updatePosition = (x: number) => {
                       const clickPosition = Math.max(0, Math.min(1, (x - trackRect.left) / trackRect.width))
                       
-                      setSliderPositions(prev => {
-                        const newMap = new Map(prev)
+                        setSliderPositions(prev => {
+                          const newMap = new Map(prev)
                         newMap.set(concept, clickPosition)
-                        return newMap
-                      })
+                          return newMap
+                        })
+                        
+                        requestAnimationFrame(() => {
+                          setSliderVersion(v => v + 1)
+                        })
+                      }
                       
-                      requestAnimationFrame(() => {
-                        setSliderVersion(v => v + 1)
-                      })
-                    }
-                    
                     updatePosition(clientX)
                     
-                    const handleMouseMove = (moveEvent: MouseEvent) => {
-                      updatePosition(moveEvent.clientX)
+                      const handleMouseMove = (moveEvent: MouseEvent) => {
+                        updatePosition(moveEvent.clientX)
+                      }
+                      
+                      const handleEnd = () => {
+                        document.removeEventListener('mousemove', handleMouseMove)
+                        document.removeEventListener('mouseup', handleEnd)
+                      }
+                      
+                      document.addEventListener('mousemove', handleMouseMove)
+                      document.addEventListener('mouseup', handleEnd)
                     }
                     
-                    const handleEnd = () => {
-                      document.removeEventListener('mousemove', handleMouseMove)
-                      document.removeEventListener('mouseup', handleEnd)
-                    }
-                    
-                    document.addEventListener('mousemove', handleMouseMove)
-                    document.addEventListener('mouseup', handleEnd)
-                  }
-                  
                   handleSliderStart(e.clientX, sliderTrack)
                 }
                 
                 const handleSliderTouchStart = (e: React.TouchEvent) => {
-                  e.preventDefault()
-                  e.stopPropagation()
+                      e.preventDefault()
+                      e.stopPropagation()
                   
                   if (e.touches.length === 0) return
-                  
-                  // Find the actual slider track element
-                  let sliderTrack = e.currentTarget as HTMLElement
-                  if (!sliderTrack.classList.contains('bg-gray-300')) {
-                    sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
-                  }
-                  
-                  if (!sliderTrack) {
-                    console.error('[Slider] Could not find slider track element')
-                    return
-                  }
-                  
+                      
+                      // Find the actual slider track element
+                      let sliderTrack = e.currentTarget as HTMLElement
+                      if (!sliderTrack.classList.contains('bg-gray-300')) {
+                        sliderTrack = sliderTrack.closest('.bg-gray-300') as HTMLElement
+                      }
+                      
+                      if (!sliderTrack) {
+                        console.error('[Slider] Could not find slider track element')
+                        return
+                      }
+                      
                   const handleSliderStart = (clientX: number, track: HTMLElement) => {
                     const trackRect = track.getBoundingClientRect()
                     const updatePosition = (x: number) => {
@@ -3502,14 +3628,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     document.addEventListener('touchmove', handleTouchMove, { passive: false })
                     document.addEventListener('touchend', handleEnd)
                     document.addEventListener('touchcancel', handleEnd)
-                  }
-                  
-                  if (e.touches.length > 0) {
-                    handleSliderStart(e.touches[0].clientX, sliderTrack)
-                  }
-                }
-                
-                return (
+                      }
+                      
+                      if (e.touches.length > 0) {
+                        handleSliderStart(e.touches[0].clientX, sliderTrack)
+                      }
+                    }
+                    
+                    return (
                       <div key={concept} className="flex items-center">
                         {firstOpposite && (
                           <>
@@ -3549,9 +3675,9 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           </div>
           </div>
         </div>
-            </div>
-          </div>
         </div>
+      </div>
+      </div>
       </div>
 
       {/* Create Account Message Modal */}

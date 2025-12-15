@@ -23,6 +23,8 @@ const CATEGORIES = ['all', 'website', 'packaging', 'brand', 'graphic', 'logo']
 interface GalleryAction {
   type: 'search' | 'filter' | 'sort' | 'add_concept' | 'clear' | 'change_category'
   query?: string // Search query
+  mainConcept?: string // Main concept/theme (from first query or identified theme)
+  additions?: string[] // Additional refinements (e.g., "3d models" when main is "techy")
   category?: string // Category filter
   concepts?: string[] // Concepts to add/remove
   sortBy?: 'relevance' | 'recent' | 'popular' // Sorting option
@@ -104,11 +106,20 @@ When the user makes a request, respond with ONLY a JSON object in this exact for
 {
   "type": "search" | "filter" | "sort" | "add_concept" | "clear" | "change_category",
   "query": "search query text (if type is search) - COMBINE with existing query if refining",
+  "mainConcept": "main theme/concept (e.g., 'techy', 'playful', 'medical') - identify the PRIMARY theme the user is after",
+  "additions": ["addition1", "addition2"] (if refining - e.g., ["3d models"] when main is "techy"),
   "category": "category name (if changing category)",
   "concepts": ["concept1", "concept2"] (if adding concepts/filters),
   "sortBy": "relevance" | "recent" | "popular" (if sorting),
   "message": "A brief, friendly response to the user explaining what you're doing"
 }
+
+IMPORTANT - MAIN CONCEPT IDENTIFICATION:
+- For first queries: Extract the main theme (e.g., "techy", "playful", "medical", "romantic")
+- For refinements: Keep the main concept from the previous query, identify new additions
+- Example: User says "techy" → mainConcept: "techy", additions: []
+- Example: User says "with 3d models" (when current is "techy") → mainConcept: "techy", additions: ["3d models"]
+- The mainConcept should be the PRIMARY theme/style the user is searching for
 
 Examples:
 User: "Show me playful designs"

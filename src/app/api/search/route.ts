@@ -6,6 +6,8 @@ import { isAbstractQuery, expandAbstractQuery, expandAndEmbedQuery, getExpansion
 import { logSearchImpressions, type SearchImpression } from '@/lib/interaction-logger'
 import { getCachedSearchResults, cacheSearchResults } from '@/lib/search-cache'
 import OpenAI from 'openai'
+import { promises as fs } from 'fs'
+import path from 'path'
 
 // Category-specific API keys for vibe extensions
 function getGroqClientForCategory(category: string): OpenAI {
@@ -580,33 +582,86 @@ Examples:
 
 You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
   } else if (category === 'website' || category === 'webb') {
-    // Website-specific prompt: [Palette] tones, [Material], [Exact user query]
-    prompt = `Generate exactly 1 semantic extension for "${vibe}" in web design.
+    // Website-specific prompt for vibe filters:
+    // COPY the same visual-grounding behaviour as search, but we will later
+    // combine the returned groundings into a single extension string.
+    prompt = `You are a visual-grounding engine for a CLIP-based web design search system.
 
-The extension must be a single comma-separated string with exactly these 3 elements in order:
-1. [Palette] tones - describe the color palette and tones (e.g., "vibrant neon color tones", "soft pastel palette", "monochrome grayscale tones", "warm earth tone palette", "light mode color scheme")
-2. [Material] - describe material or surface qualities (e.g., "matte paper texture", "glossy metallic finish", "smooth digital surface", "textured fabric appearance", "glass morphism effect")
-3. [Exact user query] - include the exact user query "${vibe}" as the final element
+Your task is to translate the user's vibe word "${vibe}" into concrete, visually recognizable visual elements that can be seen in website screenshots.
 
 CRITICAL RULES:
-- CLIP only sees STATIC images (screenshots) - NEVER mention animations, motion, interactions, or dynamic effects
-- Focus on visual characteristics visible in website screenshots
-- Each element should be a descriptive phrase (2-5 words)
-- The final element must be exactly "${vibe}" (the user's query)
+1. Focus on what is VISUALLY PRESENT in screenshots - colors, layouts, UI elements, visual patterns
+2. For color/visual characteristic queries (like "white", "light", "dark", "minimal"), emphasize how these characteristics appear VISUALLY
+3. For abstract queries, map to concrete visual elements that represent them
+4. Always describe what can be SEEN, not abstract concepts
 
-IMPORTANT RULES:
-- DO NOT use generic terms that apply to all websites
-- DO NOT mention animations, motion, interactions, or dynamic effects
-- DO use distinctive visual characteristics that differentiate "${vibe}" from opposite styles
-- Consider how colors, materials, and surfaces appear in website screenshots
+Rules:
 
-Examples:
-- For "playful": ["vibrant neon color tones, glossy metallic finish, playful"]
-- For "romantic": ["soft pastel palette, smooth digital surface, romantic"]
-- For "minimalist": ["monochrome grayscale tones, smooth digital surface, minimalist"]
-- For "medical": ["light mode color scheme, smooth digital surface, medical"]
+1. If the vibe describes a visual characteristic (color, style, mood), describe how it appears visually:
+   - Colors: "white background", "light colored interface", "dark mode design"
+   - Styles: "minimal layout", "clean white space", "bold typography"
+   - Visual patterns: "grid layout", "card-based design", "full-width sections"
 
-You must return ONLY a valid JSON array with exactly 1 string element. Do not include any explanation or other text.`
+2. If the vibe is abstract (concept, function), map it to visible UI elements:
+   - "direction" → "arrow icons", "breadcrumb navigation", "step indicators"
+   - "structure" → "grid layout", "sectioned blocks", "card layout"
+
+3. Use short noun phrases only (2–5 words each).
+
+4. Output 5–7 visual groundings that cover different aspects of how "${vibe}" appears visually.
+
+5. Do NOT include explanations, moods, branding language, or abstract concepts - ONLY what can be seen in screenshots.
+
+Output ONLY this JSON:
+
+{
+  "visual_groundings": []
+}
+
+Example for "white" (color characteristic):
+{
+  "visual_groundings": [
+    "white background",
+    "light colored interface",
+    "white and light color scheme",
+    "bright white backgrounds",
+    "light mode design",
+    "white page backgrounds"
+  ]
+}
+
+Example for "direction" (abstract concept):
+{
+  "visual_groundings": [
+    "arrow icons",
+    "scroll indicator arrows",
+    "breadcrumb navigation",
+    "step progress indicator",
+    "directional call to action"
+  ]
+}
+
+Example for "minimal" (style characteristic):
+{
+  "visual_groundings": [
+    "minimal layout",
+    "clean white space",
+    "simple interface design",
+    "sparse content layout",
+    "minimalist design elements"
+  ]
+}
+
+Example for "structure" (abstract concept):
+{
+  "visual_groundings": [
+    "grid layout",
+    "multi column layout",
+    "sectioned content blocks",
+    "card layout",
+    "aligned content rows"
+  ]
+}`
   } else {
     // Default prompt for other categories (packaging, brand, fonts, apps)
     prompt = `Generate exactly 1 semantic extension for "${vibe}" in ${categoryContext}.
@@ -673,7 +728,10 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
     
     // Handle both array and object formats
     let extensions: string[]
-    if (Array.isArray(parsed)) {
+    if (parsed.visual_groundings && Array.isArray(parsed.visual_groundings)) {
+      // Website / visual-grounding style response
+      extensions = parsed.visual_groundings
+    } else if (Array.isArray(parsed)) {
       extensions = parsed
     } else if (parsed.extensions && Array.isArray(parsed.extensions)) {
       extensions = parsed.extensions
@@ -681,18 +739,28 @@ You must return ONLY a valid JSON array with exactly 1 string element. Do not in
       throw new Error(`Expected array of extensions, got: ${typeof parsed}`)
     }
     
-    // Normalize: trim, filter empty, ensure strings, take first one only
+    // Normalize: trim, filter empty, ensure strings
     const normalized = extensions
       .map((item: any) => typeof item === 'string' ? item.trim() : String(item).trim())
       .filter((s: string) => s.length > 0)
-      .slice(0, 1) // Take only the first extension
     
-    const result = normalized.length > 0 ? normalized : []
+    // For website/webb, combine all visual groundings into a single comma-separated string
+    // (search will later embed `"vibe, <combined groundings>"`, mirroring the search-bar logic)
+    let result: string[]
+    if ((category === 'website' || category === 'webb') && normalized.length > 0) {
+      const combinedExtension = normalized.join(', ')
+      result = [combinedExtension]
+    } else {
+      // For other categories, keep existing behaviour: take only the first extension
+      result = normalized.slice(0, 1)
+    }
+    
+    if (result.length === 0) {
+      return []
+    }
     
     // Cache in memory only (database storage handled in main search route)
-    if (result.length > 0) {
-      globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, result)
-    }
+    globalForVibeExtensions.vibeExtensionsCache.set(cacheKey, result)
     
     return result
   } catch (error: any) {
@@ -813,8 +881,32 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category') || null // Get category filter: 'website', 'packaging', 'all', or null
     const source = searchParams.get('source') || 'vibefilter' // 'search' or 'vibefilter' - determines which extension system to use
     const fromAssistant = searchParams.get('fromAssistant') === 'true' // Whether query came from style assistant
+    const mainConcept = searchParams.get('mainConcept') || null // Main concept/theme (weighted more heavily)
+    const additionsParam = searchParams.get('additions') || '' // Additional refinements (weighted less)
+    // Keep additions as phrases - handle both comma-separated and space-separated formats
+    // Frontend sends comma-separated (e.g., "3d models"), but we want to preserve multi-word phrases
+    let additions: string[] = []
+    if (additionsParam) {
+      const trimmed = additionsParam.trim().toLowerCase()
+      if (trimmed.includes(',')) {
+        // Comma-separated: split by comma
+        additions = trimmed.split(',').map(a => a.trim()).filter(a => a.length > 0)
+      } else {
+        // Space-separated or single phrase: treat as one addition (for backward compatibility)
+        additions = [trimmed].filter(a => a.length > 0)
+      }
+    }
+    
+    // Check if weighted ranking should be used (before computing query vector)
+    const wordCount = q.trim().split(/\s+/).filter(w => w.length > 0).length
+    const shouldUseWeightedRankingForRetrieval = wordCount >= 2 && fromAssistant && (mainConcept || additions.length > 0)
+    console.log(`[search] 🔍 Retrieval check: wordCount=${wordCount}, fromAssistant=${fromAssistant}, mainConcept="${mainConcept}", additions=[${additions.join(', ')}], shouldUseMainConcept=${shouldUseWeightedRankingForRetrieval && !!mainConcept}`)
+    
+    // Store the retrieval embedding for main concept (will be set during query vector computation)
+    let retrievalMainConceptEmbedding: number[] | null = null
     const extensionSystem = source === 'search' ? '🔍 SEARCH (concrete)' : '🎨 VIBE FILTER (abstract)'
     console.log(`\n🔎 [search] API called: q="${q}", category="${category || 'null'}", source="${source}" (${extensionSystem}), fromAssistant=${fromAssistant}`)
+    console.log(`🔎 [search] Main concept: "${mainConcept || 'none'}", Additions: [${additions.join(', ')}]`)
     console.log(`🔎 [search] Full URL: ${request.url}`)
     console.log(`🔎 [search] Category parameter received: "${category}" (type: ${typeof category})`)
     const debug = searchParams.get('debug') === '1'
@@ -937,12 +1029,12 @@ export async function GET(request: NextRequest) {
                   // Database entry exists with both expansion and embedding - all good
                   console.log(`[vibe-cache] ✅ Database entry verified: "${dbCacheForExtension.expansion.substring(0, 100)}..."`)
                   perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'memory+db' })
-                  return { category: cat, extension: dbCacheForExtension.expansion, embedding: cachedEmbedding, needsEmbedding: false, needsGroq: false }
+                  return { category: cat, extension: dbCacheForExtension.expansion, embedding: cachedEmbedding, needsEmbedding: false, needsGroq: false, extensionText: dbCacheForExtension.expansion }
                 } else if (dbCacheForExtension?.expansion && !dbCacheForExtension.embedding) {
                   // Database has expansion but no embedding - need to embed it
                   console.warn(`[vibe-cache] ⚠️  Database has expansion but no embedding for ${embeddingCacheKey}`)
                   console.warn(`[vibe-cache]    Will regenerate embedding from: "${dbCacheForExtension.expansion.substring(0, 100)}..."`)
-                  return { category: cat, extension: dbCacheForExtension.expansion, embedding: null, needsEmbedding: true, needsGroq: false }
+                  return { category: cat, extension: dbCacheForExtension.expansion, embedding: null, needsEmbedding: true, needsGroq: false, extensionText: dbCacheForExtension.expansion }
                 } else {
                   // Database entry missing - in-memory cache is orphaned, need to regenerate
                   console.error(`[vibe-cache] ❌ CRITICAL: In-memory cache has embedding but NO database entry for ${embeddingCacheKey}`)
@@ -977,14 +1069,14 @@ export async function GET(request: NextRequest) {
                         console.log(`[vibe-cache] Extension: "${dbCache.expansion.substring(0, 150)}..."`)
                       }
                       perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { cached: 'database' })
-                      return { category: cat, extension: dbCache.expansion || null, embedding: dbEmbedding, needsEmbedding: false, needsGroq: false }
+                      return { category: cat, extension: dbCache.expansion || null, embedding: dbEmbedding, needsEmbedding: false, needsGroq: false, extensionText: dbCache.expansion || null }
                     }
                   }
                   // If we have expansion text but no embedding, we'll need to generate embedding
                   if (dbCache.expansion && !dbCache.embedding) {
                     console.log(`[vibe-cache] Found expansion text but no embedding for ${embeddingCacheKey}, will generate embedding`)
                     // Return the extension so it can be embedded
-                    return { category: cat, extension: dbCache.expansion, embedding: null, needsEmbedding: true, needsGroq: false }
+                    return { category: cat, extension: dbCache.expansion, embedding: null, needsEmbedding: true, needsGroq: false, extensionText: dbCache.expansion }
                   }
                 }
               } catch (dbError: any) {
@@ -1001,7 +1093,7 @@ export async function GET(request: NextRequest) {
                 // Take only the first extension (single string per category)
                 const extension = extensions[0]
                 perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { needsEmbedding: true })
-                return { category: cat, extension, embedding: null, needsEmbedding: true, needsGroq: false }
+                return { category: cat, extension, embedding: null, needsEmbedding: true, needsGroq: false, extensionText: extension }
               }
               perf.end(`api.search.GET.zeroShot.generateVibeExtensions.${cat}`, { noExtensions: true })
               return { category: cat, extension: null, embedding: null, needsEmbedding: false, needsGroq: false }
@@ -1114,9 +1206,13 @@ export async function GET(request: NextRequest) {
             const result = cacheResults.find(r => r.category === category)
             if (result) {
               result.embedding = normalizedEmbedding
+              // Ensure extension text is set
+              if (!result.extensionText && extension) {
+                result.extensionText = extension
+              }
             }
             
-            return { category, embedding: normalizedEmbedding }
+            return { category, embedding: normalizedEmbedding, extensionText: extension }
           })
           
           // Wait for all normalizations to complete (but database writes are fire-and-forget)
@@ -1440,34 +1536,217 @@ export async function GET(request: NextRequest) {
         console.log(`   isAbstract: ${isAbstract}, useExpansion: ${useExpansion}, isExpanded: ${isExpanded}`)
         expansionEmbeddings = await getExpansionEmbeddings(q, expansionCategory)
         console.log(`[search] Got ${expansionEmbeddings.length} expansion embedding vectors`)
-        // For backward compatibility, also compute averaged embedding (used in debug mode)
-        // IMPORTANT: Pass category so initial pgvector search uses category-specific expansions
-        queryVec = await expandAndEmbedQuery(q, expansionCategory)
-        console.log(`[search] ✅ Query vector computed (dim: ${queryVec.length}) - will be used for pgvector search\n`)
+        
+        // CRITICAL: For weighted ranking, use main concept for retrieval instead of combined query
+        // This ensures we retrieve images that match "techy" well, then boost with "3d models"
+        // IMPORTANT: Use the SAME embedding method that would be used for a direct "techy" search
+        // This means checking if "techy" would use vibe extensions, expansion, or direct embedding
+        let retrievalQuery = q
+        let useMainConceptForRetrieval = false
+        if (shouldUseWeightedRankingForRetrieval && mainConcept) {
+          retrievalQuery = mainConcept.trim().toLowerCase()
+          useMainConceptForRetrieval = true
+          console.log(`[search] 🎯 WEIGHTED RANKING: Using main concept "${retrievalQuery}" for initial retrieval (instead of combined query "${q}")`)
+          
+          // CRITICAL: Use the EXACT same embedding logic that would be used for a direct "techy" search
+          // This means replicating the same conditions: source, isAbstract, wordCount, etc.
+          const mainConceptWordCount = retrievalQuery.trim().split(/\s+/).filter(w => w.length > 0).length
+          const mainConceptIsAbstract = await isAbstractQuery(retrievalQuery)
+          const mainConceptUseExpansion = mainConceptWordCount < 3
+          
+          // Replicate the exact same logic as the main search path
+          // Check if main concept would use vibe extensions (same as hasVibeExtensions check)
+          const mainConceptHasVibeExtensions = source === 'vibefilter' && mainConceptIsAbstract && mainConceptUseExpansion
+          
+          // Determine category for main concept (same as regular search)
+          const mainConceptCategory = category && category !== 'all' ? category : 'website'
+          
+          console.log(`[search] 🎯 Main concept embedding check: wordCount=${mainConceptWordCount}, isAbstract=${mainConceptIsAbstract}, useExpansion=${mainConceptUseExpansion}, hasVibeExtensions=${mainConceptHasVibeExtensions}, source="${source}"`)
+          
+          if (mainConceptHasVibeExtensions && vibeExtensionsByCategory[mainConceptCategory]) {
+            // Use vibe extension embedding (same as direct search would)
+            const mainConceptExtension = vibeExtensionsByCategory[mainConceptCategory]?.[0] ||
+                                       vibeExtensionsByCategory['website']?.[0] ||
+                                       Object.values(vibeExtensionsByCategory)[0]?.[0]
+            if (mainConceptExtension) {
+              queryVec = mainConceptExtension
+              // Store this for later use in mainSim calculation
+              retrievalMainConceptEmbedding = mainConceptExtension
+              console.log(`[search] 🎯 Using vibe extension embedding for main concept (same as direct search)`)
+            } else {
+              // Fallback to direct embedding
+              const [vec] = await embedTextBatch([retrievalQuery])
+              queryVec = vec
+              // Store this for later use in mainSim calculation
+              retrievalMainConceptEmbedding = vec
+              console.log(`[search] 🎯 Using direct embedding for main concept (vibe extension not available)`)
+            }
+          } else if (mainConceptUseExpansion && mainConceptIsAbstract) {
+            // Use expansion (same as direct search would) - this is the path for source='search' with abstract query
+            // IMPORTANT: Use the same expansionCategory logic as the main search path
+            const mainConceptExpansionCategory = category && category !== 'all' ? category : null
+            queryVec = await expandAndEmbedQuery(retrievalQuery, mainConceptExpansionCategory)
+            // Store this for later use in mainSim calculation
+            retrievalMainConceptEmbedding = queryVec
+            console.log(`[search] 🎯 Using expansion embedding for main concept (same as direct search - source="${source}", isAbstract=${mainConceptIsAbstract}, expansionCategory="${mainConceptExpansionCategory || 'null'}")`)
+          } else {
+            // Use direct embedding (same as direct search would)
+            const [vec] = await embedTextBatch([retrievalQuery])
+            queryVec = vec
+            // Store this for later use in mainSim calculation
+            retrievalMainConceptEmbedding = vec
+            console.log(`[search] 🎯 Using direct embedding for main concept (same as direct search - concrete query)`)
+          }
+          console.log(`[search] ✅ Main concept vector computed (dim: ${queryVec.length}) - will be used for pgvector search\n`)
+        } else {
+          // For backward compatibility, also compute averaged embedding (used in debug mode)
+          // IMPORTANT: Pass category so initial pgvector search uses category-specific expansions
+          queryVec = await expandAndEmbedQuery(retrievalQuery, expansionCategory)
+          console.log(`[search] ✅ Query vector computed (dim: ${queryVec.length}) - will be used for pgvector search\n`)
+        }
       } else {
         // Direct embedding for concrete queries or queries with >2 words
-        perf.start('api.search.GET.zeroShot.embedQuery')
+        console.log(`\n✅ [search] Taking DIRECT EMBEDDING path (isExpanded=${isExpanded}, wordCount=${wordCount}, source="${source}")`)
+        // CRITICAL: For weighted ranking, use main concept for retrieval instead of combined query
+        // IMPORTANT: Use the SAME embedding method that would be used for a direct "techy" search
+        let retrievalQuery = q
+        console.log(`[search] 🔍 Checking weighted ranking retrieval: shouldUseWeightedRankingForRetrieval=${shouldUseWeightedRankingForRetrieval}, mainConcept="${mainConcept || 'null'}"`)
         try {
-          const [vec] = await perf.measure('api.search.GET.zeroShot.embedQuery.embedTextBatch', async () => {
-            return await embedTextBatch([q])
-          })
-          queryVec = vec
-          perf.end('api.search.GET.zeroShot.embedQuery')
-        } catch (error: any) {
-          perf.end('api.search.GET.zeroShot.embedQuery', { error: error.message })
-          console.error('[search] Failed to embed query:', error.message)
-          return NextResponse.json(
-            { 
-              error: 'Search temporarily unavailable',
-              message: 'Embedding service is not available in this environment. Please try again later.',
-              details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-              _performance: perf.getSummary(),
-            },
-            { status: 503 }
-          )
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 Checking weighted ranking retrieval: shouldUseWeightedRankingForRetrieval=${shouldUseWeightedRankingForRetrieval}, mainConcept="${mainConcept || 'null'}"\n`)
+        } catch (e) {}
+        
+        if (shouldUseWeightedRankingForRetrieval && mainConcept) {
+          retrievalQuery = mainConcept.trim().toLowerCase()
+          console.log(`[search] 🎯 WEIGHTED RANKING: Using main concept "${retrievalQuery}" for initial retrieval (instead of combined query "${q}")`)
+          try {
+            const logFile = path.join(process.cwd(), 'search-debug.log')
+            await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🎯 WEIGHTED RANKING: Using main concept "${retrievalQuery}" for initial retrieval\n`)
+          } catch (e) {}
+          
+          // CRITICAL: Use the EXACT same embedding logic that would be used for a direct "techy" search
+          // Replicate the exact same conditions as the main search path
+          const mainConceptWordCount = retrievalQuery.trim().split(/\s+/).filter(w => w.length > 0).length
+          const mainConceptUseExpansion = mainConceptWordCount < 3
+          let mainConceptIsAbstract = false
+          if (mainConceptUseExpansion) {
+            // Only check if abstract if query is 2 words or less (same as main search)
+            mainConceptIsAbstract = await isAbstractQuery(retrievalQuery)
+          }
+          const mainConceptIsExpanded = mainConceptUseExpansion && mainConceptIsAbstract
+          const mainConceptHasVibeExtensions = source === 'vibefilter' && mainConceptIsAbstract && mainConceptUseExpansion
+          const mainConceptCategory = category && category !== 'all' ? category : 'website'
+          
+          console.log(`[search] 🎯 Main concept embedding check: wordCount=${mainConceptWordCount}, isAbstract=${mainConceptIsAbstract}, useExpansion=${mainConceptUseExpansion}, isExpanded=${mainConceptIsExpanded}, hasVibeExtensions=${mainConceptHasVibeExtensions}, source="${source}"`)
+          try {
+            const logFile = path.join(process.cwd(), 'search-debug.log')
+            await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🎯 Main concept embedding check: wordCount=${mainConceptWordCount}, isAbstract=${mainConceptIsAbstract}, useExpansion=${mainConceptUseExpansion}, isExpanded=${mainConceptIsExpanded}, hasVibeExtensions=${mainConceptHasVibeExtensions}, source="${source}"\n`)
+          } catch (e) {}
+          
+          if (mainConceptHasVibeExtensions && vibeExtensionsByCategory[mainConceptCategory]) {
+            // Use vibe extension embedding
+            const mainConceptExtension = vibeExtensionsByCategory[mainConceptCategory]?.[0] ||
+                                       vibeExtensionsByCategory['website']?.[0] ||
+                                       Object.values(vibeExtensionsByCategory)[0]?.[0]
+            if (mainConceptExtension) {
+              queryVec = mainConceptExtension
+              // Store this for later use in mainSim calculation
+              retrievalMainConceptEmbedding = mainConceptExtension
+              console.log(`[search] 🎯 Using vibe extension embedding for main concept (same as direct search)`)
+              try {
+                const logFile = path.join(process.cwd(), 'search-debug.log')
+                await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🎯 Using vibe extension embedding for main concept\n`)
+              } catch (e) {}
+            } else {
+              // Fallback to expansion or direct embedding based on isExpanded
+              if (mainConceptIsExpanded) {
+                const mainConceptExpansionCategory = category && category !== 'all' ? category : null
+                queryVec = await expandAndEmbedQuery(retrievalQuery, mainConceptExpansionCategory)
+                retrievalMainConceptEmbedding = queryVec
+                console.log(`[search] 🎯 Using expansion embedding for main concept (fallback from vibe extension)`)
+              } else {
+                perf.start('api.search.GET.zeroShot.embedMainConcept')
+                const [vec] = await perf.measure('api.search.GET.zeroShot.embedMainConcept.embedTextBatch', async () => {
+                  return await embedTextBatch([retrievalQuery])
+                })
+                queryVec = vec
+                retrievalMainConceptEmbedding = vec
+                perf.end('api.search.GET.zeroShot.embedMainConcept')
+                console.log(`[search] 🎯 Using direct embedding for main concept (vibe extension not available)`)
+              }
+              try {
+                const logFile = path.join(process.cwd(), 'search-debug.log')
+                await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🎯 Using ${mainConceptIsExpanded ? 'expansion' : 'direct'} embedding for main concept (fallback)\n`)
+              } catch (e) {}
+            }
+          } else if (mainConceptIsExpanded) {
+            // Use expansion (same as direct search would) - this is the path for source='search' with abstract query
+            const mainConceptExpansionCategory = category && category !== 'all' ? category : null
+            queryVec = await expandAndEmbedQuery(retrievalQuery, mainConceptExpansionCategory)
+            // Store this for later use in mainSim calculation
+            retrievalMainConceptEmbedding = queryVec
+            console.log(`[search] 🎯 Using expansion embedding for main concept (same as direct search - source="${source}", isAbstract=${mainConceptIsAbstract})`)
+            try {
+              const logFile = path.join(process.cwd(), 'search-debug.log')
+              await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🎯 Using expansion embedding for main concept (source="${source}", isAbstract=${mainConceptIsAbstract})\n`)
+            } catch (e) {}
+          } else {
+            // Use direct embedding (same as direct search would)
+            perf.start('api.search.GET.zeroShot.embedMainConcept')
+            const [vec] = await perf.measure('api.search.GET.zeroShot.embedMainConcept.embedTextBatch', async () => {
+              return await embedTextBatch([retrievalQuery])
+            })
+            queryVec = vec
+            // Store this for later use in mainSim calculation
+            retrievalMainConceptEmbedding = vec
+            perf.end('api.search.GET.zeroShot.embedMainConcept')
+            console.log(`[search] 🎯 Using direct embedding for main concept (same as direct search - concrete query)`)
+            try {
+              const logFile = path.join(process.cwd(), 'search-debug.log')
+              await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🎯 Using direct embedding for main concept (concrete query)\n`)
+            } catch (e) {}
+          }
+          console.log(`[search] ✅ Main concept vector computed (dim: ${queryVec.length}) - will be used for pgvector search\n`)
+        } else {
+          // Regular direct embedding for combined query
+          perf.start('api.search.GET.zeroShot.embedQuery')
+          try {
+            const [vec] = await perf.measure('api.search.GET.zeroShot.embedQuery.embedTextBatch', async () => {
+              return await embedTextBatch([retrievalQuery])
+            })
+            queryVec = vec
+            perf.end('api.search.GET.zeroShot.embedQuery')
+          } catch (error: any) {
+            perf.end('api.search.GET.zeroShot.embedQuery', { error: error.message })
+            console.error('[search] Failed to embed query:', error.message)
+            return NextResponse.json(
+              { 
+                error: 'Search temporarily unavailable',
+                message: 'Embedding service is not available in this environment. Please try again later.',
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+                _performance: perf.getSummary(),
+              },
+              { status: 503 }
+            )
+          }
         }
       }
       const dim = queryVec.length
+      
+      // Log which query/embedding is being used for retrieval
+      if (shouldUseWeightedRankingForRetrieval && mainConcept) {
+        console.log(`[search] 🔍 RETRIEVAL: Using main concept "${mainConcept}" embedding for pgvector search (queryVec dim: ${dim})`)
+        try {
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 RETRIEVAL: Using main concept "${mainConcept}" embedding for pgvector search\n`)
+        } catch (e) {}
+      } else {
+        console.log(`[search] 🔍 RETRIEVAL: Using combined query "${q}" embedding for pgvector search (queryVec dim: ${dim})`)
+        try {
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 RETRIEVAL: Using combined query "${q}" embedding for pgvector search\n`)
+        } catch (e) {}
+      }
       
       // 2. Retrieve images with embeddings (filter by category if specified)
       // OPTIMIZATION: Only load embedding vectors and minimal image data
@@ -1483,6 +1762,15 @@ export async function GET(request: NextRequest) {
       
       // Convert query vector to pgvector format
       const queryVectorStr = '[' + queryVec!.join(',') + ']'
+      
+      // Log what we're using for retrieval (for debugging)
+      if (shouldUseWeightedRankingForRetrieval && mainConcept) {
+        console.log(`[search] 🔍 PGVECTOR RETRIEVAL: Using queryVec (dim: ${queryVec!.length}) for "${mainConcept}" - first 5 values: [${queryVec!.slice(0, 5).join(', ')}...]`)
+        try {
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 PGVECTOR RETRIEVAL: Using queryVec for "${mainConcept}" (dim: ${queryVec!.length})\n`)
+        } catch (e) {}
+      }
       
       // Use pgvector similarity search (cosine distance: 1 - cosine similarity)
       // IMPORTANT: When using vibe extensions, we need more candidates because scoring uses category-specific extensions
@@ -1772,7 +2060,17 @@ export async function GET(request: NextRequest) {
       }> = []
       
       // Pre-compute query vector length for optimization
+      // CRITICAL: Use the CURRENT queryVec (which might be the main concept embedding for weighted ranking)
       const queryVecArray = queryVec!
+      
+      // Log for debugging weighted ranking
+      if (shouldUseWeightedRankingForRetrieval && mainConcept) {
+        console.log(`[search] 🔍 baseScore calculation: Using queryVecArray (dim: ${queryVecArray.length}) for baseScore calculation - this should be the "${mainConcept}" embedding`)
+        try {
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 baseScore calculation: Using queryVecArray for "${mainConcept}" (dim: ${queryVecArray.length})\n`)
+        } catch (e) {}
+      }
       
       let dimensionMismatchCount = 0
       
@@ -1810,7 +2108,22 @@ export async function GET(request: NextRequest) {
           }
         } else if (emb.similarity !== undefined) {
           // If similarity is pre-computed (pgvector) and we're not using vibe extensions, use it
+          // CRITICAL: For weighted ranking, emb.similarity should be from the "techy" retrieval
           baseScore = emb.similarity
+          
+          // Debug: verify emb.similarity matches what we expect for weighted ranking
+          if (shouldUseWeightedRankingForRetrieval && mainConcept) {
+            const isActivetheory = emb.image.siteId === 'cmi2d3hoo000f8od8f540tj10'
+            if (isActivetheory) {
+              const calcSim = queryVecArray ? cosine(queryVecArray, (emb.vector as unknown as number[])) : 0
+              const retrievalSim = retrievalMainConceptEmbedding ? cosine(retrievalMainConceptEmbedding, (emb.vector as unknown as number[])) : 0
+              console.log(`[search] 🔍 ACTIVETHEORY baseScore: emb.similarity=${emb.similarity.toFixed(4)}, queryVecArray=${calcSim.toFixed(4)}, retrievalEmbedding=${retrievalSim.toFixed(4)}`)
+              try {
+                const logFile = path.join(process.cwd(), 'search-debug.log')
+                await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 ACTIVETHEORY baseScore: emb.similarity=${emb.similarity.toFixed(4)}, queryVecArray=${calcSim.toFixed(4)}, retrievalEmbedding=${retrievalSim.toFixed(4)}\n`)
+              } catch (e) {}
+            }
+          }
         } else {
           // Otherwise compute cosine similarity (fallback)
           const ivec = (emb.vector as unknown as number[]) || []
@@ -1835,6 +2148,18 @@ export async function GET(request: NextRequest) {
           }
         }
         
+        // Track activetheory.net for debugging
+        const isActivetheory = emb.image.siteId === 'cmi2d3hoo000f8od8f540tj10'
+        if (isActivetheory) {
+          const similaritySource = emb.similarity !== undefined ? 'pgvector' : 'calculated'
+          const queryUsed = shouldUseWeightedRankingForRetrieval && mainConcept ? `"${mainConcept}"` : `"${q}"`
+          console.log(`[search] 🔍 ACTIVETHEORY found in initial results: baseScore=${baseScore.toFixed(4)}, rank=${scoredImages.length + 1}, similaritySource=${similaritySource}, queryUsed=${queryUsed}`)
+          try {
+            const logFile = path.join(process.cwd(), 'search-debug.log')
+            await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 ACTIVETHEORY initial: baseScore=${baseScore.toFixed(4)}, rank=${scoredImages.length + 1}, query=${queryUsed}\n`)
+          } catch (e) {}
+        }
+        
         scoredImages.push({
           id: emb.image.id,
           siteId: emb.image.siteId,
@@ -1850,13 +2175,33 @@ export async function GET(request: NextRequest) {
       // This makes refinements more restrictive (e.g., "medical white" should only match images that are both medical AND white)
       let filteredScoredImages = scoredImages
       
-      // Apply strict AND logic ONLY for queries from style assistant (refinements)
+      // Apply weighted ranking ONLY for queries from style assistant (refinements)
       // Regular multi-word queries from search bar use standard filtering
-      console.log(`[search] AND logic check: wordCount=${wordCount}, fromAssistant=${fromAssistant}, query="${q}"`)
-      if (wordCount >= 2 && fromAssistant) {
-        console.log(`\n🔍 [search] ===== AND LOGIC TRIGGERED (from style assistant) =====`)
+      console.log(`[search] Weighted ranking check: wordCount=${wordCount}, fromAssistant=${fromAssistant}, mainConcept="${mainConcept}", additions=[${additions.join(', ')}], query="${q}"`)
+      const shouldUseWeightedRanking = wordCount >= 2 && fromAssistant && (mainConcept || additions.length > 0)
+      console.log(`[search] Should use weighted ranking: ${shouldUseWeightedRanking} (wordCount>=2: ${wordCount >= 2}, fromAssistant: ${fromAssistant}, hasMainConcept: ${!!mainConcept}, hasAdditions: ${additions.length > 0})`)
+      
+      // Write to log file for debugging
+      try {
+        const logFile = path.join(process.cwd(), 'search-debug.log')
+        const logMessage = `[${new Date().toISOString()}] Weighted ranking check: wordCount=${wordCount}, fromAssistant=${fromAssistant}, mainConcept="${mainConcept}", additions=[${additions.join(', ')}], query="${q}", shouldUse=${shouldUseWeightedRanking}\n`
+        await fs.appendFile(logFile, logMessage)
+      } catch (e) {
+        // Ignore file write errors
+      }
+      
+      if (shouldUseWeightedRanking) {
+        console.log(`\n🔍 [search] ===== WEIGHTED RANKING TRIGGERED (from style assistant) =====`)
         console.log(`[search] Multi-word query detected (${wordCount} words): "${q}"`)
-        console.log(`[search] Initial results before AND filtering: ${scoredImages.length}`)
+        console.log(`[search] Main concept: "${mainConcept || 'none'}", Additions: [${additions.join(', ')}]`)
+        console.log(`[search] Initial results before weighted ranking: ${scoredImages.length}`)
+        
+        try {
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] WEIGHTED RANKING TRIGGERED: query="${q}", mainConcept="${mainConcept}", additions=[${additions.join(', ')}], initialResults=${scoredImages.length}\n`)
+        } catch (e) {
+          // Ignore file write errors
+        }
         
         // Split query into individual terms (handle slashes and special characters)
         // For "medical bright/white", split by spaces first, then handle slashes
@@ -1881,10 +2226,81 @@ export async function GET(request: NextRequest) {
         })
         perf.end('api.search.GET.zeroShot.embedIndividualTerms', { termCount: queryTerms.length })
         
-        // For each image, compute similarity to EACH term
-        // Require minimum similarity to ALL terms (AND logic)
-        const minTermSimilarity = 0.20 // Minimum similarity to each individual term
-        const filtered: typeof scoredImages = []
+        // WEIGHTED RANKING APPROACH: Weight main concepts more heavily than additions
+        // Keep all results from the base query, but re-rank them with main concepts weighted 3x more
+        // This way, "techy" sites with "3d models" rank higher, but we still show all "techy" sites
+        
+        // Identify main concept and additions
+        let mainConceptTerm = mainConcept ? mainConcept.trim().toLowerCase() : null
+        let additionTerms = additions.length > 0 ? additions : []
+        
+        // If not provided, try to infer from query terms (first term is usually main concept)
+        if (!mainConceptTerm && queryTerms.length > 0) {
+          mainConceptTerm = queryTerms[0]
+          additionTerms = queryTerms.slice(1)
+        }
+        
+        console.log(`[search] Weighted ranking: mainConcept="${mainConceptTerm}", additions=[${additionTerms.join(', ')}]`)
+        
+        // Embed main concept and additions separately
+        // We need to embed them as complete phrases, not just individual terms
+        let mainConceptEmbedding: number[] | null = null
+        let additionEmbeddings: number[][] = []
+        
+        // CRITICAL: Use the SAME embedding that was used for retrieval
+        // This ensures mainSim matches the retrieval ranking
+        console.log(`[search] 🔍 Checking retrieval embedding: retrievalMainConceptEmbedding=${retrievalMainConceptEmbedding ? 'SET' : 'NULL'}, mainConceptTerm="${mainConceptTerm || 'null'}"`)
+        try {
+          const logFile = path.join(process.cwd(), 'search-debug.log')
+          await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 Checking retrieval embedding: retrievalMainConceptEmbedding=${retrievalMainConceptEmbedding ? 'SET' : 'NULL'}, mainConceptTerm="${mainConceptTerm || 'null'}"\n`)
+        } catch (e) {}
+        
+        if (retrievalMainConceptEmbedding) {
+          mainConceptEmbedding = retrievalMainConceptEmbedding
+          console.log(`[search] ✅ Using retrieval embedding for main concept (same as used for pgvector search, dim: ${retrievalMainConceptEmbedding.length})`)
+          try {
+            const logFile = path.join(process.cwd(), 'search-debug.log')
+            await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] ✅ Using retrieval embedding for main concept (dim: ${retrievalMainConceptEmbedding.length})\n`)
+          } catch (e) {}
+        } else if (mainConceptTerm) {
+          // Fallback: compute new embedding (shouldn't happen if retrieval logic worked correctly)
+          console.log(`[search] ⚠️ WARNING: Computing new embedding for main concept (retrieval embedding not available) - this means retrieval logic didn't run or failed`)
+          try {
+            const logFile = path.join(process.cwd(), 'search-debug.log')
+            await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] ⚠️ WARNING: Computing new embedding for main concept (retrieval embedding not available)\n`)
+          } catch (e) {}
+          const mainEmb = await embedTextBatch([mainConceptTerm])
+          if (mainEmb.length > 0) {
+            mainConceptEmbedding = mainEmb[0]
+          }
+        }
+        
+        // Embed additions as complete phrases (e.g., "3d models" as one phrase, not "3d" and "models" separately)
+        if (additions.length > 0) {
+          // Use provided additions (they're already complete phrases like "3d models")
+          const additionPhrases = additions
+          
+          const additionEmbs = await embedTextBatch(additionPhrases)
+          additionEmbeddings = additionEmbs
+          console.log(`[search] Embedded ${additionEmbeddings.length} addition phrase(s): [${additionPhrases.join(', ')}]`)
+        } else if (additionTerms.length > 0) {
+          // Fallback: if no additions provided but we have addition terms from query, join them
+          const additionPhrases = [additionTerms.join(' ')]
+          const additionEmbs = await embedTextBatch(additionPhrases)
+          additionEmbeddings = additionEmbs
+          console.log(`[search] Embedded ${additionEmbeddings.length} addition phrase(s) (from query terms): [${additionPhrases.join(', ')}]`)
+        }
+        
+        // RANKING-BASED APPROACH: Rank by each query separately, then combine ranks
+        // This preserves the relative ordering from each query (e.g., activetheory.net is #5 for "techy")
+        
+        // Step 1: Calculate similarities for all images
+        const imageSimilarities: Array<{
+          img: typeof scoredImages[0]
+          mainSim: number
+          addSim: number
+          ivec: number[]
+        }> = []
         
         for (const img of scoredImages) {
           // Get the image embedding vector
@@ -1892,217 +2308,160 @@ export async function GET(request: NextRequest) {
           if (ivec.length !== dim) {
             // Fallback: try to find from imageEmbeddings array
             const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
-            if (!emb || !emb.vector) continue
+            if (!emb || !emb.vector) {
+              continue
+            }
             ivec = (emb.vector as unknown as number[]) || []
-            if (ivec.length !== dim) continue
+            if (ivec.length !== dim) {
+              continue
+            }
           }
           
-          // Compute similarity to each individual term
-          const termSimilarities = termEmbeddings.map(termVec => cosine(termVec, ivec))
-          const minSimilarity = Math.min(...termSimilarities)
-          const avgSimilarity = termSimilarities.reduce((a, b) => a + b, 0) / termSimilarities.length
-          const maxSimilarity = Math.max(...termSimilarities)
+          // Measure similarity to main concept
+          // SIMPLE APPROACH: Use baseScore from pgvector retrieval - this IS the exact score from a direct search
+          // When we retrieve with "techy", emb.similarity is the pgvector similarity to "techy"
+          // This is stored in img.baseScore, so we should use that directly
+          let mainSimilarity = 0
+          if (shouldUseWeightedRankingForRetrieval) {
+            // Use baseScore - this is the pgvector similarity from the "techy" retrieval
+            // This is the EXACT same score that would be used in a direct "techy" search
+            mainSimilarity = img.baseScore || 0
+            
+            // Log for activetheory.net to debug
+            const isActivetheory = img.siteId === 'cmi2d3hoo000f8od8f540tj10' || (img.siteId && img.siteId.substring(0, 8) === 'cmi2d3ho')
+            if (isActivetheory) {
+              const calcSim = retrievalMainConceptEmbedding ? cosine(retrievalMainConceptEmbedding, ivec) : 0
+              console.log(`[search] 🔍 ACTIVETHEORY mainSim: baseScore=${mainSimilarity.toFixed(4)}, calculated=${calcSim.toFixed(4)}, using baseScore`)
+              try {
+                const logFile = path.join(process.cwd(), 'search-debug.log')
+                await fs.appendFile(logFile, `[${new Date().toISOString()}] [search] 🔍 ACTIVETHEORY mainSim: baseScore=${mainSimilarity.toFixed(4)}, calculated=${calcSim.toFixed(4)}\n`)
+              } catch (e) {}
+            }
+          } else if (mainConceptEmbedding) {
+            // Fallback: use mainConceptEmbedding if available
+            mainSimilarity = cosine(mainConceptEmbedding, ivec)
+          } else {
+            // Last resort: use baseScore
+            mainSimilarity = img.baseScore || 0
+          }
           
-          // AND logic: Image must match ALL terms well
-          // For refinements (multi-word queries), be much more strict to ensure fewer results
-          // Require:
-          // 1. Good similarity to the combined query (img.baseScore >= 0.28 for multi-word - stricter)
-          // 2. Minimum similarity to ANY term >= 0.28 (ensures it matches ALL terms well - stricter)
-          // 3. Average similarity to all terms >= 0.30 (ensures overall match quality - stricter)
-          // 4. No term should have very low similarity (< 0.20) - all terms must contribute meaningfully
-          const allTermsAboveThreshold = termSimilarities.every(sim => sim >= 0.20)
+          // Measure similarity to additions (average across all addition phrases)
+          let additionSimilarity = 0
+          if (additionEmbeddings.length > 0) {
+            const additionSimilarities = additionEmbeddings.map(addEmb => cosine(addEmb, ivec))
+            additionSimilarity = additionSimilarities.reduce((a, b) => a + b, 0) / additionSimilarities.length
+          }
           
-          // MUCH stricter thresholds for multi-word queries to ensure refinements return fewer results
-          // The key insight: for "medical white", we want images that are BOTH medical AND white
-          // So we require strong similarity to BOTH terms, not just the combined phrase
-          // For refinements (2-word queries from style assistant), be VERY strict
-          const minCombinedScore = 0.35  // Very high threshold for combined query
-          const minTermScore = 0.35      // Each term must match very well
-          const minAvgScore = 0.37       // Overall average must be very high
+          imageSimilarities.push({ img, mainSim: mainSimilarity, addSim: additionSimilarity, ivec })
+        }
+        
+        // Step 2: Rank by main concept similarity (lower rank = better, rank 1 is best)
+        const rankedByMain = [...imageSimilarities].sort((a, b) => b.mainSim - a.mainSim)
+        const mainRanks = new Map<typeof scoredImages[0], number>()
+        rankedByMain.forEach((item, index) => {
+          mainRanks.set(item.img, index + 1) // rank 1, 2, 3, ...
+        })
+        
+        // Step 3: Rank by addition similarity (if additions exist)
+        const addRanks = new Map<typeof scoredImages[0], number>()
+        if (additionEmbeddings.length > 0) {
+          const rankedByAdd = [...imageSimilarities].sort((a, b) => b.addSim - a.addSim)
+          rankedByAdd.forEach((item, index) => {
+            addRanks.set(item.img, index + 1) // rank 1, 2, 3, ...
+          })
+        }
+        
+        // Step 4: Combine ranks with weighting (90% main concept rank, 10% addition rank)
+        // Lower combined rank = better (rank 1 is best)
+        for (const { img, mainSim, addSim } of imageSimilarities) {
+          const mainRank = mainRanks.get(img) || scoredImages.length
+          const addRank = addRanks.get(img) || scoredImages.length
           
-          // Additional check: the difference between max and min similarity shouldn't be too large
-          // This ensures the image matches all terms relatively evenly (not just one term very well)
-          const similaritySpread = maxSimilarity - minSimilarity
-          const maxSpread = 0.10 // Tighter spread requirement - terms must match more evenly
+          // Combine ranks: 90% weight on main concept rank, 10% on addition rank
+          // Since lower rank is better, we want to minimize the weighted rank
+          const combinedRank = mainRank * 0.90 + addRank * 0.10
           
-          // Also require that no single term has very low similarity (all must contribute meaningfully)
-          const minIndividualTerm = 0.25 // Each term must be at least 0.25
+          // Convert combined rank back to a score (inverse: lower rank = higher score)
+          // Use a score that preserves the ranking order
+          // Score = 1 / (1 + combinedRank) so rank 1 gets score ~1.0, rank 100 gets score ~0.01
+          const weightedScore = 1 / (1 + combinedRank)
           
-          if (img.baseScore >= minCombinedScore && 
-              minSimilarity >= minTermScore && 
-              avgSimilarity >= minAvgScore && 
-              allTermsAboveThreshold &&
-              similaritySpread <= maxSpread &&
-              termSimilarities.every(sim => sim >= minIndividualTerm)) {
-            // Use the minimum score (most restrictive) between combined query and minimum term similarity
-            // This ensures the image matches BOTH the combined query AND all individual terms
-            const combinedScore = Math.min(img.baseScore, minSimilarity)
-            img.baseScore = combinedScore
-            img.score = combinedScore
-            filtered.push(img)
+          // Log for debugging (first 10 images + activetheory.net)
+          const imgIndex = scoredImages.indexOf(img)
+          const siteId = img.siteId ? img.siteId.substring(0, 8) : 'no-site'
+          const isActivetheory = img.siteId === 'cmi2d3hoo000f8od8f540tj10' || siteId === 'cmi2d3ho'
+          const shouldLog = imgIndex < 10 || isActivetheory
+          
+          if (shouldLog) {
+            const originalBase = img.baseScore || 0
+            const logMsg = `[search] Image ${imgIndex + 1} (${siteId}${isActivetheory ? ' [ACTIVETHEORY]' : ''}): mainSim=${mainSim.toFixed(4)} (rank ${mainRank}), addSim=${addSim.toFixed(4)} (rank ${addRank}), combinedRank=${combinedRank.toFixed(2)}, finalScore=${weightedScore.toFixed(4)}, originalBase=${originalBase.toFixed(4)}`
+            console.log(logMsg)
+            
+            // Also write to log file
+            try {
+              const logFile = path.join(process.cwd(), 'search-debug.log')
+              await fs.appendFile(logFile, `[${new Date().toISOString()}] ${logMsg}\n`)
+            } catch (e) {
+              // Ignore file write errors
+            }
+          }
+          
+          // Update the score - CRITICAL: Overwrite both score and baseScore
+          img.score = weightedScore
+          img.baseScore = weightedScore
+        }
+        
+        // Re-sort by the new weighted scores (highest first)
+        filteredScoredImages = [...scoredImages].sort((a, b) => {
+          const scoreA = a.score ?? a.baseScore ?? 0
+          const scoreB = b.score ?? b.baseScore ?? 0
+          if (Math.abs(scoreB - scoreA) > 0.000001) {
+            return scoreB - scoreA
+          }
+          // Secondary sort by ID for deterministic ordering
+          return (a.id || '').localeCompare(b.id || '')
+        })
+        
+        console.log(`[search] Weighted ranking applied: ${scoredImages.length} results re-ranked (main concept 75%, additions 25%)`)
+        if (filteredScoredImages.length > 0) {
+          // Find activetheory.net in the results
+          const activetheoryIndex = filteredScoredImages.findIndex(img => img.siteId === 'cmi2d3hoo000f8od8f540tj10')
+          if (activetheoryIndex >= 0) {
+            const activetheoryImg = filteredScoredImages[activetheoryIndex]
+            const activetheoryLog = `[search] 🔍 ACTIVETHEORY.NET found at rank ${activetheoryIndex + 1}: score=${(activetheoryImg.score ?? activetheoryImg.baseScore ?? 0).toFixed(4)}, baseScore=${(activetheoryImg.baseScore ?? 0).toFixed(4)}`
+            console.log(activetheoryLog)
+            try {
+              const logFile = path.join(process.cwd(), 'search-debug.log')
+              await fs.appendFile(logFile, `[${new Date().toISOString()}] ${activetheoryLog}\n`)
+            } catch (e) {}
+          } else {
+            const notFoundLog = `[search] ⚠️ ACTIVETHEORY.NET NOT FOUND in weighted ranking results (checked ${filteredScoredImages.length} results)`
+            console.log(notFoundLog)
+            try {
+              const logFile = path.join(process.cwd(), 'search-debug.log')
+              await fs.appendFile(logFile, `[${new Date().toISOString()}] ${notFoundLog}\n`)
+            } catch (e) {}
+          }
+          
+          const top10Scores = filteredScoredImages.slice(0, 10).map((img, idx) => {
+            const siteTitle = img.siteId ? 'site-' + img.siteId.substring(0, 8) : 'no-site'
+            const isActivetheory = img.siteId === 'cmi2d3hoo000f8od8f540tj10'
+            return `${idx + 1}. ${siteTitle}${isActivetheory ? ' [ACTIVETHEORY]' : ''}: ${(img.score ?? img.baseScore ?? 0).toFixed(4)}`
+          })
+          const top10Log = `[search] Top 10 weighted scores:\n   ${top10Scores.join('\n   ')}`
+          console.log(top10Log)
+          
+          // Also write to log file
+          try {
+            const logFile = path.join(process.cwd(), 'search-debug.log')
+            await fs.appendFile(logFile, `[${new Date().toISOString()}] ${top10Log}\n`)
+          } catch (e) {
+            // Ignore file write errors
           }
         }
         
-        filteredScoredImages = filtered
-        let filteredCount = scoredImages.length - filteredScoredImages.length
-        let filterPercentage = ((filteredCount / scoredImages.length) * 100).toFixed(1)
-        console.log(`[search] AND logic RESULT (first pass): ${scoredImages.length} → ${filteredScoredImages.length} results (filtered ${filteredCount}, ${filterPercentage}%)`)
-        
-        // If we filtered everything out, the thresholds are too strict - use a fallback with lower thresholds
-        if (filteredScoredImages.length === 0 && scoredImages.length > 0) {
-          console.warn(`[search] ⚠️  WARNING: AND logic filtered ALL results (${scoredImages.length} → 0). Using fallback with lower thresholds.`)
-          
-          // Fallback: use much lower thresholds to ensure we get some results
-          const fallbackFiltered: typeof scoredImages = []
-          const minCombinedScoreFallback = 0.20  // Lower threshold
-          const minTermScoreFallback = 0.20      // Lower threshold
-          const minAvgScoreFallback = 0.22      // Lower threshold
-          const maxSpreadFallback = 0.25         // More lenient spread
-          const minIndividualTermFallback = 0.15 // Lower individual term threshold
-          
-          for (const img of scoredImages) {
-            let ivec = (img.embedding?.vector as unknown as number[]) || []
-            if (ivec.length !== dim) {
-              const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
-              if (emb && emb.vector) {
-                ivec = (emb.vector as unknown as number[]) || []
-              }
-            }
-            if (ivec.length === dim) {
-              const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
-              const minSim = Math.min(...termSims)
-              const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
-              const maxSim = Math.max(...termSims)
-              const spread = maxSim - minSim
-              
-              if (img.baseScore >= minCombinedScoreFallback && 
-                  minSim >= minTermScoreFallback && 
-                  avgSim >= minAvgScoreFallback && 
-                  termSims.every(sim => sim >= minIndividualTermFallback) &&
-                  spread <= maxSpreadFallback) {
-                const combinedScore = Math.min(img.baseScore, minSim)
-                img.baseScore = combinedScore
-                img.score = combinedScore
-                fallbackFiltered.push(img)
-              }
-            }
-          }
-          
-          // If fallback still returns 0 results, use an even more lenient approach
-          // Just require that the image has decent similarity to at least one term
-          if (fallbackFiltered.length === 0) {
-            console.warn(`[search] ⚠️  WARNING: Fallback also filtered ALL results. Using ultra-lenient fallback.`)
-            for (const img of scoredImages) {
-              let ivec = (img.embedding?.vector as unknown as number[]) || []
-              if (ivec.length !== dim) {
-                const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
-                if (emb && emb.vector) {
-                  ivec = (emb.vector as unknown as number[]) || []
-                }
-              }
-              if (ivec.length === dim) {
-                const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
-                const maxSim = Math.max(...termSims)
-                const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
-                
-                // Ultra-lenient: require good similarity to combined query AND decent similarity to at least one term
-                if (img.baseScore >= 0.20 && maxSim >= 0.20 && avgSim >= 0.18) {
-                  // Use the average of combined query and best term similarity
-                  const combinedScore = (img.baseScore + maxSim) / 2
-                  img.baseScore = combinedScore
-                  img.score = combinedScore
-                  fallbackFiltered.push(img)
-                }
-              }
-            }
-          }
-          
-          filteredScoredImages = fallbackFiltered
-          filteredCount = scoredImages.length - filteredScoredImages.length
-          filterPercentage = ((filteredCount / scoredImages.length) * 100).toFixed(1)
-          console.log(`[search] AND logic RESULT (fallback): ${scoredImages.length} → ${filteredScoredImages.length} results (filtered ${filteredCount}, ${filterPercentage}%)`)
-          
-          // Final safety net: if we still have 0 results, return top 30% of original results
-          // This ensures we always return something, even if it's not perfectly filtered
-          if (filteredScoredImages.length === 0 && scoredImages.length > 0) {
-            console.warn(`[search] ⚠️  CRITICAL: All fallbacks filtered everything. Returning top 30% of original results as final safety net.`)
-            const safetyNetCount = Math.max(1, Math.floor(scoredImages.length * 0.3))
-            filteredScoredImages = scoredImages.slice(0, safetyNetCount)
-            console.log(`[search] AND logic RESULT (safety net): ${scoredImages.length} → ${filteredScoredImages.length} results`)
-          }
-        }
-        
-        // If we didn't filter enough (less than 30% filtered), apply a second, more aggressive pass
-        if (filteredScoredImages.length >= scoredImages.length * 0.7 && filteredScoredImages.length > 0) {
-          console.warn(`[search] ⚠️  WARNING: AND logic filtered less than 30% of results (${filterPercentage}% filtered).`)
-          console.warn(`[search] Applying second, more aggressive filter pass...`)
-          
-          // Second pass: even stricter thresholds
-          const stricterFiltered: typeof scoredImages = []
-          const minCombinedScore2 = 0.40  // Even higher
-          const minTermScore2 = 0.40      // Even higher
-          const minAvgScore2 = 0.42       // Even higher
-          const maxSpread2 = 0.08         // Tighter spread
-          const minIndividualTerm2 = 0.30 // Higher individual term threshold
-          
-          for (const img of scoredImages) {
-            let ivec = (img.embedding?.vector as unknown as number[]) || []
-            if (ivec.length !== dim) {
-              const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
-              if (emb && emb.vector) {
-                ivec = (emb.vector as unknown as number[]) || []
-              }
-            }
-            if (ivec.length === dim) {
-              const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
-              const minSim = Math.min(...termSims)
-              const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
-              const maxSim = Math.max(...termSims)
-              const spread = maxSim - minSim
-              
-              if (img.baseScore >= minCombinedScore2 && 
-                  minSim >= minTermScore2 && 
-                  avgSim >= minAvgScore2 && 
-                  termSims.every(sim => sim >= minIndividualTerm2) &&
-                  spread <= maxSpread2) {
-                const combinedScore = Math.min(img.baseScore, minSim)
-                img.baseScore = combinedScore
-                img.score = combinedScore
-                stricterFiltered.push(img)
-              }
-            }
-          }
-          
-          filteredScoredImages = stricterFiltered
-          filteredCount = scoredImages.length - filteredScoredImages.length
-          filterPercentage = ((filteredCount / scoredImages.length) * 100).toFixed(1)
-          console.log(`[search] AND logic RESULT (second pass): ${scoredImages.length} → ${filteredScoredImages.length} results (filtered ${filteredCount}, ${filterPercentage}%)`)
-          
-          // Show detailed stats for debugging
-          console.log(`[search] Detailed similarity stats for first 10 images:`)
-          for (let i = 0; i < Math.min(10, scoredImages.length); i++) {
-            const img = scoredImages[i]
-            let ivec = (img.embedding?.vector as unknown as number[]) || []
-            if (ivec.length !== dim) {
-              const emb = imageEmbeddings.find((e: any) => e.image?.id === img.id)
-              if (emb && emb.vector) {
-                ivec = (emb.vector as unknown as number[]) || []
-              }
-            }
-            if (ivec.length === dim) {
-              const termSims = termEmbeddings.map(termVec => cosine(termVec, ivec))
-              const minSim = Math.min(...termSims)
-              const avgSim = termSims.reduce((a, b) => a + b, 0) / termSims.length
-              const maxSim = Math.max(...termSims)
-              const spread = maxSim - minSim
-              const passed1 = img.baseScore >= 0.35 && minSim >= 0.35 && avgSim >= 0.37 && termSims.every(s => s >= 0.25) && spread <= 0.10
-              const passed2 = img.baseScore >= 0.40 && minSim >= 0.40 && avgSim >= 0.42 && termSims.every(s => s >= 0.30) && spread <= 0.08
-              console.log(`[search]   Image ${i+1}: baseScore=${img.baseScore.toFixed(3)}, termSims=[${termSims.map(s => s.toFixed(3)).join(', ')}], min=${minSim.toFixed(3)}, avg=${avgSim.toFixed(3)}, spread=${spread.toFixed(3)}, pass1=${passed1}, pass2=${passed2}`)
-            }
-          }
-        }
-        
-        console.log(`[search] ===== END AND LOGIC =====\n`)
+        // No filtering - we keep all results, just re-ranked with main concept weighted more heavily
+        console.log(`[search] ===== END WEIGHTED RANKING =====\n`)
       } else {
         // Single word query: use standard threshold
         const minSimilarityThreshold = 0.15
