@@ -1,20 +1,8 @@
 #!/usr/bin/env tsx
-/**
- * Add Website Items through Pipeline 2.0
- * 
- * Processes website screenshots from FireShot directory and uploads them
- * through Pipeline 2.0 (no new concept generation, only tags with existing concepts).
- */
-
 import 'dotenv/config'
-import fs from 'fs'
-import path from 'path'
-import { uploadImageToSupabaseStorage } from './upload_to_supabase_storage'
+import { prisma } from '../src/lib/prisma'
 
-const IMAGE_DIR = '/Users/victor/Downloads/FireShot'
-const API_URL = process.env.API_URL || 'http://localhost:3000/api/sites'
-
-// Website entries to process
+// All website entries from the upload script
 const WEBSITE_ENTRIES = [
   { url: 'https://www.flim.ai/', title: 'Flim' },
   { url: 'https://www.seventeenagency.com/', title: 'Seventeen Agency' },
@@ -68,7 +56,6 @@ const WEBSITE_ENTRIES = [
   { url: 'https://www.atrio.it/', title: 'àtrio - Agenzia di Comunicazione' },
   { url: 'https://mark-appleby.com/', title: 'Mark Appleby - Web Developer' },
   { url: 'https://rinnai.jp/microbubble/', title: 'Rinnai Micro Bubble Bath Unit' },
-  // New batch
   { url: 'https://freshman.tv/', title: 'Freshman' },
   { url: 'https://shopify.supply/', title: 'Shopify Supply' },
   { url: 'https://www.maxmilkin.com/', title: 'Max Milkin' },
@@ -132,7 +119,6 @@ const WEBSITE_ENTRIES = [
   { url: 'https://www.serienreif.com/', title: 'Serienreif' },
   { url: 'https://spenceltd.co.uk/', title: 'Spence Ltd' },
   { url: 'https://www.elevatehomescriptions.com/', title: 'Elevate Homescriptions' },
-  // Additional batch
   { url: 'https://www.arcprojects.build/', title: 'Arc Projects' },
   { url: 'https://kau.studio/', title: 'Kau Studio' },
   { url: 'https://loandbehold.studio/', title: 'Lo and Behold Studio' },
@@ -163,24 +149,19 @@ const WEBSITE_ENTRIES = [
   { url: 'https://neverhack.com/en', title: 'Neverhack' },
   { url: 'https://mallardandclaret.com/', title: 'Mallard and Claret' },
   { url: 'https://history.jailhouselawyers.org/', title: 'Jailhouse Lawyers – History' },
+  { url: 'https://www.mathical.com/', title: 'Mathical' },
+  { url: 'https://www.breachbunny.com/de', title: 'Breach Bunny' },
+  { url: 'https://www.cartier.com/en-us/loveconfigurator.html#love=%22%7B%5C%22state%5C%22%3A%7B%5C%22result%5C%22%3Anull%2C%5C%22currentStep%5C%22%3A%5C%22model%5C%22%2C%5C%22currentSelection%5C%22%3A%7B%5C%22model%5C%22%3A%5C%22classic%5C%22%7D%7D%2C%5C%22version%5C%22%3A0%7D%22', title: 'Cartier Love Configurator' },
+  { url: 'https://apartamentosguayadeque.com/es', title: 'Apartamentos Guayadeque' },
+  { url: 'https://www.jokula.com/', title: 'Jokula' },
+  { url: 'https://www.beteropenbaarbestuur.nl/', title: 'Beter Openbaar Bestuur' },
+  { url: 'https://okapa.com/', title: 'Okapa' },
+  { url: 'https://docshield.com/', title: 'DocShield' },
+  { url: 'https://www.anima-cc.com/', title: 'Anima CC' },
+  { url: 'https://www.voltpile.com/', title: 'Voltpile' },
+  { url: 'https://feather.computer/', title: 'Feather Computer' },
+  { url: 'https://firmus.co/', title: 'Firmus' },
 ]
-
-/**
- * Extract URL from filename
- * Pattern: "FireShot Capture XXX - Title - [URL].png"
- */
-function extractUrlFromFilename(filename: string): string | null {
-  const match = filename.match(/\[([^\]]+)\]/)
-  if (match) {
-    let url = match[1]
-    // Normalize URL (remove trailing slash, ensure https)
-    if (!url.startsWith('http')) {
-      url = 'https://' + url
-    }
-    return url.replace(/\/$/, '')
-  }
-  return null
-}
 
 /**
  * Normalize URL for matching
@@ -190,196 +171,66 @@ function normalizeUrl(url: string): string {
   if (!normalized.startsWith('http')) {
     normalized = 'https://' + normalized
   }
-  // Remove trailing slash
   normalized = normalized.replace(/\/$/, '')
-  // Remove www. prefix for matching
   normalized = normalized.replace(/^https?:\/\/(www\.)?/, 'https://')
   return normalized.toLowerCase()
 }
 
-/**
- * Find image file matching the URL
- */
-function findImageFile(entryUrl: string, imageFiles: string[]): string | null {
-  const normalizedEntryUrl = normalizeUrl(entryUrl)
-  
-  for (const imageFile of imageFiles) {
-    const extractedUrl = extractUrlFromFilename(imageFile)
-    if (extractedUrl) {
-      const normalizedExtractedUrl = normalizeUrl(extractedUrl)
-      if (normalizedExtractedUrl === normalizedEntryUrl) {
-        return path.join(IMAGE_DIR, imageFile)
-      }
-    }
-  }
-  
-  // Try domain-only matching as fallback
-  const entryDomain = new URL(entryUrl).hostname.replace(/^www\./, '')
-  for (const imageFile of imageFiles) {
-    const extractedUrl = extractUrlFromFilename(imageFile)
-    if (extractedUrl) {
-      try {
-        const extractedDomain = new URL(extractedUrl).hostname.replace(/^www\./, '')
-        if (extractedDomain === entryDomain) {
-          return path.join(IMAGE_DIR, imageFile)
-        }
-      } catch {
-        // Invalid URL, skip
-      }
-    }
-  }
-  
-  return null
-}
-
-
-/**
- * Process a single website entry
- */
-async function processEntry(entry: { title: string; url: string }, imagePath: string | null) {
-  try {
-    console.log(`\n[${entry.title}] Processing...`)
-    console.log(`  URL: ${entry.url}`)
-    
-    if (!imagePath) {
-      console.log(`  ⚠️  No matching image found, skipping`)
-      return { success: false, reason: 'no_image' }
-    }
-    
-    if (!fs.existsSync(imagePath)) {
-      console.log(`  ⚠️  Image file not found: ${imagePath}`)
-      return { success: false, reason: 'file_not_found' }
-    }
-    
-    // Upload image to Supabase storage first
-    console.log(`  📤 Uploading image to storage...`)
-    const imageUrl = await uploadImageToSupabaseStorage(imagePath)
-    
-    if (!imageUrl) {
-      console.log(`  ❌ Failed to upload image`)
-      return { success: false, reason: 'upload_failed' }
-    }
-    
-    console.log(`  ✅ Image uploaded: ${imageUrl}`)
-    
-    // Call API with JSON body (not form data)
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: entry.title,
-        url: entry.url,
-        imageUrl: imageUrl,
-        category: 'website',
-        skipConceptGeneration: true, // Pipeline 2.0: Skip concept generation
-      }),
-    })
-    
-    if (!response.ok) {
-      let errorText = ''
-      try {
-        const errorJson = await response.json()
-        errorText = JSON.stringify(errorJson, null, 2)
-      } catch {
-        errorText = await response.text()
-      }
-      console.log(`  ❌ API error: ${response.status}`)
-      console.log(`  Error details: ${errorText}`)
-      return { success: false, reason: 'api_error', status: response.status, error: errorText }
-    }
-    
-    const result = await response.json()
-    console.log(`  ✅ Success! Site ID: ${result.site?.id || 'unknown'}`)
-    if (result.error) {
-      console.log(`  ⚠️  Warning: ${result.error}`)
-    }
-    return { success: true, siteId: result.site?.id }
-  } catch (error: any) {
-    const errorMsg = error.message || String(error)
-    console.log(`  ❌ Error: ${errorMsg}`)
-    
-    // If it's a network error, provide more context
-    if (errorMsg.includes('fetch failed') || errorMsg.includes('ECONNREFUSED')) {
-      return { success: false, reason: 'network_error', error: 'Server may be overloaded or unreachable. Try again later.' }
-    }
-    
-    return { success: false, reason: 'exception', error: errorMsg }
-  }
-}
-
-/**
- * Main function
- */
 async function main() {
-  console.log('🚀 Starting website upload through Pipeline 2.0...\n')
-  console.log(`📁 Image directory: ${IMAGE_DIR}`)
-  console.log(`🌐 API URL: ${API_URL}`)
-  console.log(`📊 Total entries: ${WEBSITE_ENTRIES.length}\n`)
-  
-  // Get all image files
-  const imageFiles = fs.readdirSync(IMAGE_DIR).filter(file => 
-    file.endsWith('.png') && file.includes('FireShot')
-  )
-  
-  console.log(`📸 Found ${imageFiles.length} FireShot images\n`)
-  
-  const results = {
-    success: 0,
-    failed: 0,
-    noImage: 0,
-    errors: [] as Array<{ entry: string; reason: string; error?: string }>,
-  }
-  
-  // Filter entries to only those with matching images
-  const entriesWithImages = WEBSITE_ENTRIES.filter(entry => {
-    const imagePath = findImageFile(entry.url, imageFiles)
-    return imagePath !== null && fs.existsSync(imagePath)
-  })
-  
-  console.log(`📋 Found ${entriesWithImages.length} entries with matching images (out of ${WEBSITE_ENTRIES.length} total)\n`)
-  
-  // Process each entry
-  for (const entry of entriesWithImages) {
-    const imagePath = findImageFile(entry.url, imageFiles)
-    const result = await processEntry(entry, imagePath, 3)
+  console.log('🔍 Checking which websites were uploaded...\n')
+  console.log(`📊 Total entries to check: ${WEBSITE_ENTRIES.length}\n`)
+
+  const uploaded: string[] = []
+  const missing: Array<{ title: string; url: string }> = []
+
+  for (const entry of WEBSITE_ENTRIES) {
+    const normalizedUrl = normalizeUrl(entry.url)
     
-    if (result.success) {
-      results.success++
+    // Check if site exists with this URL and has website images
+    const site = await prisma.site.findFirst({
+      where: {
+        OR: [
+          { url: { equals: entry.url, mode: 'insensitive' } },
+          { url: { contains: normalizedUrl.replace('https://', '').replace('http://', ''), mode: 'insensitive' } },
+        ],
+      },
+      include: {
+        images: {
+          where: {
+            category: 'website',
+          },
+        },
+      },
+    })
+
+    if (site && site.images.length > 0) {
+      uploaded.push(entry.url)
+      console.log(`✅ ${entry.title}`)
     } else {
-      results.failed++
-      if (result.reason === 'no_image') {
-        results.noImage++
-      }
-      results.errors.push({
-        entry: entry.title,
-        reason: result.reason,
-        error: result.error,
-      })
+      missing.push(entry)
+      console.log(`❌ ${entry.title} - NOT FOUND`)
     }
-    
-    // Longer delay to avoid overwhelming the server
-    await new Promise(resolve => setTimeout(resolve, 2000))
   }
-  
-  // Summary
+
   console.log('\n' + '='.repeat(60))
   console.log('📊 SUMMARY')
   console.log('='.repeat(60))
-  console.log(`✅ Success: ${results.success}`)
-  console.log(`❌ Failed: ${results.failed}`)
-  console.log(`⚠️  No image found: ${results.noImage}`)
-  
-  if (results.errors.length > 0) {
-    console.log('\n❌ Errors:')
-    results.errors.forEach(err => {
-      console.log(`  - ${err.entry}: ${err.reason}${err.error ? ` (${err.error})` : ''}`)
+  console.log(`✅ Uploaded: ${uploaded.length}/${WEBSITE_ENTRIES.length}`)
+  console.log(`❌ Missing: ${missing.length}/${WEBSITE_ENTRIES.length}`)
+
+  if (missing.length > 0) {
+    console.log('\n❌ Missing entries:')
+    missing.forEach(entry => {
+      console.log(`  - ${entry.title}: ${entry.url}`)
     })
   }
-  
-  console.log('\n✅ Done!')
+
+  await prisma.$disconnect()
 }
 
-main().catch(console.error)
+main().catch(async (err) => {
+  console.error('❌ Error:', err)
+  await prisma.$disconnect()
+  process.exit(1)
+})
 

@@ -287,6 +287,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false) // Drawer collapsed state (80px vs 280px)
   const [isMobile, setIsMobile] = useState(false) // Track if we're on mobile
   const [drawerTab, setDrawerTab] = useState<'style-filter' | 'style-assistant'>('style-filter') // Drawer tab state
+  const [promptLimitState, setPromptLimitState] = useState<'none' | 'loggedIn' | 'loggedOut'>('none')
   const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]) // Chat messages
   const [chatInput, setChatInput] = useState('') // Chat input value
   const chatMessagesEndRef = useRef<HTMLDivElement>(null) // Ref for auto-scrolling to bottom
@@ -1602,6 +1603,64 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     if (!chatInput.trim()) {
       console.log('[handleSendMessage] Empty input, returning')
       return
+    }
+
+    // Prompt usage / quota logic
+    try {
+      const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+      const userId = session?.user?.id as string | undefined
+      const accountType = (session?.user as { accountType?: 'Pro' | 'Agency' | 'Enterprise' | 'VIP' } | undefined)?.accountType || 'Pro'
+
+      // Determine daily limit
+      let dailyLimit: number
+      if (!session) {
+        // Logged out
+        dailyLimit = 3
+      } else if (accountType === 'Pro') {
+        // Pro has unlimited
+        dailyLimit = Infinity
+      } else {
+        // All other logged-in account types
+        dailyLimit = 5
+      }
+
+      if (dailyLimit !== Infinity && typeof window !== 'undefined') {
+        const storageKey = userId ? `styleAssistantPrompts_${userId}` : 'styleAssistantPrompts_guest'
+        const raw = window.localStorage.getItem(storageKey)
+        let usedToday = 0
+        let storedDate = today
+
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw) as { date: string; count: number }
+            storedDate = parsed.date
+            if (parsed.date === today) {
+              usedToday = parsed.count || 0
+            }
+          } catch {
+            // Ignore parse errors and reset
+          }
+        }
+
+        if (usedToday >= dailyLimit) {
+          // Show appropriate modal and block request
+          if (session) {
+            setPromptLimitState('loggedIn')
+          } else {
+            setPromptLimitState('loggedOut')
+          }
+          return
+        }
+
+        // Increment and store immediately so rapid clicks are counted
+        const nextCount = usedToday + 1
+        window.localStorage.setItem(
+          storageKey,
+          JSON.stringify({ date: today, count: nextCount })
+        )
+      }
+    } catch (quotaError) {
+      console.warn('[handleSendMessage] Prompt quota check failed, allowing request:', quotaError)
     }
     
     const userMessage = chatInput.trim()
@@ -4033,6 +4092,69 @@ Message:
                 Create filter
               </button>
             </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Prompt limit modals */}
+      {promptLimitState === 'loggedIn' && (
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="relative mb-6">
+                <button
+                  onClick={() => setPromptLimitState('none')}
+                  className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="text-center mb-2">
+                <h2 className="text-xl font-semibold text-gray-900 mb-3">Prompt limit reached</h2>
+                <p className="text-gray-900 text-base leading-relaxed">
+                  You&apos;ve reached your daily Style assistant prompt quota. Talk to Victor to get more prompts.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {promptLimitState === 'loggedOut' && (
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="relative mb-6">
+                <button
+                  onClick={() => setPromptLimitState('none')}
+                  className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-3">Free prompts used</h2>
+                <p className="text-gray-900 text-base leading-relaxed mb-4">
+                  You&apos;ve reached the limit of free Style assistant prompts for today. Log in to get more prompts.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPromptLimitState('none')
+                    router.push('/login')
+                  }}
+                  className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors cursor-pointer"
+                >
+                  Login
+                </button>
+              </div>
             </div>
           </div>
         </div>
