@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import React, { Fragment, useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import SubmissionForm from './SubmissionForm'
@@ -2556,7 +2556,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               )
               
               return (
-                <div key={spectrum.id} className="relative space-y-2 bg-[#f5f3ed] rounded-lg p-4 pb-6">
+                <div key={spectrum.id} className="relative space-y-2 bg-[#f5f3ed] rounded-lg p-4">
                   {/* Spectrum input field with concept suggestions - only show if isInputVisible */}
                   {spectrum.isInputVisible && (
                     <div className="relative">
@@ -2612,42 +2612,53 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     <div className="space-y-1">
                       {/* Skeleton loader while slider is loading */}
                       {isSliderLoading ? (
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                           {/* Skeleton for labels - match the actual filter layout */}
                           {customConcepts.has(spectrum.concept) ? (
                             // Single-pole skeleton (centered label)
-                            <div className="flex items-center justify-center px-1 mb-6 pt-2">
+                            <div className="flex items-center justify-center px-1 mb-5 pt-2">
                               <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-                          </div>
+                            </div>
                           ) : (
                             // Two-pole skeleton (labels on opposite ends)
-                            <div className="flex items-center justify-between px-1 mb-6 pt-2">
+                            <div className="flex items-center justify-between px-1 mb-5 pt-2">
                               <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
                               <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
                             </div>
                           )}
                           {/* Skeleton for slider */}
                           <div className="flex items-center justify-center">
-                            <div className="w-full h-1 bg-gray-200 rounded-full relative">
-                              <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gray-300 rounded-full"></div>
+                            <div className="w-full h-1.5 bg-gray-300 rounded-full relative">
+                              {/* Active portion skeleton */}
+                              <div className="absolute left-0 top-0 h-full bg-gray-200 rounded-full" style={{ width: '50%' }}></div>
+                              {/* Knob skeleton - positioned with 8px inset */}
+                              <div className="absolute left-[calc(8px+50%*(100%-16px)/100%-10px)] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full border-2 border-[#f5f3ed]"></div>
                             </div>
+                          </div>
+                          {/* Skeleton for "A little" and "A lot" labels */}
+                          <div className="w-full flex items-center justify-between min-w-0 pt-1">
+                            <div className="h-3.5 bg-gray-200 rounded w-12 animate-pulse"></div>
+                            <div className="h-3.5 bg-gray-200 rounded w-10 animate-pulse"></div>
                           </div>
                         </div>
                       ) : (
                         <>
-                      {/* Check if this is a custom concept (single-pole slider) */}
-                      {customConcepts.has(spectrum.concept) ? (
-                        // Single-pole slider for custom queries
-                        <>
-                          {/* Label on top, centered */}
-                          <div className="flex items-center justify-center px-1 mb-6 pt-2">
-                            <span className="text-sm font-medium text-gray-700 truncate">{capitalizeFirst(spectrum.concept)}</span>
-                          </div>
-                          {/* Single-pole slider (only right half) */}
-                          <div className="flex items-center justify-center">
-                            <div 
-                              className="flex-shrink-0 w-full h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
-                              onMouseDown={(e) => {
+                          {/* Check if this is a custom concept (single-pole slider) */}
+                          {(() => {
+                            if (customConcepts.has(spectrum.concept)) {
+                              return (
+                                <>
+                                  {/* Single-pole slider for custom queries */}
+                                  {/* Label on top, centered */}
+                                  <div className="flex items-center justify-center px-1 mb-5 pt-2">
+                                    <span className="text-[16px] font-bold text-gray-700 truncate">{capitalizeFirst(spectrum.concept)}</span>
+                                  </div>
+                                  {/* Single-pole slider (only right half) */}
+                                  <div className="w-full space-y-2">
+                                    <div className="flex items-center justify-center">
+                                      <div
+                                        className="flex-shrink-0 w-full h-1.5 bg-gray-300 rounded-full relative cursor-pointer touch-none"
+                                        onMouseDown={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
                                 const sliderTrack = e.currentTarget
@@ -2829,34 +2840,53 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                 }
                               }}
                             >
+                              {/* Active portion of track - black from left edge to knob */}
                               <div 
-                                className="absolute flex items-center justify-center pointer-events-none"
+                                className="absolute left-0 top-0 h-full bg-gray-900 rounded-full z-0"
                                 style={{ 
-                                  left: `calc(${Math.max(0, Math.min(100, ((spectrum.sliderPosition - 0.5) / 0.5) * 100))}% - 12px)`, 
+                                  width: `calc(8px + ${Math.max(0, Math.min(100, ((spectrum.sliderPosition - 0.5) / 0.5) * 100))}% * (100% - 16px) / 100%)`
+                                }}
+                              ></div>
+                              <div 
+                                className="absolute flex items-center justify-center pointer-events-none z-20"
+                                style={{ 
+                                  left: `calc(8px + ${Math.max(0, Math.min(100, ((spectrum.sliderPosition - 0.5) / 0.5) * 100))}% * (100% - 16px) / 100% - 10px)`, 
                                   top: '50%',
-                                  marginTop: '-12px',
-                                  width: '24px',
-                                  height: '24px'
+                                  marginTop: '-10px',
+                                  width: '20px',
+                                  height: '20px'
                                 }}
                               >
-                                <div className="w-6 h-6 bg-gray-900 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
+                                <div 
+                                  className="w-5 h-5 border-2 border-[#f5f3ed] rounded-full pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"
+                                  style={{ backgroundColor: '#111827' }}
+                                ></div>
                               </div>
                             </div>
                           </div>
-                        </>
-                      ) : firstOpposite ? (
-                        // Two-pole slider for concepts with opposites
-                        <>
-                          {/* Labels on top, opposite ends */}
-                          <div className="flex items-center justify-between px-1 mb-6 pt-2">
-                            <span className="text-sm font-medium text-gray-700 truncate flex-1 text-left pr-2">{capitalizeFirst(firstOpposite)}</span>
-                            <span className="text-sm font-medium text-gray-700 truncate flex-1 text-right pl-2">{capitalizeFirst(spectrum.concept)}</span>
+                          {/* Low/High labels */}
+                          <div className="w-full flex items-center justify-between min-w-0 pt-1">
+                            <span className="text-[14px] text-gray-500 text-left flex-shrink-0">A little</span>
+                            <span className="text-[14px] text-gray-500 text-right flex-shrink-0">A lot</span>
                           </div>
-                          {/* Slider */}
-                          <div className="flex items-center justify-center">
-                        <div 
-                          className="flex-shrink-0 w-full h-1 bg-gray-300 rounded-full relative cursor-pointer touch-none"
-                          onMouseDown={(e) => {
+                          </div>
+                                </>
+                              )
+                            } else if (firstOpposite) {
+                              return (
+                                <>
+                                  {/* Two-pole slider for concepts with opposites */}
+                                  {/* Labels on top, opposite ends */}
+                            <div className="flex items-center justify-between px-1 mb-5 pt-2">
+                              <span className="text-[16px] font-bold text-gray-700 truncate flex-1 text-left pr-2">{firstOpposite ? capitalizeFirst(firstOpposite) : ''}</span>
+                              <span className="text-[16px] font-bold text-gray-700 truncate flex-1 text-right pl-2">{capitalizeFirst(spectrum.concept)}</span>
+                            </div>
+                            {/* Slider */}
+                            <div className="w-full space-y-2">
+                              <div className="flex items-center justify-center">
+                                <div 
+                                    className="flex-shrink-0 w-full h-1.5 bg-gray-300 rounded-full relative cursor-pointer touch-none"
+                                    onMouseDown={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
                             const sliderTrack = e.currentTarget
@@ -3034,22 +3064,41 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                             }
                           }}
                         >
+                          {/* Active portion of track - black from left edge to knob */}
                           <div 
-                            className="absolute flex items-center justify-center pointer-events-none"
+                            className="absolute left-0 top-0 h-full bg-gray-900 rounded-full z-0"
                             style={{ 
-                              left: `calc(${Math.max(0, Math.min(100, spectrum.sliderPosition * 100))}% - 12px)`, 
+                              width: `calc(8px + ${spectrum.sliderPosition * 100}% * (100% - 16px) / 100%)`
+                            }}
+                          ></div>
+                          <div 
+                            className="absolute flex items-center justify-center pointer-events-none z-20"
+                            style={{ 
+                              left: `calc(8px + ${Math.max(0, Math.min(100, spectrum.sliderPosition * 100))}% * (100% - 16px) / 100% - 10px)`, 
                               top: '50%',
-                              marginTop: '-12px',
-                              width: '24px',
-                              height: '24px'
+                              marginTop: '-10px',
+                              width: '20px',
+                              height: '20px'
                             }}
                           >
-                            <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-sm pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"></div>
+                            <div 
+                              className="w-5 h-5 border-2 border-[#f5f3ed] rounded-full pointer-events-auto cursor-grab active:cursor-grabbing flex-shrink-0"
+                              style={{ backgroundColor: '#ffffff' }}
+                            ></div>
                           </div>
                         </div>
                       </div>
-                        </>
-                      ) : null}
+                      {/* Low/High labels */}
+                      <div className="w-full flex items-center justify-between min-w-0 pt-1">
+                        <span className="text-[14px] text-gray-500 text-left flex-shrink-0">A little</span>
+                        <span className="text-[14px] text-gray-500 text-right flex-shrink-0">A lot</span>
+                      </div>
+                      </div>
+                          </>
+                              )
+                            }
+                            return null
+                          })()}
                         </>
                       )}
                     </div>
