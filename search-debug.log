@@ -3667,3 +3667,63 @@
 [2025-12-21T10:51:57.496Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
 [2025-12-21T10:51:58.678Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
 [2025-12-21T10:51:58.790Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:01:01.914Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:01:02.633Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:01:04.532Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:01:05.012Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:01:14.222Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:01:14.735Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:01:15.420Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:01:15.804Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:01:19.813Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:01:20.323Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:01:21.043Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:01:21.426Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:03:46.755Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:03:47.288Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:03:48.105Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:03:48.479Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:03:49.946Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:03:50.122Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:03:50.936Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:03:51.027Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:04:18.808Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:04:19.068Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:04:19.900Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:04:20.003Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:05:00.012Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:05:00.340Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:05:02.727Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:05:02.989Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:06:54.967Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:06:55.243Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:06:56.448Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:06:56.599Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:07:19.752Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:07:19.990Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:07:20.820Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:07:20.907Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:09:41.335Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:09:41.576Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:09:42.398Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:09:42.477Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:10:56.862Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:10:57.098Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:10:57.898Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:10:57.985Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:11:23.904Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:11:24.773Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:11:26.736Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:11:27.208Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:12:14.760Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:12:15.266Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:12:16.061Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:12:16.422Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:12:42.881Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:12:44.279Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:12:48.081Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:12:48.645Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:16:31.527Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:16:31.788Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false
+[2025-12-21T11:16:33.257Z] [search] 🔍 RETRIEVAL: Using combined query "tech" embedding for pgvector search
+[2025-12-21T11:16:33.431Z] Weighted ranking check: wordCount=1, fromAssistant=false, mainConcept="null", additions=[], query="tech", shouldUse=false

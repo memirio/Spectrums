@@ -2499,12 +2499,18 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         <div className="sticky top-0 z-50 bg-[#EEEDEA] px-6 py-3 flex items-center justify-end">
           <button
             onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
-            className="p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
+            className="relative p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
             aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19 2C20.6569 2 22 3.34315 22 5V19C22 20.6569 20.6569 22 19 22H5C3.34315 22 2 20.6569 2 19V5C2 3.34315 3.34315 2 5 2H19ZM10 20H19C19.5523 20 20 19.5523 20 19V10H10V20ZM4 19C4 19.5523 4.44772 20 5 20H8V10H4V19ZM5 4C4.44772 4 4 4.44772 4 5V8H20V5C20 4.44772 19.5523 4 19 4H5Z" fill="currentColor"/>
             </svg>
+            {/* Notification counter - only show when drawer is collapsed and filters are active */}
+            {isDrawerCollapsed && spectrums.length > 0 && (
+              <span className="absolute -top-1 bg-gray-900 text-white text-xs font-black rounded-full w-5 h-5 flex items-center justify-center" style={{ right: '-8px' }}>
+                {spectrums.length}
+              </span>
+            )}
           </button>
         </div>
         
@@ -2540,8 +2546,33 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             /* Spectrum list */
             <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-0">
               {spectrums.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-center text-sm text-gray-600 px-4">
-                  <span>No active style filters</span>
+                <div className="h-full flex flex-col items-center justify-center text-center px-4 space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-gray-900">No active style filters</h3>
+                    <p className="text-sm text-gray-600">Add a style filter to find the vibe you are looking for.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (isPublicPage && !isLoggedIn) {
+                        // Check if already have 2 active filters
+                        if (spectrums.length >= 2) {
+                          setShowLoginModal(true)
+                          return
+                        }
+                        // Check if already created 3 filters today
+                        const dailyCount = getDailyFilterCount()
+                        if (dailyCount >= 3) {
+                          setShowLoginModal(true)
+                          return
+                        }
+                      }
+                      setShowAddConceptModal(true)
+                      setAddConceptInputValue('')
+                    }}
+                    className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium cursor-pointer"
+                  >
+                    + Add filter
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-10 pb-4">
@@ -2612,7 +2643,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                     <div className="space-y-1">
                       {/* Skeleton loader while slider is loading */}
                       {isSliderLoading ? (
-                        <div className="space-y-2 w-full">
+                        <>
                           {/* Skeleton for labels - match the actual filter layout */}
                           {customConcepts.has(spectrum.concept) ? (
                             // Single-pole skeleton (centered label)
@@ -2627,20 +2658,22 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                             </div>
                           )}
                           {/* Skeleton for slider */}
-                          <div className="flex items-center justify-center">
-                            <div className="w-full h-1.5 bg-gray-300 rounded-full relative">
-                              {/* Active portion skeleton */}
-                              <div className="absolute left-0 top-0 h-full bg-gray-200 rounded-full" style={{ width: '50%' }}></div>
-                              {/* Knob skeleton - positioned with 8px inset */}
-                              <div className="absolute left-[calc(8px+50%*(100%-16px)/100%-10px)] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full border-2 border-[#f5f3ed]"></div>
+                          <div className="w-full space-y-2">
+                            <div className="flex items-center justify-center">
+                              <div className="w-full h-1.5 bg-gray-300 rounded-full relative">
+                                {/* Active portion skeleton */}
+                                <div className="absolute left-0 top-0 h-full bg-gray-200 rounded-full" style={{ width: '50%' }}></div>
+                                {/* Knob skeleton - positioned with 8px inset */}
+                                <div className="absolute left-[calc(8px+50%*(100%-16px)/100%-10px)] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full border-2 border-[#f5f3ed]"></div>
+                              </div>
+                            </div>
+                            {/* Skeleton for "A little" and "A lot" labels */}
+                            <div className="w-full flex items-center justify-between min-w-0 pt-1">
+                              <div className="h-3.5 bg-gray-200 rounded w-12 animate-pulse"></div>
+                              <div className="h-3.5 bg-gray-200 rounded w-10 animate-pulse"></div>
                             </div>
                           </div>
-                          {/* Skeleton for "A little" and "A lot" labels */}
-                          <div className="w-full flex items-center justify-between min-w-0 pt-1">
-                            <div className="h-3.5 bg-gray-200 rounded w-12 animate-pulse"></div>
-                            <div className="h-3.5 bg-gray-200 rounded w-10 animate-pulse"></div>
-                          </div>
-                        </div>
+                        </>
                       ) : (
                         <>
                           {/* Check if this is a custom concept (single-pole slider) */}
@@ -3206,9 +3239,9 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         </div>
         
         {/* Add vibes button - sticky at bottom of drawer (only show for style-filter tab) */}
-        {drawerTab === 'style-filter' && (
+        {drawerTab === 'style-filter' && spectrums.length > 0 && (
           <div className={`sticky bottom-0 bg-[#EEEDEA] p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-                <button
+            <button
               onClick={() => {
                 if (isPublicPage && !isLoggedIn) {
                   // Check if already have 2 active filters
@@ -3228,10 +3261,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               }}
               className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium cursor-pointer"
             >
-              + Add filter
-                </button>
+              {spectrums.length > 0 ? '+ Add another filter' : '+ Add filter'}
+            </button>
           </div>
-              )}
+        )}
             </div>
         )}
 
