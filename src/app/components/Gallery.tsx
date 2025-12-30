@@ -284,7 +284,6 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [resultsVersion, setResultsVersion] = useState(0) // Version counter to trigger reordering when results change
   const [sliderVersion, setSliderVersion] = useState(0) // Version counter to trigger reordering when slider moves
   const [isDrawerOpen, setIsDrawerOpen] = useState(true) // Drawer open/closed state
-  const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false) // Drawer collapsed state (80px vs 280px)
   const [isMobile, setIsMobile] = useState(false) // Track if we're on mobile
   const [drawerTab, setDrawerTab] = useState<'style-filter' | 'style-assistant'>('style-filter') // Drawer tab state
   const [promptLimitState, setPromptLimitState] = useState<'none' | 'loggedIn' | 'loggedOut'>('none')
@@ -297,14 +296,11 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
   const [showAddToCollectionModal, setShowAddToCollectionModal] = useState(false) // Show add to collection modal
   const [selectedImageForCollection, setSelectedImageForCollection] = useState<{ id: string; url: string; title?: string } | null>(null) // Image to add to collection
 
-  // Detect mobile and set initial collapsed state
+  // Detect mobile
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768 // md breakpoint
       setIsMobile(mobile)
-      if (mobile) {
-        setIsDrawerCollapsed(true) // Collapsed by default on mobile
-      }
     }
     
     checkMobile()
@@ -1582,12 +1578,14 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
       controller.abort()
       clearTimeout(timer)
     }
-  }, [selectedConcepts, category, isCollectionsPage, fetchSites])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConcepts, category, isCollectionsPage])
 
   // Initial fetch on mount
   useEffect(() => {
     fetchSites()
-  }, [fetchSites])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Main search input handler (simple text search)
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1926,7 +1924,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     }
   }
 
-  // Clear search query and reset search results
+  // Clear search query and reset search results (but keep filters)
   const clearSearchQuery = () => {
     // Clear search query state and refs
     setSearchQuery('')
@@ -1934,14 +1932,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     latestQueryRef.current = '' // Update ref immediately
     setIsQueryFromAssistant(false)
     
-    // Clear global search context (this also clears selectedConcepts in the context)
-    globalSearch.clearSearch()
+    // Only clear the search query in global context, not the selectedConcepts (filters)
+    globalSearch.setSearchQuery('')
     
-    // Clear local selected concepts and related state
-    setSelectedConcepts([])
-    setCustomConcepts(new Set())
-    setSliderPositions(new Map())
-    setSpectrums([])
+    // Don't clear filters - keep selectedConcepts, spectrums, customConcepts, sliderPositions
     
     // Reset search results - clear sites and fetch default sites
     setAllSites([])
@@ -1950,7 +1944,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     setDisplayedCount(50)
     setHasMoreResults(false)
     
-    // Fetch default sites (no search query)
+    // Fetch default sites (no search query, but filters may still be active)
     fetchSites()
   }
 
@@ -2459,63 +2453,16 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     <div className="h-screen bg-[#fbf9f4] flex overflow-hidden relative">
       {/* Content area - Drawer and main content side by side */}
       <div className="flex-1 flex overflow-hidden relative">
-      {/* Mobile: Floating chevron button when collapsed */}
-        {!isCollectionsPage && isMobile && isDrawerCollapsed && (
-        <button
-          onClick={() => setIsDrawerCollapsed(false)}
-            className="fixed top-20 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] transition-colors md:hidden cursor-pointer"
-          aria-label="Expand drawer"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      )}
 
-      {/* Mobile backdrop when drawer is open */}
-        {!isCollectionsPage && isMobile && !isDrawerCollapsed && (
-        <div 
-          className="fixed inset-0 z-[55] md:hidden"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
-          onClick={() => setIsDrawerCollapsed(true)}
-        />
-      )}
-
-        {/* Left Drawer - Dynamic, max width 280px - Below menu */}
+        {/* Left Drawer - Fixed width 280px */}
         {!isCollectionsPage && (
         <div className={`bg-[#EEEDEA] transition-all duration-300 ease-in-out ${
         isMobile 
-            ? (isDrawerCollapsed ? 'hidden' : 'fixed left-0 top-[73px] z-[60] w-[280px] h-[calc(100vh-73px)] shadow-lg') 
-          : (isDrawerOpen ? (isDrawerCollapsed ? 'w-20' : 'w-[280px]') : 'w-0')
+            ? (isDrawerOpen ? 'fixed left-0 top-[73px] z-[60] w-[280px] h-[calc(100vh-73px)] shadow-lg' : 'hidden')
+          : (isDrawerOpen ? 'w-[280px]' : 'w-0')
       } overflow-hidden flex flex-col h-full`}>
-        {/* Collapse button at top of drawer - sticky */}
-        <div className="sticky top-0 z-50 bg-[#EEEDEA] px-6 py-3 flex items-center justify-end">
-          <button
-            onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
-            className="relative p-1 text-gray-600 hover:text-gray-900 hover:bg-[#f5f3ed] rounded transition-colors cursor-pointer"
-            aria-label={isDrawerCollapsed ? 'Expand drawer' : 'Collapse drawer'}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 2C20.6569 2 22 3.34315 22 5V19C22 20.6569 20.6569 22 19 22H5C3.34315 22 2 20.6569 2 19V5C2 3.34315 3.34315 2 5 2H19ZM10 20H19C19.5523 20 20 19.5523 20 19V10H10V20ZM4 19C4 19.5523 4.44772 20 5 20H8V10H4V19ZM5 4C4.44772 4 4 4.44772 4 5V8H20V5C20 4.44772 19.5523 4 19 4H5Z" fill="currentColor"/>
-            </svg>
-            {/* Notification counter - only show when drawer is collapsed and filters are active */}
-            {isDrawerCollapsed && spectrums.length > 0 && (
-              <span className="absolute -top-1 bg-gray-900 text-white text-xs font-black rounded-full w-5 h-5 flex items-center justify-center" style={{ right: '-8px' }}>
-                {spectrums.length}
-              </span>
-            )}
-          </button>
-        </div>
-        
-        {/* Tabs - below minimize section */}
-        <div className={`sticky top-[60px] z-40 bg-[#EEEDEA] px-6 py-2 ${isDrawerCollapsed ? 'hidden' : ''}`}>
+        {/* Tabs */}
+        <div className="sticky top-0 z-40 bg-[#EEEDEA] pl-6 py-2">
           <div className="bg-[#e1dfd8] rounded-md p-0.5 flex items-center gap-0.5">
           <button
               onClick={() => setDrawerTab('style-filter')}
@@ -2541,10 +2488,10 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         </div>
         
         {/* Drawer content - scrollable */}
-        <div className={`flex-1 overflow-hidden flex flex-col ${isDrawerCollapsed ? 'hidden' : ''}`}>
+        <div className="flex-1 overflow-hidden flex flex-col">
           {drawerTab === 'style-filter' ? (
             /* Spectrum list */
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-0">
+            <div className="flex-1 overflow-y-auto pl-4 md:pl-6 pt-4 pb-12">
               {spectrums.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center px-4 space-y-4">
                   <div className="space-y-2">
@@ -2575,7 +2522,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                   </button>
                 </div>
               ) : (
-                <div className="space-y-10 pb-4">
+                <div className="space-y-6 pb-4">
             {spectrums.map((spectrum) => {
               const conceptInfo = conceptData.get(spectrum.concept.toLowerCase())
               const opposites = conceptInfo?.opposites || []
@@ -2587,7 +2534,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               )
               
               return (
-                <div key={spectrum.id} className="relative space-y-2 bg-[#f5f3ed] rounded-lg p-4">
+                <div key={spectrum.id} className="relative space-y-2 bg-[#FBF9F4] rounded-2xl p-4">
                   {/* Spectrum input field with concept suggestions - only show if isInputVisible */}
                   {spectrum.isInputVisible && (
                     <div className="relative">
@@ -2664,7 +2611,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                                 {/* Active portion skeleton */}
                                 <div className="absolute left-0 top-0 h-full bg-gray-200 rounded-full" style={{ width: '50%' }}></div>
                                 {/* Knob skeleton - positioned with 8px inset */}
-                                <div className="absolute left-[calc(8px+50%*(100%-16px)/100%-10px)] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full border-2 border-[#f5f3ed]"></div>
+                                <div className="absolute left-[calc(8px+50%*(100%-16px)/100%-10px)] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full border-2 border-[#FBF9F4]"></div>
                               </div>
                             </div>
                             {/* Skeleton for "A little" and "A lot" labels */}
@@ -3152,6 +3099,32 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
                 </div>
               )
             })}
+            
+            {/* Add another filter button - inside scrollable content */}
+            <div className="pt-4">
+              <button
+                onClick={() => {
+                  if (isPublicPage && !isLoggedIn) {
+                    // Check if already have 2 active filters
+                    if (spectrums.length >= 2) {
+                      setShowLoginModal(true)
+                      return
+                    }
+                    // Check if already created 3 filters today
+                    const dailyCount = getDailyFilterCount()
+                    if (dailyCount >= 3) {
+                      setShowLoginModal(true)
+                      return
+                    }
+                  }
+                  setShowAddConceptModal(true)
+                  setAddConceptInputValue('')
+                }}
+                className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium cursor-pointer"
+              >
+                + Add another filter
+              </button>
+            </div>
           </div>
               )}
         </div>
@@ -3159,7 +3132,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             /* Style assistant content - Chat interface */
             <div className="flex flex-col flex-1 min-h-0">
               {/* Chat messages area - scrollable */}
-              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 min-h-0">
+              <div className="flex-1 overflow-y-auto pl-4 md:pl-6 pt-0 pb-12 space-y-4 min-h-0">
                 {chatMessages.length === 0 ? (
                   <div className="h-full flex items-center justify-center text-center text-sm text-gray-600 px-4">
                     <span>Start a conversation with the style assistant...</span>
@@ -3186,7 +3159,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           </div>
           
               {/* Chat input - fixed at bottom */}
-              <div className="flex-shrink-0 p-4 md:p-6 pt-3">
+              <div className="flex-shrink-0 pl-4 md:pl-6 pt-0 pb-12">
                 <div className="border border-gray-300 rounded-md p-2">
                   <textarea
                     value={chatInput}
@@ -3237,43 +3210,13 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             </div>
           )}
         </div>
-        
-        {/* Add vibes button - sticky at bottom of drawer (only show for style-filter tab) */}
-        {drawerTab === 'style-filter' && spectrums.length > 0 && (
-          <div className={`sticky bottom-0 bg-[#EEEDEA] p-4 md:p-6 ${isDrawerCollapsed ? 'hidden' : ''}`}>
-            <button
-              onClick={() => {
-                if (isPublicPage && !isLoggedIn) {
-                  // Check if already have 2 active filters
-                  if (spectrums.length >= 2) {
-                    setShowLoginModal(true)
-                    return
-                  }
-                  // Check if already created 3 filters today
-                  const dailyCount = getDailyFilterCount()
-                  if (dailyCount >= 3) {
-                    setShowLoginModal(true)
-                    return
-                  }
-                }
-                setShowAddConceptModal(true)
-                setAddConceptInputValue('')
-              }}
-              className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium cursor-pointer"
-            >
-              {spectrums.length > 0 ? '+ Add another filter' : '+ Add filter'}
-            </button>
-          </div>
-        )}
             </div>
         )}
 
-        {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
-        <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
-          isMobile && isDrawerCollapsed ? 'w-full' : ''
-        }`}>
-          {/* Header */}
-          <div className="flex-shrink-0 z-50">
+        {/* Right Content Area - Fixed height, flex column */}
+        <div className="flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full bg-[#EEEDEA]">
+          {/* Header - Full width, positioned over drawer */}
+          <div className="fixed top-0 left-0 right-0 flex-shrink-0 z-[70]">
             <Header 
               onSubmitClick={() => setShowSubmissionForm(true)}
               onLoginClick={() => router.push('/login')}
@@ -3293,18 +3236,21 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               searchInputRef={inputRef}
             />
           </div>
-          {/* Scrollable Gallery Content */}
-          <div className="flex-1 overflow-y-auto min-w-0">
-        {/* Main Content and Panel Container */}
-        <div className="flex">
-          {/* Main Content - shifts when panel opens */}
-          <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
-
-            {/* Gallery Grid */}
+          {/* Gallery Container - Fixed position, scrollable content */}
+          <div className="fixed bottom-8 right-8 rounded-2xl p-6 overflow-y-auto" style={{ 
+            maxHeight: 'calc(100vh - 64px)', 
+            width: 'calc(100vw - 64px - 280px)',
+            top: '73px', // Position below header
+            backgroundColor: '#FBF9F4'
+          }}>
+            {/* Main Content and Panel Container */}
+            <div className="flex">
+              {/* Main Content - shifts when panel opens */}
+              <div className="flex-1 transition-all duration-300 ease-in-out min-w-0">
             <main className="bg-transparent pb-8">
-            <div className="max-w-full mx-auto px-4 md:px-[52px] pt-3 pb-8">
+            <div className="max-w-full mx-auto relative">
               {/* Tabs - Above gallery images */}
-              <div className="mb-4 pb-3">
+              <div className="mb-4 pb-3 relative z-[1]">
                 <Navigation activeCategory={category} onCategoryChange={handleCategoryChange} />
               </div>
         {loading ? (
@@ -3350,7 +3296,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
             ))}
           </div>
         ) : assistantSites.length > 0 || sites.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-0">
             {(assistantSites.length > 0 ? assistantSites : sites).map((site, index) => (
                      <div key={`${site.id}-${index}`} className="group">
                        <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
@@ -3633,15 +3579,15 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         ) : null}
         </div>
       </main>
-            </div>
+              </div>
 
-        {/* Side Panel - slides in from right and pushes content */}
+              {/* Side Panel - slides in from right and pushes content */}
         <div
           className={`sticky top-0 h-screen bg-[#fbf9f4] transition-all duration-300 ease-in-out overflow-hidden ${
             isPanelOpen ? 'w-80' : 'w-0'
           }`}
         >
-          <div className={`p-6 pr-[52px] ${isPanelOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+          <div className={`p-6 ${isPanelOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">Concept Spectrum</h2>
             <button
@@ -3816,9 +3762,9 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
           </div>
           </div>
         </div>
+            </div>
+          </div>
         </div>
-      </div>
-      </div>
       </div>
 
       {/* Create Account Message Modal */}
@@ -3840,7 +3786,8 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-black/50 z-[70] transition-opacity"
+            className="fixed inset-0 bg-black/50 transition-opacity"
+            style={{ zIndex: 100 }}
             onClick={() => {
               setIsAccountDrawerOpen(false)
               setIsAccountSettingsView(false)
@@ -4112,7 +4059,7 @@ Message:
 
       {/* Add vibes Modal */}
       {showAddConceptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 100 }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
@@ -4181,7 +4128,7 @@ Message:
 
       {/* Prompt limit modals */}
       {promptLimitState === 'loggedIn' && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 100 }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="p-6">
               <div className="relative mb-6">
@@ -4206,7 +4153,7 @@ Message:
       )}
 
       {promptLimitState === 'loggedOut' && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 100 }}>
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="p-6">
               <div className="relative mb-6">
