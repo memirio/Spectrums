@@ -26,6 +26,18 @@ export default function CreateAccountMessageModal({ onClose }: CreateAccountMess
               We are glad you want to join us. For the moment, we are only inviting friends and acquaintances.
             </p>
           </div>
+
+          <div className="flex flex-col gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = 'mailto:victor.jacobssonn@hyperisland.se?subject=Account Request'
+              }}
+              className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors cursor-pointer"
+            >
+              Request account
+            </button>
+          </div>
         </div>
       </div>
     </div>
