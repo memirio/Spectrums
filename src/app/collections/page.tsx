@@ -280,13 +280,10 @@ export default function CollectionsPage() {
       {/* Content area - Drawer and main content side by side */}
       <div className="flex-1 flex overflow-hidden relative">
 
-
-        {/* Right Content Area - Fixed height, flex column - Full width on mobile when drawer collapsed */}
-        <div className={`flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full ${
-          isMobile && isDrawerCollapsed ? 'w-full' : ''
-        }`}>
-          {/* Header */}
-          <div className="flex-shrink-0 z-50">
+        {/* Right Content Area - Fixed height, flex column */}
+        <div className="flex-1 transition-all duration-300 ease-in-out min-w-0 flex flex-col overflow-hidden h-full bg-[#EEEDEA]">
+          {/* Header - Full width, positioned over drawer */}
+          <div className="fixed top-0 left-0 right-0 flex-shrink-0 z-[70]">
             <Header 
               onSubmitClick={() => setShowSubmissionForm(true)}
               onLoginClick={() => router.push('/login')}
@@ -303,10 +300,15 @@ export default function CollectionsPage() {
             />
           </div>
           
-          {/* Main Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-7xl mx-auto px-4 md:px-[52px] py-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Collections</h1>
+          {/* Collections Container - Fixed position, scrollable content */}
+          <div className="fixed bottom-8 right-8 rounded-2xl p-6 overflow-y-auto" style={{ 
+            maxHeight: 'calc(100vh - 64px)', 
+            width: 'calc(100vw - 64px)',
+            top: '73px', // Position below header
+            backgroundColor: '#FBF9F4'
+          }}>
+            <div className="max-w-full mx-auto">
+              <h1 className="text-3xl font-bold text-gray-900 mb-8">Collections</h1>
         
         {/* Collections Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
