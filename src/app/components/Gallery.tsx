@@ -1419,7 +1419,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
               score: image.score || 0,
             } as Site
           })
-          .filter((site): site is Site => site !== null)
+          .filter((site: Site | null): site is Site => site !== null)
         
         // Deduplicate by site ID - keep the one with the highest score for each ID
         const siteMap = new Map<string, Site>()

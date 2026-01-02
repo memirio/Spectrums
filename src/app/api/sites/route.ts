@@ -804,7 +804,7 @@ export async function POST(request: NextRequest) {
             }),
             'upsertImage',
             3
-          )
+          ) as { id: string }
           
           console.log(`[sites] ✅ Image record created/updated: ${image.id}`)
 
