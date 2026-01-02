@@ -1719,12 +1719,35 @@ export async function GET(request: NextRequest) {
           } catch (error: any) {
             perf.end('api.search.GET.zeroShot.embedQuery', { error: error.message })
             console.error('[search] Failed to embed query:', error.message)
+            console.error('[search] Full error:', error)
+            
+            // Extract more diagnostic information from the error
+            const errorDetails: any = {
+              message: error.message,
+              _performance: perf.getSummary(),
+            }
+            
+            // Include diagnostic info in development or if explicitly requested
+            if (process.env.NODE_ENV === 'development' || process.env.DEBUG_EMBEDDINGS === 'true') {
+              errorDetails.details = error.message
+              errorDetails.stack = error.stack
+              errorDetails.embeddingServiceUrl = process.env.EMBEDDING_SERVICE_URL ? 'SET' : 'NOT SET'
+              errorDetails.hasApiKey = !!process.env.EMBEDDING_SERVICE_API_KEY
+            }
+            
+            // Always include a helpful message
+            let userMessage = 'Embedding service is not available in this environment. Please try again later.'
+            if (error.message?.includes('EMBEDDING_SERVICE_URL is not set')) {
+              userMessage = 'Embedding service is not configured. Please set EMBEDDING_SERVICE_URL in your environment variables.'
+            } else if (error.message?.includes('Embedding service failed')) {
+              userMessage = 'Embedding service is unreachable or down. Please check your Railway service status.'
+            }
+            
             return NextResponse.json(
               { 
                 error: 'Search temporarily unavailable',
-                message: 'Embedding service is not available in this environment. Please try again later.',
-                details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-                _performance: perf.getSummary(),
+                message: userMessage,
+                ...errorDetails,
               },
               { status: 503 }
             )

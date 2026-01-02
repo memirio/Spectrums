@@ -113,6 +113,16 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   const embeddingServiceUrl = process.env.EMBEDDING_SERVICE_URL;
   const embeddingServiceApiKey = process.env.EMBEDDING_SERVICE_API_KEY;
   
+  // Log configuration status for debugging
+  if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EMBEDDINGS === 'true') {
+    console.log('[embeddings] Configuration check:', {
+      hasServiceUrl: !!embeddingServiceUrl,
+      serviceUrl: embeddingServiceUrl ? `${embeddingServiceUrl.substring(0, 30)}...` : 'NOT SET',
+      hasApiKey: !!embeddingServiceApiKey,
+      environment: process.env.NODE_ENV,
+    });
+  }
+  
   if (embeddingServiceUrl) {
     // Strip trailing slashes to avoid double slashes in URL
     const baseUrl = embeddingServiceUrl.replace(/\/+$/, '');
@@ -203,8 +213,22 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
               lastError = fetchError;
               continue;
             }
-            throw new Error(`Embedding service request timed out after ${timeout}ms (attempt ${attempt + 1}/${maxRetries + 1})`);
+            const timeoutError = new Error(`Embedding service request timed out after ${timeout}ms (attempt ${attempt + 1}/${maxRetries + 1}). Service URL: ${baseUrl}. This usually means the service is down or unreachable.`);
+            console.error('[embeddings] Timeout error details:', {
+              serviceUrl: baseUrl,
+              timeout: `${timeout}ms`,
+              attempt: attempt + 1,
+              maxAttempts: maxRetries + 1,
+            });
+            throw timeoutError;
           }
+          // Log fetch errors for better debugging
+          console.error('[embeddings] Fetch error details:', {
+            error: fetchError.message,
+            name: fetchError.name,
+            serviceUrl: baseUrl,
+            attempt: attempt + 1,
+          });
           throw fetchError;
         }
       } catch (error: any) {
@@ -229,7 +253,13 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
       }
     }
     
-    // If all retries failed, log and fall through to local CLIP
+    // If all retries failed, log detailed error and fall through to local CLIP
+    console.error('[embeddings] External service failed after all retries:', {
+      serviceUrl: embeddingServiceUrl,
+      lastError: lastError?.message || 'Unknown error',
+      errorType: lastError?.name || 'Unknown',
+      willTryLocal: true,
+    });
     console.warn('[embeddings] External service failed, trying local CLIP:', lastError?.message || 'Unknown error');
   }
   
@@ -252,11 +282,43 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
     // CRITICAL: Do NOT fall back to OpenAI embeddings - they are 1536 dimensions
     // but the database has 768-dim CLIP embeddings. This causes dimension mismatch errors.
     // Instead, throw an error so the user knows the Railway service is required.
-    const errorMessage = embeddingServiceUrl 
-      ? `Embedding service failed and CLIP is not available in this environment. Please ensure your Railway embedding service at ${embeddingServiceUrl} is running and accessible. Error: ${error.message}`
-      : `CLIP embeddings are required (768 dimensions) but not available in this environment. Please set EMBEDDING_SERVICE_URL to your Railway embedding service URL. Error: ${error.message}`;
     
-    console.error('[embeddings] CRITICAL: Cannot generate CLIP embeddings:', errorMessage);
+    // Provide detailed diagnostic information
+    const diagnostics = {
+      embeddingServiceUrl: embeddingServiceUrl || 'NOT SET',
+      hasApiKey: !!embeddingServiceApiKey,
+      environment: process.env.NODE_ENV,
+      error: error.message,
+      errorType: error.name,
+    };
+    
+    console.error('[embeddings] CRITICAL: Cannot generate CLIP embeddings. Diagnostics:', diagnostics);
+    
+    let errorMessage: string;
+    if (!embeddingServiceUrl) {
+      errorMessage = `CLIP embeddings are required (768 dimensions) but EMBEDDING_SERVICE_URL is not set. 
+      
+To fix this:
+1. Deploy the embedding service to Railway (see embedding-service/DEPLOY.md)
+2. Set EMBEDDING_SERVICE_URL in your Vercel environment variables to your Railway service URL
+3. Set EMBEDDING_SERVICE_API_KEY if your service requires authentication
+
+Error: ${error.message}`;
+    } else {
+      errorMessage = `Embedding service at ${embeddingServiceUrl} failed and local CLIP is not available in this environment (Vercel/serverless).
+
+Possible issues:
+1. Service is down or unreachable - check Railway dashboard
+2. Service URL is incorrect - verify EMBEDDING_SERVICE_URL
+3. API key mismatch - verify EMBEDDING_SERVICE_API_KEY matches Railway
+4. Service is cold-starting - wait a few seconds and retry
+
+To verify service is running:
+  curl ${embeddingServiceUrl}/health
+
+Error: ${error.message}`;
+    }
+    
     throw new Error(errorMessage);
   }
 }

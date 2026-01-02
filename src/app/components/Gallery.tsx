@@ -1308,23 +1308,81 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         const response = await fetch(searchUrl)
         if (!response.ok) {
           console.error('[fetchSites] Failed response fetching search', response.status, response.statusText)
-          const errorText = await response.text().catch(() => '')
-          console.error('[fetchSites] Error response:', errorText.substring(0, 200))
+          let errorData: any = {}
+          try {
+            const errorText = await response.text()
+            console.error('[fetchSites] Error response:', errorText.substring(0, 500))
+            try {
+              errorData = JSON.parse(errorText)
+            } catch {
+              // Not JSON, use raw text
+              errorData = { message: errorText.substring(0, 200) }
+            }
+          } catch (e) {
+            console.error('[fetchSites] Failed to read error response:', e)
+          }
+          
+          // Log detailed error information
+          console.error('[fetchSites] Error details:', {
+            status: response.status,
+            statusText: response.statusText,
+            error: errorData.error,
+            message: errorData.message,
+            details: errorData.details,
+            embeddingServiceUrl: errorData.embeddingServiceUrl,
+            hasApiKey: errorData.hasApiKey,
+          })
+          
           setSites([])
           setAllSites([])
+          setLoading(false)
+          // Clear search query to prevent retry loop on persistent errors
+          if (response.status === 503 || response.status >= 500) {
+            console.warn('[fetchSites] Server error detected, clearing search query to prevent retry loop')
+            console.warn('[fetchSites] Error message:', errorData.message || 'Unknown error')
+            searchQueryRef.current = ''
+            latestQueryRef.current = ''
+            setSearchQuery('')
+            globalSearch.setSearchQuery('')
+          }
           return
         }
-        const data = await response.json()
+        
+        let data: any
+        try {
+          data = await response.json()
+        } catch (parseError: any) {
+          console.error('[fetchSites] Failed to parse JSON response:', parseError)
+          // Try to get response text for debugging (but response body is already consumed)
+          console.error('[fetchSites] Response status:', response.status, response.statusText)
+          setSites([])
+          setAllSites([])
+          setLoading(false)
+          return
+        }
+        
         console.log('[fetchSites] Search response received:', { 
-          imageCount: data.images?.length || 0, 
-          hasMore: data.hasMore,
+          imageCount: data?.images?.length || 0, 
+          hasMore: data?.hasMore,
           query: finalQuery,
-          error: data.error,
-          total: data.total
+          error: data?.error,
+          total: data?.total
         })
         
-        if (data.error) {
+        if (data?.error) {
           console.error('[fetchSites] API returned error:', data.error)
+          setSites([])
+          setAllSites([])
+          setLoading(false)
+          return
+        }
+        
+        if (!data || typeof data !== 'object') {
+          console.error('[fetchSites] Invalid response data structure:', data)
+          setSites([])
+          setAllSites([])
+          setLoading(false)
+          return
         }
         
         if (data.images && data.images.length === 0 && !data.error) {
@@ -1337,25 +1395,39 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
         
         // Search API returns images with embedded site data
         // Extract sites from images array
-        const sitesWithImageIds = (data.images || []).map((image: any) => {
-          const site = image.site || {}
-          const siteCategory = image.site?.category || image.category || 'website'
-          return {
-            id: site.id || image.siteId,
-            title: site.title || '',
-            description: site.description || null,
-            url: site.url || image.siteUrl || '',
-            imageUrl: image.url || site.imageUrl || null,
-            author: site.author || null,
-            tags: [],
-            imageId: image.imageId || undefined,
-            category: siteCategory,
-            score: image.score || 0,
-          } as Site
-        })
+        const imagesArray = Array.isArray(data.images) ? data.images : []
+        const sitesWithImageIds = imagesArray
+          .map((image: any) => {
+            const site = image.site || {}
+            const siteCategory = image.site?.category || image.category || 'website'
+            const siteId = site.id || image.siteId
+            // Skip if no site ID (invalid data)
+            if (!siteId) {
+              console.warn('[fetchSites] Skipping image with no site ID:', image)
+              return null
+            }
+            return {
+              id: siteId,
+              title: site.title || '',
+              description: site.description || null,
+              url: site.url || image.siteUrl || '',
+              imageUrl: image.url || site.imageUrl || null,
+              author: site.author || null,
+              tags: [],
+              imageId: image.imageId || undefined,
+              category: siteCategory,
+              score: image.score || 0,
+            } as Site
+          })
+          .filter((site): site is Site => site !== null)
+        
         // Deduplicate by site ID - keep the one with the highest score for each ID
         const siteMap = new Map<string, Site>()
         for (const site of sitesWithImageIds) {
+          if (!site.id) {
+            console.warn('[fetchSites] Skipping site with no ID:', site)
+            continue
+          }
           const existing = siteMap.get(site.id)
           if (!existing || (site.score ?? 0) > (existing.score ?? 0)) {
             siteMap.set(site.id, site)
@@ -1563,7 +1635,7 @@ export default function Gallery({ category: categoryProp, onCategoryChange }: Ga
     } finally {
       setLoading(false)
     }
-  }, [selectedConcepts, category, isCollectionsPage, isLoggedIn, searchQuery])
+  }, [selectedConcepts, category, isCollectionsPage, isLoggedIn])
 
   // Fetch sites when concepts, category, or collections page changes (but not when slider moves)
   // Note: searchQuery is NOT in dependencies - searches only trigger on Enter key press

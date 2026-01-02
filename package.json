@@ -16,7 +16,8 @@
     "check:synonyms": "tsx scripts/check_synonym_coverage.ts",
     "check:tagging": "tsx scripts/check_tagging_quality.ts",
     "validate:search": "tsx scripts/validate_search_quality.ts",
-    "expand:related": "tsx scripts/expand_related_terms.ts"
+    "expand:related": "tsx scripts/expand_related_terms.ts",
+    "check:embeddings": "tsx scripts/check_embedding_service.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.922.0",
