@@ -221,11 +221,54 @@ export async function tagImage(imageId: string): Promise<string[]> {
  * Does NOT generate new concepts - only tags with existing concepts
  * This is faster and doesn't require Gemini/OpenAI API calls
  */
+/**
+ * Retry helper for database operations with exponential backoff
+ */
+async function retryDbOp<T>(
+  operation: () => Promise<T>,
+  operationName: string,
+  maxRetries: number = 3
+): Promise<T> {
+  let lastError: any = null
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      if (attempt > 0) {
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000)
+        console.log(`[tagging] Retrying ${operationName} (attempt ${attempt + 1}/${maxRetries}) after ${delay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+        try {
+          await prisma.$disconnect()
+          await new Promise(resolve => setTimeout(resolve, 500))
+        } catch {}
+      }
+      return await operation()
+    } catch (error: any) {
+      lastError = error
+      const errorMsg = error?.message || String(error)
+      const isConnectionError = 
+        errorMsg.includes('timeout') ||
+        errorMsg.includes('connection') ||
+        errorMsg.includes('ECONNREFUSED') ||
+        errorMsg.includes('Connection terminated') ||
+        errorMsg.includes('Connection closed')
+      if (isConnectionError && attempt < maxRetries - 1) {
+        continue
+      }
+      throw error
+    }
+  }
+  throw lastError || new Error(`Failed ${operationName} after ${maxRetries} attempts`)
+}
+
 export async function tagImageWithoutNewConcepts(imageId: string): Promise<void> {
-  const image = await prisma.image.findUnique({ 
-    where: { id: imageId },
-    select: { id: true, url: true, category: true }
-  });
+  const image = await retryDbOp(
+    () => prisma.image.findUnique({ 
+      where: { id: imageId },
+      select: { id: true, url: true, category: true }
+    }),
+    'findImageForTagging',
+    3
+  );
   if (!image) return;
   
   // Fetch image buffer
@@ -238,14 +281,22 @@ export async function tagImageWithoutNewConcepts(imageId: string): Promise<void>
   const { hash: contentHash } = await canonicalizeImage(buf);
   
   // Check if embedding already exists for this image
-  const existingForImage = await prisma.imageEmbedding.findUnique({ 
-    where: { imageId: image.id } 
-  });
+  const existingForImage = await retryDbOp(
+    () => prisma.imageEmbedding.findUnique({ 
+      where: { imageId: image.id } 
+    }),
+    'findExistingEmbeddingForImage',
+    3
+  );
   
   // Check if embedding exists by contentHash (for reuse)
-  const existingByHash = await prisma.imageEmbedding.findFirst({ 
-    where: { contentHash: contentHash } as any 
-  });
+  const existingByHash = await retryDbOp(
+    () => prisma.imageEmbedding.findFirst({ 
+      where: { contentHash: contentHash } as any 
+    }),
+    'findExistingEmbeddingByHash',
+    3
+  );
   
   let ivec: number[];
   if (existingForImage) {
@@ -254,10 +305,14 @@ export async function tagImageWithoutNewConcepts(imageId: string): Promise<void>
     // Update contentHash if needed (but don't violate unique constraint)
     if (existingForImage.contentHash !== contentHash && !existingByHash) {
       // Only update if no other image has this contentHash
-      await prisma.imageEmbedding.update({
-        where: { imageId: image.id },
-        data: { contentHash: contentHash } as any,
-      });
+      await retryDbOp(
+        () => prisma.imageEmbedding.update({
+          where: { imageId: image.id },
+          data: { contentHash: contentHash } as any,
+        }),
+        'updateImageEmbeddingContentHash',
+        3
+      );
     }
   } else if (existingByHash) {
     // Reuse existing embedding vector from another image (don't recompute)
@@ -267,54 +322,70 @@ export async function tagImageWithoutNewConcepts(imageId: string): Promise<void>
     // Actually, each image should have its own embedding record
     // We'll create a new record but with null contentHash if hash already exists
     try {
-      await prisma.imageEmbedding.create({
-        data: { 
-          imageId: image.id, 
-          model: existingByHash.model, 
-          vector: existingByHash.vector as any, 
-          contentHash: null // Set to null if hash already exists
-        } as any,
-      });
+      await retryDbOp(
+        () => prisma.imageEmbedding.create({
+          data: { 
+            imageId: image.id, 
+            model: existingByHash.model, 
+            vector: existingByHash.vector as any, 
+            contentHash: null // Set to null if hash already exists
+          } as any,
+        }),
+        'createImageEmbeddingFromExisting',
+        3
+      );
     } catch (e: any) {
       // If creation fails (e.g., imageId already exists), just update
-      await prisma.imageEmbedding.update({
-        where: { imageId: image.id },
-        data: { 
-          model: existingByHash.model,
-          vector: existingByHash.vector as any,
-        } as any,
-      });
+      await retryDbOp(
+        () => prisma.imageEmbedding.update({
+          where: { imageId: image.id },
+          data: { 
+            model: existingByHash.model,
+            vector: existingByHash.vector as any,
+          } as any,
+        }),
+        'updateImageEmbeddingFromExisting',
+        3
+      );
     }
   } else {
     // Compute new embedding (expensive operation)
     const result = await embedImageFromBuffer(buf);
     ivec = result.vector;
-    await prisma.imageEmbedding.upsert({
-      where: { imageId: image.id },
-      update: { 
-        model: 'clip-ViT-L/14', 
-        vector: ivec as unknown as any, 
-        contentHash: contentHash 
-      } as any,
-      create: { 
-        imageId: image.id, 
-        model: 'clip-ViT-L/14', 
-        vector: ivec as unknown as any, 
-        contentHash: contentHash 
-      } as any,
-    });
+    await retryDbOp(
+      () => prisma.imageEmbedding.upsert({
+        where: { imageId: image.id },
+        update: { 
+          model: 'clip-ViT-L/14', 
+          vector: ivec as unknown as any, 
+          contentHash: contentHash 
+        } as any,
+        create: { 
+          imageId: image.id, 
+          model: 'clip-ViT-L/14', 
+          vector: ivec as unknown as any, 
+          contentHash: contentHash 
+        } as any,
+      }),
+      'upsertImageEmbedding',
+      3
+    );
   }
 
   // Tag the image using pre-computed concept embeddings (existing concepts only)
   // OPTIMIZATION: Only fetch concept IDs and embeddings (not other fields)
   const { TAG_CONFIG } = await import('@/lib/tagging-config');
-  const concepts = await prisma.concept.findMany({
-    select: {
-      id: true,
-      embedding: true,
-      // Don't fetch label, synonyms, related, opposites - not needed for tagging
-    },
-  });
+  const concepts = await retryDbOp(
+    () => prisma.concept.findMany({
+      select: {
+        id: true,
+        embedding: true,
+        // Don't fetch label, synonyms, related, opposites - not needed for tagging
+      },
+    }),
+    'findAllConceptsForTagging',
+    3
+  );
   
   // Use pre-computed embeddings (fast approach)
   function cosineSimilarity(a: number[], b: number[]): number {
@@ -392,17 +463,25 @@ export async function tagImageWithoutNewConcepts(imageId: string): Promise<void>
   const chosenConceptIds = new Set(tagResults.map((t: any) => t.conceptId))
 
   // Get existing tags to avoid duplicates
-  const existingTags = await prisma.imageTag.findMany({
-    where: { imageId: image.id },
-  })
+  const existingTags = await retryDbOp(
+    () => prisma.imageTag.findMany({
+      where: { imageId: image.id },
+    }),
+    'findExistingImageTags',
+    3
+  )
   const existingConceptIds = new Set(existingTags.map((t: any) => t.conceptId))
 
   // Only create new tags (don't update or delete existing ones)
   for (const t of tagResults) {
     if (!existingConceptIds.has(t.conceptId)) {
-      await prisma.imageTag.create({
-        data: { imageId: image.id, conceptId: t.conceptId, score: t.score },
-      })
+      await retryDbOp(
+        () => prisma.imageTag.create({
+          data: { imageId: image.id, conceptId: t.conceptId, score: t.score },
+        }),
+        `createImageTag-${t.conceptId}`,
+        3
+      )
     }
   }
   

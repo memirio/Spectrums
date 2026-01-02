@@ -27,22 +27,26 @@ function getPrismaClient(): PrismaClient {
       const isTransactionPooler = dbUrl.includes(':6543') || dbUrl.includes('pooler.supabase.com')
       
       // For serverless: Use minimal pool size (1 connection per invocation)
+      // For local development: Use larger pool to handle concurrent requests
       // Transaction Pooler handles the actual pooling at Supabase's end
       // Each Vercel function invocation gets its own pool, which is fine because
       // Transaction Pooler can handle many concurrent connections
+      const isProduction = process.env.NODE_ENV === 'production'
+      const poolMax = isProduction ? 1 : 10 // Larger pool for local dev
+      
       if (!globalForPrisma.pool) {
         globalForPrisma.pool = new Pool({
           connectionString: dbUrl,
-          max: 1, // One connection per serverless function invocation
+          max: poolMax, // One connection per serverless function invocation, more for local dev
           min: 0, // Don't keep idle connections
           idleTimeoutMillis: 10000, // Close idle connections quickly (10s)
-          connectionTimeoutMillis: 30000, // 30s timeout for local dev (increased from 10s)
+          connectionTimeoutMillis: isProduction ? 30000 : 60000, // Longer timeout for local dev
           // For Transaction Pooler, connections are pooled at Supabase's end
           // We just need to ensure we don't leak connections
           // Add statement_timeout to prevent long-running queries from blocking
-          statement_timeout: 25000, // 25s max query time (Vercel timeout is 30s)
+          statement_timeout: isProduction ? 25000 : 55000, // Longer timeout for local dev
         })
-        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'})`)
+        console.log(`[prisma] Created connection pool (pooler: ${isTransactionPooler ? 'Transaction' : 'Session'}, max: ${poolMax}, env: ${isProduction ? 'production' : 'development'})`)
         
         // Handle pool errors gracefully
         globalForPrisma.pool.on('error', (err) => {

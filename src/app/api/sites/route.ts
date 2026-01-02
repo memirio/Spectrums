@@ -73,6 +73,59 @@ function stem(text: string): string {
   }
 }
 
+/**
+ * Retry helper for database operations with exponential backoff
+ * Handles connection timeouts and transient errors
+ */
+async function retryDatabaseOperation<T>(
+  operation: () => Promise<T>,
+  operationName: string,
+  maxRetries: number = 3,
+  initialDelay: number = 1000
+): Promise<T> {
+  let lastError: any = null
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      if (attempt > 0) {
+        const delay = Math.min(initialDelay * Math.pow(2, attempt - 1), 10000) // Max 10s delay
+        console.log(`[sites] Retrying ${operationName} (attempt ${attempt + 1}/${maxRetries}) after ${delay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+        
+        // Try to reconnect the database connection
+        try {
+          await prisma.$disconnect()
+          await new Promise(resolve => setTimeout(resolve, 500))
+        } catch (disconnectError) {
+          // Ignore disconnect errors
+        }
+      }
+      
+      return await operation()
+    } catch (error: any) {
+      lastError = error
+      const errorMsg = error?.message || String(error)
+      const isConnectionError = 
+        errorMsg.includes('timeout') ||
+        errorMsg.includes('connection') ||
+        errorMsg.includes('ECONNREFUSED') ||
+        errorMsg.includes('Connection terminated') ||
+        errorMsg.includes('Connection closed')
+      
+      if (isConnectionError && attempt < maxRetries - 1) {
+        console.warn(`[sites] Database connection error in ${operationName}: ${errorMsg}`)
+        continue // Retry
+      }
+      
+      // Not a connection error or max retries reached
+      throw error
+    }
+  }
+  
+  // Should never reach here, but TypeScript needs it
+  throw lastError || new Error(`Failed ${operationName} after ${maxRetries} attempts`)
+}
+
 async function findBestMatch(input: string, candidates: string[], maxDistance = 2): Promise<string | null> {
   const inputLower = normalize(input)
   const inputStem = stem(inputLower)
@@ -662,22 +715,26 @@ export async function POST(request: NextRequest) {
 
     // Check for existing site with the same URL (normalize URL for comparison)
     const normalizedUrl = url.trim().replace(/\/$/, ''); // Remove trailing slash
-    const existingSite = await prisma.site.findFirst({
-      where: {
-        url: {
-          in: [
-            normalizedUrl,
-            normalizedUrl + '/',
-            url.trim(),
-            url.trim().replace(/\/$/, '')
-          ]
+    const existingSite = await retryDatabaseOperation(
+      () => prisma.site.findFirst({
+        where: {
+          url: {
+            in: [
+              normalizedUrl,
+              normalizedUrl + '/',
+              url.trim(),
+              url.trim().replace(/\/$/, '')
+            ]
+          }
+        },
+        include: {
+          images: true,
+          // tags relationship is legacy/unused - we use Concepts/ImageTags instead
         }
-      },
-      include: {
-        images: true,
-        // tags relationship is legacy/unused - we use Concepts/ImageTags instead
-      }
-    })
+      }),
+      'findExistingSite',
+      3
+    )
 
     // If site exists, return existing site instead of creating duplicate
     if (existingSite) {
@@ -693,15 +750,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Create site (tags are legacy/unused - we use Concepts/ImageTags instead)
-    const site = await prisma.site.create({
-      data: {
-        title,
-        description,
-        url: normalizedUrl,
-        imageUrl: finalImageUrl,
-        author,
-      }
-    })
+    const site = await retryDatabaseOperation(
+      () => prisma.site.create({
+        data: {
+          title,
+          description,
+          url: normalizedUrl,
+          imageUrl: finalImageUrl,
+          author,
+        }
+      }),
+      'createSite',
+      3
+    )
 
     // If we have an image URL, create an Image row and tag inline
     if (finalImageUrl) {
@@ -723,23 +784,27 @@ export async function POST(request: NextRequest) {
           
           console.log(`[sites] Image metadata: ${width}x${height}, ${bytes} bytes`)
 
-          const image = await (prisma.image as any).upsert({
-            where: { siteId_url: { siteId: site.id, url: finalImageUrl } },
-            update: {
-              width,
-              height,
-              bytes,
-              category: imageCategory, // Update category if changed
-            },
-            create: {
-              siteId: site.id,
-              url: finalImageUrl,
-              width,
-              height,
-              bytes,
-              category: imageCategory, // Set category when creating
-            },
-          })
+          const image = await retryDatabaseOperation(
+            () => (prisma.image as any).upsert({
+              where: { siteId_url: { siteId: site.id, url: finalImageUrl } },
+              update: {
+                width,
+                height,
+                bytes,
+                category: imageCategory, // Update category if changed
+              },
+              create: {
+                siteId: site.id,
+                url: finalImageUrl,
+                width,
+                height,
+                bytes,
+                category: imageCategory, // Set category when creating
+              },
+            }),
+            'upsertImage',
+            3
+          )
           
           console.log(`[sites] ✅ Image record created/updated: ${image.id}`)
 
@@ -758,44 +823,56 @@ export async function POST(request: NextRequest) {
           }
           
           // Check if embedding already exists by contentHash
-          const existing = await prisma.imageEmbedding.findFirst({ 
-            where: { contentHash: contentHash } as any
-          })
+          const existing = await retryDatabaseOperation(
+            () => prisma.imageEmbedding.findFirst({ 
+              where: { contentHash: contentHash } as any
+            }),
+            'findExistingEmbedding',
+            3
+          )
           
           let ivec: number[] | null = null
           if (existing) {
             // Reuse existing embedding vector
             ivec = existing.vector as unknown as number[]
-            await prisma.imageEmbedding.upsert({
-              where: { imageId: image.id },
-              update: { contentHash: contentHash } as any,
-              create: { 
-                imageId: image.id, 
-                model: existing.model, 
-                vector: existing.vector as any, 
-                contentHash: contentHash 
-              } as any,
-            })
+            await retryDatabaseOperation(
+              () => prisma.imageEmbedding.upsert({
+                where: { imageId: image.id },
+                update: { contentHash: contentHash } as any,
+                create: { 
+                  imageId: image.id, 
+                  model: existing.model, 
+                  vector: existing.vector as any, 
+                  contentHash: contentHash 
+                } as any,
+              }),
+              'upsertImageEmbeddingFromExisting',
+              3
+            )
           } else {
             // Compute new embedding (lazy load to avoid native library issues)
             try {
               const { embedImageFromBuffer } = await import('@/lib/embeddings')
               const result = await embedImageFromBuffer(buf)
               ivec = result.vector
-              await prisma.imageEmbedding.upsert({
-                where: { imageId: image.id },
-                update: { 
-                  vector: ivec as any, 
-                  model: 'clip-ViT-L/14', 
-                  contentHash: contentHash 
-                } as any,
-                create: { 
-                  imageId: image.id, 
-                  vector: ivec as any, 
-                  model: 'clip-ViT-L/14', 
-                  contentHash: contentHash 
-                } as any,
-              })
+              await retryDatabaseOperation(
+                () => prisma.imageEmbedding.upsert({
+                  where: { imageId: image.id },
+                  update: { 
+                    vector: ivec as any, 
+                    model: 'clip-ViT-L/14', 
+                    contentHash: contentHash 
+                  } as any,
+                  create: { 
+                    imageId: image.id, 
+                    vector: ivec as any, 
+                    model: 'clip-ViT-L/14', 
+                    contentHash: contentHash 
+                  } as any,
+                }),
+                'upsertImageEmbedding',
+                3
+              )
             } catch (embedError: any) {
               console.warn(`[sites] Failed to generate embedding (transformers not available):`, embedError.message)
               // Skip embedding generation - image will be created without embedding
@@ -848,7 +925,11 @@ export async function POST(request: NextRequest) {
               
               // Check existing concepts BEFORE generating new ones
               const existingConceptIdsBefore = new Set(
-                (await prisma.concept.findMany({ select: { id: true } })).map((c: any) => c.id)
+                (await retryDatabaseOperation(
+                  () => prisma.concept.findMany({ select: { id: true } }),
+                  'findAllConcepts',
+                  3
+                )).map((c: any) => c.id)
               )
               
               let newlyCreatedConceptIds: string[] = []
